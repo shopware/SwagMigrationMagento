@@ -1,0 +1,63 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Magento 1.9 Profile -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Magento19Profile">
+            <tag name="shopware.migration.profile"/>
+        </service>
+
+        <!-- Magento ConnectionFactory -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+
+        <!-- Magento ReaderRegistry for all data readers -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\ReaderRegistry">
+            <argument type="tagged" tag="shopware.migration.magento_local_reader"/>
+        </service>
+
+        <!-- Shopware Profile Gateways -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\ReaderRegistry" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <argument type="service" id="currency.repository" />
+            <tag name="shopware.migration.gateway" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader">
+            <argument id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" type="service"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <argument type="service" id="SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSetRegistry" />
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService" />
+        </service>
+
+        <!-- Data Selections for Magento -->
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection">
+            <tag name="shopware.migration.data_selection"/>
+        </service>
+        <!-- DataSets for Magento -->
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet">
+            <tag name="shopware.migration.data_set" />
+        </service>
+
+        <!-- Readers which contain the sql queries -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
+            <argument type="service" id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" />
+            <tag name="shopware.migration.magento_local_reader" />
+        </service>
+
+        <!-- Magento converters -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\MappingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+    </services>
+</container>

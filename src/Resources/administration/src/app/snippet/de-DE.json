@@ -1,0 +1,26 @@
+{
+    "swag-migration": {
+        "wizard": {
+            "pages": {
+                "credentials": {
+                    "magento": {
+                        "local": {
+                            "contentInformation": "Wir benötigen noch Zugangsdaten um eine Verbindung zu Deiner Datenbank von Magento 1 herstellen zu können.",
+                            "dbHostLabel": "Host",
+                            "dbHostPlaceholder": "Host eintragen",
+                            "dbPortLabel": "Port",
+                            "dbNameLabel": "Datenbankname",
+                            "dbNamePlaceholder": "Name eintragen",
+                            "dbUserLabel": "Benutzername",
+                            "dbUserPlaceholder": "Name eintragen",
+                            "dbPasswordLabel": "Passwort",
+                            "dbPasswordPlaceholder": "Passwort eintragen",
+                            "installationRoot": "Ordner der Shopinstallation",
+                            "installationRootPlaceholder": "Root-Verzeichnis eingeben"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
