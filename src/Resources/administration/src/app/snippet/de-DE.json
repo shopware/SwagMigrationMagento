@@ -1,5 +1,13 @@
 {
     "swag-migration": {
+        "index": {
+            "premappingCard": {
+                "group": {
+                    "language": "Sprachen",
+                    "shipping_method": "Liefermethoden"
+                }
+            }
+        },
         "wizard": {
             "pages": {
                 "credentials": {
