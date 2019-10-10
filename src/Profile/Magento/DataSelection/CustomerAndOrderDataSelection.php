@@ -3,6 +3,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
@@ -22,6 +23,7 @@ class CustomerAndOrderDataSelection implements DataSelectionInterface
         return new DataSelectionStruct(
             self::IDENTIFIER,
             $this->getEntityNames(),
+            $this->getEntityNamesRequiredForCount(),
             'swag-migration.index.selectDataCard.dataSelection.customersOrders',
             200,
             true
@@ -35,6 +37,12 @@ class CustomerAndOrderDataSelection implements DataSelectionInterface
     {
         return [
             CustomerDataSet::getEntity(),
+            OrderDataSet::getEntity()
         ];
+    }
+
+    public function getEntityNamesRequiredForCount(): array
+    {
+        return $this->getEntityNames();
     }
 }

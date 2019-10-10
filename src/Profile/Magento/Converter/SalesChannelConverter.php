@@ -14,36 +14,29 @@ use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class SalesChannelConverter extends MagentoConverter
 {
     /**
-     * @var MagentoMappingServiceInterface
-     */
-    private $mappingService;
-
-    /**
-     * @var LoggingServiceInterface
-     */
-    private $loggingService;
-
-    /**
      * @var string
      */
-    private $connectionId;
+    protected $connectionId;
 
     /**
      * @var Context
      */
-    private $context;
+    protected $context;
 
-    public function __construct(
-        MagentoMappingServiceInterface $mappingService,
-        LoggingServiceInterface $loggingService
-    ) {
-        $this->mappingService = $mappingService;
-        $this->loggingService = $loggingService;
+    /**
+     * @var MagentoMappingServiceInterface
+     */
+    protected $mappingService;
+
+    public function __construct(MagentoMappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
+    {
+        parent::__construct($mappingService, $loggingService);
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool
@@ -54,27 +47,28 @@ class SalesChannelConverter extends MagentoConverter
 
     public function getSourceIdentifier(array $data): string
     {
-        return $data['customerID'];
-    }
-
-    public function writeMapping(Context $context): void
-    {
-        $this->mappingService->writeMapping($context);
+        return $data['website_id'];
     }
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        $this->generateChecksum($data);
         $this->context = $context;
         $this->connectionId = $migrationContext->getConnection()->getId();
 
         $converted = [];
-        $converted['id'] = $this->mappingService->createNewUuid(
+        $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::SALES_CHANNEL,
             $data['website_id'],
-            $context
+            $context,
+            $this->checksum
         );
+        $converted['id'] = $this->mainMapping['entityUuid'];
 
+        /**
+         * Todo: Add Customer Group Association
+         */
         $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
 
         $languageUuid = $this->mappingService->getLanguageUuid(
@@ -121,14 +115,14 @@ class SalesChannelConverter extends MagentoConverter
         $converted['currencyId'] = $currencyUuid;
         $converted['currencies'] = $this->getSalesChannelCurrencies($currencyUuid, $data, $context);
 
-        $categoryUuid = $this->mappingService->getUuid(
+        $categoryMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,
             $data['store_group']['root_category_id'],
             $context
         );
 
-        if ($categoryUuid === null) {
+        if ($categoryMapping === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
@@ -140,6 +134,9 @@ class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
+
+        $categoryUuid = $categoryMapping['entityUuid'];
+        $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
 
         $countryUuid = $this->mappingService->getMagentoCountryUuid(
@@ -175,7 +172,9 @@ class SalesChannelConverter extends MagentoConverter
         $this->convertValue($converted, 'name', $data, 'name');
         $converted['accessKey'] = AccessKeyHelper::generateAccessKey('sales-channel');
 
-        return new ConvertStruct($converted, $data);
+        $this->updateMainMapping($migrationContext, $context);
+
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
     protected function getSalesChannelLanguages(string $languageUuid, array $data, Context $context): array
@@ -264,17 +263,18 @@ class SalesChannelConverter extends MagentoConverter
         $payments = [];
         if (isset($data['payments'])) {
             foreach ($data['payments'] as $payment) {
-                $uuid = $this->mappingService->getUuid(
+                $mapping = $this->mappingService->getMapping(
                     $this->connectionId,
                     PaymentMethodReader::getMappingName(),
                     $payment['payment_id'],
                     $context
                 );
 
-                if ($uuid === null) {
+                if ($mapping === null) {
                     continue;
                 }
 
+                $uuid = $mapping['entityUuid'];
                 $payments[$uuid] = [
                     'id' => $uuid,
                 ];
@@ -289,17 +289,18 @@ class SalesChannelConverter extends MagentoConverter
         $carriers = [];
         if (isset($data['carriers'])) {
             foreach ($data['carriers'] as $payment) {
-                $uuid = $this->mappingService->getUuid(
+                $mapping = $this->mappingService->getMapping(
                     $this->connectionId,
                     ShippingMethodReader::getMappingName(),
                     $payment['carrier_id'],
                     $context
                 );
 
-                if ($uuid === null) {
+                if ($mapping === null) {
                     continue;
                 }
 
+                $uuid = $mapping['entityUuid'];
                 $carriers[$uuid] = [
                     'id' => $uuid,
                 ];
@@ -320,12 +321,14 @@ class SalesChannelConverter extends MagentoConverter
 
         $this->convertValue($localeTranslation, 'name', $data, 'name');
 
-        $localeTranslation['id'] = $this->mappingService->createNewUuid(
+        $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::SALES_CHANNEL_TRANSLATION,
             $data['website_id'] . ':' . $data['defaultLocale'],
             $this->context
         );
+        $localeTranslation['id'] = $mapping['entityUuid'];
+        $this->mappingIds[] = $mapping['id'];
         $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
         $localeTranslation['languageId'] = $languageUuid;
 

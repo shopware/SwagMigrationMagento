@@ -23,6 +23,7 @@ class BasicSettingsDataSelection implements DataSelectionInterface
         return new DataSelectionStruct(
             self::IDENTIFIER,
             $this->getEntityNames(),
+            $this->getEntityNamesRequiredForCount(),
             'swag-migration.index.selectDataCard.dataSelection.basicSettings',
             -100,
             true,
@@ -37,5 +38,10 @@ class BasicSettingsDataSelection implements DataSelectionInterface
             CategoryDataSet::getEntity(),
             SalesChannelDataSet::getEntity(),
         ];
+    }
+
+    public function getEntityNamesRequiredForCount(): array
+    {
+        return $this->getEntityNames();
     }
 }

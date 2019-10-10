@@ -20,34 +20,24 @@ use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 class CustomerConverter extends MagentoConverter
 {
     /**
-     * @var MappingServiceInterface
+     * @var string
      */
-    private $mappingService;
-
-    /**
-     * @var LoggingServiceInterface
-     */
-    private $loggingService;
+    protected $runId;
 
     /**
      * @var string
      */
-    private $runId;
-
-    /**
-     * @var string
-     */
-    private $connectionId;
+    protected $connectionId;
 
     /**
      * @var Context
      */
-    private $context;
+    protected $context;
 
     /**
      * @var string[]
      */
-    private $requiredAddressDataFieldKeys = [
+    protected $requiredAddressDataFieldKeys = [
         'firstname',
         'lastname',
         'zipcode',
@@ -58,13 +48,7 @@ class CustomerConverter extends MagentoConverter
     /**
      * @var string
      */
-    private $oldCustomerId;
-
-    public function __construct(MappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
-    {
-        $this->mappingService = $mappingService;
-        $this->loggingService = $loggingService;
-    }
+    protected $oldCustomerId;
 
     public function supports(MigrationContextInterface $migrationContext): bool
     {
@@ -77,14 +61,10 @@ class CustomerConverter extends MagentoConverter
         return $data['customerID'];
     }
 
-    public function writeMapping(Context $context): void
-    {
-        $this->mappingService->writeMapping($context);
-    }
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $oldData = $data;
+        $this->generateChecksum($data);
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
         $this->oldCustomerId = $data['customerID'];
@@ -92,24 +72,27 @@ class CustomerConverter extends MagentoConverter
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
 
-        $customerUuid = $this->mappingService->createNewUuid(
+        $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CUSTOMER,
             $data['customerID'],
-            $this->context
+            $this->context,
+            $this->checksum
         );
 
-        $this->mappingService->createNewUuid(
+        $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CUSTOMER,
             $data['email'],
             $this->context,
             null,
-            $customerUuid
+            null,
+            $this->mainMapping['entityUuid']
         );
+        $this->mappingIds[] = $mapping['id'];
 
         $converted = [];
-        $converted['id'] = $customerUuid;
+        $converted['id'] = $this->mainMapping['entityUuid'];
 
         /*
          * Todo: SalesChannel-Zuweisung
@@ -149,7 +132,7 @@ class CustomerConverter extends MagentoConverter
         $converted['defaultPaymentMethodId'] = $defaultPaymentMethodUuid;
 
         if (isset($data['addresses']) && !empty($data['addresses'])) {
-            $this->getAddresses($data, $converted, $customerUuid);
+            $this->getAddresses($data, $converted, $this->mainMapping['entityUuid']);
         }
 
         if (!isset($converted['defaultBillingAddressId'], $converted['defaultShippingAddressId'])) {
@@ -165,7 +148,9 @@ class CustomerConverter extends MagentoConverter
             return new ConvertStruct(null, $oldData);
         }
 
-        return new ConvertStruct($converted, $data);
+        $this->updateMainMapping($migrationContext, $context);
+
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
     /**
@@ -189,12 +174,14 @@ class CustomerConverter extends MagentoConverter
                 continue;
             }
 
-            $newAddress['id'] = $this->mappingService->createNewUuid(
+            $addressMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::CUSTOMER_ADDRESS,
                 $address['id'],
                 $this->context
             );
+            $newAddress['id'] = $addressMapping['entityUuid'];
+            $this->mappingIds[] = $addressMapping['id'];
 
             if (isset($originalData['default_billing_address_id']) && $address['id'] === $originalData['default_billing_address_id']) {
                 $converted['defaultBillingAddressId'] = $newAddress['id'];
@@ -308,14 +295,14 @@ class CustomerConverter extends MagentoConverter
 
     protected function getSalutation(string $salutation): ?string
     {
-        $salutationUuid = $this->mappingService->getUuid(
+        $mapping = $this->mappingService->getMapping(
             $this->connectionId,
             SalutationReader::getMappingName(),
             $salutation,
             $this->context
         );
 
-        if ($salutationUuid === null) {
+        if ($mapping === null) {
             $this->loggingService->addLogEntry(new UnknownEntityLog(
                 $this->runId,
                 DefaultEntities::SALUTATION,
@@ -323,21 +310,24 @@ class CustomerConverter extends MagentoConverter
                 DefaultEntities::CUSTOMER,
                 $this->oldCustomerId
             ));
-        }
 
-        return $salutationUuid;
+            return null;
+        }
+        $this->mappingIds[] = $mapping['id'];
+
+        return $mapping['entityUuid'];
     }
 
     protected function getDefaultPaymentMethod(): ?string
     {
-        $paymentMethodUuid = $this->mappingService->getUuid(
+        $paymentMethodMapping = $this->mappingService->getMapping(
             $this->connectionId,
             PaymentMethodReader::getMappingName(),
             'default_payment_method',
             $this->context
         );
 
-        if ($paymentMethodUuid === null) {
+        if ($paymentMethodMapping === null) {
             $this->loggingService->addLogEntry(new UnknownEntityLog(
                 $this->runId,
                 DefaultEntities::PAYMENT_METHOD,
@@ -345,8 +335,11 @@ class CustomerConverter extends MagentoConverter
                 DefaultEntities::CUSTOMER,
                 $this->oldCustomerId
             ));
-        }
 
-        return $paymentMethodUuid;
+            return null;
+        }
+        $this->mappingIds[] = $paymentMethodMapping['id'];
+
+        return $paymentMethodMapping['entityUuid'];
     }
 }

@@ -15,34 +15,23 @@ use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFou
 class CategoryConverter extends MagentoConverter
 {
     /**
-     * @var MappingServiceInterface
-     */
-    private $mappingService;
-
-    /**
-     * @var LoggingServiceInterface
-     */
-    private $loggingService;
-
-    /**
      * @var string
      */
-    private $connectionId;
+    protected $connectionId;
 
     /**
      * @var Context
      */
-    private $context;
+    protected $context;
 
     /**
      * @var string
      */
-    private $entity_id;
+    protected $entity_id;
 
-    public function __construct(MappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
+    public function getSourceIdentifier(array $data): string
     {
-        $this->mappingService = $mappingService;
-        $this->loggingService = $loggingService;
+        return $data['entity_id'];
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool
@@ -51,13 +40,9 @@ class CategoryConverter extends MagentoConverter
             && $migrationContext->getDataSet()::getEntity() === CategoryDataSet::getEntity();
     }
 
-    public function writeMapping(Context $context): void
-    {
-        $this->mappingService->writeMapping($context);
-    }
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        $this->generateChecksum($data);
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
         $this->entity_id = $data['entity_id'];
@@ -68,18 +53,19 @@ class CategoryConverter extends MagentoConverter
         }
 
         if (isset($data['parent_id']) && $data['parent_id'] !== '0') {
-            $parentUuid = $this->mappingService->getUuid(
+            $parentMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 DefaultEntities::CATEGORY,
                 $data['parent_id'],
                 $this->context
             );
 
-            if ($parentUuid === null) {
+            if ($parentMapping === null) {
                 throw new ParentEntityForChildNotFoundException(DefaultEntities::CATEGORY, $this->entity_id);
             }
 
-            $converted['parentId'] = $parentUuid;
+            $this->mappingIds[] = $parentMapping['id'];
+            $converted['parentId'] = $parentMapping['entityUuid'];
             // get last root category as previous sibling
         } elseif (!isset($data['previousSiblingId'])) {
             $previousSiblingUuid = $this->mappingService->getLowestRootCategoryUuid($context);
@@ -91,23 +77,29 @@ class CategoryConverter extends MagentoConverter
         unset($data['parent']);
 
         if (isset($data['previousSiblingId'])) {
-            $previousSiblingUuid = $this->mappingService->getUuid(
+            $previousSiblingMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 DefaultEntities::CATEGORY,
                 $data['previousSiblingId'],
                 $this->context
             );
 
-            $converted['afterCategoryId'] = $previousSiblingUuid;
+            if ($previousSiblingMapping !== null) {
+                $converted['afterCategoryId'] = $previousSiblingMapping['entityUuid'];
+                $this->mappingIds[] = $previousSiblingMapping['id'];
+            }
+            unset($previousSiblingMapping);
         }
-        unset($data['previousSiblingId'], $data['position']);
+        unset($data['previousSiblingId'], $data['categoryPosition'], $previousSiblingMapping);
 
-        $converted['id'] = $this->mappingService->createNewUuid(
+        $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,
             $this->entity_id,
-            $this->context
+            $this->context,
+            $this->checksum
         );
+        $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['id']);
 
         $this->convertValue($converted, 'description', $data, 'description', self::TYPE_STRING);
@@ -118,7 +110,9 @@ class CategoryConverter extends MagentoConverter
         $this->setCategoryTranslation($data, $converted);
         unset($data['defaultLocale']);
 
-        return new ConvertStruct($converted, $data);
+        $this->updateMainMapping($migrationContext, $context);
+
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
     protected function setCategoryTranslation(array &$data, array &$converted): void
@@ -136,12 +130,14 @@ class CategoryConverter extends MagentoConverter
 
         $this->convertValue($localeTranslation, 'name', $originalData, 'name');
 
-        $localeTranslation['id'] = $this->mappingService->createNewUuid(
+        $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY_TRANSLATION,
             $this->entity_id . ':' . $data['defaultLocale'],
             $this->context
         );
+        $localeTranslation['id'] = $mapping['entityUuid'];
+        $this->mappingIds[] = $mapping['id'];
 
         try {
             $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);

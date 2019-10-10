@@ -2,10 +2,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
-use SwagMigrationAssistant\Migration\Converter\ConverterInterface;
+use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-abstract class MagentoConverter implements ConverterInterface
+abstract class MagentoConverter extends Converter
 {
     protected const TYPE_STRING = 'string';
     protected const TYPE_BOOLEAN = 'bool';

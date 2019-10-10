@@ -3,9 +3,13 @@
 namespace Swag\MigrationMagento\Migration\Mapping;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriterInterface;
+use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Country\CountryEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
@@ -14,10 +18,10 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
 {
     public function getMagentoCountryUuid(string $iso, string $connectionId, Context $context): ?string
     {
-        $countryUuid = $this->getUuid($connectionId, DefaultEntities::COUNTRY, $iso, $context);
+        $countryUuid = $this->getMapping($connectionId, DefaultEntities::COUNTRY, $iso, $context);
 
         if ($countryUuid !== null) {
-            return $countryUuid;
+            return $countryUuid['entityUuid'];
         }
 
         /** @var EntitySearchResult $result */
@@ -37,6 +41,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
 
             $this->saveMapping(
                 [
+                    'id' => Uuid::randomHex(),
                     'connectionId' => $connectionId,
                     'entity' => DefaultEntities::COUNTRY,
                     'oldIdentifier' => $iso,
