@@ -8,4 +8,6 @@ use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 interface MagentoMappingServiceInterface extends MappingServiceInterface
 {
     public function getMagentoCountryUuid(string $iso, string $connectionId, Context $context): ?string;
+
+    public function getTransactionStateUuid(string $state, Context $context): ?string;
 }

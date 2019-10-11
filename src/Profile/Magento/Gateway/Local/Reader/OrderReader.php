@@ -52,11 +52,11 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
         $query->addSelect('IF(orders.customer_gender=2, \'ms\', \'mr\') as customerSalutation');
         $this->addTableSelection($query, 'sales_flat_order', 'orders');
 
-        $query->join('orders', 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');
+        $query->leftjoin('orders', 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');
         $this->addTableSelection($query, 'sales_flat_quote', 'quote');
 
-        $query->join('quote', 'sales_flat_quote_payment', 'quote_payment', 'quote.entity_id = quote_payment.quote_id');
-        $this->addTableSelection($query, 'sales_flat_quote_payment', 'quote_payment');
+        $query->leftJoin('orders', 'sales_flat_order_payment', 'orders_payment', 'orders.entity_id = orders_payment.parent_id');
+        $this->addTableSelection($query, 'sales_flat_order_payment', 'orders_payment');
 
         $query->leftJoin(
             'orders',

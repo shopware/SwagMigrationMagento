@@ -12,7 +12,6 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\EnvironmentInformation;
-use SwagMigrationAssistant\Migration\Gateway\GatewayInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
@@ -151,17 +150,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
                       FROM core_config_data config
                       WHERE path LIKE 'payment/%/title'
                         AND scope = 'default'
-                      ) AS payment,
-
-                      (
-                      SELECT
-                             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
-                      FROM core_config_data config
-                      WHERE path LIKE 'payment/%/active'
-                        AND scope = 'default'
-                        AND value = true
-                      ) AS payment_active
-        WHERE payment.payment_id = payment_active.payment_id
+                      ) AS payment
         ";
 
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);

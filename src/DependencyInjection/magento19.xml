@@ -30,7 +30,7 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader">
-            <argument id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" type="service"/>
+            <argument id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" type="service"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader">
@@ -67,22 +67,22 @@
 
         <!-- Readers which contain the sql queries -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
-            <argument type="service" id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SalesChannelReader">
-            <argument type="service" id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CategoryReader">
-            <argument type="service" id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\OrderReader">
-            <argument type="service" id="SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactory" />
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
 
@@ -120,6 +120,8 @@
         <!-- Magento mapping service -->
         <service id="Swag\MigrationMagento\Migration\Mapping\MagentoMappingService"
                  parent="SwagMigrationAssistant\Migration\Mapping\MappingService">
+            <argument type="service" id="state_machine.repository"/>
+            <argument type="service" id="state_machine_state.repository"/>
         </service>
 
         <!-- Magento converters -->
@@ -142,7 +144,7 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter">
-            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\MappingService"/>
+            <argument type="service" id="Swag\MigrationMagento\Migration\Mapping\MagentoMappingService"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\TaxCalculator"/>
             <tag name="shopware.migration.converter"/>

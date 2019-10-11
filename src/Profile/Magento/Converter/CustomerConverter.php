@@ -12,8 +12,6 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
-use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 
@@ -205,12 +203,15 @@ class CustomerConverter extends MagentoConverter
             );
 
             if ($countryUuid === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::CUSTOMER_ADDRESS,
-                    $address['id'],
-                    'country'
-                ));
+                $this->loggingService->addLogEntry(
+                    new UnknownEntityLog(
+                        $this->runId,
+                        DefaultEntities::COUNTRY,
+                        $address['country_id'],
+                        DefaultEntities::ORDER,
+                        $this->oldCustomerId
+                    )
+                );
 
                 continue;
             }

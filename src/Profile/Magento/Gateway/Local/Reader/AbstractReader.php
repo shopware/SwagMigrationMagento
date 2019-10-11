@@ -5,9 +5,9 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Column;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
-use SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactoryInterface;
 
 abstract class AbstractReader implements ReaderInterface
 {

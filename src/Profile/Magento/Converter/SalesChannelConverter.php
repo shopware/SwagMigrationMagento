@@ -66,6 +66,19 @@ class SalesChannelConverter extends MagentoConverter
         );
         $converted['id'] = $this->mainMapping['entityUuid'];
 
+        foreach ($data['stores'] as $store) {
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::SALES_CHANNEL . '_stores',
+                $store['store_id'],
+                $context,
+                null,
+                null,
+                $converted['id']
+            );
+            $this->mappingIds[] = $mapping['id'];
+        }
+
         /**
          * Todo: Add Customer Group Association
          */
