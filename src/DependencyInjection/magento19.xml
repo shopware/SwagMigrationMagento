@@ -92,12 +92,6 @@
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
 
-        <service id="Swag\MigrationMagento\Profile\Magento\Premapping\LanguageReader">
-            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry" />
-            <argument type="service" id="language.repository" />
-            <tag name="shopware.migration.pre_mapping_reader"/>
-        </service>
-
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader">
             <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry" />
             <argument type="service" id="payment_method.repository" />
