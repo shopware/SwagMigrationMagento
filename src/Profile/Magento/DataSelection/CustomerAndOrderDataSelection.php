@@ -37,7 +37,7 @@ class CustomerAndOrderDataSelection implements DataSelectionInterface
     {
         return [
             CustomerDataSet::getEntity(),
-            OrderDataSet::getEntity()
+            OrderDataSet::getEntity(),
         ];
     }
 

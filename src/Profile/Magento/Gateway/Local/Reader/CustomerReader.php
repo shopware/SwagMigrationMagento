@@ -120,7 +120,7 @@ class CustomerReader extends AbstractReader implements LocalReaderInterface
         ORDER BY customer_address.parent_id
         ";
 
-        $addresses = $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_ASSOC);
+        $addresses = $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
 
         return $addresses;
     }

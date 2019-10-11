@@ -24,8 +24,8 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
 
         $stores = $this->mapData($this->fetchStores($ids), [], ['store']);
         $storeIds = [];
-        array_map(function ($website) use (&$storeIds) {
-            array_map(function ($store) use (&$storeIds) {
+        array_map(function ($website) use (&$storeIds): void {
+            array_map(function ($store) use (&$storeIds): void {
                 $storeId = $store['store_id'];
                 $storeIds[$storeId] = $storeId;
             }, $website);
@@ -176,7 +176,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
         $query->andWhere('website_id in (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
     }
 
     private function fetchCarriers(): array
@@ -296,7 +296,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
         $query->orWhere('scope = \'stores\' AND scope_id in (:storeId) AND path = \'general/locale/code\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
-        $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_UNIQUE);
+        $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         $storeConfigs = [];
         foreach ($configurations as $key => $storeConfig) {

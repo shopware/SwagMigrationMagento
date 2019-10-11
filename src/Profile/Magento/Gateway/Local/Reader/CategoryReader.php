@@ -9,7 +9,6 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class CategoryReader extends AbstractReader implements LocalReaderInterface
 {
-
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
@@ -89,7 +88,10 @@ class CategoryReader extends AbstractReader implements LocalReaderInterface
         ORDER BY level, position
         ';
 
-        return $this->connection->executeQuery($sql, [$ids],
-            [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery(
+            $sql,
+            [$ids],
+            [Connection::PARAM_STR_ARRAY]
+        )->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

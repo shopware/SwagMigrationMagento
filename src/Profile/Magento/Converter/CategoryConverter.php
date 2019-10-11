@@ -31,7 +31,7 @@ class CategoryConverter extends MagentoConverter
     /**
      * @var string[]
      */
-    static protected $requiredDataFieldKeys = [
+    protected static $requiredDataFieldKeys = [
         'entity_id',
         'name',
         'defaultLocale',

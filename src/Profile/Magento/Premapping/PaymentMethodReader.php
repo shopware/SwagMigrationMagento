@@ -34,18 +34,17 @@ class PaymentMethodReader extends AbstractPremappingReader
      */
     private $preselectionDictionary;
 
-    public static function getMappingName(): string
-    {
-        return self::MAPPING_NAME;
-    }
-
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
         EntityRepositoryInterface $paymentMethodRepo
     ) {
-
         $this->gatewayRegistry = $gatewayRegistry;
         $this->paymentMethodRepo = $paymentMethodRepo;
+    }
+
+    public static function getMappingName(): string
+    {
+        return self::MAPPING_NAME;
     }
 
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

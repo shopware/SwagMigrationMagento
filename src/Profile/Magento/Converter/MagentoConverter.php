@@ -28,13 +28,13 @@ abstract class MagentoConverter extends Converter
         if ($sourceData[$sourceKey] !== null && $sourceData[$sourceKey] !== '') {
             switch ($castType) {
                 case self::TYPE_BOOLEAN:
-                    $sourceValue = (bool)$sourceData[$sourceKey];
+                    $sourceValue = (bool) $sourceData[$sourceKey];
                     break;
                 case self::TYPE_INTEGER:
-                    $sourceValue = (int)$sourceData[$sourceKey];
+                    $sourceValue = (int) $sourceData[$sourceKey];
                     break;
                 case self::TYPE_FLOAT:
-                    $sourceValue = (float)$sourceData[$sourceKey];
+                    $sourceValue = (float) $sourceData[$sourceKey];
                     break;
                 case self::TYPE_DATETIME:
                     $sourceValue = $sourceData[$sourceKey];
@@ -43,7 +43,7 @@ abstract class MagentoConverter extends Converter
                     }
                     break;
                 default:
-                    $sourceValue = (string)$sourceData[$sourceKey];
+                    $sourceValue = (string) $sourceData[$sourceKey];
             }
             $newData[$newKey] = $sourceValue;
         }

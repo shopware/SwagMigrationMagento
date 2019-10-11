@@ -35,17 +35,17 @@ class CustomerConverter extends MagentoConverter
     /**
      * @var string[]
      */
-    static protected $requiredDataFieldKeys = [
+    protected static $requiredDataFieldKeys = [
         'entity_id',
         'email',
         'firstname',
-        'lastname'
+        'lastname',
     ];
 
     /**
      * @var string[]
      */
-    static protected $requiredAddressDataFieldKeys = [
+    protected static $requiredAddressDataFieldKeys = [
         'entity_id',
         'firstname',
         'lastname',
