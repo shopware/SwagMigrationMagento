@@ -13,8 +13,8 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class SalesChannelConverter extends MagentoConverter
@@ -34,6 +34,20 @@ class SalesChannelConverter extends MagentoConverter
      */
     protected $mappingService;
 
+    /**
+     * @var string[]
+     */
+    static protected $requiredDataFieldKeys = [
+        'website_id',
+        'name',
+        'carriers',
+        'payments',
+        'defaultCurrency',
+        'defaultCountry',
+        'defaultLocale',
+        'store_group',
+    ];
+
     public function __construct(MagentoMappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
     {
         parent::__construct($mappingService, $loggingService);
@@ -52,11 +66,31 @@ class SalesChannelConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
+        if (!isset($data['store_group']['root_category_id'])) {
+            $fields[] = 'root_category_id';
+        }
+        if (!empty($fields)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::SALES_CHANNEL,
+                $data['website_id'],
+                implode(',', $fields)
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
+
+        /*
+         * Set main data
+         */
         $this->generateChecksum($data);
         $this->context = $context;
         $this->connectionId = $migrationContext->getConnection()->getId();
 
-        $converted = [];
+        /*
+         * Set main mapping
+         */
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::SALES_CHANNEL,
@@ -66,17 +100,22 @@ class SalesChannelConverter extends MagentoConverter
         );
         $converted['id'] = $this->mainMapping['entityUuid'];
 
-        foreach ($data['stores'] as $store) {
-            $mapping = $this->mappingService->getOrCreateMapping(
-                $this->connectionId,
-                DefaultEntities::SALES_CHANNEL . '_stores',
-                $store['store_id'],
-                $context,
-                null,
-                null,
-                $converted['id']
-            );
-            $this->mappingIds[] = $mapping['id'];
+        /*
+         * Create the store mappings
+         */
+        if (isset($data['stores'])) {
+            foreach ($data['stores'] as $store) {
+                $mapping = $this->mappingService->getOrCreateMapping(
+                    $this->connectionId,
+                    DefaultEntities::SALES_CHANNEL . '_stores',
+                    $store['store_id'],
+                    $context,
+                    null,
+                    null,
+                    $converted['id']
+                );
+                $this->mappingIds[] = $mapping['id'];
+            }
         }
 
         /**
@@ -84,6 +123,9 @@ class SalesChannelConverter extends MagentoConverter
          */
         $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
 
+        /*
+         * Set main language and allowed languages
+         */
         $languageUuid = $this->mappingService->getLanguageUuid(
             $this->connectionId,
             $data['defaultLocale'],
@@ -102,10 +144,12 @@ class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
-
         $converted['languageId'] = $languageUuid;
         $converted['languages'] = $this->getSalesChannelLanguages($languageUuid, $data, $context);
 
+        /*
+         * Set main currency and allowed currencies
+         */
         $currencyUuid = $this->mappingService->getCurrencyUuid(
             $this->connectionId,
             $data['defaultCurrency'],
@@ -124,10 +168,12 @@ class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
-
         $converted['currencyId'] = $currencyUuid;
         $converted['currencies'] = $this->getSalesChannelCurrencies($currencyUuid, $data, $context);
 
+        /*
+         * Set navigation category
+         */
         $categoryMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,
@@ -147,11 +193,13 @@ class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
-
         $categoryUuid = $categoryMapping['entityUuid'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
 
+        /*
+         * Set main country and allowed countries
+         */
         $countryUuid = $this->mappingService->getMagentoCountryUuid(
             $data['defaultCountry'],
             $this->connectionId,
@@ -170,20 +218,29 @@ class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
-
         $converted['countryId'] = $countryUuid;
         $converted['countries'] = $this->getSalesChannelCountries($countryUuid, $data, $context);
 
+        /*
+         * Set main payment method and allowed payment methods
+         */
         $converted['paymentMethods'] = $this->getPaymentMethods($data, $context);
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
 
+        /*
+         * Set main shipping method and allowed shipping methods
+         */
         $converted['shippingMethods'] = $this->getShippingMethods($data, $context);
         $converted['shippingMethodId'] = $converted['shippingMethods'][0]['id'];
 
-        $converted['typeId'] = Defaults::SALES_CHANNEL_TYPE_STOREFRONT;
+        /*
+         * Set translations
+         */
         $this->getSalesChannelTranslation($converted, $data);
-        $this->convertValue($converted, 'name', $data, 'name');
+
+        $converted['typeId'] = Defaults::SALES_CHANNEL_TYPE_STOREFRONT;
         $converted['accessKey'] = AccessKeyHelper::generateAccessKey('sales-channel');
+        $this->convertValue($converted, 'name', $data, 'name');
 
         $this->updateMainMapping($migrationContext, $context);
 

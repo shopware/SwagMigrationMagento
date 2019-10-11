@@ -49,7 +49,7 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
 
         $query->from('sales_flat_order', 'orders');
         $query->addSelect('orders.entity_id as identifier');
-        $query->addSelect('IF(orders.customer_gender=2, \'ms\', \'mr\') as customerSalutation');
+        $query->addSelect('IF(orders.customer_gender=2, \'mrs\', \'mr\') as customerSalutation');
         $this->addTableSelection($query, 'sales_flat_order', 'orders');
 
         $query->leftjoin('orders', 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');

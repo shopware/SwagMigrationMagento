@@ -35,18 +35,32 @@ class CustomerConverter extends MagentoConverter
     /**
      * @var string[]
      */
-    protected $requiredAddressDataFieldKeys = [
+    static protected $requiredDataFieldKeys = [
+        'entity_id',
+        'email',
+        'firstname',
+        'lastname'
+    ];
+
+    /**
+     * @var string[]
+     */
+    static protected $requiredAddressDataFieldKeys = [
+        'entity_id',
         'firstname',
         'lastname',
-        'zipcode',
+        'postcode',
         'city',
         'street',
+        'country_id',
+        'country_iso2',
+        'country_iso3',
     ];
 
     /**
      * @var string
      */
-    protected $oldCustomerId;
+    protected $oldIdentifier;
 
     public function supports(MigrationContextInterface $migrationContext): bool
     {
@@ -56,24 +70,40 @@ class CustomerConverter extends MagentoConverter
 
     public function getSourceIdentifier(array $data): string
     {
-        return $data['customerID'];
+        return $data['entity_id'];
     }
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        $oldData = $data;
+        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
+        if (!empty($fields)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::CUSTOMER,
+                $data['entity_id'],
+                implode(',', $fields)
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
+
+        /*
+         * Set main data
+         */
         $this->generateChecksum($data);
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
-        $this->oldCustomerId = $data['customerID'];
-
+        $this->oldIdentifier = $data['entity_id'];
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
 
+        /*
+         * Set main mapping
+         */
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CUSTOMER,
-            $data['customerID'],
+            $this->oldIdentifier,
             $this->context,
             $this->checksum
         );
@@ -93,26 +123,42 @@ class CustomerConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
 
         /*
-         * Todo: SalesChannel-Zuweisung
+         * Set sales channel
          */
         $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
+        if (isset($data['store_id'])) {
+            $salesChannelMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::SALES_CHANNEL . '_stores',
+                $data['store_id'],
+                $context
+            );
 
+            if ($salesChannelMapping !== null) {
+                $this->mappingIds[] = $salesChannelMapping['id'];
+                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+            }
+        }
+
+        $converted['guest'] = false;
         $this->convertValue($converted, 'active', $data, 'is_active', self::TYPE_BOOLEAN);
         $this->convertValue($converted, 'email', $data, 'email');
-        $converted['guest'] = false;
         $this->convertValue($converted, 'title', $data, 'prefix');
         $this->convertValue($converted, 'firstName', $data, 'firstname');
         $this->convertValue($converted, 'lastName', $data, 'lastname');
         $this->convertValue($converted, 'birthday', $data, 'dob', self::TYPE_DATETIME);
-        $this->convertValue($converted, 'customerNumber', $data, 'customernumber');
+        $this->convertValue($converted, 'customerNumber', $data, 'increment_id');
 
         if (!isset($converted['customerNumber']) || $converted['customerNumber'] === '') {
-            $converted['customerNumber'] = 'number-' . $data['customerID'];
+            $converted['customerNumber'] = 'number-' . $data['entity_id'];
         }
 
+        /*
+         * Set salutation
+         */
         $salutationUuid = $this->getSalutation($data['salutation']);
         if ($salutationUuid === null) {
-            return new ConvertStruct(null, $oldData);
+            return new ConvertStruct(null, $data);
         }
         $converted['salutationId'] = $salutationUuid;
 
@@ -121,29 +167,36 @@ class CustomerConverter extends MagentoConverter
          */
         $converted['groupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
 
+        /*
+         * Set payment method
+         */
         $defaultPaymentMethodUuid = $this->getDefaultPaymentMethod();
-
         if ($defaultPaymentMethodUuid === null) {
-            return new ConvertStruct(null, $oldData);
+            return new ConvertStruct(null, $data);
         }
-
         $converted['defaultPaymentMethodId'] = $defaultPaymentMethodUuid;
 
+        /*
+         * Set addresses
+         */
         if (isset($data['addresses']) && !empty($data['addresses'])) {
             $this->getAddresses($data, $converted, $this->mainMapping['entityUuid']);
         }
 
+        /*
+         * Set default billing and shipping address
+         */
         if (!isset($converted['defaultBillingAddressId'], $converted['defaultShippingAddressId'])) {
             $this->mappingService->deleteMapping($converted['id'], $this->connectionId, $this->context);
 
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                 $this->runId,
                 DefaultEntities::CUSTOMER,
-                $this->oldCustomerId,
+                $this->oldIdentifier,
                 'address data'
             ));
 
-            return new ConvertStruct(null, $oldData);
+            return new ConvertStruct(null, $data);
         }
 
         $this->updateMainMapping($migrationContext, $context);
@@ -151,21 +204,18 @@ class CustomerConverter extends MagentoConverter
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
-    /**
-     * @param array[] $originalData
-     */
     protected function getAddresses(array &$originalData, array &$converted, string $customerUuid): void
     {
         $addresses = [];
         foreach ($originalData['addresses'] as $address) {
             $newAddress = [];
 
-            $fields = $this->checkForEmptyRequiredDataFields($address, $this->requiredAddressDataFieldKeys);
+            $fields = $this->checkForEmptyRequiredDataFields($address, self::$requiredAddressDataFieldKeys);
             if (!empty($fields)) {
                 $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::CUSTOMER_ADDRESS,
-                    $address['id'],
+                    $address['entity_id'],
                     implode(',', $fields)
                 ));
 
@@ -175,18 +225,18 @@ class CustomerConverter extends MagentoConverter
             $addressMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::CUSTOMER_ADDRESS,
-                $address['id'],
+                $address['entity_id'],
                 $this->context
             );
             $newAddress['id'] = $addressMapping['entityUuid'];
             $this->mappingIds[] = $addressMapping['id'];
 
-            if (isset($originalData['default_billing_address_id']) && $address['id'] === $originalData['default_billing_address_id']) {
+            if (isset($originalData['default_billing_address_id']) && $address['entity_id'] === $originalData['default_billing_address_id']) {
                 $converted['defaultBillingAddressId'] = $newAddress['id'];
                 unset($originalData['default_billing_address_id']);
             }
 
-            if (isset($originalData['default_shipping_address_id']) && $address['id'] === $originalData['default_shipping_address_id']) {
+            if (isset($originalData['default_shipping_address_id']) && $address['entity_id'] === $originalData['default_shipping_address_id']) {
                 $converted['defaultShippingAddressId'] = $newAddress['id'];
                 unset($originalData['default_shipping_address_id']);
             }
@@ -209,7 +259,7 @@ class CustomerConverter extends MagentoConverter
                         DefaultEntities::COUNTRY,
                         $address['country_id'],
                         DefaultEntities::ORDER,
-                        $this->oldCustomerId
+                        $this->oldIdentifier
                     )
                 );
 
@@ -220,11 +270,11 @@ class CustomerConverter extends MagentoConverter
 
             $this->convertValue($newAddress, 'firstName', $address, 'firstname');
             $this->convertValue($newAddress, 'lastName', $address, 'lastname');
-            $this->convertValue($newAddress, 'zipcode', $address, 'zipcode');
+            $this->convertValue($newAddress, 'zipcode', $address, 'postcode');
             $this->convertValue($newAddress, 'city', $address, 'city');
             $this->convertValue($newAddress, 'company', $address, 'company');
             $this->convertValue($newAddress, 'street', $address, 'street');
-            $this->convertValue($newAddress, 'phoneNumber', $address, 'phone');
+            $this->convertValue($newAddress, 'phoneNumber', $address, 'telephone');
 
             $addresses[] = $newAddress;
         }
@@ -255,7 +305,7 @@ class CustomerConverter extends MagentoConverter
             $this->loggingService->addLogEntry(new FieldReassignedRunLog(
                 $this->runId,
                 DefaultEntities::CUSTOMER,
-                $this->oldCustomerId,
+                $this->oldIdentifier,
                 'default billing and shipping address',
                 'first address'
             ));
@@ -271,7 +321,7 @@ class CustomerConverter extends MagentoConverter
             $this->loggingService->addLogEntry(new FieldReassignedRunLog(
                 $this->runId,
                 DefaultEntities::CUSTOMER,
-                $this->oldCustomerId,
+                $this->oldIdentifier,
                 'default shipping address',
                 'default billing address'
             ));
@@ -287,7 +337,7 @@ class CustomerConverter extends MagentoConverter
             $this->loggingService->addLogEntry(new FieldReassignedRunLog(
                 $this->runId,
                 DefaultEntities::CUSTOMER,
-                $this->oldCustomerId,
+                $this->oldIdentifier,
                 'default billing address',
                 'default shipping address'
             ));
@@ -309,7 +359,7 @@ class CustomerConverter extends MagentoConverter
                 DefaultEntities::SALUTATION,
                 $salutation,
                 DefaultEntities::CUSTOMER,
-                $this->oldCustomerId
+                $this->oldIdentifier
             ));
 
             return null;
@@ -334,7 +384,7 @@ class CustomerConverter extends MagentoConverter
                 DefaultEntities::PAYMENT_METHOD,
                 'default_payment_method',
                 DefaultEntities::CUSTOMER,
-                $this->oldCustomerId
+                $this->oldIdentifier
             ));
 
             return null;

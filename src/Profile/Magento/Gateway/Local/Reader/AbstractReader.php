@@ -133,13 +133,12 @@ abstract class AbstractReader implements ReaderInterface
         return $result;
     }
 
-    /**
+    /*
      * Returns the sql statement to select the shop system article attribute fields
      */
     protected function createTableSelect(
         $type = 'catalog_product',
         $attributes = null,
-        $prefix = '',
         $store_id = null
     ): string {
         $sql = "
@@ -172,33 +171,29 @@ abstract class AbstractReader implements ReaderInterface
         $select_fields = [];
         $join_fields = '';
 
-        // Do not use quoteTable for aliases!
-        $type_quoted = "`{$prefix}{$type}`";
-
+        $type_quoted = "`{$type}`";
         foreach ($attributes as $attribute) {
-            $attribute_alias = $prefix . $attribute;
-
             if (empty($attribute_fields[$attribute])) {
                 $join_fields .= "
-					LEFT JOIN (SELECT 1 as attribute_id, NULL as value) as `$attribute_alias`
+					LEFT JOIN (SELECT 1 as attribute_id, NULL as value) as `$attribute`
 					ON 1
 				";
             } else {
                 if ($attribute_fields[$attribute]['type'] === 'static') {
-                    $select_fields[] = "{$type_quoted}.{$attribute} as $attribute_alias";
+                    $select_fields[] = "{$type_quoted}.{$attribute} as $attribute";
                 } else {
                     $table = $type . '_entity_' . $attribute_fields[$attribute]['type'];
                     $join_fields .= "
-						LEFT JOIN {$table} `$attribute_alias`
-						ON	`{$attribute_alias}`.attribute_id = {$attribute_fields[$attribute]['id']}
-						AND `{$attribute_alias}`.entity_id = {$type_quoted}.entity_id
+						LEFT JOIN {$table} `$attribute`
+						ON	`{$attribute}`.attribute_id = {$attribute_fields[$attribute]['id']}
+						AND `{$attribute}`.entity_id = {$type_quoted}.entity_id
 					";
                     if ($store_id !== null) {
                         $join_fields .= "
-						AND {$attribute_alias}.store_id = {$store_id}
+						AND {$attribute}.store_id = {$store_id}
 						";
                     }
-                    $select_fields[] = "{$attribute_alias}.value as `{$attribute_alias}`";
+                    $select_fields[] = "{$attribute}.value as `{$attribute}`";
                 }
             }
         }

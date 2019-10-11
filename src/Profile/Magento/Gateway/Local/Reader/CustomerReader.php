@@ -24,7 +24,7 @@ class CustomerReader extends AbstractReader implements LocalReaderInterface
         $fetchedAddresses = $this->fetchAddresses($ids);
 
         foreach ($fetchedCustomers as &$customer) {
-            $customerId = $customer['customerID'];
+            $customerId = $customer['entity_id'];
 
             if (isset($fetchedAddresses[$customerId])) {
                 $customer['addresses'] = $fetchedAddresses[$customerId];
@@ -52,18 +52,18 @@ class CustomerReader extends AbstractReader implements LocalReaderInterface
 
         $sql = "
         SELECT
-				customer.entity_id						as customerID,
-				customer.increment_id					as customernumber,
-				customer.email							as email,
-				customer.store_id						as store_id,
-				customer.is_active 						as is_active,
-				customer.group_id						as customergroupID,
+				customer.entity_id,
+				customer.increment_id,
+				customer.email,
+				customer.store_id,
+				customer.is_active,
+				customer.group_id,
 				prefix.value                            as prefix,
 				firstname.value                         as firstname,
 				lastname.value                          as lastname,
-				IF(gender.value=2, 'ms', 'mr')			as salutation,
+				IF(gender.value=2, 'mrs', 'mr')			as salutation,
 				dob.value 								as dob,
-				taxvat.value 							as ustid,
+				taxvat.value 							as taxvat,
 				default_billing.value                   as default_billing_address_id,
 				default_shipping.value                   as default_shipping_address_id
 
@@ -97,8 +97,8 @@ class CustomerReader extends AbstractReader implements LocalReaderInterface
 
         $sql = "
         SELECT
-            customer_address.parent_id      as customer_id,
-            customer_address.entity_id      as id,
+            customer_address.parent_id,
+            customer_address.entity_id,
             company.value 				    as company,
             TRIM(CONCAT(firstname.value, ' ', IFNULL(middlename.value, '')))
                                             as firstname,
@@ -108,8 +108,8 @@ class CustomerReader extends AbstractReader implements LocalReaderInterface
             country_id.value				as country_id,
             directory_country.iso2_code 	as country_iso2,
             directory_country.iso3_code 	as country_iso3,
-            postcode.value					as zipcode,
-            telephone.value					as phone
+            postcode.value					as postcode,
+            telephone.value					as telephone
         FROM customer_address_entity as customer_address
         
         {$this->createTableSelect('customer_address', $addressAttributes)}

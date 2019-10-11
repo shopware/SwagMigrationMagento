@@ -35,31 +35,28 @@ class CategoryReader extends AbstractReader implements LocalReaderInterface
         $sql = '
         SELECT
                category.*,
-               n.value AS name,
+               name.value AS name,
                description.value AS description,
-               s.value AS status,
+               status.value AS status,
                sibling.entity_id as previousSiblingId,
                defaultLocale.value as defaultLocale
         FROM
              catalog_category_entity AS category
         
-                 -- name
-               LEFT JOIN catalog_category_entity_varchar n ON
-                 category.entity_id = n.entity_id
-                 AND n.attribute_id = 41
-                 AND n.store_id = 0
+               LEFT JOIN catalog_category_entity_varchar as name ON
+                 category.entity_id = name.entity_id
+                 AND name.attribute_id = 41
+                 AND name.store_id = 0
         
-                 -- status
-               LEFT JOIN catalog_category_entity_int s ON
-                 category.entity_id = s.entity_id
-                 AND s.attribute_id = 42
-                 AND s.store_id = 0
+               LEFT JOIN catalog_category_entity_int status ON
+                 category.entity_id = status.entity_id
+                 AND status.attribute_id = 42
+                 AND status.store_id = 0
                  
-                 -- status
                LEFT JOIN catalog_category_entity_text AS description ON
-                 category.entity_id = s.entity_id
-                 AND s.attribute_id = 44
-                 AND s.store_id = 0
+                 category.entity_id = description.entity_id
+                 AND description.attribute_id = 44
+                 AND description.store_id = 0
                  
                LEFT JOIN core_config_data AS defaultLocale ON
                 defaultLocale.scope = \'default\' AND defaultLocale.path = \'general/locale/code\'

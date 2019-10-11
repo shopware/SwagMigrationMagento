@@ -7,8 +7,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
+use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFoundException;
 
@@ -29,6 +28,15 @@ class CategoryConverter extends MagentoConverter
      */
     protected $entity_id;
 
+    /**
+     * @var string[]
+     */
+    static protected $requiredDataFieldKeys = [
+        'entity_id',
+        'name',
+        'defaultLocale',
+    ];
+
     public function getSourceIdentifier(array $data): string
     {
         return $data['entity_id'];
@@ -42,16 +50,37 @@ class CategoryConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
+        if (!empty($fields)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::CATEGORY,
+                $data['entity_id'],
+                implode(',', $fields)
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
+
+        /*
+         * Set main data
+         */
         $this->generateChecksum($data);
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
         $this->entity_id = $data['entity_id'];
 
+        /*
+         * Set cms page with default cms page
+         */
         $cmsPageUuid = $this->mappingService->getDefaultCmsPageUuid($migrationContext->getConnection()->getId(), $context);
         if ($cmsPageUuid !== null) {
             $converted['cmsPageId'] = $cmsPageUuid;
         }
 
+        /*
+         * Set parent category and afterCategory with a root category, if a previous category is not found
+         */
         if (isset($data['parent_id']) && $data['parent_id'] !== '0') {
             $parentMapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -66,7 +95,6 @@ class CategoryConverter extends MagentoConverter
 
             $this->mappingIds[] = $parentMapping['id'];
             $converted['parentId'] = $parentMapping['entityUuid'];
-            // get last root category as previous sibling
         } elseif (!isset($data['previousSiblingId'])) {
             $previousSiblingUuid = $this->mappingService->getLowestRootCategoryUuid($context);
 
@@ -76,6 +104,9 @@ class CategoryConverter extends MagentoConverter
         }
         unset($data['parent']);
 
+        /*
+         * Set afterCategory
+         */
         if (isset($data['previousSiblingId'])) {
             $previousSiblingMapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -92,6 +123,9 @@ class CategoryConverter extends MagentoConverter
         }
         unset($data['previousSiblingId'], $data['categoryPosition'], $previousSiblingMapping);
 
+        /*
+         * Set main mapping
+         */
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,
@@ -106,6 +140,9 @@ class CategoryConverter extends MagentoConverter
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
         $this->convertValue($converted, 'active', $data, 'status', self::TYPE_BOOLEAN);
 
+        /*
+         * Set translations
+         */
         $converted['translations'] = [];
         $this->setCategoryTranslation($data, $converted);
         unset($data['defaultLocale']);

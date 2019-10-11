@@ -70,6 +70,16 @@ class OrderConverter extends MagentoConverter
      */
     protected $salutationUuid;
 
+    /**
+     * @var string[]
+     */
+    static protected $requiredDataFieldKeys = [
+        'orders',
+        'billingAddress',
+        'shippingAddress',
+        'items',
+    ];
+
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
@@ -93,6 +103,32 @@ class OrderConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        /*
+         * Checking required fields and logging missing ones
+         */
+        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
+        if (!isset($data['orders']['customer_id'])) {
+            $fields[] = 'customer_id';
+        }
+
+        if (!isset($data['orders']['entity_id'])) {
+            $fields[] = 'entity_id';
+        }
+
+        if (!empty($fields)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::ORDER,
+                $data['orders']['entity_id'],
+                implode(',', $fields)
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
+
+        /*
+         * Set main data
+         */
         $this->generateChecksum($data);
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
@@ -101,6 +137,9 @@ class OrderConverter extends MagentoConverter
         $this->context = $context;
         $this->oldIdentifier = $data['orders']['entity_id'];
 
+        /*
+         * Set main mapping
+         */
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::ORDER,
@@ -112,15 +151,10 @@ class OrderConverter extends MagentoConverter
         unset($data['orders']['entity_id']);
         $this->uuid = $converted['id'];
 
-        $this->convertValue($converted, 'orderNumber', $data['orders'], 'increment_id');
 
-        if (!isset($data['orders']['customer_id'])) {
-            throw new AssociationEntityRequiredMissingException(
-                DefaultEntities::ORDER,
-                DefaultEntities::CUSTOMER
-            );
-        }
-
+        /*
+         * Set customer
+         */
         $customerMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::CUSTOMER,
@@ -141,6 +175,9 @@ class OrderConverter extends MagentoConverter
         $this->mappingIds[] = $customerMapping['id'];
         unset($customerMapping);
 
+        /*
+         * Set salutation
+         */
         $salutation = $data['orders']['customer_salutation'] ?? 'mr';
         $this->salutationUuid = $this->getSalutation($salutation);
         if ($this->salutationUuid === null) {
@@ -152,8 +189,13 @@ class OrderConverter extends MagentoConverter
         $this->convertValue($converted['orderCustomer'], 'firstName', $data['orders'], 'customer_firstname');
         $this->convertValue($converted['orderCustomer'], 'lastName', $data['orders'], 'customer_lastname');
 
+        $this->convertValue($converted, 'orderNumber', $data['orders'], 'increment_id');
         $this->convertValue($converted, 'currencyFactor', $data['orders'], 'store_to_order_rate', self::TYPE_FLOAT);
+        $this->convertValue($converted, 'orderDateTime', $data['orders'], 'created_at', self::TYPE_DATETIME);
 
+        /*
+         * Set currency
+         */
         $currencyUuid = null;
         if (isset($data['orders']['order_currency_code'])) {
             $currencyUuid = $this->mappingService->getCurrencyUuid(
@@ -175,8 +217,9 @@ class OrderConverter extends MagentoConverter
 
         $converted['currencyId'] = $currencyUuid;
 
-        $this->convertValue($converted, 'orderDateTime', $data['orders'], 'created_at', self::TYPE_DATETIME);
-
+        /*
+         * Set order state
+         */
         $stateMapping = $this->mappingService->getMapping(
             $this->connectionId,
             OrderStateReader::getMappingName(),
@@ -205,7 +248,10 @@ class OrderConverter extends MagentoConverter
             new TaxRuleCollection()
         );
 
-        if (isset($data['items'], $data['orders'])) {
+        /*
+         * Set line items, shipping costs and transactions
+         */
+        if (isset($data['items'])) {
             $taxRules = $this->getTaxRules($data);
             $taxStatus = CartPrice::TAX_STATE_GROSS;
 
@@ -225,10 +271,16 @@ class OrderConverter extends MagentoConverter
             $this->getTransactions($data, $converted);
         }
 
+        /*
+         * Set deliveries
+         */
         if (isset($data['shipments'])) {
             $converted['deliveries'] = $this->getDeliveries($data, $converted, $shippingCosts);
         }
 
+        /*
+         * Set billing address
+         */
         $billingAddress = $this->getAddress($data['billingAddress']);
         if (empty($billingAddress)) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
@@ -244,6 +296,9 @@ class OrderConverter extends MagentoConverter
         $converted['addresses'][] = $billingAddress;
         unset($data['billingaddress']);
 
+        /*
+         * Set sales channel
+         */
         $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
         if (isset($data['orders']['store_id'])) {
             $salesChannelMapping = $this->mappingService->getMapping(
