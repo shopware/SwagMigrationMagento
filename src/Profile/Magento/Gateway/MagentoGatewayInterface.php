@@ -9,5 +9,5 @@ interface MagentoGatewayInterface extends GatewayInterface
 {
     public function readTable(MigrationContextInterface $migrationContext, string $tableName, array $filter = []): array;
 
-    public function readPayments(MigrationContextInterface $migrationContext):array;
+    public function readPayments(MigrationContextInterface $migrationContext): array;
 }

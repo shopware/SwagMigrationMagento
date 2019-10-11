@@ -73,7 +73,7 @@ class OrderConverter extends MagentoConverter
     /**
      * @var string[]
      */
-    static protected $requiredDataFieldKeys = [
+    protected static $requiredDataFieldKeys = [
         'orders',
         'billingAddress',
         'shippingAddress',
@@ -150,7 +150,6 @@ class OrderConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['orders']['entity_id']);
         $this->uuid = $converted['id'];
-
 
         /*
          * Set customer
@@ -384,7 +383,6 @@ class OrderConverter extends MagentoConverter
             if ($isProduct) {
                 $lineItem['type'] = LineItem::PRODUCT_LINE_ITEM_TYPE;
             } else {
-
                 $lineItem['type'] = LineItem::CREDIT_LINE_ITEM_TYPE;
             }
 
@@ -595,7 +593,6 @@ class OrderConverter extends MagentoConverter
             }
         }
 
-
         $address['salutationId'] = $this->salutationUuid;
         $this->convertValue($address, 'firstName', $originalData, 'firstname');
         $this->convertValue($address, 'lastName', $originalData, 'lastname');
@@ -622,7 +619,7 @@ class OrderConverter extends MagentoConverter
         $stateName = OrderTransactionStates::STATE_OPEN;
         if (isset($data['orders']['total_invoiced'], $data['orders']['total_paid'])) {
             if ($data['orders']['total_invoiced'] === $data['orders']['total_paid']) {
-                $stateName= OrderTransactionStates::STATE_PAID;
+                $stateName = OrderTransactionStates::STATE_PAID;
             } else {
                 if ($data['orders']['total_paid'] > 0) {
                     $stateName = OrderTransactionStates::STATE_PARTIALLY_PAID;

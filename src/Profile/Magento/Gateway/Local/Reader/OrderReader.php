@@ -76,7 +76,7 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
 
         $query->where('orders.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
-        
+
         return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -91,7 +91,7 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
         $query->where('items.order_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_ASSOC);
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     private function fetchShipments(array $ids): array
@@ -105,7 +105,7 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
         $query->where('shipment.order_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        $shipments = $this->mapData($query->execute()->fetchAll(\PDO::FETCH_GROUP|\PDO::FETCH_ASSOC), [], ['shipment']);
+        $shipments = $this->mapData($query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC), [], ['shipment']);
 
         $shipmentIds = [];
         foreach ($shipments as $shipment) {
@@ -113,7 +113,7 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
                 $shipmentIds[] = $value['entity_id'];
             }
         }
-        
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from('sales_flat_shipment_item', 'item');

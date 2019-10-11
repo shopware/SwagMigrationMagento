@@ -37,7 +37,7 @@ class SalesChannelConverter extends MagentoConverter
     /**
      * @var string[]
      */
-    static protected $requiredDataFieldKeys = [
+    protected static $requiredDataFieldKeys = [
         'website_id',
         'name',
         'carriers',
@@ -118,7 +118,7 @@ class SalesChannelConverter extends MagentoConverter
             }
         }
 
-        /**
+        /*
          * Todo: Add Customer Group Association
          */
         $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;

@@ -48,9 +48,23 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         EntityRepositoryInterface $stateMachineRepo,
         EntityRepositoryInterface $stateMachineStateRepo
     ) {
-        parent::__construct($migrationMappingRepo, $localeRepository, $languageRepository, $countryRepository,
-            $currencyRepository, $taxRepo, $numberRangeRepo, $ruleRepo, $thumbnailSizeRepo, $mediaDefaultRepo,
-            $categoryRepo, $cmsPageRepo, $deliveryTimeRepo, $entityWriter, $mappingDefinition);
+        parent::__construct(
+            $migrationMappingRepo,
+            $localeRepository,
+            $languageRepository,
+            $countryRepository,
+            $currencyRepository,
+            $taxRepo,
+            $numberRangeRepo,
+            $ruleRepo,
+            $thumbnailSizeRepo,
+            $mediaDefaultRepo,
+            $categoryRepo,
+            $cmsPageRepo,
+            $deliveryTimeRepo,
+            $entityWriter,
+            $mappingDefinition
+        );
 
         $this->stateMachineRepo = $stateMachineRepo;
         $this->stateMachineStateRepo = $stateMachineStateRepo;

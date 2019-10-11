@@ -138,7 +138,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         return $this->localTableReader->read($migrationContext, $tableName, $filter);
     }
 
-    public function readPayments(MigrationContextInterface $migrationContext):array
+    public function readPayments(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
         $sql = "
@@ -156,7 +156,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    public function readCarriers(MigrationContextInterface $migrationContext):array
+    public function readCarriers(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
         $sql = "
