@@ -5,9 +5,9 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Column;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
-use SwagMigrationAssistant\Profile\Shopware\Gateway\Connection\ConnectionFactoryInterface;
 
 abstract class AbstractReader implements ReaderInterface
 {
@@ -29,6 +29,19 @@ abstract class AbstractReader implements ReaderInterface
     protected function setConnection(MigrationContextInterface $migrationContext): void
     {
         $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+    }
+
+    protected function utf8ize($mixed)
+    {
+        if (is_array($mixed)) {
+            foreach ($mixed as $key => $value) {
+                $mixed[$key] = $this->utf8ize($value);
+            }
+        } elseif (is_string($mixed)) {
+            return mb_convert_encoding($mixed, 'UTF-8', 'UTF-8');
+        }
+
+        return $mixed;
     }
 
     protected function addTableSelection(QueryBuilder $query, string $table, string $tableAlias): void
@@ -118,5 +131,73 @@ abstract class AbstractReader implements ReaderInterface
         }
 
         return $result;
+    }
+
+    /*
+     * Returns the sql statement to select the shop system article attribute fields
+     */
+    protected function createTableSelect(
+        $type = 'catalog_product',
+        $attributes = null,
+        $store_id = null
+    ): string {
+        $sql = "
+			SELECT
+				ea.attribute_code 	as `name`,
+				ea.attribute_id 	as `id`,
+				ea.backend_type 	as `type`,
+				ea.is_required		as `required`
+			FROM eav_attribute ea, eav_entity_type et
+			WHERE ea.`entity_type_id` = et.entity_type_id
+			AND et.entity_type_code = ?
+			AND ea.frontend_input != ''
+		";
+        if (!empty($attributes)) {
+            $sql .= 'AND ea.attribute_code IN (?)';
+        } else {
+            $sql .= 'ORDER BY `required` DESC, `name`';
+        }
+
+        $attribute_fields = $this->connection->executeQuery(
+            $sql,
+            [$type, $attributes],
+            [\PDO::PARAM_STR, Connection::PARAM_STR_ARRAY]
+        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+
+        if (empty($attributes)) {
+            $attributes = array_keys($attribute_fields);
+        }
+
+        $select_fields = [];
+        $join_fields = '';
+
+        $type_quoted = "`{$type}`";
+        foreach ($attributes as $attribute) {
+            if (empty($attribute_fields[$attribute])) {
+                $join_fields .= "
+					LEFT JOIN (SELECT 1 as attribute_id, NULL as value) as `$attribute`
+					ON 1
+				";
+            } else {
+                if ($attribute_fields[$attribute]['type'] === 'static') {
+                    $select_fields[] = "{$type_quoted}.{$attribute} as $attribute";
+                } else {
+                    $table = $type . '_entity_' . $attribute_fields[$attribute]['type'];
+                    $join_fields .= "
+						LEFT JOIN {$table} `$attribute`
+						ON	`{$attribute}`.attribute_id = {$attribute_fields[$attribute]['id']}
+						AND `{$attribute}`.entity_id = {$type_quoted}.entity_id
+					";
+                    if ($store_id !== null) {
+                        $join_fields .= "
+						AND {$attribute}.store_id = {$store_id}
+						";
+                    }
+                    $select_fields[] = "{$attribute}.value as `{$attribute}`";
+                }
+            }
+        }
+
+        return $join_fields;
     }
 }

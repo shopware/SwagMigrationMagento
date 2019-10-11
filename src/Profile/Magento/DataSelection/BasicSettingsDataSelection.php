@@ -2,16 +2,16 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Profile\Shopware\DataSelection\DataSet\SalesChannelDataSet;
 
-class CustomerAndOrderDataSelection implements DataSelectionInterface
+class BasicSettingsDataSelection implements DataSelectionInterface
 {
-    public const IDENTIFIER = 'customersOrders';
+    public const IDENTIFIER = 'basicSettings';
 
     public function supports(MigrationContextInterface $migrationContext): bool
     {
@@ -24,20 +24,19 @@ class CustomerAndOrderDataSelection implements DataSelectionInterface
             self::IDENTIFIER,
             $this->getEntityNames(),
             $this->getEntityNamesRequiredForCount(),
-            'swag-migration.index.selectDataCard.dataSelection.customersOrders',
-            200,
+            'swag-migration.index.selectDataCard.dataSelection.basicSettings',
+            -100,
+            true,
+            DataSelectionStruct::BASIC_DATA_TYPE,
             true
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getEntityNames(): array
     {
         return [
-            CustomerDataSet::getEntity(),
-            OrderDataSet::getEntity()
+            CategoryDataSet::getEntity(),
+            SalesChannelDataSet::getEntity(),
         ];
     }
 

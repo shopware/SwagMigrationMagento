@@ -9,14 +9,15 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Currency\CurrencyEntity;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\EnvironmentInformation;
-use SwagMigrationAssistant\Migration\Gateway\GatewayInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
+use SwagMigrationAssistant\Profile\Shopware\Gateway\TableReaderInterface;
 
-class Magento19LocalGateway implements GatewayInterface
+class Magento19LocalGateway implements MagentoGatewayInterface
 {
     public const GATEWAY_NAME = 'local';
 
@@ -45,15 +46,22 @@ class Magento19LocalGateway implements GatewayInterface
      */
     private $currencyRepository;
 
+    /**
+     * @var TableReaderInterface
+     */
+    private $localTableReader;
+
     public function __construct(
         ReaderRegistry $readerRegistry,
         ReaderInterface $localEnvironmentReader,
+        TableReaderInterface $localTableReader,
         TableCountReader $localTableCountReader,
         ConnectionFactoryInterface $connectionFactory,
         EntityRepositoryInterface $currencyRepository
     ) {
         $this->readerRegistry = $readerRegistry;
         $this->localEnvironmentReader = $localEnvironmentReader;
+        $this->localTableReader = $localTableReader;
         $this->localTableCountReader = $localTableCountReader;
         $this->connectionFactory = $connectionFactory;
         $this->currencyRepository = $currencyRepository;
@@ -123,5 +131,56 @@ class Magento19LocalGateway implements GatewayInterface
     public function readTotals(MigrationContextInterface $migrationContext, Context $context): array
     {
         return $this->localTableCountReader->readTotals($migrationContext, $context);
+    }
+
+    public function readTable(MigrationContextInterface $migrationContext, string $tableName, array $filter = []): array
+    {
+        return $this->localTableReader->read($migrationContext, $tableName, $filter);
+    }
+
+    public function readPayments(MigrationContextInterface $migrationContext):array
+    {
+        $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        $sql = "
+        SELECT payment.* FROM
+                      (
+                      SELECT
+                             REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
+                             config.*
+                      FROM core_config_data config
+                      WHERE path LIKE 'payment/%/title'
+                        AND scope = 'default'
+                      ) AS payment
+        ";
+
+        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function readCarriers(MigrationContextInterface $migrationContext):array
+    {
+        $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        $sql = "
+        SELECT carrier.* FROM
+              (
+                  SELECT
+                    REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
+                    config.*
+                  FROM core_config_data config
+                  WHERE path LIKE 'carriers/%/title'
+                        AND scope = 'default'
+              ) AS carrier,
+              
+              (
+                  SELECT
+                    REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
+                  FROM core_config_data config
+                  WHERE path LIKE 'carriers/%/active'
+                        AND scope = 'default'
+                        AND value = true
+              ) AS carrier_active
+        WHERE carrier.carrier_id = carrier_active.carrier_id
+        ";
+
+        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 }
