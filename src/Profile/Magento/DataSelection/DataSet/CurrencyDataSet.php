@@ -7,11 +7,11 @@ use SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSet;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CountryDataSet extends DataSet
+class CurrencyDataSet extends DataSet
 {
     public static function getEntity(): string
     {
-        return DefaultEntities::COUNTRY;
+        return DefaultEntities::CURRENCY;
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool

@@ -5,10 +5,10 @@ namespace Swag\MigrationMagento\Migration\Writer;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Writer\AbstractWriter;
 
-class CountryWriter extends AbstractWriter
+class CurrencyWriter extends AbstractWriter
 {
     public function supports(): string
     {
-        return DefaultEntities::COUNTRY;
+        return DefaultEntities::CURRENCY;
     }
 }

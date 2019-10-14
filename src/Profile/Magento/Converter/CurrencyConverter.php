@@ -4,14 +4,14 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
-use Swag\MigrationMagento\Migration\Mapping\Registry\CountryRegistry;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
+use Swag\MigrationMagento\Migration\Mapping\Registry\CurrencyRegistry;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CountryConverter extends MagentoConverter
+class CurrencyConverter extends MagentoConverter
 {
     /**
      * @var MagentoMappingServiceInterface
@@ -21,65 +21,71 @@ class CountryConverter extends MagentoConverter
     /**
      * @var string
      */
-    private $connectionId;
+    protected $connectionId;
+
+    public function supports(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
+            && $migrationContext->getDataSet()::getEntity() === CurrencyDataSet::getEntity();
+    }
 
     public function getSourceIdentifier(array $data): string
     {
         return $data['isoCode'];
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CountryDataSet::getEntity();
-    }
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->connectionId = $migrationContext->getConnection()->getId();
-        $countryValue = CountryRegistry::get($data['isoCode']);
+        $currencyValue = CurrencyRegistry::get($data['isoCode']);
 
-        if ($countryValue === null) {
+        if ($currencyValue === null) {
             return new ConvertStruct(null, $data);
         }
 
         $this->generateChecksum($data);
-        $countryUuid = $this->mappingService->getMagentoCountryUuid(
-            $data['isoCode'],
+        $currencyUuid = $this->mappingService->getCurrencyUuid(
             $this->connectionId,
+            $data['isoCode'],
             $context
         );
 
-        if ($countryUuid === null) {
+        if ($currencyUuid === null) {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
                 $migrationContext->getConnection()->getId(),
-                DefaultEntities::COUNTRY,
+                DefaultEntities::CURRENCY,
                 $data['isoCode'],
                 $context
             );
         } else {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
-                DefaultEntities::COUNTRY,
+                DefaultEntities::CURRENCY,
                 $data['isoCode'],
                 $context,
                 null,
                 null,
-                $countryUuid
+                $currencyUuid
             );
         }
 
         $this->mappingIds[] = $this->mainMapping['id'];
-        $countryUuid = $this->mainMapping['entityUuid'];
+        $currencyUuid = $this->mainMapping['entityUuid'];
 
-        $converted['id'] = $countryUuid;
-        $converted['name'] = $countryValue['name'];
-        $converted['iso'] = $data['isoCode'];
-        $converted['iso3'] = $countryValue['iso3'];
-        $converted['active'] = true;
+        $converted['id'] = $currencyUuid;
+        $converted['name'] = $currencyValue['name'];
+        $converted['symbol'] = $currencyValue['symbol'];
+        $converted['isoCode'] = $data['isoCode'];
+        $converted['shortName'] = $data['isoCode'];
+        $converted['decimalPrecision'] = $context->getCurrencyPrecision();
 
-        foreach ($countryValue['translations'] as $key => $value) {
-            $languageUuid = $countryUuid;
+        /*
+         * Todo: Migrate currency factor
+         */
+        $converted['factor'] = 1.0;
+
+        foreach ($currencyValue['translations'] as $key => $value) {
+            $languageUuid = $currencyUuid;
             if ($key !== $data['isoCode']) {
                 $uuid = $this->mappingService->getLanguageUuid($this->connectionId, $key, $context);
 
