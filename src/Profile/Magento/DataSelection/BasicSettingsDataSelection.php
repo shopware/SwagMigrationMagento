@@ -3,6 +3,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
@@ -36,6 +37,7 @@ class BasicSettingsDataSelection implements DataSelectionInterface
     {
         return [
             CategoryDataSet::getEntity(),
+            CountryDataSet::getEntity(),
             SalesChannelDataSet::getEntity(),
         ];
     }
