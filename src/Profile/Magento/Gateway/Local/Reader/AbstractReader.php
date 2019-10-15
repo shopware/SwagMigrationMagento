@@ -99,11 +99,15 @@ abstract class AbstractReader implements ReaderInterface
         return $data;
     }
 
-    protected function fetchIdentifiers(string $table, string $identitfier = 'id', int $offset = 0, int $limit = 250): array
+    protected function fetchIdentifiers(string $table, string $identitfier = 'id', int $offset = 0, int $limit = 250, bool $distinct = false): array
     {
         $query = $this->connection->createQueryBuilder();
 
         $query->select($identitfier);
+        if ($distinct) {
+            $query->select('DISTINCT ' . $identitfier);
+        }
+
         $query->from($table);
         $query->addOrderBy($identitfier);
 

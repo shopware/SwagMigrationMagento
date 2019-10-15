@@ -48,6 +48,10 @@
             <tag name="shopware.migration.data_selection"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\MediaDataSelection">
+            <tag name="shopware.migration.data_selection"/>
+        </service>
+
         <!-- DataSets for Magento -->
         <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet">
             <tag name="shopware.migration.data_set" />
@@ -70,6 +74,10 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet">
+            <tag name="shopware.migration.data_set" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet">
             <tag name="shopware.migration.data_set" />
         </service>
 
@@ -100,6 +108,11 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CurrencyReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <tag name="shopware.migration.magento_local_reader" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\MediaReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
@@ -174,11 +187,27 @@
             <tag name="shopware.migration.converter"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\MappingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+
         <!-- Magento writers -->
         <service id="Swag\MigrationMagento\Migration\Writer\CountryWriter">
             <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
             <argument type="service" id="Shopware\Core\System\Country\CountryDefinition"/>
             <tag name="shopware.migration.writer"/>
+        </service>
+
+        <!-- Magento media processor -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor">
+            <argument type="service" id="swag_migration_media_file.repository"/>
+            <argument type="service" id="media.repository"/>
+            <argument type="service" id="Shopware\Core\Content\Media\File\FileSaver"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <tag name="shopware.migration.media_file_processor"/>
         </service>
     </services>
 </container>
