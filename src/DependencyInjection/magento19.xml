@@ -65,6 +65,14 @@
             <tag name="shopware.migration.data_set" />
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet">
+            <tag name="shopware.migration.data_set" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet">
+            <tag name="shopware.migration.data_set" />
+        </service>
+
         <!-- Readers which contain the sql queries -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
@@ -82,6 +90,16 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\OrderReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <tag name="shopware.migration.magento_local_reader" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CountryReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <tag name="shopware.migration.magento_local_reader" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CurrencyReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
@@ -142,6 +160,25 @@
             <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
             <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\TaxCalculator"/>
             <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter">
+            <argument type="service" id="Swag\MigrationMagento\Migration\Mapping\MagentoMappingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\CurrencyConverter">
+            <argument type="service" id="Swag\MigrationMagento\Migration\Mapping\MagentoMappingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <!-- Magento writers -->
+        <service id="Swag\MigrationMagento\Migration\Writer\CountryWriter">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
+            <argument type="service" id="Shopware\Core\System\Country\CountryDefinition"/>
+            <tag name="shopware.migration.writer"/>
         </service>
     </services>
 </container>
