@@ -3,11 +3,15 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFoundException;
 
@@ -36,6 +40,26 @@ class CategoryConverter extends MagentoConverter
         'name',
         'defaultLocale',
     ];
+
+    /**
+     * @var MediaFileServiceInterface
+     */
+    private $mediaFileService;
+
+    /**
+     * @var string
+     */
+    private $runId;
+
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        MediaFileServiceInterface $mediaFileService
+    ) {
+        parent::__construct($mappingService, $loggingService);
+
+        $this->mediaFileService = $mediaFileService;
+    }
 
     public function getSourceIdentifier(array $data): string
     {
@@ -67,7 +91,9 @@ class CategoryConverter extends MagentoConverter
          */
         $this->generateChecksum($data);
         $this->connectionId = $migrationContext->getConnection()->getId();
+        $this->runId = $migrationContext->getRunUuid();
         $this->context = $context;
+        $this->migrationContext = $migrationContext;
         $this->entity_id = $data['entity_id'];
 
         /*
@@ -147,6 +173,14 @@ class CategoryConverter extends MagentoConverter
         $this->setCategoryTranslation($data, $converted);
         unset($data['defaultLocale']);
 
+        /*
+         * Set category image
+         */
+        if (isset($data['image'])) {
+            $converted['media'] = $this->getCategoryMedia($data['image']);
+            unset($data['image']);
+        }
+
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
@@ -190,5 +224,36 @@ class CategoryConverter extends MagentoConverter
         }
 
         $converted['translations'][$languageUuid] = $localeTranslation;
+    }
+
+    protected function getCategoryMedia(string $path): array
+    {
+        $mapping = $this->mappingService->getOrCreateMapping(
+            $this->connectionId,
+            DefaultEntities::MEDIA,
+            $path,
+            $this->context
+        );
+        $categoryMedia['id'] = $mapping['entityUuid'];
+        $this->mappingIds[] = $mapping['id'];
+
+        $albumUuid = $this->mappingService->getDefaultFolderIdByEntity(DefaultEntities::CATEGORY, $this->migrationContext, $this->context);
+
+        if ($albumUuid !== null) {
+            $categoryMedia['mediaFolderId'] = $albumUuid;
+        }
+
+        $this->mediaFileService->saveMediaFile(
+            [
+                'runId' => $this->runId,
+                'entity' => MediaDataSet::getEntity(),
+                'uri' => '/media/catalog/category/' . $path,
+                'fileName' => $categoryMedia['id'],
+                'fileSize' => 0,
+                'mediaId' => $categoryMedia['id'],
+            ]
+        );
+
+        return $categoryMedia;
     }
 }

@@ -165,6 +165,7 @@
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter">
             <argument type="service" id="Swag\MigrationMagento\Migration\Mapping\MagentoMappingService"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <tag name="shopware.migration.converter"/>
         </service>
 

@@ -64,7 +64,7 @@ class MediaConverter extends MagentoConverter
             [
                 'runId' => $migrationContext->getRunUuid(),
                 'entity' => MediaDataSet::getEntity(),
-                'uri' => $data['path'],
+                'uri' => '/media/catalog/product' . $data['path'],
                 'fileName' => $converted['id'],
                 'fileSize' => 0,
                 'mediaId' => $converted['id'],

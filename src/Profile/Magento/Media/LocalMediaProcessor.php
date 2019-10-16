@@ -138,7 +138,7 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
 
         /** @var SwagMigrationMediaFileEntity[] $media */
         foreach ($media as $mediaFile) {
-            $sourcePath = $migrationContext->getConnection()->getCredentialFields()['installationRoot'] . '/media/catalog/product' . $mappedWorkload[$mediaFile->getMediaId()]->getAdditionalData()['path'];
+            $sourcePath = $migrationContext->getConnection()->getCredentialFields()['installationRoot'] . $mappedWorkload[$mediaFile->getMediaId()]->getAdditionalData()['path'];
 
             $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
             $filePath = sprintf('_temp/%s.%s', $mediaFile->getId(), $fileExtension);
