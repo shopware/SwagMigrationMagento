@@ -28,4 +28,18 @@ class CategoryDataSet extends DataSet
 
         return $information;
     }
+
+    public function getMediaUuids(array $converted): ?array
+    {
+        $mediaUuids = [];
+        foreach ($converted as $data) {
+            if (!isset($data['media']['id'])) {
+                continue;
+            }
+
+            $mediaUuids[] = $data['media']['id'];
+        }
+
+        return $mediaUuids;
+    }
 }

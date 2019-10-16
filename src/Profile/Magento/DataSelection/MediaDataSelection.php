@@ -3,6 +3,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NotAssociatedMediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
@@ -33,6 +34,7 @@ class MediaDataSelection implements DataSelectionInterface
     {
         return [
             MediaDataSet::getEntity(),
+            NotAssociatedMediaDataSet::getEntity(),
         ];
     }
 

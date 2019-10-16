@@ -81,6 +81,10 @@
             <tag name="shopware.migration.data_set" />
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NotAssociatedMediaDataSet">
+            <tag name="shopware.migration.data_set" />
+        </service>
+
         <!-- Readers which contain the sql queries -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
@@ -113,6 +117,11 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\MediaReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <tag name="shopware.migration.magento_local_reader" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NotAssociatedMediaReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
@@ -195,10 +204,23 @@
             <tag name="shopware.migration.converter"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\MappingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+
         <!-- Magento writers -->
         <service id="Swag\MigrationMagento\Migration\Writer\CountryWriter">
             <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
             <argument type="service" id="Shopware\Core\System\Country\CountryDefinition"/>
+            <tag name="shopware.migration.writer"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Migration\Writer\NotAssociatedWriter">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
+            <argument type="service" id="Shopware\Core\Content\Media\MediaDefinition"/>
             <tag name="shopware.migration.writer"/>
         </service>
 
