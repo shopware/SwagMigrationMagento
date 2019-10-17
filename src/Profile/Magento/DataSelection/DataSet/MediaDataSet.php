@@ -9,11 +9,11 @@ use SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSet;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CategoryDataSet extends DataSet
+class MediaDataSet extends DataSet
 {
     public static function getEntity(): string
     {
-        return DefaultEntities::CATEGORY;
+        return DefaultEntities::MEDIA;
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool
@@ -24,7 +24,7 @@ class CategoryDataSet extends DataSet
     public function getCountingInformation(): ?CountingInformationStruct
     {
         $information = new CountingInformationStruct(self::getEntity());
-        $information->addQueryStruct(new CountingQueryStruct('catalog_category_entity'));
+        $information->addQueryStruct(new CountingQueryStruct('catalog_product_entity_media_gallery'));
 
         return $information;
     }
@@ -33,11 +33,7 @@ class CategoryDataSet extends DataSet
     {
         $mediaUuids = [];
         foreach ($converted as $data) {
-            if (!isset($data['media']['id'])) {
-                continue;
-            }
-
-            $mediaUuids[] = $data['media']['id'];
+            $mediaUuids[] = $data['id'];
         }
 
         return $mediaUuids;

@@ -38,7 +38,8 @@ class CategoryReader extends AbstractReader implements LocalReaderInterface
                description.value AS description,
                status.value AS status,
                sibling.entity_id as previousSiblingId,
-               defaultLocale.value as defaultLocale
+               defaultLocale.value as defaultLocale,
+               image.value as image
         FROM
              catalog_category_entity AS category
         
@@ -56,6 +57,11 @@ class CategoryReader extends AbstractReader implements LocalReaderInterface
                  category.entity_id = description.entity_id
                  AND description.attribute_id = 44
                  AND description.store_id = 0
+                 
+                 LEFT JOIN catalog_category_entity_varchar AS image ON
+                 category.entity_id = image.entity_id
+                 AND image.attribute_id = 45
+                 AND image.store_id = 0
                  
                LEFT JOIN core_config_data AS defaultLocale ON
                 defaultLocale.scope = \'default\' AND defaultLocale.path = \'general/locale/code\'
