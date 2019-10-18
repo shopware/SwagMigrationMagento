@@ -2,6 +2,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -60,27 +61,42 @@ class ProductConverter extends MagentoConverter
         // grouped > auch als Variante zu behandeln
         // simple > normal
         // configurable product > variante
-        // bundle > not supported yet
+        // bundle > not supported yet > haben keine Steuersätze und sind auch eine Art container > noch nicht migrieren
         // virtual / downloadable > not supported yet
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $migrationContext->getConnection()->getId(),
             DefaultEntities::PRODUCT,
-            $data['entity_uuid'],
+            $data['entity_id'],
             $context,
             $this->checksum
         );
+        $converted['id'] = $this->mainMapping['entityUuid'];
 
         if (isset($data['manufacturer'])) {
             $converted['manufacturer'] = $this->getManufacturer($data['manufacturer']);
         }
         unset($data['manufacturer']);
 
+        if (!isset($data['tax_class_id'])) {
+            // bundle product obviously > no conversion yet
+            return new ConvertStruct(null, $data);
+        }
         $converted['taxId'] = $this->getTax($data['tax_class_id']);
         unset($data['tax_class_id']);
 
         $converted['price'] = (float) $data['price'];
         $converted['stock'] = (int) $data['instock'];
         $converted['productNumber'] = $data['sku'];
+        // preispflege info aus config auslesen > kann netto oder brutto sein > an den datensatz hängen
+        $converted['price'] = [
+            [
+                'currencyId' => Defaults::CURRENCY,
+                'gross' => 10,
+                'net' => (float) 7.5,
+                'linked' => true,
+            ],
+        ];
+        $converted['name'] = $data['name'];
 
         // price
         // productNumber
@@ -117,7 +133,7 @@ class ProductConverter extends MagentoConverter
             // todo: implement exception class
             throw new \Exception('Unknown tax');
         }
-        $this->mappingIds[] = $mapping['uuid'];
+        $this->mappingIds[] = $mapping['id'];
 
         return $mapping['entityUuid'];
     }
