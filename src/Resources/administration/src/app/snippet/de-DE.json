@@ -4,7 +4,8 @@
             "premappingCard": {
                 "group": {
                     "language": "Sprachen",
-                    "shipping_method": "Liefermethoden"
+                    "shipping_method": "Liefermethoden",
+                    "tax": "Steuern"
                 }
             }
         },

@@ -164,6 +164,12 @@
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry" />
+            <argument type="service" id="tax.repository" />
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
         <!-- Magento mapping service -->
         <service id="Swag\MigrationMagento\Migration\Mapping\MagentoMappingService"
                  parent="SwagMigrationAssistant\Migration\Mapping\MappingService">
