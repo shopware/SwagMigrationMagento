@@ -23,26 +23,24 @@ class NotAssociatedMediaReader extends AbstractReader implements LocalReaderInte
     {
         $installationRoot = $migrationContext->getConnection()->getCredentialFields()['installationRoot'];
         $this->sourcePath = $installationRoot . '/media/wysiwyg/';
-        $files = $this->dirToArray($this->sourcePath);
+
+        $files = [];
+        $this->dirToArray($this->sourcePath, $files);
 
         return $files;
     }
 
-    private function dirToArray($dir)
+    private function dirToArray(string $dir, array &$result): void
     {
-        $result = [];
-
         $cdir = scandir($dir, 1);
         foreach ($cdir as $key => $value) {
             if (!in_array($value, ['.', '..'], true)) {
                 if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
-                    $result = array_merge($this->dirToArray($dir . $value . DIRECTORY_SEPARATOR), $result);
+                    $this->dirToArray($dir . $value . DIRECTORY_SEPARATOR, $result);
                 } else {
                     $result[]['path'] = str_replace($this->sourcePath, '', $dir) . $value;
                 }
             }
         }
-
-        return $result;
     }
 }
