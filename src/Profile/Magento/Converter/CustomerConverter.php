@@ -156,7 +156,7 @@ class CustomerConverter extends MagentoConverter
         /*
          * Set salutation
          */
-        $salutationUuid = $this->getSalutation($data['salutation']);
+        $salutationUuid = $this->getSalutation($data['gender']);
         if ($salutationUuid === null) {
             return new ConvertStruct(null, $data);
         }
@@ -344,8 +344,20 @@ class CustomerConverter extends MagentoConverter
         }
     }
 
-    protected function getSalutation(string $salutation): ?string
+    protected function getSalutation(?string $gender): ?string
     {
+        switch ($gender) {
+            case "1":
+                $salutation = 'mr';
+                break;
+            case "2":
+                $salutation = 'mrs';
+                break;
+            default:
+                $salutation = 'not_specified';
+                break;
+        }
+
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
             SalutationReader::getMappingName(),

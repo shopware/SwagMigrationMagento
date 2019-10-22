@@ -99,20 +99,32 @@ abstract class AbstractReader implements ReaderInterface
         return $data;
     }
 
-    protected function fetchIdentifiers(string $table, string $identitfier = 'id', int $offset = 0, int $limit = 250, bool $distinct = false): array
+    protected function fetchIdentifiers(string $table, string $identifier = 'id', int $offset = 0, int $limit = 250, bool $distinct = false): array
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->select($identitfier);
+        $query->select($identifier);
         if ($distinct) {
-            $query->select('DISTINCT ' . $identitfier);
+            $query->select('DISTINCT ' . $identifier);
         }
 
         $query->from($table);
-        $query->addOrderBy($identitfier);
+        $query->addOrderBy($identifier);
 
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_COLUMN);
+    }
+
+    protected function fetchIdentifiersByRelation(string $table, string $identifier, string $relationKey, array $relationIds): array
+    {
+        $query = $this->connection->createQueryBuilder();
+        $query->select($identifier)
+            ->from($table)
+            ->where($relationKey . ' IN (:ids)')
+            ->addOrderBy($identifier)
+            ->setParameter('ids', $relationIds, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_COLUMN);
     }
@@ -137,71 +149,76 @@ abstract class AbstractReader implements ReaderInterface
         return $result;
     }
 
-    /*
-     * Returns the sql statement to select the shop system article attribute fields
-     */
-    protected function createTableSelect(
-        $type = 'catalog_product',
-        $attributes = null,
-        $store_id = null
-    ): string {
-        $sql = "
-			SELECT
-				ea.attribute_code 	as `name`,
-				ea.attribute_id 	as `id`,
-				ea.backend_type 	as `type`,
-				ea.is_required		as `required`
-			FROM eav_attribute ea, eav_entity_type et
-			WHERE ea.`entity_type_id` = et.entity_type_id
-			AND et.entity_type_code = ?
-			AND ea.frontend_input != ''
-		";
-        if (!empty($attributes)) {
-            $sql .= 'AND ea.attribute_code IN (?)';
-        } else {
-            $sql .= 'ORDER BY `required` DESC, `name`';
-        }
-
-        $attribute_fields = $this->connection->executeQuery(
+    protected function fetchAttributes(array $ids, string $entity, array $customAttributes = []): array
+    {
+        $sql = <<<SQL
+SELECT 
+    {$entity}.entity_id,
+    attribute.attribute_code,
+    CASE attribute.backend_type
+       WHEN 'varchar' THEN {$entity}_varchar.value
+       WHEN 'int' THEN {$entity}_int.value
+       WHEN 'text' THEN {$entity}_text.value
+       WHEN 'decimal' THEN {$entity}_decimal.value
+       WHEN 'datetime' THEN {$entity}_datetime.value
+       ELSE attribute.backend_type
+    END AS value
+FROM {$entity}_entity AS {$entity}
+LEFT JOIN eav_attribute AS attribute 
+    ON {$entity}.entity_type_id = attribute.entity_type_id
+LEFT JOIN {$entity}_entity_varchar AS {$entity}_varchar 
+    ON {$entity}.entity_id = {$entity}_varchar.entity_id 
+    AND attribute.attribute_id = {$entity}_varchar.attribute_id 
+    AND attribute.backend_type = 'varchar'
+LEFT JOIN {$entity}_entity_int AS {$entity}_int 
+    ON {$entity}.entity_id = {$entity}_int.entity_id 
+    AND attribute.attribute_id = {$entity}_int.attribute_id 
+    AND attribute.backend_type = 'int'
+LEFT JOIN {$entity}_entity_text AS {$entity}_text 
+    ON {$entity}.entity_id = {$entity}_text.entity_id 
+    AND attribute.attribute_id = {$entity}_text.attribute_id 
+    AND attribute.backend_type = 'text'
+LEFT JOIN {$entity}_entity_decimal AS {$entity}_decimal 
+    ON {$entity}.entity_id = {$entity}_decimal.entity_id 
+    AND attribute.attribute_id = {$entity}_decimal.attribute_id 
+    AND attribute.backend_type = 'decimal'
+LEFT JOIN {$entity}_entity_datetime AS {$entity}_datetime 
+    ON {$entity}.entity_id = {$entity}_datetime.entity_id 
+    AND attribute.attribute_id = {$entity}_datetime.attribute_id 
+    AND attribute.backend_type = 'datetime'
+WHERE {$entity}.entity_id IN (?)
+AND (attribute.is_user_defined = 0 OR attribute.attribute_code IN (?))
+AND attribute.backend_type != 'static'
+AND attribute.frontend_input IS NOT NULL
+GROUP BY {$entity}.entity_id, attribute_code, value;
+SQL;
+        return $this->connection->executeQuery(
             $sql,
-            [$type, $attributes],
-            [\PDO::PARAM_STR, Connection::PARAM_STR_ARRAY]
-        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+            [$ids, $customAttributes],
+            [Connection::PARAM_STR_ARRAY, Connection::PARAM_STR_ARRAY]
+        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
 
-        if (empty($attributes)) {
-            $attributes = array_keys($attribute_fields);
-        }
-
-        $select_fields = [];
-        $join_fields = '';
-
-        $type_quoted = "`{$type}`";
-        foreach ($attributes as $attribute) {
-            if (empty($attribute_fields[$attribute])) {
-                $join_fields .= "
-					LEFT JOIN (SELECT 1 as attribute_id, NULL as value) as `$attribute`
-					ON 1
-				";
-            } else {
-                if ($attribute_fields[$attribute]['type'] === 'static') {
-                    $select_fields[] = "{$type_quoted}.{$attribute} as $attribute";
-                } else {
-                    $table = $type . '_entity_' . $attribute_fields[$attribute]['type'];
-                    $join_fields .= "
-						LEFT JOIN {$table} `$attribute`
-						ON	`{$attribute}`.attribute_id = {$attribute_fields[$attribute]['id']}
-						AND `{$attribute}`.entity_id = {$type_quoted}.entity_id
-					";
-                    if ($store_id !== null) {
-                        $join_fields .= "
-						AND {$attribute}.store_id = {$store_id}
-						";
-                    }
-                    $select_fields[] = "{$attribute}.value as `{$attribute}`";
-                }
+    protected function appendAttributes(array &$fetchedEntities, array $fetchDefaultAttributes)
+    {
+        foreach ($fetchedEntities as &$fetchedEntity) {
+            if (isset($fetchDefaultAttributes[$fetchedEntity['entity_id']])) {
+                $attributes = $fetchDefaultAttributes[$fetchedEntity['entity_id']];
+                $preparedAttributes = array_combine(
+                    array_column($attributes, 'attribute_code'),
+                    array_column($attributes, 'value')
+                );
+                $fetchedEntity = array_merge($fetchedEntity, $preparedAttributes);
             }
         }
+    }
 
-        return $join_fields;
+    protected function groupByProperty(array $resultSet, string $property)
+    {
+        $groupedResult = [];
+        foreach ($resultSet as $result) {
+            $groupedResult[$result[$property]][] = $result;
+        }
+        return $groupedResult;
     }
 }
