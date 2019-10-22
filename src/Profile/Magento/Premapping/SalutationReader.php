@@ -61,7 +61,7 @@ class SalutationReader extends AbstractPremappingReader
      */
     private function getMapping(): array
     {
-        $salutations = ['mr', 'mrs'];
+        $salutations = ['mr', 'mrs', 'not_specified'];
 
         $entityData = [];
 
