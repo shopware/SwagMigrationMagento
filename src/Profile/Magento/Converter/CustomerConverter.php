@@ -347,10 +347,10 @@ class CustomerConverter extends MagentoConverter
     protected function getSalutation(?string $gender): ?string
     {
         switch ($gender) {
-            case "1":
+            case '1':
                 $salutation = 'mr';
                 break;
-            case "2":
+            case '2':
                 $salutation = 'mrs';
                 break;
             default:

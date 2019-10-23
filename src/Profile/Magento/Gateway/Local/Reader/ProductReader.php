@@ -31,10 +31,11 @@ class ProductReader extends AbstractReader implements LocalReaderInterface
         $sql = <<<SQL
 SELECT
     product.*,
-    stock.qty          as instock,
-    stock.min_qty      as stockmin,
-    stock.min_sale_qty as minpurchase,
-    stock.max_sale_qty as maxpurchase
+    stock.qty                 as instock,
+    stock.min_qty             as stockmin,
+    stock.min_sale_qty        as minpurchase,
+    stock.max_sale_qty        as maxpurchase,
+    price_includes_tax.value  as priceIncludesTax
     
 FROM catalog_product_entity product
 
@@ -46,6 +47,11 @@ AND stock.stock_id = 1
 -- join parent for sorting
 LEFT JOIN catalog_product_relation relation
 ON product.entity_id = relation.child_id
+
+-- join price includes tax configuration
+LEFT JOIN core_config_data price_includes_tax
+ON price_includes_tax.path = 'tax/calculation/price_includes_tax'
+AND price_includes_tax.scope = 'default'
 
 WHERE product.entity_id IN (?)
 ORDER BY relation.parent_id ASC;
@@ -103,8 +109,6 @@ SQL;
             [Connection::PARAM_STR_ARRAY, Connection::PARAM_STR_ARRAY]
         )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
 
-        error_log(print_r($fetchedAttributes, true) . "\n", 3, '/Users/h.kassner/Development/log/debug.log');
-
         foreach ($fetchedProducts as &$fetchedProduct) {
             if (isset($fetchedAttributes[$fetchedProduct['entity_id']])) {
                 $attributes = $fetchedAttributes[$fetchedProduct['entity_id']];
@@ -138,6 +142,8 @@ SQL;
 
             $resultSet[] = $product;
         }
+
+        $resultSet = $this->utf8ize($resultSet);
 
         return $resultSet;
     }
@@ -182,11 +188,17 @@ SQL;
         $sql = <<<SQL
 SELECT
     price.entity_id as productId,
+    price.value_id as id,
     price.qty as fromQty,
     price.value as price,
-    price.customer_group_id as customerGroup
+    price.customer_group_id as customerGroup,
+    groups.customer_group_code as customerGroupCode,
+    IFNULL(toQty.qty, 'not_set') as toQty
 FROM catalog_product_entity_tier_price price
+LEFT JOIN customer_group groups ON groups.customer_group_id = price.customer_group_id
+LEFT JOIN (SELECT toQty.* FROM catalog_product_entity_tier_price toQty) toQty ON toQty.qty > price.qty AND toQty.entity_id = price.entity_id
 WHERE price.entity_id IN (?)
+GROUP BY productId, id, fromQty, price.customer_group_id, groups.customer_group_code
 ORDER BY productId, customerGroup, fromQty
 SQL;
 

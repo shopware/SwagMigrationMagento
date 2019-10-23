@@ -21,7 +21,7 @@ class CountryConverter extends MagentoConverter
     /**
      * @var string
      */
-    private $connectionId;
+    protected $connectionId;
 
     public function getSourceIdentifier(array $data): string
     {

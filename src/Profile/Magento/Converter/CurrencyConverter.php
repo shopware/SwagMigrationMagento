@@ -72,6 +72,16 @@ class CurrencyConverter extends MagentoConverter
         $this->mappingIds[] = $this->mainMapping['id'];
         $currencyUuid = $this->mainMapping['entityUuid'];
 
+        $this->mappingService->getOrCreateMapping(
+            $this->connectionId,
+            DefaultEntities::CURRENCY,
+            'default_currency',
+            $context,
+            null,
+            null,
+            $currencyUuid
+        );
+
         $converted['id'] = $currencyUuid;
         $converted['name'] = $currencyValue['name'];
         $converted['symbol'] = $currencyValue['symbol'];

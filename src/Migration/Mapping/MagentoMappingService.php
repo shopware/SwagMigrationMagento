@@ -14,6 +14,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\StateMachine\Aggregation\StateMachineState\StateMachineStateEntity;
 use Shopware\Core\System\StateMachine\StateMachineEntity;
+use Shopware\Core\System\Tax\TaxEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
 
@@ -133,5 +134,17 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         }
 
         return $state->getId();
+    }
+
+    public function getTaxRate(string $uuid, Context $context): ?float
+    {
+        /** @var TaxEntity|null $tax */
+        $tax = $this->taxRepo->search(new Criteria([$uuid]), $context)->first();
+
+        if ($tax === null) {
+            return null;
+        }
+
+        return $tax->getTaxRate();
     }
 }
