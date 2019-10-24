@@ -18,48 +18,19 @@ class ManufacturerReader extends AbstractReader implements LocalReaderInterface
     {
         $this->setConnection($migrationContext);
 
-        $fetchedManufacturers = $this->fetchManufacturers();
-
-        $manufacturers = [];
-        foreach ($fetchedManufacturers as $manufacturer) {
-            if (!empty($manufacturer) && isset($manufacturer[0])) {
-                $detail = $manufacturer[0];
-                unset($manufacturer[0]);
-
-                $manufacturers[] = [
-                    'detail' => $detail,
-                    'tanslations' => array_values($manufacturer),
-                ];
-            }
-        }
-
-        return $manufacturers;
+        return $this->fetchManufacturers();
     }
 
     private function fetchManufacturers(): array
     {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->select([
-            'optionValue.option_id as identifier',
-            'optionValue.option_id',
-            'optionValue.value',
-            'optionValue.store_id',
-        ]);
-        $query->from('eav_attribute_option_value', 'optionValue');
-
-        $query->innerJoin('optionValue', 'eav_attribute_option', 'attributeOption', 'optionValue.option_id = attributeOption.option_id');
-
-        $query->innerJoin('optionValue', 'eav_attribute', 'attribute', 'attribute.attribute_id = attributeOption.attribute_id AND attribute.attribute_code = :code');
-        $query->setParameter('code', 'manufacturer');
-
-        $query->groupBy([
-            'optionValue.option_id',
-            'optionValue.value',
-        ]);
-
-        $query->orderBy('optionValue.store_id');
-
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP);
+        $sql = <<<SQL
+SELECT
+    DISTINCT(optionValue.option_id),
+    optionValue.value
+FROM eav_attribute_option_value optionValue
+INNER JOIN eav_attribute_option attributeOption ON optionValue.option_id = attributeOption.option_id
+INNER JOIN eav_attribute attribute ON attribute.attribute_id = attributeOption.attribute_id AND attribute.attribute_code = "manufacturer";
+SQL;
+        return $this->connection->executeQuery($sql)->fetchAll();
     }
 }

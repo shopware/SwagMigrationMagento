@@ -39,7 +39,7 @@ class ManufacturerConverter extends MagentoConverter
 
     public function getSourceIdentifier(array $data): string
     {
-        return $data['detail']['option_id'];
+        return $data['option_id'];
     }
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
@@ -50,7 +50,7 @@ class ManufacturerConverter extends MagentoConverter
         $this->generateChecksum($data);
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
-        $this->oldIdentifier = $data['detail']['option_id'];
+        $this->oldIdentifier = $data['option_id'];
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
 
@@ -68,7 +68,7 @@ class ManufacturerConverter extends MagentoConverter
         $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
 
-        $this->convertValue($converted, 'name', $data['detail'], 'value');
+        $this->convertValue($converted, 'name', $data, 'value');
 
         /*
          * Todo: Set translations
