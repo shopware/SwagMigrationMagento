@@ -4,6 +4,7 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
@@ -34,12 +35,15 @@ class ProductDataSelection implements DataSelectionInterface
     {
         return [
             ManufacturerDataSet::getEntity(),
+            PropertyGroupDataSet::getEntity(),
             ProductDataSet::getEntity(),
         ];
     }
 
     public function getEntityNamesRequiredForCount(): array
     {
-        return $this->getEntityNames();
+        return [
+            ProductDataSet::getEntity(),
+        ];
     }
 }

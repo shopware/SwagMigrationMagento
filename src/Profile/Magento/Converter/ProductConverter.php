@@ -8,6 +8,7 @@ use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -16,6 +17,7 @@ use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFoundException;
 
 class ProductConverter extends MagentoConverter
 {
@@ -78,21 +80,13 @@ class ProductConverter extends MagentoConverter
         $this->runUuid = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['entity_id'];
 
-        $converted = [];
         // produktypen
         // grouped > auch als Variante zu behandeln
         // simple > normal
         // configurable product > variante
         // bundle > not supported yet > haben keine Steuersätze und sind auch eine Art container > noch nicht migrieren
         // virtual / downloadable > not supported yet
-        $this->mainMapping = $this->mappingService->getOrCreateMapping(
-            $migrationContext->getConnection()->getId(),
-            DefaultEntities::PRODUCT,
-            $data['entity_id'],
-            $context,
-            $this->checksum
-        );
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted = [];
 
         /*
          * Set manufacturer
@@ -136,6 +130,19 @@ class ProductConverter extends MagentoConverter
         }
         unset($data['tax_class_id']);
 
+        if (!isset($data['price'])) {
+            $this->loggingService->addLogEntry(
+                new EmptyNecessaryFieldRunLog(
+                    $this->runUuid,
+                    DefaultEntities::PRODUCT,
+                    $this->oldIdentifier,
+                    'price'
+                )
+            );
+
+            return new ConvertStruct(null, $data);
+        }
+
         $converted['price'] = $this->getPrice($data, $converted);
 
         if (empty($converted['price'])) {
@@ -149,6 +156,18 @@ class ProductConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
 
+        /*
+         * Set main id
+         */
+        $this->mainMapping = $this->mappingService->getOrCreateMapping(
+            $migrationContext->getConnection()->getId(),
+            DefaultEntities::PRODUCT,
+            $data['entity_id'],
+            $context,
+            $this->checksum
+        );
+        $converted['id'] = $this->mainMapping['entityUuid'];
+
         if (isset($data['prices'])) {
             $converted['prices'] = $this->getPrices($data['prices'], $converted);
         }
@@ -157,12 +176,60 @@ class ProductConverter extends MagentoConverter
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
 
+        /*
+         * Set parent
+         */
+        if (isset($data['parentId'])) {
+            $this->setParent($converted, $data);
+        }
+
+        /*
+         * Set properties
+         */
+        if (isset($data['properties'])) {
+            $this->setProperties($converted, $data);
+        }
+
+        /*
+         * Set configurator settings
+         */
+        if (isset($data['configuratorSettings'])) {
+            $this->setConfiguratorSettings($converted, $data);
+        }
+
+        /*
+         * Set options
+         */
+        if (isset($data['options'])) {
+            $this->setOptions($converted, $data);
+        }
+
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, null, $this->mainMapping['id']);
     }
 
-    private function setManufacturerId(string $manufacturer, array &$converted): void
+    /**
+     * @throws ParentEntityForChildNotFoundException
+     */
+    protected function setParent(array &$converted, array &$data): void
+    {
+        $parentMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::PRODUCT,
+            $data['parentId'],
+            $this->context
+        );
+
+        if ($parentMapping === null) {
+            throw new ParentEntityForChildNotFoundException(DefaultEntities::PRODUCT, $this->oldIdentifier);
+        }
+
+        $converted['parentId'] = $parentMapping['entityUuid'];
+        $this->mappingIds[] = $parentMapping['id'];
+    }
+
+    protected function setManufacturerId(string $manufacturer, array &$converted): void
     {
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -178,7 +245,7 @@ class ProductConverter extends MagentoConverter
         $converted['manufacturerId'] = $mapping['entityUuid'];
     }
 
-    private function setTax(string $taxClassId, array &$converted): bool
+    protected function setTax(string $taxClassId, array &$converted): bool
     {
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -215,7 +282,7 @@ class ProductConverter extends MagentoConverter
         return false;
     }
 
-    private function getPrice(array $priceData, array $converted): array
+    protected function getPrice(array $priceData, array $converted): array
     {
         $taxRate = 0;
         if (isset($converted['taxId'])) {
@@ -260,7 +327,7 @@ class ProductConverter extends MagentoConverter
         return $price;
     }
 
-    private function getPrices(array $prices, array $converted): array
+    protected function getPrices(array $prices, array $converted): array
     {
         foreach ($prices as $key => &$price) {
             $price['toQty'] = null;
@@ -281,7 +348,7 @@ class ProductConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($customerGroupMapping === null) {
+            if ($customerGroupMapping === null || !isset($price['price'])) {
                 continue;
             }
             $customerGroupUuid = $customerGroupMapping['entityUuid'];
@@ -387,5 +454,85 @@ class ProductConverter extends MagentoConverter
         }
 
         return $newData;
+    }
+
+    protected function setProperties(array &$converted, array &$data): void
+    {
+        $properties = [];
+        foreach ($data['properties'] as $property) {
+            $propertyMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::PROPERTY_GROUP_OPTION,
+                $property['optionId'],
+                $this->context
+            );
+
+            if ($propertyMapping === null) {
+                continue;
+            }
+
+            $properties[]['id'] = $propertyMapping['entityUuid'];
+        }
+
+        $converted['properties'] = $properties;
+    }
+
+    protected function setConfiguratorSettings(array &$converted, array &$data): void
+    {
+        $options = [];
+        foreach ($data['configuratorSettings'] as $option) {
+            $configuratorSettingMapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                MagentoDefaultEntities::PRODUCT_CONFIGURATOR_SETTING,
+                $this->oldIdentifier . '_' . $option['optionId'],
+                $this->context
+            );
+            $this->mappingIds[] = $configuratorSettingMapping['id'];
+
+            $optionMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::PROPERTY_GROUP_OPTION,
+                $option['optionId'],
+                $this->context
+            );
+
+            if ($optionMapping === null) {
+                continue;
+            }
+
+            $this->mappingIds[] = $optionMapping['id'];
+
+            $optionElement = [
+                'id' => $configuratorSettingMapping['entityUuid'],
+                'productId' => $converted['id'],
+                'optionId' => $optionMapping['entityUuid'],
+            ];
+
+            $options[] = $optionElement;
+        }
+
+        $converted['configuratorSettings'] = $options;
+    }
+
+    protected function setOptions(array &$converted, array &$data): void
+    {
+        $options = [];
+        foreach ($data['options'] as $option) {
+            $optionMapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::PROPERTY_GROUP_OPTION,
+                $option['optionId'],
+                $this->context
+            );
+            $this->mappingIds[] = $optionMapping['id'];
+
+            $optionElement = [
+                'id' => $optionMapping['entityUuid'],
+            ];
+
+            $options[] = $optionElement;
+        }
+
+        $converted['options'] = $options;
     }
 }

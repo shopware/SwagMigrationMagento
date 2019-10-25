@@ -19,14 +19,14 @@ class ProductReader extends AbstractReader implements LocalReaderInterface
     {
         $this->setConnection($migrationContext);
 
-        $ids = $this->fetchIdentifiers('catalog_product_entity', 'entity_id', $migrationContext->getOffset(), $migrationContext->getLimit());
-        $fetchedProducts = $this->fetchProducts($ids);
+        $fetchedProducts = $this->fetchProducts($migrationContext);
+        $ids = array_column($fetchedProducts, 'entity_id');
         $this->appendDefaultAttributes($ids, $fetchedProducts);
 
         return $this->appendAssociatedData($fetchedProducts, $ids);
     }
 
-    protected function fetchProducts(array $ids): array
+    protected function fetchProducts(MigrationContextInterface $migrationContext): array
     {
         $sql = <<<SQL
 SELECT
@@ -35,7 +35,8 @@ SELECT
     stock.min_qty             as stockmin,
     stock.min_sale_qty        as minpurchase,
     stock.max_sale_qty        as maxpurchase,
-    price_includes_tax.value  as priceIncludesTax
+    price_includes_tax.value  as priceIncludesTax,
+    relation.parent_id        as parentId
     
 FROM catalog_product_entity product
 
@@ -53,14 +54,16 @@ LEFT JOIN core_config_data price_includes_tax
 ON price_includes_tax.path = 'tax/calculation/price_includes_tax'
 AND price_includes_tax.scope = 'default'
 
-WHERE product.entity_id IN (?)
-ORDER BY relation.parent_id ASC;
+ORDER BY relation.parent_id ASC
+
+LIMIT ?
+OFFSET ?;
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery($sql, [$migrationContext->getLimit(), $migrationContext->getOffset()], [\PDO::PARAM_INT, \PDO::PARAM_INT])->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function appendDefaultAttributes(array $ids, array &$fetchedProducts): void
+    protected function appendDefaultAttributes(array $ids, array &$fetchedProducts): void
     {
         $sql = <<<SQL
 SELECT 
@@ -121,23 +124,37 @@ SQL;
         }
     }
 
-    private function appendAssociatedData(array $fetchedProducts, array $ids)
+    protected function appendAssociatedData(array $fetchedProducts, array $ids)
     {
         $resultSet = [];
 
         $categories = $this->fetchProductCategories($ids);
         $media = $this->fetchProductMedia($ids);
         $prices = $this->fetchProductPrices($ids);
+        $properties = $this->fetchProperties($ids);
+        $configuratorSettings = $this->fetchConfiguratorSettings($ids);
+        $options = $this->fetchOptions($ids);
 
         foreach ($fetchedProducts as &$product) {
-            if (isset($categories[$product['entity_id']])) {
-                $product['categories'] = $categories[$product['entity_id']];
+            $productId = $product['entity_id'];
+
+            if (isset($categories[$productId])) {
+                $product['categories'] = $categories[$productId];
             }
-            if (isset($media[$product['entity_id']])) {
-                $product['media'] = $media[$product['entity_id']];
+            if (isset($media[$productId])) {
+                $product['media'] = $media[$productId];
             }
-            if (isset($prices[$product['entity_id']])) {
-                $product['prices'] = $prices[$product['entity_id']];
+            if (isset($prices[$productId])) {
+                $product['prices'] = $prices[$productId];
+            }
+            if (isset($properties[$productId])) {
+                $product['properties'] = $properties[$productId];
+            }
+            if (isset($configuratorSettings[$productId])) {
+                $product['configuratorSettings'] = $configuratorSettings[$productId];
+            }
+            if (isset($options[$productId])) {
+                $product['options'] = $options[$productId];
             }
 
             $resultSet[] = $product;
@@ -148,7 +165,7 @@ SQL;
         return $resultSet;
     }
 
-    private function fetchProductCategories(array $ids): array
+    protected function fetchProductCategories(array $ids): array
     {
         $sql = <<<SQL
 SELECT 
@@ -163,7 +180,7 @@ SQL;
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    private function fetchProductMedia(array $ids)
+    protected function fetchProductMedia(array $ids)
     {
         $sql = <<<SQL
 SELECT
@@ -183,7 +200,7 @@ SQL;
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    private function fetchProductPrices(array $ids): array
+    protected function fetchProductPrices(array $ids): array
     {
         $sql = <<<SQL
 SELECT
@@ -197,5 +214,79 @@ ORDER BY price.entity_id, price.all_groups DESC, price.customer_group_id, price.
 SQL;
 
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchProperties(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('DISTINCT product.entity_id identifier');
+        $query->addSelect('product.entity_id parentId');
+        $query->addSelect('eav.attribute_id as groupId');
+        $query->addSelect('eav.attribute_code groupName');
+        $query->addSelect('option_value.option_id as optionId');
+        $query->addSelect('option_value.value optionValue');
+
+        $query->from('catalog_product_entity', 'product');
+
+        $query->innerJoin('product', 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
+        $query->innerJoin('product', 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id');
+        $query->innerJoin('product', 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
+        $query->innerJoin('product', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_filterable = 1');
+        $query->innerJoin('product', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
+
+        $query->where('product.entity_type_id = (SELECT entity_type_id FROM eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchConfiguratorSettings(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('DISTINCT product.entity_id identifier');
+        $query->addSelect('product.entity_id parentId');
+        $query->addSelect('eav.attribute_id as groupId');
+        $query->addSelect('eav.attribute_code groupName');
+        $query->addSelect('option_value.option_id as optionId');
+        $query->addSelect('option_value.value optionValue');
+
+        $query->from('catalog_product_entity', 'product');
+
+        $query->innerJoin('product', 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
+        $query->innerJoin('product', 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id');
+        $query->innerJoin('product', 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
+        $query->innerJoin('product', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 1');
+        $query->innerJoin('product', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
+
+        $query->where('product.entity_type_id = (SELECT entity_type_id FROM eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchOptions(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('DISTINCT product.entity_id identifier');
+        $query->addSelect('product.entity_id productId');
+        $query->addSelect('eav.attribute_id as groupId');
+        $query->addSelect('eav.attribute_code groupName');
+        $query->addSelect('option_value.option_id as optionId');
+        $query->addSelect('option_value.value optionValue');
+
+        $query->from('catalog_product_entity', 'product');
+
+        $query->innerJoin('product', 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = product.entity_id');
+        $query->innerJoin('product', 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
+        $query->innerJoin('product', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 1');
+        $query->innerJoin('product', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
+
+        $query->where('product.entity_type_id = (SELECT entity_type_id FROM eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 }
