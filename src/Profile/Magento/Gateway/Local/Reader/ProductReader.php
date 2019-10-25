@@ -187,19 +187,13 @@ SQL;
     {
         $sql = <<<SQL
 SELECT
-    price.entity_id as productId,
-    price.value_id as id,
-    price.qty as fromQty,
-    price.value as price,
-    price.customer_group_id as customerGroup,
-    groups.customer_group_code as customerGroupCode,
-    IFNULL(toQty.qty, 'not_set') as toQty
+    price.entity_id, 
+    price.*,
+    customerGroup.customer_group_code as customerGroupCode
 FROM catalog_product_entity_tier_price price
-LEFT JOIN customer_group groups ON groups.customer_group_id = price.customer_group_id
-LEFT JOIN (SELECT toQty.* FROM catalog_product_entity_tier_price toQty) toQty ON toQty.qty > price.qty AND toQty.entity_id = price.entity_id
+LEFT JOIN customer_group customerGroup ON customerGroup.customer_group_id = price.customer_group_id
 WHERE price.entity_id IN (?)
-GROUP BY productId, id, fromQty, price.customer_group_id, groups.customer_group_code
-ORDER BY productId, customerGroup, fromQty
+ORDER BY price.entity_id, price.all_groups DESC, price.customer_group_id, price.qty;
 SQL;
 
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);

@@ -260,18 +260,24 @@ class ProductConverter extends MagentoConverter
         return $price;
     }
 
-    private function getPrices(array $priceData, array $converted): array
+    private function getPrices(array $prices, array $converted): array
     {
-        $newData = [];
-        foreach ($priceData as $price) {
-            if (!isset($price['customerGroup'])) {
-                continue;
+        foreach ($prices as $key => &$price) {
+            $price['toQty'] = null;
+            if (isset($prices[$key + 1])
+                && $prices[$key + 1]['all_groups'] === $price['all_groups']
+                && $prices[$key + 1]['customer_group_id'] === $price['customer_group_id']
+            ) {
+                $price['toQty'] = ((int) $prices[$key + 1]['qty']) - 1;
             }
+        }
 
+        $newData = [];
+        foreach ($prices as $price) {
             $customerGroupMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 DefaultEntities::CUSTOMER_GROUP,
-                $price['customerGroup'],
+                $price['customer_group_id'],
                 $this->context
             );
 
@@ -284,7 +290,7 @@ class ProductConverter extends MagentoConverter
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::RULE,
-                'customerGroupRule_productPriceRule_' . $price['id'] . '_' . $price['customerGroup'],
+                'customerGroupRule_productPriceRule_' . $price['entity_id'] . '_' . $price['customer_group_id'],
                 $this->context
             );
             $productPriceRuleUuid = $mapping['entityUuid'];
@@ -293,7 +299,7 @@ class ProductConverter extends MagentoConverter
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::RULE,
-                'customerGroupRule_' . $price['customerGroup'],
+                'customerGroupRule_' . $price['customer_group_id'],
                 $this->context
             );
             $priceRuleUuid = $mapping['entityUuid'];
@@ -302,7 +308,7 @@ class ProductConverter extends MagentoConverter
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::RULE,
-                'customerGroupRule_orContainer_' . $price['customerGroup'],
+                'customerGroupRule_orContainer_' . $price['customer_group_id'],
                 $this->context
             );
             $orContainerUuid = $mapping['entityUuid'];
@@ -311,7 +317,7 @@ class ProductConverter extends MagentoConverter
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::RULE,
-                'customerGroupRule_andContainer_' . $price['customerGroup'],
+                'customerGroupRule_andContainer_' . $price['customer_group_id'],
                 $this->context
             );
             $andContainerUuid = $mapping['entityUuid'];
@@ -320,7 +326,7 @@ class ProductConverter extends MagentoConverter
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::RULE,
-                'customerGroupRule_condition_' . $price['customerGroup'],
+                'customerGroupRule_condition_' . $price['customer_group_id'],
                 $this->context
             );
             $conditionUuid = $mapping['entityUuid'];
@@ -374,7 +380,7 @@ class ProductConverter extends MagentoConverter
                 ],
                 'price' => $priceArray,
                 'quantityStart' => (int) $price['fromQty'],
-                'quantityEnd' => $price['toQty'] !== 'not_set' ? (int) $price['toQty'] : null,
+                'quantityEnd' => $price['toQty'],
             ];
 
             $newData[] = $data;
