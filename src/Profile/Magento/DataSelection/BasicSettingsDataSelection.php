@@ -6,6 +6,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerGroupDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\LanguageDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
@@ -38,6 +39,7 @@ class BasicSettingsDataSelection implements DataSelectionInterface
     public function getEntityNames(): array
     {
         return [
+            LanguageDataSet::getEntity(),
             CustomerGroupDataSet::getEntity(),
             CategoryDataSet::getEntity(),
             CountryDataSet::getEntity(),
