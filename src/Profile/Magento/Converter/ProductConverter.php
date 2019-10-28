@@ -7,6 +7,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -76,6 +77,7 @@ class ProductConverter extends MagentoConverter
     {
         $this->generateChecksum($data);
         $this->context = $context;
+        $this->migrationContext = $migrationContext;
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runUuid = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['entity_id'];
@@ -202,6 +204,20 @@ class ProductConverter extends MagentoConverter
          */
         if (isset($data['options'])) {
             $this->setOptions($converted, $data);
+        }
+
+        if (isset($data['media'])) {
+            $convertedMedia = $this->getMedia($data['media'], $converted);
+
+            if (!empty($convertedMedia['media'])) {
+                $converted['media'] = $convertedMedia['media'];
+            }
+
+            if (isset($convertedMedia['cover'])) {
+                $converted['cover'] = $convertedMedia['cover'];
+            }
+
+            unset($data['media'], $convertedMedia);
         }
 
         $this->updateMainMapping($migrationContext, $context);
@@ -534,5 +550,67 @@ class ProductConverter extends MagentoConverter
         }
 
         $converted['options'] = $options;
+    }
+
+    protected function getMedia(array $media, array $converted): array
+    {
+        $mediaObjects = [];
+        $cover = null;
+        foreach ($media as $mediaData) {
+            $newProductMedia = [];
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::PRODUCT_MEDIA,
+                $this->oldIdentifier . '_' . $mediaData['image'],
+                $this->context
+            );
+            $newProductMedia['id'] = $mapping['entityUuid'];
+            $this->mappingIds[] = $mapping['id'];
+            $newProductMedia['productId'] = $converted['id'];
+            $this->convertValue($newProductMedia, 'position', $mediaData, 'position', self::TYPE_INTEGER);
+
+            $newMedia = [];
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::MEDIA,
+                $mediaData['image'],
+                $this->context
+            );
+            $newMedia['id'] = $mapping['entityUuid'];
+            $this->mappingIds[] = $mapping['id'];
+
+            if (!isset($mediaData['description'])) {
+                $mediaData['description'] = $newMedia['id'];
+            }
+
+            $this->mediaFileService->saveMediaFile(
+                [
+                    'runId' => $this->runUuid,
+                    'entity' => MediaDataSet::getEntity(),
+                    'uri' => '/media/catalog/product' . $mediaData['image'],
+                    'fileName' => $mediaData['description'],
+                    'fileSize' => 0,
+                    'mediaId' => $newMedia['id'],
+                ]
+            );
+
+            $this->convertValue($newMedia, 'name', $mediaData, 'description');
+            $newMedia['description'] = $newMedia['name'];
+
+            $folderUuid = $this->mappingService->getDefaultFolderIdByEntity(DefaultEntities::PRODUCT, $this->migrationContext, $this->context);
+
+            if ($folderUuid !== null) {
+                $newMedia['mediaFolderId'] = $folderUuid;
+            }
+
+            $newProductMedia['media'] = $newMedia;
+            $mediaObjects[] = $newProductMedia;
+
+            if ($cover === null && (int) $mediaData['main'] === 1) {
+                $cover = $newProductMedia;
+            }
+        }
+
+        return ['media' => $mediaObjects, 'cover' => $cover];
     }
 }
