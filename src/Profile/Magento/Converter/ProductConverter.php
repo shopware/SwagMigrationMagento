@@ -2,6 +2,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Product\Aggregate\ProductVisibility\ProductVisibilityDefinition;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Rule\Container\AndRule;
@@ -218,6 +219,10 @@ class ProductConverter extends MagentoConverter
             }
 
             unset($data['media'], $convertedMedia);
+        }
+
+        if (isset($data['visibility'])) {
+            $this->setVisibility($converted, $data);
         }
 
         $this->updateMainMapping($migrationContext, $context);
@@ -612,5 +617,97 @@ class ProductConverter extends MagentoConverter
         }
 
         return ['media' => $mediaObjects, 'cover' => $cover];
+    }
+
+    protected function setVisibility(array &$converted, array &$data): void
+    {
+        $productId = $converted['id'];
+        $visibilities = [];
+        foreach ($data['visibility'] as $storeConfig) {
+            $storeId = (int) $storeConfig['store_id'];
+            $status = (int) $storeConfig['value'];
+
+            if ($storeId === 0) {
+                $this->setDefaultStoreVisibility($status, $productId, $visibilities);
+                continue;
+            }
+
+            $this->setStoreVisibilities($storeId, $status, $productId, $visibilities);
+        }
+
+        $converted['visibilities'] = array_values($visibilities);
+    }
+
+    private function setDefaultStoreVisibility(int $status, string $productId, array &$visibilities): void
+    {
+        if ($status !== 1) {
+            return;
+        }
+
+        $uuids = $this->mappingService->getUuidList(
+            $this->connectionId,
+            DefaultEntities::SALES_CHANNEL . '_default_store',
+            '0',
+            $this->context
+        );
+
+        foreach ($uuids as $uuid) {
+            if (isset($visibilities[$uuid])) {
+                continue;
+            }
+
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::PRODUCT_VISIBILITY,
+                $this->oldIdentifier . '_' . $uuid,
+                $this->context
+            );
+            $this->mappingIds[] = $mapping['id'];
+
+            $visibilities[$uuid] = [
+                'id' => $mapping['entityUuid'],
+                'productId' => $productId,
+                'salesChannelId' => $uuid,
+                'visibility' => ProductVisibilityDefinition::VISIBILITY_ALL,
+            ];
+        }
+    }
+
+    private function setStoreVisibilities(int $storeId, int $status, string $productId, array &$visibilities): void
+    {
+        $mapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::SALES_CHANNEL . '_stores',
+            (string) $storeId,
+            $this->context
+        );
+
+        if ($mapping !== null) {
+            $salesChannelUuid = $mapping['entityUuid'];
+            if ($status !== 1) {
+                unset($visibilities[$salesChannelUuid]);
+
+                return;
+            }
+
+            if (isset($visibilities[$salesChannelUuid])) {
+                return;
+            }
+
+            $this->mappingIds[] = $mapping['id'];
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::PRODUCT_VISIBILITY,
+                $this->oldIdentifier . '_' . $storeId,
+                $this->context
+            );
+            $this->mappingIds[] = $mapping['id'];
+            $visibilities[$salesChannelUuid] = [
+                'id' => $mapping['entityUuid'],
+                'productId' => $productId,
+                'salesChannelId' => $salesChannelUuid,
+                'visibility' => ProductVisibilityDefinition::VISIBILITY_ALL,
+            ];
+        }
     }
 }

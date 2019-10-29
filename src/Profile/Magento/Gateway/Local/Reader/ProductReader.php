@@ -134,6 +134,7 @@ SQL;
         $properties = $this->fetchProperties($ids);
         $configuratorSettings = $this->fetchConfiguratorSettings($ids);
         $options = $this->fetchOptions($ids);
+        $visibility = $this->fetchVisibility($ids);
 
         foreach ($fetchedProducts as &$product) {
             $productId = $product['entity_id'];
@@ -155,6 +156,9 @@ SQL;
             }
             if (isset($options[$productId])) {
                 $product['options'] = $options[$productId];
+            }
+            if (isset($visibility[$productId])) {
+                $product['visibility'] = $visibility[$productId];
             }
 
             $resultSet[] = $product;
@@ -285,6 +289,23 @@ SQL;
         $query->innerJoin('product', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('product.entity_type_id = (SELECT entity_type_id FROM eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchVisibility(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('product_int.entity_id, product_int.store_id, product_int.value');
+        $query->from('catalog_product_entity_int', 'product_int');
+
+        $query->innerJoin('product_int', 'eav_attribute', 'attribute', 'product_int.attribute_id = attribute.attribute_id');
+
+        $query->where('attribute.attribute_code =  \'status\'');
+        $query->andWhere('product_int.entity_id IN (:ids)');
+        $query->orderBy('product_int.value');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);

@@ -115,6 +115,15 @@ class SalesChannelConverter extends MagentoConverter
                     $converted['id']
                 );
                 $this->mappingIds[] = $mapping['id'];
+
+                $this->mappingService->createListItemMapping(
+                    $this->connectionId,
+                    DefaultEntities::SALES_CHANNEL . '_default_store',
+                    '0',
+                    $this->context,
+                    null,
+                    $converted['id']
+                );
             }
         }
 
