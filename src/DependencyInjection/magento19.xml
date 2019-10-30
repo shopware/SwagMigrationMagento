@@ -109,6 +109,10 @@
             <tag name="shopware.migration.data_set" />
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet">
+            <tag name="shopware.migration.data_set" />
+        </service>
+
         <!-- Readers which contain the sql queries -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
@@ -171,6 +175,11 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LanguageReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
+            <tag name="shopware.migration.magento_local_reader" />
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductCustomFieldReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" />
             <tag name="shopware.migration.magento_local_reader" />
         </service>
@@ -292,6 +301,12 @@
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\MappingService"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\ProductCustomFieldConverter">
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\MappingService"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
             <tag name="shopware.migration.converter"/>

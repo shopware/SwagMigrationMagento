@@ -225,6 +225,10 @@ class ProductConverter extends MagentoConverter
             $this->setVisibility($converted, $data);
         }
 
+        if (isset($data['attributes'])) {
+            $converted['customFields'] = $this->getAttributes($data['attributes'], DefaultEntities::PRODUCT, $migrationContext->getConnection()->getName());
+        }
+
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, null, $this->mainMapping['id']);

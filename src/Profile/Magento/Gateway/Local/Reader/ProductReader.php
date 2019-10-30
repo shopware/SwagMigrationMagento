@@ -22,6 +22,7 @@ class ProductReader extends AbstractReader implements LocalReaderInterface
         $fetchedProducts = $this->fetchProducts($migrationContext);
         $ids = array_column($fetchedProducts, 'entity_id');
         $this->appendDefaultAttributes($ids, $fetchedProducts);
+        $this->appendCustomAttributes($ids, $fetchedProducts);
 
         return $this->appendAssociatedData($fetchedProducts, $ids);
     }
@@ -120,6 +121,72 @@ SQL;
                     array_column($attributes, 'value')
                 );
                 $fetchedProduct = array_merge($fetchedProduct, $preparedAttributes);
+            }
+        }
+    }
+
+    protected function appendCustomAttributes(array $ids, array &$fetchedProducts): void
+    {
+        $sql = <<<SQL
+SELECT 
+    product.entity_id,
+    attribute.attribute_id,
+    attribute.attribute_code,
+    CASE attribute.backend_type
+       WHEN 'varchar' THEN product_varchar.value
+       WHEN 'int' THEN product_int.value
+       WHEN 'text' THEN product_text.value
+       WHEN 'decimal' THEN product_decimal.value
+       WHEN 'datetime' THEN product_datetime.value
+       ELSE attribute.backend_type
+    END AS value
+FROM catalog_product_entity AS product
+INNER JOIN eav_attribute AS attribute 
+    ON product.entity_type_id = attribute.entity_type_id
+INNER JOIN catalog_eav_attribute AS attributeSetting
+    ON attribute.attribute_id = attributeSetting.attribute_id
+    AND attributeSetting.is_configurable = 0
+LEFT JOIN catalog_product_entity_varchar AS product_varchar 
+    ON product.entity_id = product_varchar.entity_id 
+    AND attribute.attribute_id = product_varchar.attribute_id 
+    AND attribute.backend_type = 'varchar'
+LEFT JOIN catalog_product_entity_int AS product_int 
+    ON product.entity_id = product_int.entity_id 
+    AND attribute.attribute_id = product_int.attribute_id 
+    AND attribute.backend_type = 'int'
+LEFT JOIN catalog_product_entity_text AS product_text 
+    ON product.entity_id = product_text.entity_id 
+    AND attribute.attribute_id = product_text.attribute_id 
+    AND attribute.backend_type = 'text'
+LEFT JOIN catalog_product_entity_decimal AS product_decimal 
+    ON product.entity_id = product_decimal.entity_id 
+    AND attribute.attribute_id = product_decimal.attribute_id 
+    AND attribute.backend_type = 'decimal'
+LEFT JOIN catalog_product_entity_datetime AS product_datetime 
+    ON product.entity_id = product_datetime.entity_id 
+    AND attribute.attribute_id = product_datetime.attribute_id 
+    AND attribute.backend_type = 'datetime'
+WHERE product.entity_id IN (?)
+AND attribute.is_user_defined = 1
+AND attribute.frontend_input IS NOT NULL
+GROUP BY product.entity_id, attribute_code, value;
+SQL;
+        $fetchedAttributes = $this->connection->executeQuery(
+            $sql,
+            [$ids],
+            [Connection::PARAM_STR_ARRAY, Connection::PARAM_STR_ARRAY]
+        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+
+        foreach ($fetchedProducts as &$fetchedProduct) {
+            if (isset($fetchedAttributes[$fetchedProduct['entity_id']])) {
+                $attributes = $fetchedAttributes[$fetchedProduct['entity_id']];
+                foreach ($attributes as $attribute) {
+                    if (empty($attribute['value'])) {
+                        continue;
+                    }
+
+                    $fetchedProduct['attributes'][] = $attribute;
+                }
             }
         }
     }

@@ -77,4 +77,21 @@ abstract class MagentoConverter extends Converter
 
         return $emptyFields;
     }
+
+    protected function getAttributes(array $attributes, string $entityName, string $connectionName, array $blacklist = []): array
+    {
+        $result = [];
+        // remove unwanted characters from connection name
+        $connectionName = str_replace(' ', '', $connectionName);
+        $connectionName = preg_replace('/[^A-Za-z0-9\-]/', '', $connectionName);
+
+        foreach ($attributes as $attribute) {
+            if (in_array($attribute['attribute_code'], $blacklist, true)) {
+                continue;
+            }
+            $result['migration_' . $connectionName . '_' . $entityName . '_' . $attribute['attribute_id']] = $attribute['value'];
+        }
+
+        return $result;
+    }
 }

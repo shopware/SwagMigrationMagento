@@ -7,6 +7,12 @@
                     "shipping_method": "Liefermethoden",
                     "tax": "Steuern"
                 }
+            },
+            "selectDataCard": {
+                "entities": {
+                    "product_custom_field": "Produktattribute:",
+                    "property_group": "Eigenschaften:"
+                }
             }
         },
         "wizard": {

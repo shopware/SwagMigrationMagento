@@ -3,6 +3,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -36,6 +37,7 @@ class ProductDataSelection implements DataSelectionInterface
         return [
             ManufacturerDataSet::getEntity(),
             PropertyGroupDataSet::getEntity(),
+            ProductCustomFieldDataSet::getEntity(),
             ProductDataSet::getEntity(),
         ];
     }
