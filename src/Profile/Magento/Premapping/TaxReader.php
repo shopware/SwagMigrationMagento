@@ -8,6 +8,8 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\Tax\TaxEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductDataSelection;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\SeoUrlDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
@@ -52,7 +54,9 @@ class TaxReader extends AbstractPremappingReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
-            && in_array(ProductDataSelection::IDENTIFIER, $entityGroupNames, true);
+            && (in_array(ProductDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || in_array(SeoUrlDataSelection::IDENTIFIER, $entityGroupNames, true));
     }
 
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct

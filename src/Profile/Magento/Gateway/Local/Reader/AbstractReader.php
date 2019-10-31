@@ -31,6 +31,17 @@ abstract class AbstractReader implements ReaderInterface
         $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
     }
 
+    protected function fetchDefaultLocale(): string
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('locale.value AS locale');
+        $query->from('core_config_data', 'locale');
+        $query->where('locale.scope = \'default\' AND path = \'general/locale/code\'');
+
+        return $query->execute()->fetch(\PDO::FETCH_COLUMN);
+    }
+
     protected function utf8ize($mixed)
     {
         if (is_array($mixed)) {

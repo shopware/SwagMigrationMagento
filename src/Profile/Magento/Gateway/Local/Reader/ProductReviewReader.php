@@ -86,15 +86,4 @@ class ProductReviewReader extends AbstractReader implements LocalReaderInterface
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
-
-    protected function fetchDefaultLocale(): string
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->addSelect('locale.value AS locale');
-        $query->from('core_config_data', 'locale');
-        $query->where('locale.scope = \'default\' AND path = \'general/locale/code\'');
-
-        return $query->execute()->fetch(\PDO::FETCH_COLUMN);
-    }
 }
