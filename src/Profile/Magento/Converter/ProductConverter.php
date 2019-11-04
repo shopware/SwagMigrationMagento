@@ -225,6 +225,10 @@ class ProductConverter extends MagentoConverter
             $this->setVisibility($converted, $data);
         }
 
+        if (isset($data['categories'])) {
+            $this->setCategories($converted, $data);
+        }
+
         if (isset($data['attributes'])) {
             $converted['customFields'] = $this->getAttributes($data['attributes'], DefaultEntities::PRODUCT, $migrationContext->getConnection()->getName());
         }
@@ -232,6 +236,28 @@ class ProductConverter extends MagentoConverter
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, null, $this->mainMapping['id']);
+    }
+
+    protected function setCategories(array &$converted, array &$data): void
+    {
+        $categoryMapping = [];
+
+        foreach ($data['categories'] as $category) {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CATEGORY,
+                $category['categoryId'],
+                $this->context
+            );
+
+            if ($mapping === null) {
+                continue;
+            }
+            $categoryMapping[] = ['id' => $mapping['entityUuid']];
+            $this->mappingIds[] = $mapping['id'];
+        }
+
+        $converted['categories'] = $categoryMapping;
     }
 
     /**
