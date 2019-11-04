@@ -22,7 +22,7 @@ class ProductReviewReader extends AbstractReader implements LocalReaderInterface
         $fetchedProductReviews = $this->mapData($this->fetchProductReviews($migrationContext), [], ['detail']);
         $ids = array_column($fetchedProductReviews, 'review_id');
         $fetchedRatings = $this->mapData($this->fetchRatings($ids), [], ['opt']);
-        $defaultLocale = $this->fetchDefaultLocale();
+        $defaultLocale = str_replace('_', '-', $this->fetchDefaultLocale());
 
         foreach ($fetchedProductReviews as &$productReview) {
             $review_id = $productReview['review_id'];

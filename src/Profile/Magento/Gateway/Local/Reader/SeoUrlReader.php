@@ -19,7 +19,7 @@ class SeoUrlReader extends AbstractReader implements LocalReaderInterface
         $this->setConnection($migrationContext);
 
         $fetchedSeoUrls = $this->mapData($this->fetchSeoUrls($migrationContext), [], ['seo']);
-        $defaultLocale = $this->fetchDefaultLocale();
+        $defaultLocale = str_replace('_', '-', $this->fetchDefaultLocale());
 
         foreach ($fetchedSeoUrls as &$seoUrl) {
             if (isset($seoUrl['locale'])) {
