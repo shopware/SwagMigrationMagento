@@ -169,7 +169,7 @@ LEFT JOIN catalog_product_entity_datetime AS product_datetime
 WHERE product.entity_id IN (?)
 AND attribute.is_user_defined = 1
 AND attribute.frontend_input IS NOT NULL
-GROUP BY product.entity_id, attribute_code, value;
+GROUP BY product.entity_id, attribute.attribute_id, attribute_code, value;
 SQL;
         $fetchedAttributes = $this->connection->executeQuery(
             $sql,
