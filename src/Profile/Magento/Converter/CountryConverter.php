@@ -55,7 +55,8 @@ class CountryConverter extends MagentoConverter
                 $migrationContext->getConnection()->getId(),
                 DefaultEntities::COUNTRY,
                 $data['isoCode'],
-                $context
+                $context,
+                $this->checksum
             );
         } else {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -63,13 +64,11 @@ class CountryConverter extends MagentoConverter
                 DefaultEntities::COUNTRY,
                 $data['isoCode'],
                 $context,
-                null,
+                $this->checksum,
                 null,
                 $countryUuid
             );
         }
-
-        $this->mappingIds[] = $this->mainMapping['id'];
         $countryUuid = $this->mainMapping['entityUuid'];
 
         $converted['id'] = $countryUuid;
@@ -95,6 +94,10 @@ class CountryConverter extends MagentoConverter
         }
 
         $this->updateMainMapping($migrationContext, $context);
+
+        if (empty($data)) {
+            $data = null;
+        }
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }

@@ -85,11 +85,11 @@ abstract class CustomFieldConverter extends Converter
             ],
         ];
 
+        $this->updateMainMapping($migrationContext, $context);
+
         if (empty($data)) {
             $data = null;
         }
-
-        $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
@@ -113,10 +113,6 @@ abstract class CustomFieldConverter extends Converter
             'type' => 'text',
             'customFieldType' => 'text',
         ];
-
-        /*
-         * Todo: Implement translations
-         */
 
         if ($data['frontend_input'] === 'text') {
             $attributeData['type'] = 'text';

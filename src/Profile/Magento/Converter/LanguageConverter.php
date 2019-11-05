@@ -46,9 +46,6 @@ class LanguageConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        /*
-         * Set main data
-         */
         $this->generateChecksum($data);
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
@@ -64,13 +61,13 @@ class LanguageConverter extends MagentoConverter
         );
 
         if ($languageUuid !== null) {
-            return new ConvertStruct([], $data);
+            return new ConvertStruct(null, $data);
         }
 
         $languageData = LanguageRegistry::get($this->oldIdentifier);
 
         if ($languageData === null) {
-            return new ConvertStruct([], $data);
+            return new ConvertStruct(null, $data);
         }
 
         $localeUuid = null;
@@ -84,22 +81,26 @@ class LanguageConverter extends MagentoConverter
         }
 
         if ($localeUuid === null) {
-            return new ConvertStruct([], $data);
+            return new ConvertStruct(null, $data);
         }
 
-        $languageMapping = $this->mappingService->getOrCreateMapping(
+        $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::LANGUAGE,
             $this->oldIdentifier,
-            $this->context
+            $this->context,
+            $this->checksum
         );
-        $this->mappingIds[] = $languageMapping['id'];
 
-        $converted['id'] = $languageMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityUuid'];
         $converted['name'] = $languageData['name'];
         $converted['localeId'] = $localeUuid;
         $converted['translationCodeId'] = $localeUuid;
 
-        return new ConvertStruct($converted, $data);
+        if (empty($data)) {
+            $data = null;
+        }
+
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 }

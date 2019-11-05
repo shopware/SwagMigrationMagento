@@ -44,9 +44,6 @@ class ManufacturerConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        /*
-         * Set main data
-         */
         $this->generateChecksum($data);
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
@@ -54,9 +51,6 @@ class ManufacturerConverter extends MagentoConverter
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
 
-        /*
-         * Set main mapping
-         */
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::PRODUCT_MANUFACTURER,
@@ -69,10 +63,6 @@ class ManufacturerConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
 
         $this->convertValue($converted, 'name', $data, 'value');
-
-        /*
-         * Todo: Set translations
-         */
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }

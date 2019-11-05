@@ -55,7 +55,8 @@ class CurrencyConverter extends MagentoConverter
                 $migrationContext->getConnection()->getId(),
                 DefaultEntities::CURRENCY,
                 $data['isoCode'],
-                $context
+                $context,
+                $this->checksum
             );
         } else {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -63,16 +64,14 @@ class CurrencyConverter extends MagentoConverter
                 DefaultEntities::CURRENCY,
                 $data['isoCode'],
                 $context,
-                null,
+                $this->checksum,
                 null,
                 $currencyUuid
             );
         }
-
-        $this->mappingIds[] = $this->mainMapping['id'];
         $currencyUuid = $this->mainMapping['entityUuid'];
 
-        $this->mappingService->getOrCreateMapping(
+        $defaultCurrencyMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::CURRENCY,
             'default_currency',
@@ -81,6 +80,7 @@ class CurrencyConverter extends MagentoConverter
             null,
             $currencyUuid
         );
+        $this->mappingIds[] = $defaultCurrencyMapping['id'];
 
         $converted['id'] = $currencyUuid;
         $converted['name'] = $currencyValue['name'];
@@ -111,6 +111,10 @@ class CurrencyConverter extends MagentoConverter
         }
 
         $this->updateMainMapping($migrationContext, $context);
+
+        if (empty($data)) {
+            $data = null;
+        }
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }

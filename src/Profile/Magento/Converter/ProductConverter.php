@@ -235,6 +235,10 @@ class ProductConverter extends MagentoConverter
 
         $this->updateMainMapping($migrationContext, $context);
 
+        if (empty($data)) {
+            $data = null;
+        }
+
         return new ConvertStruct($converted, null, $this->mainMapping['id']);
     }
 

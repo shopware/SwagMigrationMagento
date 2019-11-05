@@ -161,10 +161,11 @@ class SeoUrlConverter extends MagentoConverter
         }
 
         $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
+        $hash = hash('sha256', $converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical);
         $uniqueUrlMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::SEO_URL,
-            $converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical,
+            $hash,
             $context
         );
 
@@ -172,7 +173,7 @@ class SeoUrlConverter extends MagentoConverter
             $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::SEO_URL,
-                $converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical,
+                $hash,
                 $context,
                 null,
                 null,
@@ -195,6 +196,10 @@ class SeoUrlConverter extends MagentoConverter
         $this->convertValue($converted, 'seoPathInfo', $data, 'request_path');
 
         $this->updateMainMapping($migrationContext, $context);
+
+        if (empty($data)) {
+            $data = null;
+        }
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }

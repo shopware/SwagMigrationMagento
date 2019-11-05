@@ -66,7 +66,8 @@ class PropertyGroupConverter extends MagentoConverter
             $this->connectionId,
             DefaultEntities::PROPERTY_GROUP,
             $this->oldIdentifier,
-            $context
+            $context,
+            $this->checksum
         );
 
         $converted = [
@@ -76,6 +77,10 @@ class PropertyGroupConverter extends MagentoConverter
 
         $this->getProperties($data, $converted);
         $this->updateMainMapping($migrationContext, $context);
+
+        if (empty($data)) {
+            $data = null;
+        }
 
         return new ConvertStruct($converted, $data);
     }
