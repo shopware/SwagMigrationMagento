@@ -183,6 +183,10 @@ class CategoryConverter extends MagentoConverter
 
         $this->updateMainMapping($migrationContext, $context);
 
+        if (empty($data)) {
+            $data = null;
+        }
+
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 

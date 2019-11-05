@@ -54,6 +54,7 @@ FROM customer_entity customer
 WHERE customer.entity_id IN (?)
 ORDER BY customer.entity_id;
 SQL;
+
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
     }
 
@@ -70,6 +71,7 @@ LEFT JOIN customer_address_entity_varchar country_attribute ON attribute.attribu
 LEFT JOIN directory_country ON directory_country.country_id = country_attribute.value
 WHERE customer_address.parent_id in (?);
 SQL;
+
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

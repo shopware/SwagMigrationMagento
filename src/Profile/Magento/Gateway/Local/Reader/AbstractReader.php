@@ -31,6 +31,17 @@ abstract class AbstractReader implements ReaderInterface
         $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
     }
 
+    protected function fetchDefaultLocale(): string
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('locale.value AS locale');
+        $query->from('core_config_data', 'locale');
+        $query->where('locale.scope = \'default\' AND path = \'general/locale/code\'');
+
+        return $query->execute()->fetch(\PDO::FETCH_COLUMN);
+    }
+
     protected function utf8ize($mixed)
     {
         if (is_array($mixed)) {
@@ -192,6 +203,7 @@ AND attribute.backend_type != 'static'
 AND attribute.frontend_input IS NOT NULL
 GROUP BY {$entity}.entity_id, attribute_code, value;
 SQL;
+
         return $this->connection->executeQuery(
             $sql,
             [$ids, $customAttributes],
@@ -199,7 +211,7 @@ SQL;
         )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    protected function appendAttributes(array &$fetchedEntities, array $fetchDefaultAttributes)
+    protected function appendAttributes(array &$fetchedEntities, array $fetchDefaultAttributes): void
     {
         foreach ($fetchedEntities as &$fetchedEntity) {
             if (isset($fetchDefaultAttributes[$fetchedEntity['entity_id']])) {
@@ -219,6 +231,7 @@ SQL;
         foreach ($resultSet as $result) {
             $groupedResult[$result[$property]][] = $result;
         }
+
         return $groupedResult;
     }
 }

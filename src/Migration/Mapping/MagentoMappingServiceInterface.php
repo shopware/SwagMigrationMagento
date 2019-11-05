@@ -10,4 +10,6 @@ interface MagentoMappingServiceInterface extends MappingServiceInterface
     public function getMagentoCountryUuid(string $iso, string $connectionId, Context $context): ?string;
 
     public function getTransactionStateUuid(string $state, Context $context): ?string;
+
+    public function getTaxRate(string $uuid, Context $context): ?float;
 }

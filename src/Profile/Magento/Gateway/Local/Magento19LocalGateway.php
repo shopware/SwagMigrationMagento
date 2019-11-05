@@ -151,6 +151,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
                       WHERE path LIKE 'payment/%/title'
                         AND scope = 'default'
                       ) AS payment
+        WHERE payment.payment_id IN (SELECT DISTINCT(method) FROM sales_flat_order_payment)
         ";
 
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);

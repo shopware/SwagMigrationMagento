@@ -4,7 +4,14 @@
             "premappingCard": {
                 "group": {
                     "language": "Languages",
-                    "shipping_method": "Shipping methods"
+                    "shipping_method": "Shipping methods",
+                    "tax": "Taxes"
+                }
+            },
+            "selectDataCard": {
+                "entities": {
+                    "product_custom_field": "Product attributes:",
+                    "property_group": "Properties:"
                 }
             }
         },

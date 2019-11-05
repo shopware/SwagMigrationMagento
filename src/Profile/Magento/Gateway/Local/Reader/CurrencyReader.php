@@ -18,10 +18,14 @@ class CurrencyReader extends AbstractReader implements LocalReaderInterface
     {
         $this->setConnection($migrationContext);
         $fetchedCurrencies = $this->fetchCurrencies();
+        $baseCurrency = $this->fetchBaseCurrency();
 
         $currencies = [];
         foreach ($fetchedCurrencies as $currency) {
-            $currencies[]['isoCode'] = $currency;
+            $currencies[] = [
+                'isBaseCurrency' => $baseCurrency === $currency,
+                'isoCode' => $currency,
+            ];
         }
 
         return $currencies;
@@ -46,5 +50,18 @@ class CurrencyReader extends AbstractReader implements LocalReaderInterface
         }
 
         return array_values(array_unique($currencyConfig));
+    }
+
+    private function fetchBaseCurrency(): string
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->from('core_config_data', 'baseCurrency');
+        $query->addSelect('value');
+        $query->andwhere('path = \'currency/options/base\' AND scope = \'default\'');
+
+        $baseCurrency = $query->execute()->fetch(\PDO::FETCH_COLUMN);
+
+        return $baseCurrency;
     }
 }
