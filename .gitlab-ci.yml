@@ -6,7 +6,7 @@ variables:
 
 stages:
     - Static analyzes
-#    - Testing
+    - PHPUnit
 
 default:
     image: shopware/development:latest
@@ -19,8 +19,6 @@ default:
         - cd development
         - cp -v dev-ops/gitlab/.psh.yaml.override .
         - /entrypoint supervisord > /dev/null 2>&1 &
-
-# Stage: static
 
 PHP analyze:
     stage: Static analyzes
@@ -38,28 +36,30 @@ PHP analyze:
         reports:
             junit: development/php-cs-fixer.xml
 
-#PHPUnit (MariaDB):
-#    stage: Testing
-#    services:
-#        -   name: mariadb:10.3
-#            alias: mysql
-#    script:
-#        - ./psh.phar init
-#        - php bin/console plugin:install --activate SwagMigrationMagento
-#        - composer dump-autoload -d custom/plugins/SwagMigrationMagento
-#        - ./psh.phar init-test-databases
-#        - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
-#            vendor/bin/phpunit
-#            --configuration custom/plugins/SwagMigrationMagento/phpunit.xml.dist
-#            --log-junit build/artifacts/phpunit.junit.xml
-#            --colors=never
-#            --coverage-clover build/artifacts/phpunit.clover.xml
-#            --coverage-html build/artifacts/phpunit-coverage-html
-#            --coverage-text
-#
-#    coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
-#    artifacts:
-#        paths:
-#            - development/build/artifacts/phpunit.clover.xml
-#        reports:
-#            junit: development/build/artifacts/phpunit.junit.xml
+PHPUnit (MariaDB):
+   stage: PHPUnit
+   needs: [PHP analyze]
+   services:
+       -   name: mariadb:10.3
+           alias: mysql
+   script:
+       - ./psh.phar init
+       - php bin/console plugin:install --activate SwagMigrationAssistant
+       - php bin/console plugin:install --activate SwagMigrationMagento
+       - composer dump-autoload -d custom/plugins/SwagMigrationMagento
+       - composer dump-autoload -d custom/plugins/SwagMigrationAssistant
+       - ./psh.phar init-test-databases
+       - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
+           vendor/bin/phpunit
+           --configuration custom/plugins/SwagMigrationMagento/phpunit.xml.dist
+           --log-junit build/artifacts/phpunit.junit.xml
+           --colors=never
+           --coverage-clover build/artifacts/phpunit.clover.xml
+           --coverage-html build/artifacts/phpunit-coverage-html
+           --coverage-text
+   coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
+   artifacts:
+       paths:
+           - development/build/artifacts/phpunit.clover.xml
+       reports:
+           junit: development/build/artifacts/phpunit.junit.xml

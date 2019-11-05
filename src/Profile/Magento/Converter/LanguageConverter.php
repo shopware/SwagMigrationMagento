@@ -55,7 +55,7 @@ class LanguageConverter extends MagentoConverter
 
         $languageUuid = $this->mappingService->getLanguageUuid(
             $this->connectionId,
-            $data['locale'],
+            $this->oldIdentifier,
             $this->context,
             true
         );
@@ -96,6 +96,7 @@ class LanguageConverter extends MagentoConverter
         $converted['name'] = $languageData['name'];
         $converted['localeId'] = $localeUuid;
         $converted['translationCodeId'] = $localeUuid;
+        unset($data['locale']);
 
         if (empty($data)) {
             $data = null;

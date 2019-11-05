@@ -128,7 +128,7 @@ class CategoryConverter extends MagentoConverter
                 $converted['afterCategoryId'] = $previousSiblingUuid;
             }
         }
-        unset($data['parent']);
+        unset($data['parent_id']);
 
         /*
          * Set afterCategory
@@ -147,7 +147,7 @@ class CategoryConverter extends MagentoConverter
             }
             unset($previousSiblingMapping);
         }
-        unset($data['previousSiblingId'], $data['categoryPosition'], $previousSiblingMapping);
+        unset($data['previousSiblingId']);
 
         /*
          * Set main mapping
@@ -160,7 +160,7 @@ class CategoryConverter extends MagentoConverter
             $this->checksum
         );
         $converted['id'] = $this->mainMapping['entityUuid'];
-        unset($data['id']);
+        unset($data['entity_id']);
 
         $this->convertValue($converted, 'description', $data, 'description', self::TYPE_STRING);
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
@@ -178,10 +178,21 @@ class CategoryConverter extends MagentoConverter
          */
         if (isset($data['image'])) {
             $converted['media'] = $this->getCategoryMedia($data['image']);
-            unset($data['image']);
         }
+        unset($data['image']);
 
         $this->updateMainMapping($migrationContext, $context);
+
+        // There is no equivalent field
+        unset(
+            $data['entity_type_id'],
+            $data['attribute_set_id'],
+            $data['created_at'],
+            $data['updated_at'],
+            $data['path'],
+            $data['position'],
+            $data['children_count']
+        );
 
         if (empty($data)) {
             $data = null;

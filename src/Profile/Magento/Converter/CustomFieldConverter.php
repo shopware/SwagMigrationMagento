@@ -84,6 +84,30 @@ abstract class CustomFieldConverter extends Converter
                 'config' => $this->getConfiguredCustomFieldData($data),
             ],
         ];
+        unset(
+            // Used keys
+            $data['attribute_id'],
+            $data['attribute_code'],
+            $data['options'],
+            $data['frontend_input'],
+            $data['frontend_label'],
+            $data['defaultLocale'],
+
+            // There is no equivalent field
+            $data['entity_type_id'],
+            $data['attribute_model'],
+            $data['backend_model'],
+            $data['backend_type'],
+            $data['backend_table'],
+            $data['frontend_model'],
+            $data['frontend_class'],
+            $data['source_model'],
+            $data['is_required'],
+            $data['is_user_defined'],
+            $data['default_value'],
+            $data['is_unique'],
+            $data['note']
+        );
 
         $this->updateMainMapping($migrationContext, $context);
 

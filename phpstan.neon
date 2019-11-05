@@ -3,3 +3,6 @@ parameters:
         - %currentWorkingDirectory%/../SwagMigrationAssistant
     level: 5
     reportUnmatchedIgnoredErrors: false
+    excludes_analyse:
+            - %currentWorkingDirectory%/tests/*
+            - %currentWorkingDirectory%/vendor/*

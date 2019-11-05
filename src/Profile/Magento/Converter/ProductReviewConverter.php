@@ -18,6 +18,11 @@ class ProductReviewConverter extends MagentoConverter
      */
     protected $connectionId;
 
+    /**
+     * @var string
+     */
+    protected $oldIdentifier;
+
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
@@ -34,12 +39,14 @@ class ProductReviewConverter extends MagentoConverter
         $this->generateChecksum($data);
         $originalData = $data;
         $this->connectionId = $migrationContext->getConnection()->getId();
+        $this->oldIdentifier = $data['review_id'];
+        unset($data['review_id']);
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::PRODUCT_REVIEW,
-            $data['review_id'],
+            $this->oldIdentifier,
             $context,
             $this->checksum
         );
@@ -66,12 +73,13 @@ class ProductReviewConverter extends MagentoConverter
         }
         $converted['productId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
+        unset($data['productId']);
 
         if (!isset($data['customer_id'])) {
             new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::PRODUCT_REVIEW,
-                $data['review_id'],
+                $this->oldIdentifier,
                 'customer_id'
             );
 
@@ -99,6 +107,7 @@ class ProductReviewConverter extends MagentoConverter
         }
         $converted['customerId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
+        unset($data['customer_id']);
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -121,6 +130,7 @@ class ProductReviewConverter extends MagentoConverter
         }
         $converted['salesChannelId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
+        unset($data['store_id']);
 
         $converted['languageId'] = $this->mappingService->getLanguageUuid(
             $this->connectionId,
@@ -140,6 +150,7 @@ class ProductReviewConverter extends MagentoConverter
 
             return new ConvertStruct(null, $originalData);
         }
+        unset($data['locale']);
 
         $this->convertValue($converted, 'title', $data, 'title');
         if (empty($converted['title'])) {
@@ -150,12 +161,20 @@ class ProductReviewConverter extends MagentoConverter
         if (isset($data['status'])) {
             $converted['status'] = $data['status'] === 'Approved';
         }
+        unset($data['status']);
 
         if (isset($data['ratings'])) {
             $this->setPoints($converted, $data);
         }
+        unset($data['ratings']);
 
         $this->updateMainMapping($migrationContext, $context);
+
+        // There is no equivalent field
+        unset(
+            $data['detail_id'],
+            $data['nickname']
+        );
 
         if (empty($data)) {
             $data = null;
