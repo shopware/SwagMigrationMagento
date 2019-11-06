@@ -120,7 +120,7 @@ class SalesChannelConverter extends MagentoConverter
             foreach ($data['stores'] as $store) {
                 $mapping = $this->mappingService->getOrCreateMapping(
                     $this->connectionId,
-                    DefaultEntities::SALES_CHANNEL . '_stores',
+                    DefaultEntities::SALES_CHANNEL . '_store',
                     $store['store_id'],
                     $context,
                     null,

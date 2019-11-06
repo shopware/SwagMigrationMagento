@@ -127,7 +127,7 @@ class CustomerConverter extends MagentoConverter
         if (isset($data['store_id'])) {
             $salesChannelMapping = $this->mappingService->getMapping(
                 $this->connectionId,
-                DefaultEntities::SALES_CHANNEL . '_stores',
+                DefaultEntities::SALES_CHANNEL . '_store',
                 $data['store_id'],
                 $context
             );

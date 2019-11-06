@@ -111,7 +111,7 @@ class ProductReviewConverter extends MagentoConverter
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
-            DefaultEntities::SALES_CHANNEL . '_stores',
+            DefaultEntities::SALES_CHANNEL . '_store',
             $data['store_id'],
             $context
         );
