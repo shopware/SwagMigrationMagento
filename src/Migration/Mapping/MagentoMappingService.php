@@ -44,6 +44,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         EntityRepositoryInterface $categoryRepo,
         EntityRepositoryInterface $cmsPageRepo,
         EntityRepositoryInterface $deliveryTimeRepo,
+        EntityRepositoryInterface $documentTypeRepo,
         EntityWriterInterface $entityWriter,
         EntityDefinition $mappingDefinition,
         EntityRepositoryInterface $stateMachineRepo,
@@ -63,6 +64,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
             $categoryRepo,
             $cmsPageRepo,
             $deliveryTimeRepo,
+            $documentTypeRepo,
             $entityWriter,
             $mappingDefinition
         );
