@@ -136,6 +136,18 @@ class CustomerConverter extends MagentoConverter
                 $this->mappingIds[] = $salesChannelMapping['id'];
                 $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
             }
+
+            $languageMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::SALES_CHANNEL . '_store_language',
+                $data['store_id'],
+                $context
+            );
+
+            if ($languageMapping !== null) {
+                $this->mappingIds[] = $languageMapping['id'];
+                $converted['languageId'] = $languageMapping['entityUuid'];
+            }
             unset($data['store_id']);
         }
 
