@@ -1,0 +1,178 @@
+<?php declare(strict_types=1);
+
+namespace Swag\MigrationMagento\Profile\Magento\Converter;
+
+use Shopware\Core\Defaults;
+use Shopware\Core\Framework\Context;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NewsletterRecipientDataSet;
+use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader;
+use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
+use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
+use SwagMigrationAssistant\Migration\MigrationContextInterface;
+
+class NewsletterRecipientConverter extends MagentoConverter
+{
+    /**
+     * @var string
+     */
+    protected $connectionId;
+
+    /**
+     * @var array
+     */
+    protected $originalData;
+
+    /**
+     * @var Context
+     */
+    protected $context;
+
+    /**
+     * @var string
+     */
+    protected $runId;
+
+    public function supports(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
+            && $migrationContext->getDataSet()::getEntity() === NewsletterRecipientDataSet::getEntity();
+    }
+
+    public function getSourceIdentifier(array $data): string
+    {
+        return $data['subscriber_id'];
+    }
+
+    public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
+    {
+        $this->generateChecksum($data);
+        $this->connectionId = $migrationContext->getConnection()->getId();
+        $this->context = $context;
+        $this->runId = $migrationContext->getRunUuid();
+        $this->originalData = $data;
+        $converted = [];
+
+        $languageMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::SALES_CHANNEL . '_store_language',
+            $data['store_id'],
+            $context
+        );
+
+        if ($languageMapping === null) {
+            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::LANGUAGE,
+                $data['store_id'],
+                DefaultEntities::NEWSLETTER_RECIPIENT
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
+
+        $this->mainMapping = $this->mappingService->getOrCreateMapping(
+            $this->connectionId,
+            DefaultEntities::NEWSLETTER_RECIPIENT,
+            $data['subscriber_id'],
+            $context,
+            $this->checksum
+        );
+        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['languageId'] = $languageMapping['entityUuid'];
+        $converted['hash'] = $data['subscriber_confirm_code'];
+
+        $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
+        $salesChannelMapping = $this->getSalesChannelMapping($data);
+        if ($salesChannelMapping === null) {
+            return new ConvertStruct(null, $this->originalData);
+        }
+        $this->mappingIds[] = $salesChannelMapping['id'];
+        $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+
+        $this->convertValue($converted, 'email', $data, 'subscriber_email');
+
+        if (isset($data['firstName'])) {
+            $this->convertValue($converted, 'firstName', $data, 'firstName');
+        }
+        if (isset($data['lastName'])) {
+            $this->convertValue($converted, 'lastName', $data, 'lastName');
+        }
+        if (isset($data['title'])) {
+            $this->convertValue($converted, 'title', $data, 'title');
+        }
+        $status = $this->getStatus($data);
+        if ($status === null) {
+            return new ConvertStruct(null, $this->originalData);
+        }
+        $converted['status'] = $status;
+
+        $this->updateMainMapping($migrationContext, $context);
+
+        unset(
+            $data['subscriber_id'],
+            $data['store_id'],
+            $data['subscriber_status'],
+            $data['subscriber_confirm_code']
+        );
+
+        if (empty($data)) {
+            $data = null;
+        }
+
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+    }
+
+    private function getSalesChannelMapping(array $data): ?array
+    {
+        $salesChannelMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::SALES_CHANNEL . '_store',
+            $data['store_id'],
+            $this->context
+        );
+
+        if ($salesChannelMapping === null) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::NEWSLETTER_RECIPIENT,
+                $data['subscriber_id'],
+                'salesChannel'
+            ));
+        }
+
+        return $salesChannelMapping;
+    }
+
+    private function getStatus(array $data): ?string
+    {
+        $status = $this->mappingService->getValue(
+            $this->connectionId,
+            NewsletterRecipientStatusReader::getMappingName(),
+            $data['subscriber_status'],
+            $this->context
+        );
+
+        if ($status === null) {
+            $status = $this->mappingService->getValue(
+                $this->connectionId,
+                NewsletterRecipientStatusReader::getMappingName(),
+                'default_newsletter_recipient_status',
+                $this->context
+            );
+        }
+
+        if ($status === null) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::NEWSLETTER_RECIPIENT,
+                $data['subscriber_id'],
+                'status'
+            ));
+        }
+
+        return $status;
+    }
+}

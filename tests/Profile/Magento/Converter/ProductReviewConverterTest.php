@@ -91,7 +91,7 @@ class ProductReviewConverterTest extends TestCase
 
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
-            DefaultEntities::SALES_CHANNEL . '_stores',
+            DefaultEntities::SALES_CHANNEL . '_store',
             '1',
             $context,
             null,
@@ -173,7 +173,7 @@ class ProductReviewConverterTest extends TestCase
     {
         $productReviewData = require __DIR__ . '/../../../_fixtures/product_review_data.php';
 
-        $this->mappingService->deleteDummyMapping(DefaultEntities::SALES_CHANNEL . '_stores', '1');
+        $this->mappingService->deleteDummyMapping(DefaultEntities::SALES_CHANNEL . '_store', '1');
 
         $context = Context::createDefaultContext();
         $convertResult = $this->productReviewConverter->convert($productReviewData[0], $context, $this->migrationContext);

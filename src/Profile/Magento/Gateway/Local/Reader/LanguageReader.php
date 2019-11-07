@@ -25,19 +25,41 @@ class LanguageReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'locales');
-        $query->addSelect('scope_id as store_id');
-        $query->addSelect('value as locale');
+        $query->from('core_store', 'store');
+        $query->leftJoin(
+            'store',
+            'core_config_data',
+            'localeconfig',
+            'localeconfig.scope = \'stores\' AND localeconfig.path = \'general/locale/code\' AND store.store_id = localeconfig.scope_id'
+        );
+        $query->innerJoin(
+            'store',
+            'core_config_data',
+            'defaultlocale',
+            'defaultlocale.scope = \'default\' AND defaultlocale.path = \'general/locale/code\''
+        );
+        $query->addSelect('store.store_id');
+        $query->addSelect('localeconfig.value as locale');
+        $query->addSelect('defaultlocale.value as defaultLocale');
 
-        $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
-
-        $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        $configurations = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
 
         $storeConfigs = [];
-        foreach ($configurations as $key => $storeConfig) {
-            $storeConfigs[$key]['locale'] = str_replace('_', '-', $storeConfig['locale']);
+        foreach ($configurations as $storeConfig) {
+            if ($storeConfig['locale'] === null) {
+                $storeConfig['locale'] = $storeConfig['defaultLocale'];
+            }
+            if (isset($storeConfigs[$storeConfig['locale']])) {
+                $storeConfigs[$storeConfig['locale']]['stores'][] = $storeConfig['store_id'];
+
+                continue;
+            }
+            $storeConfigs[$storeConfig['locale']] = [
+                'locale' => str_replace('_', '-', $storeConfig['locale']),
+                'stores' => [$storeConfig['store_id']],
+            ];
         }
 
-        return $storeConfigs;
+        return array_values($storeConfigs);
     }
 }

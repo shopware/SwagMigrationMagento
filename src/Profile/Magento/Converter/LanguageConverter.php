@@ -61,11 +61,21 @@ class LanguageConverter extends MagentoConverter
         );
 
         if ($languageUuid !== null) {
+            foreach ($data['stores'] as $storeId) {
+                $this->mappingService->getOrCreateMapping(
+                    $this->connectionId,
+                    DefaultEntities::SALES_CHANNEL . '_store_language',
+                    $storeId,
+                    $this->context,
+                    null,
+                    null,
+                    $languageUuid
+                );
+            }
+
             return new ConvertStruct(null, $data);
         }
-
         $languageData = LanguageRegistry::get($this->oldIdentifier);
-
         if ($languageData === null) {
             return new ConvertStruct(null, $data);
         }
@@ -92,6 +102,20 @@ class LanguageConverter extends MagentoConverter
             $this->checksum
         );
 
+        foreach ($data['stores'] as $storeId) {
+            $languageMapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::SALES_CHANNEL . '_store_language',
+                $storeId,
+                $this->context,
+                null,
+                null,
+                $languageUuid
+            );
+            $this->mappingIds[] = $languageMapping['id'];
+        }
+        unset($data['stores']);
+
         $converted['id'] = $this->mainMapping['entityUuid'];
         $converted['name'] = $languageData['name'];
         $converted['localeId'] = $localeUuid;
@@ -101,6 +125,7 @@ class LanguageConverter extends MagentoConverter
         if (empty($data)) {
             $data = null;
         }
+        $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }

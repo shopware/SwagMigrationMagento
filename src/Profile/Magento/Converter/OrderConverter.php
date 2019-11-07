@@ -305,7 +305,7 @@ class OrderConverter extends MagentoConverter
         if (isset($data['orders']['store_id'])) {
             $salesChannelMapping = $this->mappingService->getMapping(
                 $this->connectionId,
-                DefaultEntities::SALES_CHANNEL . '_stores',
+                DefaultEntities::SALES_CHANNEL . '_store',
                 $data['orders']['store_id'],
                 $context
             );
