@@ -58,11 +58,14 @@ class ManufacturerConverter extends MagentoConverter
             $this->context,
             $this->checksum
         );
-
-        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
+        unset($data['option_id']);
 
         $this->convertValue($converted, 'name', $data, 'value');
+
+        if (empty($data)) {
+            $data = null;
+        }
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }

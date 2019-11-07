@@ -48,6 +48,16 @@ class SalesChannelConverter extends MagentoConverter
         'store_group',
     ];
 
+    /**
+     * @var string
+     */
+    protected $runId;
+
+    /**
+     * @var string
+     */
+    protected $oldIdentifier;
+
     public function __construct(MagentoMappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
     {
         parent::__construct($mappingService, $loggingService);
@@ -87,6 +97,8 @@ class SalesChannelConverter extends MagentoConverter
         $this->generateChecksum($data);
         $this->context = $context;
         $this->connectionId = $migrationContext->getConnection()->getId();
+        $this->runId = $migrationContext->getRunUuid();
+        $this->oldIdentifier = $data['website_id'];
 
         /*
          * Set main mapping
@@ -94,11 +106,12 @@ class SalesChannelConverter extends MagentoConverter
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::SALES_CHANNEL,
-            $data['website_id'],
+            $this->oldIdentifier,
             $context,
             $this->checksum
         );
         $converted['id'] = $this->mainMapping['entityUuid'];
+        unset($data['website_id']);
 
         /*
          * Create the store mappings
@@ -126,6 +139,7 @@ class SalesChannelConverter extends MagentoConverter
                 );
             }
         }
+        unset($data['stores']);
 
         /*
          * Todo: Add Customer Group Association
@@ -144,7 +158,7 @@ class SalesChannelConverter extends MagentoConverter
         if ($languageUuid === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
+                    $this->runId,
                     DefaultEntities::LANGUAGE,
                     $data['defaultLocale'],
                     DefaultEntities::SALES_CHANNEL
@@ -155,6 +169,7 @@ class SalesChannelConverter extends MagentoConverter
         }
         $converted['languageId'] = $languageUuid;
         $converted['languages'] = $this->getSalesChannelLanguages($languageUuid, $data, $context);
+        unset($data['locales']);
 
         /*
          * Set main currency and allowed currencies
@@ -168,7 +183,7 @@ class SalesChannelConverter extends MagentoConverter
         if ($currencyUuid === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
+                    $this->runId,
                     DefaultEntities::CURRENCY,
                     $data['defaultCurrency'],
                     DefaultEntities::SALES_CHANNEL
@@ -179,6 +194,7 @@ class SalesChannelConverter extends MagentoConverter
         }
         $converted['currencyId'] = $currencyUuid;
         $converted['currencies'] = $this->getSalesChannelCurrencies($currencyUuid, $data, $context);
+        unset($data['currencies'], $data['defaultCurrency']);
 
         /*
          * Set navigation category
@@ -193,7 +209,7 @@ class SalesChannelConverter extends MagentoConverter
         if ($categoryMapping === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
+                    $this->runId,
                     DefaultEntities::CATEGORY,
                     $data['store_group']['root_category_id'],
                     DefaultEntities::SALES_CHANNEL
@@ -205,6 +221,7 @@ class SalesChannelConverter extends MagentoConverter
         $categoryUuid = $categoryMapping['entityUuid'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
+        unset($data['store_group']);
 
         /*
          * Set main country and allowed countries
@@ -218,7 +235,7 @@ class SalesChannelConverter extends MagentoConverter
         if ($countryUuid === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
+                    $this->runId,
                     DefaultEntities::COUNTRY,
                     $data['defaultCountry'],
                     DefaultEntities::SALES_CHANNEL
@@ -229,29 +246,65 @@ class SalesChannelConverter extends MagentoConverter
         }
         $converted['countryId'] = $countryUuid;
         $converted['countries'] = $this->getSalesChannelCountries($countryUuid, $data, $context);
+        unset($data['countries'], $data['defaultCountry']);
 
         /*
          * Set main payment method and allowed payment methods
          */
         $converted['paymentMethods'] = $this->getPaymentMethods($data, $context);
+        if (empty($converted['paymentMethods'])) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::SALES_CHANNEL,
+                $this->oldIdentifier,
+                'payment methods'
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
+        unset($data['payments']);
 
         /*
          * Set main shipping method and allowed shipping methods
          */
         $converted['shippingMethods'] = $this->getShippingMethods($data, $context);
+        if (empty($converted['shippingMethods'])) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::SALES_CHANNEL,
+                $this->oldIdentifier,
+                'shipping methods'
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
         $converted['shippingMethodId'] = $converted['shippingMethods'][0]['id'];
+        unset($data['carriers']);
 
         /*
          * Set translations
          */
         $this->getSalesChannelTranslation($converted, $data);
+        unset($data['defaultLocale']);
 
         $converted['typeId'] = Defaults::SALES_CHANNEL_TYPE_STOREFRONT;
         $converted['accessKey'] = AccessKeyHelper::generateAccessKey('sales-channel');
         $this->convertValue($converted, 'name', $data, 'name');
 
         $this->updateMainMapping($migrationContext, $context);
+
+        // There is no equivalent field
+        unset(
+            $data['code'],
+            $data['sort_order'],
+            $data['default_group_id'],
+            $data['is_default'],
+            $data['is_staging'],
+            $data['master_login'],
+            $data['master_password'],
+            $data['visibility']
+        );
 
         if (empty($data)) {
             $data = null;
@@ -354,6 +407,13 @@ class SalesChannelConverter extends MagentoConverter
                 );
 
                 if ($mapping === null) {
+                    $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                        $this->runId,
+                        DefaultEntities::PAYMENT_METHOD,
+                        $payment['payment_id'],
+                        DefaultEntities::SALES_CHANNEL
+                    ));
+
                     continue;
                 }
 
@@ -380,6 +440,13 @@ class SalesChannelConverter extends MagentoConverter
                 );
 
                 if ($mapping === null) {
+                    $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                        $this->runId,
+                        DefaultEntities::SHIPPING_METHOD,
+                        $payment['carrier_id'],
+                        DefaultEntities::SALES_CHANNEL
+                    ));
+
                     continue;
                 }
 
@@ -407,7 +474,7 @@ class SalesChannelConverter extends MagentoConverter
         $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::SALES_CHANNEL_TRANSLATION,
-            $data['website_id'] . ':' . $data['defaultLocale'],
+            $this->oldIdentifier . ':' . $data['defaultLocale'],
             $this->context
         );
         $localeTranslation['id'] = $mapping['entityUuid'];

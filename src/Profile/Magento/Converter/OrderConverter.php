@@ -119,7 +119,7 @@ class OrderConverter extends MagentoConverter
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::ORDER,
-                $data['orders']['entity_id'],
+                $data['identifier'],
                 implode(',', $fields)
             ));
 
@@ -183,6 +183,7 @@ class OrderConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
         $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
+        unset($data['customerSalutation']);
 
         $this->convertValue($converted['orderCustomer'], 'email', $data['orders'], 'customer_email');
         $this->convertValue($converted['orderCustomer'], 'firstName', $data['orders'], 'customer_firstname');
@@ -268,6 +269,7 @@ class OrderConverter extends MagentoConverter
             $converted['shippingCosts'] = $shippingCosts;
 
             $this->getTransactions($data, $converted);
+            unset($data['items'], $data['orders']['payment']);
         }
 
         /*
@@ -276,6 +278,7 @@ class OrderConverter extends MagentoConverter
         if (isset($data['shipments'])) {
             $converted['deliveries'] = $this->getDeliveries($data, $converted, $shippingCosts);
         }
+        unset($data['shippingAddress']);
 
         /*
          * Set billing address
@@ -293,7 +296,7 @@ class OrderConverter extends MagentoConverter
         }
         $converted['billingAddressId'] = $billingAddress['id'];
         $converted['addresses'][] = $billingAddress;
-        unset($data['billingaddress']);
+        unset($data['billingAddress']);
 
         /*
          * Set sales channel
@@ -312,6 +315,7 @@ class OrderConverter extends MagentoConverter
                 $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
             }
         }
+        unset($data['orders'], $data['identifier']);
 
         if (empty($data)) {
             $data = null;

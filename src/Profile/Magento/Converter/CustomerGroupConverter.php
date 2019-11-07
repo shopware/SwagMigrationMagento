@@ -46,6 +46,7 @@ class CustomerGroupConverter extends MagentoConverter
             $this->checksum
         );
         $converted['id'] = $this->mainMapping['entityUuid'];
+        unset($data['customer_group_id'], $data['tax_class_id']);
 
         $this->convertValue($converted, 'name', $data, 'customer_group_code');
 

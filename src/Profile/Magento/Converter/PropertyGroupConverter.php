@@ -56,11 +56,12 @@ class PropertyGroupConverter extends MagentoConverter
                 $this->runId,
                 DefaultEntities::PROPERTY_GROUP,
                 $this->oldIdentifier,
-                'group'
+                'group name'
             ));
 
             return new ConvertStruct(null, $data);
         }
+        unset($data['id']);
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
@@ -74,15 +75,18 @@ class PropertyGroupConverter extends MagentoConverter
             'id' => $this->mainMapping['entityUuid'],
             'name' => $data['name'],
         ];
+        unset($data['name']);
 
         $this->getProperties($data, $converted);
+        unset($data['options']);
+
         $this->updateMainMapping($migrationContext, $context);
 
         if (empty($data)) {
             $data = null;
         }
 
-        return new ConvertStruct($converted, $data);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
     protected function getProperties(array $data, array &$converted): void

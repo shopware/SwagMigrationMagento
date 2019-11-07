@@ -71,6 +71,7 @@ class NotAssociatedMediaConverter extends MagentoConverter
                 'mediaId' => $converted['id'],
             ]
         );
+        unset($data['path']);
 
         $this->updateMainMapping($migrationContext, $context);
 

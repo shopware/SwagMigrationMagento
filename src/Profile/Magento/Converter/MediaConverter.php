@@ -70,10 +70,12 @@ class MediaConverter extends MagentoConverter
                 'mediaId' => $converted['id'],
             ]
         );
+        unset($data['path']);
 
         if (isset($data['label'])) {
             $this->convertValue($converted, 'title', $data, 'label');
         }
+        unset($data['label']);
 
         $albumUuid = $this->mappingService->getDefaultFolderIdByEntity(DefaultEntities::PRODUCT, $migrationContext, $context);
         if ($albumUuid !== null) {

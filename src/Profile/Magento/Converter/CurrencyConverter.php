@@ -23,6 +23,11 @@ class CurrencyConverter extends MagentoConverter
      */
     protected $connectionId;
 
+    /**
+     * @var string
+     */
+    protected $oldIdentifier;
+
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
@@ -36,17 +41,19 @@ class CurrencyConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        $this->oldIdentifier = $data['isoCode'];
         $this->connectionId = $migrationContext->getConnection()->getId();
-        $currencyValue = CurrencyRegistry::get($data['isoCode']);
+        $currencyValue = CurrencyRegistry::get($this->oldIdentifier);
 
         if ($currencyValue === null) {
             return new ConvertStruct(null, $data);
         }
+        unset($data['isoCode']);
 
         $this->generateChecksum($data);
         $currencyUuid = $this->mappingService->getCurrencyUuid(
             $this->connectionId,
-            $data['isoCode'],
+            $this->oldIdentifier,
             $context
         );
 
@@ -54,7 +61,7 @@ class CurrencyConverter extends MagentoConverter
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
                 $migrationContext->getConnection()->getId(),
                 DefaultEntities::CURRENCY,
-                $data['isoCode'],
+                $this->oldIdentifier,
                 $context,
                 $this->checksum
             );
@@ -62,7 +69,7 @@ class CurrencyConverter extends MagentoConverter
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::CURRENCY,
-                $data['isoCode'],
+                $this->oldIdentifier,
                 $context,
                 $this->checksum,
                 null,
@@ -85,18 +92,19 @@ class CurrencyConverter extends MagentoConverter
         $converted['id'] = $currencyUuid;
         $converted['name'] = $currencyValue['name'];
         $converted['symbol'] = $currencyValue['symbol'];
-        $converted['isoCode'] = $data['isoCode'];
-        $converted['shortName'] = $data['isoCode'];
+        $converted['isoCode'] = $this->oldIdentifier;
+        $converted['shortName'] = $this->oldIdentifier;
         $converted['decimalPrecision'] = $context->getCurrencyPrecision();
 
         /*
          * Todo: Migrate currency factor
          */
         $converted['factor'] = 1.0;
+        unset($data['isBaseCurrency']);
 
         foreach ($currencyValue['translations'] as $key => $value) {
             $languageUuid = $currencyUuid;
-            if ($key !== $data['isoCode']) {
+            if ($key !== $this->oldIdentifier) {
                 $uuid = $this->mappingService->getLanguageUuid($this->connectionId, $key, $context);
 
                 if ($uuid === null) {

@@ -36,7 +36,6 @@ class CustomerConverter extends MagentoConverter
      * @var string[]
      */
     protected static $requiredDataFieldKeys = [
-        'entity_id',
         'email',
         'firstname',
         'lastname',
@@ -96,6 +95,7 @@ class CustomerConverter extends MagentoConverter
         $this->oldIdentifier = $data['entity_id'];
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
+        unset($data['entity_id']);
 
         /*
          * Set main mapping
@@ -118,8 +118,6 @@ class CustomerConverter extends MagentoConverter
             $this->mainMapping['entityUuid']
         );
         $this->mappingIds[] = $mapping['id'];
-
-        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
 
         /*
@@ -138,6 +136,7 @@ class CustomerConverter extends MagentoConverter
                 $this->mappingIds[] = $salesChannelMapping['id'];
                 $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
             }
+            unset($data['store_id']);
         }
 
         $converted['guest'] = false;
@@ -150,7 +149,7 @@ class CustomerConverter extends MagentoConverter
         $this->convertValue($converted, 'customerNumber', $data, 'increment_id');
 
         if (!isset($converted['customerNumber']) || $converted['customerNumber'] === '') {
-            $converted['customerNumber'] = 'number-' . $data['entity_id'];
+            $converted['customerNumber'] = 'number-' . $this->oldIdentifier;
         }
 
         /*
@@ -161,6 +160,7 @@ class CustomerConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
         $converted['salutationId'] = $salutationUuid;
+        unset($data['gender']);
 
         /*
          * Todo: CustomerGroup-Zuweisung
@@ -181,6 +181,7 @@ class CustomerConverter extends MagentoConverter
          */
         if (isset($data['addresses']) && !empty($data['addresses'])) {
             $this->getAddresses($data, $converted, $this->mainMapping['entityUuid']);
+            unset($data['addresses']);
         }
 
         /*
@@ -198,8 +199,30 @@ class CustomerConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
+        unset($data['default_billing'], $data['default_shipping']);
 
         $this->updateMainMapping($migrationContext, $context);
+
+        // There is no equivalent field
+        unset(
+            $data['entity_type_id'],
+            $data['attribute_set_id'],
+            $data['website_id'],
+            $data['group_id'],
+            $data['created_at'],
+            $data['updated_at'],
+            $data['disable_auto_group_change'],
+            $data['confirmation'],
+            $data['created_in'],
+            $data['middlename'],
+            $data['password_hash'],
+            $data['reward_update_notification'],
+            $data['reward_warning_notification'],
+            $data['rp_token'],
+            $data['rp_token_created_at'],
+            $data['suffix'],
+            $data['taxvat']
+        );
 
         if (empty($data)) {
             $data = null;
@@ -235,14 +258,14 @@ class CustomerConverter extends MagentoConverter
             $newAddress['id'] = $addressMapping['entityUuid'];
             $this->mappingIds[] = $addressMapping['id'];
 
-            if (isset($originalData['default_billing_address_id']) && $address['entity_id'] === $originalData['default_billing_address_id']) {
+            if (isset($originalData['default_billing']) && $address['entity_id'] === $originalData['default_billing']) {
                 $converted['defaultBillingAddressId'] = $newAddress['id'];
-                unset($originalData['default_billing_address_id']);
+                unset($originalData['default_billing']);
             }
 
-            if (isset($originalData['default_shipping_address_id']) && $address['entity_id'] === $originalData['default_shipping_address_id']) {
+            if (isset($originalData['default_shipping']) && $address['entity_id'] === $originalData['default_shipping']) {
                 $converted['defaultShippingAddressId'] = $newAddress['id'];
-                unset($originalData['default_shipping_address_id']);
+                unset($originalData['default_shipping']);
             }
 
             $newAddress['salutationId'] = $converted['salutationId'];

@@ -92,6 +92,7 @@ class CountryConverter extends MagentoConverter
             $localeTranslation['name'] = $value;
             $converted['translations'][$languageUuid] = $localeTranslation;
         }
+        unset($data['isoCode']);
 
         $this->updateMainMapping($migrationContext, $context);
 
