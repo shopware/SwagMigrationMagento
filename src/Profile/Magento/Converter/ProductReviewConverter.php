@@ -37,7 +37,7 @@ class ProductReviewConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
-        $originalData = $data;
+        $this->originalData = $data;
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->oldIdentifier = $data['review_id'];
         unset($data['review_id']);
@@ -69,7 +69,7 @@ class ProductReviewConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['productId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
@@ -103,7 +103,7 @@ class ProductReviewConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['customerId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
@@ -126,7 +126,7 @@ class ProductReviewConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['salesChannelId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
@@ -148,7 +148,7 @@ class ProductReviewConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
         unset($data['locale']);
 

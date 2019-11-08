@@ -58,6 +58,11 @@ class CustomerConverterTest extends TestCase
      */
     private $countryMappingUuid;
 
+    /**
+     * @var string
+     */
+    private $customerGroupUuid;
+
     protected function setUp(): void
     {
         $mappingService = new DummyMagentoMappingService();
@@ -89,6 +94,17 @@ class CustomerConverterTest extends TestCase
             null,
             null,
             $this->mrMappingUuid
+        );
+
+        $this->customerGroupUuid = Uuid::randomHex();
+        $mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::CUSTOMER_GROUP,
+            '2',
+            $context,
+            null,
+            null,
+            $this->customerGroupUuid
         );
 
         $this->paymentMappingUuid = Uuid::randomHex();

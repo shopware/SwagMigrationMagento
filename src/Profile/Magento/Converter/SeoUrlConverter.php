@@ -37,7 +37,7 @@ class SeoUrlConverter extends MagentoConverter
     {
         $this->generateChecksum($data);
         $this->connectionId = $migrationContext->getConnection()->getId();
-        $originalData = $data;
+        $this->originalData = $data;
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -66,7 +66,7 @@ class SeoUrlConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['salesChannelId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
@@ -86,7 +86,7 @@ class SeoUrlConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
         $this->mappingIds[] = $converted['languageId'];
         unset($data['_locale']);
@@ -115,7 +115,7 @@ class SeoUrlConverter extends MagentoConverter
                     )
                 );
 
-                return new ConvertStruct(null, $originalData);
+                return new ConvertStruct(null, $this->originalData);
             }
             $converted['foreignKey'] = $mapping['entityUuid'];
             $converted['routeName'] = self::ROUTE_NAME_PRODUCT;
@@ -139,7 +139,7 @@ class SeoUrlConverter extends MagentoConverter
                     )
                 );
 
-                return new ConvertStruct(null, $originalData);
+                return new ConvertStruct(null, $this->originalData);
             }
             $converted['isCanonical'] = true;
             $converted['isModified'] = true;
@@ -152,12 +152,12 @@ class SeoUrlConverter extends MagentoConverter
                 new EmptyNecessaryFieldRunLog(
                     $migrationContext->getRunUuid(),
                     DefaultEntities::SEO_URL,
-                    $originalData['url_rewrite_id'],
+                    $this->originalData['url_rewrite_id'],
                     'category_id, product_id'
                 )
             );
 
-            return new ConvertStruct(null, $originalData);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
@@ -189,7 +189,7 @@ class SeoUrlConverter extends MagentoConverter
                     )
                 );
 
-                return new ConvertStruct(null, $data);
+                return new ConvertStruct(null, $this->originalData);
             }
         }
 

@@ -95,6 +95,7 @@ class SalesChannelConverter extends MagentoConverter
          * Set main data
          */
         $this->generateChecksum($data);
+        $this->originalData = $data;
         $this->context = $context;
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runId = $migrationContext->getRunUuid();
@@ -141,10 +142,17 @@ class SalesChannelConverter extends MagentoConverter
         }
         unset($data['stores']);
 
-        /*
-         * Todo: Add Customer Group Association
-         */
-        $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
+        $mapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::CUSTOMER_GROUP,
+            $data['default_group_id'],
+            $context
+        );
+        if ($mapping === null) {
+            return new ConvertStruct(null, $this->originalData);
+        }
+        $converted['customerGroupId'] = $mapping['entityUuid'];
+        unset($data['default_group_id']);
 
         /*
          * Set main language and allowed languages
@@ -165,7 +173,7 @@ class SalesChannelConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['languageId'] = $languageUuid;
         $converted['languages'] = $this->getSalesChannelLanguages($languageUuid, $data, $context);
@@ -190,7 +198,7 @@ class SalesChannelConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['currencyId'] = $currencyUuid;
         $converted['currencies'] = $this->getSalesChannelCurrencies($currencyUuid, $data, $context);
@@ -216,7 +224,7 @@ class SalesChannelConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $categoryUuid = $categoryMapping['entityUuid'];
         $this->mappingIds[] = $categoryMapping['id'];
@@ -242,7 +250,7 @@ class SalesChannelConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['countryId'] = $countryUuid;
         $converted['countries'] = $this->getSalesChannelCountries($countryUuid, $data, $context);
@@ -260,7 +268,7 @@ class SalesChannelConverter extends MagentoConverter
                 'payment methods'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
         unset($data['payments']);
@@ -277,7 +285,7 @@ class SalesChannelConverter extends MagentoConverter
                 'shipping methods'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['shippingMethodId'] = $converted['shippingMethods'][0]['id'];
         unset($data['carriers']);

@@ -47,6 +47,7 @@ class LanguageConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
+        $this->originalData = $data;
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
         $this->oldIdentifier = $data['locale'];
@@ -73,11 +74,11 @@ class LanguageConverter extends MagentoConverter
                 );
             }
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $languageData = LanguageRegistry::get($this->oldIdentifier);
         if ($languageData === null) {
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         $localeUuid = null;
@@ -91,7 +92,7 @@ class LanguageConverter extends MagentoConverter
         }
 
         if ($localeUuid === null) {
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(

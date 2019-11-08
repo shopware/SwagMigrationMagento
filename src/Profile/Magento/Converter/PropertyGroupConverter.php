@@ -46,6 +46,7 @@ class PropertyGroupConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
+        $this->originalData = $data;
         $this->context = $context;
         $this->runId = $migrationContext->getRunUuid();
         $this->connectionId = $migrationContext->getConnection()->getId();
@@ -59,7 +60,7 @@ class PropertyGroupConverter extends MagentoConverter
                 'group name'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         unset($data['id']);
 
