@@ -23,6 +23,10 @@ Currently you can migrate the following data:
 
 This plugin is still in development.
 
+## Documentation
+
+If you need further information. You can have a look at our [user documentation](https://docs.shopware.com/en/migration-en/Migrationprocess?category=migration-en) and our [developer documentation](https://docs.shopware.com/en/shopware-platform-dev-en/internals/plugins/shopware-migration-assistant).
+
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE) for more information.
