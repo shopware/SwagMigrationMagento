@@ -130,6 +130,7 @@ class OrderConverter extends MagentoConverter
          * Set main data
          */
         $this->generateChecksum($data);
+        $this->originalData = $data;
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
 
@@ -180,7 +181,7 @@ class OrderConverter extends MagentoConverter
         $salutation = $data['orders']['customer_salutation'] ?? 'mr';
         $this->salutationUuid = $this->getSalutation($salutation);
         if ($this->salutationUuid === null) {
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
         unset($data['customerSalutation']);
@@ -212,7 +213,7 @@ class OrderConverter extends MagentoConverter
                 'currency'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         $converted['currencyId'] = $currencyUuid;
@@ -236,7 +237,7 @@ class OrderConverter extends MagentoConverter
                 $this->oldIdentifier
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['stateId'] = $stateMapping['entityUuid'];
         $this->mappingIds[] = $stateMapping['id'];
@@ -292,7 +293,7 @@ class OrderConverter extends MagentoConverter
                 'billingAddress'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['billingAddressId'] = $billingAddress['id'];
         $converted['addresses'][] = $billingAddress;

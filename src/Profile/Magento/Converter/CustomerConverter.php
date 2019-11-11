@@ -90,6 +90,7 @@ class CustomerConverter extends MagentoConverter
          * Set main data
          */
         $this->generateChecksum($data);
+        $this->originalData = $data;
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
         $this->oldIdentifier = $data['entity_id'];
@@ -169,22 +170,29 @@ class CustomerConverter extends MagentoConverter
          */
         $salutationUuid = $this->getSalutation($data['gender']);
         if ($salutationUuid === null) {
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['salutationId'] = $salutationUuid;
         unset($data['gender']);
 
-        /*
-         * Todo: CustomerGroup-Zuweisung
-         */
-        $converted['groupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
+        $mapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::CUSTOMER_GROUP,
+            $data['group_id'],
+            $context
+        );
+        if ($mapping === null) {
+            return new ConvertStruct(null, $this->originalData);
+        }
+        $converted['groupId'] = $mapping['entityUuid'];
+        unset($data['group_id']);
 
         /*
          * Set payment method
          */
         $defaultPaymentMethodUuid = $this->getDefaultPaymentMethod();
         if ($defaultPaymentMethodUuid === null) {
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         $converted['defaultPaymentMethodId'] = $defaultPaymentMethodUuid;
 
@@ -209,7 +217,7 @@ class CustomerConverter extends MagentoConverter
                 'address data'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         unset($data['default_billing'], $data['default_shipping']);
 
@@ -220,7 +228,6 @@ class CustomerConverter extends MagentoConverter
             $data['entity_type_id'],
             $data['attribute_set_id'],
             $data['website_id'],
-            $data['group_id'],
             $data['created_at'],
             $data['updated_at'],
             $data['disable_auto_group_change'],

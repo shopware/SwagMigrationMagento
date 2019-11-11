@@ -81,6 +81,7 @@ class SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'freeshipping', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'ups', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, '1', $context, null, null, Uuid::randomHex());
     }
 
     public function testSupports(): void

@@ -77,18 +77,12 @@ class ProductConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
+        $this->originalData = $data;
         $this->context = $context;
         $this->migrationContext = $migrationContext;
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runUuid = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['entity_id'];
-
-        // produktypen
-        // grouped > auch als Variante zu behandeln
-        // simple > normal
-        // configurable product > variante
-        // bundle > not supported yet > haben keine Steuersätze und sind auch eine Art container > noch nicht migrieren
-        // virtual / downloadable > not supported yet
         $converted = [];
 
         /*
@@ -112,7 +106,7 @@ class ProductConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         /*
@@ -129,7 +123,7 @@ class ProductConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
         unset($data['tax_class_id']);
 
@@ -143,7 +137,7 @@ class ProductConverter extends MagentoConverter
                 )
             );
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         $converted['price'] = $this->getPrice($data, $converted);
@@ -156,7 +150,7 @@ class ProductConverter extends MagentoConverter
                 'currency'
             ));
 
-            return new ConvertStruct(null, $data);
+            return new ConvertStruct(null, $this->originalData);
         }
 
         /*

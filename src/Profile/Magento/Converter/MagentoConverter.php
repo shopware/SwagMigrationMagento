@@ -18,6 +18,11 @@ abstract class MagentoConverter extends Converter
      */
     protected $migrationContext;
 
+    /**
+     * @var array
+     */
+    protected $originalData;
+
     protected function convertValue(
         array &$newData,
         string $newKey,
