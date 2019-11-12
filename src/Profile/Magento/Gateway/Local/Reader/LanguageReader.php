@@ -25,16 +25,16 @@ class LanguageReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_store', 'store');
+        $query->from($this->tablePrefix . 'core_store', 'store');
         $query->leftJoin(
             'store',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'localeconfig',
             'localeconfig.scope = \'stores\' AND localeconfig.path = \'general/locale/code\' AND store.store_id = localeconfig.scope_id'
         );
         $query->innerJoin(
             'store',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'defaultlocale',
             'defaultlocale.scope = \'default\' AND defaultlocale.path = \'general/locale/code\''
         );

@@ -89,9 +89,9 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_website', 'website');
+        $query->from($this->tablePrefix . 'core_website', 'website');
         $query->addSelect('website.website_id as identifier');
-        $this->addTableSelection($query, 'core_website', 'website');
+        $this->addTableSelection($query, $this->tablePrefix . 'core_website', 'website');
 
         $query->andWhere('website_id != 0');
         $query->setFirstResult($migrationContext->getOffset());
@@ -104,7 +104,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'defaultCurrency');
+        $query->from($this->tablePrefix . 'core_config_data', 'defaultCurrency');
         $query->addSelect('defaultCurrency.value AS defaultCurrency');
 
         $query->andWhere('defaultCurrency.scope = \'default\'');
@@ -112,7 +112,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
 
         $query->leftJoin(
             'defaultCurrency',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'defaultAllowedCurrencies',
             'defaultAllowedCurrencies.scope = \'default\' AND defaultAllowedCurrencies.path = \'currency/options/allow\''
         );
@@ -120,7 +120,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
 
         $query->leftJoin(
             'defaultCurrency',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'defaultCountry',
             'defaultCountry.scope = \'default\' AND defaultCountry.path = \'general/country/default\''
         );
@@ -128,7 +128,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
 
         $query->leftJoin(
             'defaultCurrency',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'defaultAllowedCountries',
             'defaultAllowedCountries.scope = \'default\' AND defaultAllowedCountries.path = \'general/country/allow\''
         );
@@ -136,7 +136,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
 
         $query->leftJoin(
             'defaultCurrency',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'defaultLocale',
             'defaultLocale.scope = \'default\' AND defaultLocale.path = \'general/locale/code\''
         );
@@ -155,9 +155,9 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_store', 'store');
+        $query->from($this->tablePrefix . 'core_store', 'store');
         $query->addSelect('store.website_id as website');
-        $this->addTableSelection($query, 'core_store', 'store');
+        $this->addTableSelection($query, $this->tablePrefix . 'core_store', 'store');
 
         $query->andWhere('website_id in (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
@@ -169,9 +169,9 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_store_group', 'storeGroup');
+        $query->from($this->tablePrefix . 'core_store_group', 'storeGroup');
         $query->addSelect('storeGroup.website_id as website');
-        $this->addTableSelection($query, 'core_store_group', 'storeGroup');
+        $this->addTableSelection($query, $this->tablePrefix . 'core_store_group', 'storeGroup');
 
         $query->andWhere('website_id in (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
@@ -181,54 +181,46 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
 
     private function fetchCarriers(): array
     {
-        $sql = "
-        SELECT carrier.* FROM
-              (
-                  SELECT
-                    REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
-                    config.*
-                  FROM core_config_data config
-                  WHERE path LIKE 'carriers/%/title'
-                        AND scope = 'default'
-              ) AS carrier,
-              
-              (
-                  SELECT
-                    REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
-                  FROM core_config_data config
-                  WHERE path LIKE 'carriers/%/active'
-                        AND scope = 'default'
-                        AND value = true
-              ) AS carrier_active
-        WHERE carrier.carrier_id = carrier_active.carrier_id
-        ";
+        $sql = <<<SQL
+SELECT carrier.* FROM
+      (
+          SELECT
+            REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
+            config.*
+          FROM {$this->tablePrefix}core_config_data config
+          WHERE path LIKE 'carriers/%/title' AND scope = 'default'
+      ) AS carrier,              
+      (
+          SELECT
+            REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
+          FROM {$this->tablePrefix}core_config_data config
+          WHERE path LIKE 'carriers/%/active' AND scope = 'default' AND value = true
+      ) AS carrier_active
+WHERE carrier.carrier_id = carrier_active.carrier_id;
+SQL;
 
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     private function fetchPayments(): array
     {
-        $sql = "
-        SELECT payment.* FROM
-                      (
-                      SELECT
-                             REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
-                             config.*
-                      FROM core_config_data config
-                      WHERE path LIKE 'payment/%/title'
-                        AND scope = 'default'
-                      ) AS payment,
-
-                      (
-                      SELECT
-                             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
-                      FROM core_config_data config
-                      WHERE path LIKE 'payment/%/active'
-                        AND scope = 'default'
-                        AND value = true
-                      ) AS payment_active
-        WHERE payment.payment_id = payment_active.payment_id
-        ";
+        $sql = <<<SQL
+SELECT payment.* 
+FROM (
+      SELECT
+             REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
+             config.*
+      FROM {$this->tablePrefix}core_config_data config
+      WHERE path LIKE 'payment/%/title' AND scope = 'default'
+      ) AS payment,
+      (
+      SELECT
+             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
+      FROM {$this->tablePrefix}core_config_data config
+      WHERE path LIKE 'payment/%/active' AND scope = 'default' AND value = true
+      ) AS payment_active
+WHERE payment.payment_id = payment_active.payment_id;
+SQL;
 
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -237,7 +229,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'currency');
+        $query->from($this->tablePrefix . 'core_config_data', 'currency');
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value as currencies');
 
@@ -259,7 +251,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'currency');
+        $query->from($this->tablePrefix . 'core_config_data', 'currency');
         $query->addSelect('scope_id as store_id');
         $query->addSelect('path');
         $query->addSelect('value');
@@ -289,7 +281,7 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'locales');
+        $query->from($this->tablePrefix . 'core_config_data', 'locales');
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value as locale');
 

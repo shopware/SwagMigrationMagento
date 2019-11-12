@@ -27,9 +27,9 @@ class ManufacturerReader extends AbstractReader implements LocalReaderInterface
 SELECT
     DISTINCT(optionValue.option_id),
     optionValue.value
-FROM eav_attribute_option_value optionValue
-INNER JOIN eav_attribute_option attributeOption ON optionValue.option_id = attributeOption.option_id
-INNER JOIN eav_attribute attribute ON attribute.attribute_id = attributeOption.attribute_id AND attribute.attribute_code = "manufacturer";
+FROM {$this->tablePrefix}eav_attribute_option_value optionValue
+INNER JOIN {$this->tablePrefix}eav_attribute_option attributeOption ON optionValue.option_id = attributeOption.option_id
+INNER JOIN {$this->tablePrefix}eav_attribute attribute ON attribute.attribute_id = attributeOption.attribute_id AND attribute.attribute_code = "manufacturer";
 SQL;
 
         return $this->connection->executeQuery($sql)->fetchAll();

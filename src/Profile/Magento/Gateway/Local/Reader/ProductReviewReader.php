@@ -45,20 +45,20 @@ class ProductReviewReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('review');
+        $query->from($this->tablePrefix . 'review', 'review');
 
-        $query->innerJoin('review', 'review_entity', 'entity', 'review.entity_id = entity.entity_id AND entity.entity_code = \'product\'');
+        $query->innerJoin('review', $this->tablePrefix . 'review_entity', 'entity', 'review.entity_id = entity.entity_id AND entity.entity_code = \'product\'');
         $query->addSelect('review.entity_pk_value AS `detail.productId`');
 
-        $query->innerJoin('review', 'review_status', 'status', 'status.status_id = review.status_id');
+        $query->innerJoin('review', $this->tablePrefix . 'review_status', 'status', 'status.status_id = review.status_id');
         $query->addSelect('status.status_code AS `detail.status`');
 
-        $query->innerJoin('review', 'review_detail', 'detail', 'detail.review_id = review.review_id');
-        $this->addTableSelection($query, 'review_detail', 'detail');
+        $query->innerJoin('review', $this->tablePrefix . 'review_detail', 'detail', 'detail.review_id = review.review_id');
+        $this->addTableSelection($query, $this->tablePrefix . 'review_detail', 'detail');
 
         $query->leftJoin(
             'detail',
-            'core_config_data',
+            $this->tablePrefix . 'core_config_data',
             'locale',
             'locale.scope_id = detail.store_id AND locale.scope = \'stores\' AND path = \'general/locale/code\''
         );
@@ -74,11 +74,11 @@ class ProductReviewReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('rating_option_vote', 'opt');
+        $query->from($this->tablePrefix . 'rating_option_vote', 'opt');
         $query->addSelect('opt.review_id AS identifier');
-        $this->addTableSelection($query, 'rating_option_vote', 'opt');
+        $this->addTableSelection($query, $this->tablePrefix . 'rating_option_vote', 'opt');
 
-        $query->innerJoin('opt', 'rating', 'rating', 'rating.rating_id = opt.rating_id');
+        $query->innerJoin('opt', $this->tablePrefix . 'rating', 'rating', 'rating.rating_id = opt.rating_id');
         $query->addSelect('rating.rating_code AS `opt.rating_code`');
 
         $query->andWhere('opt.review_id IN (:ids)');

@@ -5,11 +5,10 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSet\CountingInformationStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DataSet\CountingQueryStruct;
-use SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSet;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class OrderDataSet extends DataSet
+class OrderDataSet extends MagentoDataSet
 {
     public static function getEntity(): string
     {
@@ -21,10 +20,10 @@ class OrderDataSet extends DataSet
         return $migrationContext->getProfile() instanceof Magento19Profile;
     }
 
-    public function getCountingInformation(): ?CountingInformationStruct
+    public function getCountingInformation(?MigrationContextInterface $migrationContext = null): ?CountingInformationStruct
     {
         $information = new CountingInformationStruct(self::getEntity());
-        $information->addQueryStruct(new CountingQueryStruct('sales_flat_order'));
+        $information->addQueryStruct(new CountingQueryStruct($this->getTablePrefixFromCredentials($migrationContext) . 'sales_flat_order'));
 
         return $information;
     }

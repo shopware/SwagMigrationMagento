@@ -21,14 +21,25 @@ abstract class AbstractReader implements ReaderInterface
      */
     protected $connection;
 
+    /**
+     * @var string
+     */
+    protected $tablePrefix;
+
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
         $this->connectionFactory = $connectionFactory;
+        $this->tablePrefix = '';
     }
 
     protected function setConnection(MigrationContextInterface $migrationContext): void
     {
         $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        if (isset($credentials['tablePrefix'])) {
+            $this->tablePrefix = $credentials['tablePrefix'];
+        }
     }
 
     protected function fetchDefaultLocale(): string
@@ -36,7 +47,7 @@ abstract class AbstractReader implements ReaderInterface
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('locale.value AS locale');
-        $query->from('core_config_data', 'locale');
+        $query->from($this->tablePrefix . 'core_config_data', 'locale');
         $query->where('locale.scope = \'default\' AND path = \'general/locale/code\'');
 
         return $query->execute()->fetch(\PDO::FETCH_COLUMN);
@@ -174,26 +185,26 @@ SELECT
        WHEN 'datetime' THEN {$entity}_datetime.value
        ELSE attribute.backend_type
     END AS value
-FROM {$entity}_entity AS {$entity}
-LEFT JOIN eav_attribute AS attribute 
+FROM {$this->tablePrefix}{$entity}_entity AS {$entity}
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute 
     ON {$entity}.entity_type_id = attribute.entity_type_id
-LEFT JOIN {$entity}_entity_varchar AS {$entity}_varchar 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_varchar AS {$entity}_varchar 
     ON {$entity}.entity_id = {$entity}_varchar.entity_id 
     AND attribute.attribute_id = {$entity}_varchar.attribute_id 
     AND attribute.backend_type = 'varchar'
-LEFT JOIN {$entity}_entity_int AS {$entity}_int 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_int AS {$entity}_int 
     ON {$entity}.entity_id = {$entity}_int.entity_id 
     AND attribute.attribute_id = {$entity}_int.attribute_id 
     AND attribute.backend_type = 'int'
-LEFT JOIN {$entity}_entity_text AS {$entity}_text 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_text AS {$entity}_text 
     ON {$entity}.entity_id = {$entity}_text.entity_id 
     AND attribute.attribute_id = {$entity}_text.attribute_id 
     AND attribute.backend_type = 'text'
-LEFT JOIN {$entity}_entity_decimal AS {$entity}_decimal 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_decimal AS {$entity}_decimal 
     ON {$entity}.entity_id = {$entity}_decimal.entity_id 
     AND attribute.attribute_id = {$entity}_decimal.attribute_id 
     AND attribute.backend_type = 'decimal'
-LEFT JOIN {$entity}_entity_datetime AS {$entity}_datetime 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_datetime AS {$entity}_datetime 
     ON {$entity}.entity_id = {$entity}_datetime.entity_id 
     AND attribute.attribute_id = {$entity}_datetime.attribute_id 
     AND attribute.backend_type = 'datetime'

@@ -35,10 +35,10 @@ class CurrencyReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'currency');
+        $query->from($this->tablePrefix . 'core_config_data', 'currency');
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value');
-        $query->andwhere('path = \'currency/options/allow\'');
+        $query->andWhere('path = \'currency/options/allow\'');
 
         $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
@@ -56,7 +56,7 @@ class CurrencyReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'baseCurrency');
+        $query->from($this->tablePrefix . 'core_config_data', 'baseCurrency');
         $query->addSelect('value');
         $query->andwhere('path = \'currency/options/base\' AND scope = \'default\'');
 

@@ -31,7 +31,9 @@
                             "dbPasswordLabel": "Password",
                             "dbPasswordPlaceholder": "Enter password",
                             "installationRoot": "Shop installation folder",
-                            "installationRootPlaceholder": "Enter installation root"
+                            "installationRootPlaceholder": "Enter installation root",
+                            "tablePrefix": "Database tableprefix",
+                            "tablePrefixPlaceholder": "Database table prefix"
                         }
                     }
                 }

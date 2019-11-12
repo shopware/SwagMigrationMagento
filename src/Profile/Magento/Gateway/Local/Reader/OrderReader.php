@@ -19,7 +19,7 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
     {
         $this->setConnection($migrationContext);
 
-        $ids = $this->fetchIdentifiers('sales_flat_order', 'entity_id', $migrationContext->getOffset(), $migrationContext->getLimit());
+        $ids = $this->fetchIdentifiers($this->tablePrefix . 'sales_flat_order', 'entity_id', $migrationContext->getOffset(), $migrationContext->getLimit());
         $fetchedOrders = $this->mapData($this->fetchOrders($ids), [], ['identifier', 'customerSalutation']);
         $fetchedDetails = $this->mapData($this->fetchDetails($ids), [], ['items']);
         $fetchedDeliveries = $this->fetchShipments($ids);
@@ -47,32 +47,32 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('sales_flat_order', 'orders');
+        $query->from($this->tablePrefix . 'sales_flat_order', 'orders');
         $query->addSelect('orders.entity_id as identifier');
         $query->addSelect('IF(orders.customer_gender=2, \'mrs\', \'mr\') as customerSalutation');
-        $this->addTableSelection($query, 'sales_flat_order', 'orders');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order', 'orders');
 
-        $query->leftjoin('orders', 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');
-        $this->addTableSelection($query, 'sales_flat_quote', 'quote');
+        $query->leftjoin('orders', $this->tablePrefix . 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_quote', 'quote');
 
-        $query->leftJoin('orders', 'sales_flat_order_payment', 'orders_payment', 'orders.entity_id = orders_payment.parent_id');
-        $this->addTableSelection($query, 'sales_flat_order_payment', 'orders_payment');
+        $query->leftJoin('orders', $this->tablePrefix . 'sales_flat_order_payment', 'orders_payment', 'orders.entity_id = orders_payment.parent_id');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_payment', 'orders_payment');
 
         $query->leftJoin(
             'orders',
-            'sales_flat_order_address',
+            $this->tablePrefix . 'sales_flat_order_address',
             'billingAddress',
             'billingAddress.parent_id = orders.entity_id AND billingAddress.address_type = \'billing\''
         );
-        $this->addTableSelection($query, 'sales_flat_order_address', 'billingAddress');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_address', 'billingAddress');
 
         $query->leftJoin(
             'orders',
-            'sales_flat_order_address',
+            $this->tablePrefix . 'sales_flat_order_address',
             'shippingAddress',
             'shippingAddress.parent_id = orders.entity_id AND shippingAddress.address_type = \'shipping\''
         );
-        $this->addTableSelection($query, 'sales_flat_order_address', 'shippingAddress');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_address', 'shippingAddress');
 
         $query->where('orders.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
@@ -84,9 +84,9 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('sales_flat_order_item', 'items');
+        $query->from($this->tablePrefix . 'sales_flat_order_item', 'items');
         $query->addSelect('items.order_id as identifier');
-        $this->addTableSelection($query, 'sales_flat_order_item', 'items');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_item', 'items');
 
         $query->where('items.order_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
@@ -98,9 +98,9 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('sales_flat_shipment', 'shipment');
+        $query->from($this->tablePrefix . 'sales_flat_shipment', 'shipment');
         $query->addSelect('shipment.order_id as identifier');
-        $this->addTableSelection($query, 'sales_flat_shipment', 'shipment');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_shipment', 'shipment');
 
         $query->where('shipment.order_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
@@ -116,9 +116,9 @@ class OrderReader extends AbstractReader implements LocalReaderInterface
 
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('sales_flat_shipment_item', 'item');
+        $query->from($this->tablePrefix . 'sales_flat_shipment_item', 'item');
         $query->addSelect('item.parent_id as identifier');
-        $this->addTableSelection($query, 'sales_flat_shipment_item', 'item');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_shipment_item', 'item');
 
         $query->where('item.parent_id in (:ids)');
         $query->setParameter('ids', $shipmentIds, Connection::PARAM_STR_ARRAY);
