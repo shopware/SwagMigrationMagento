@@ -3,7 +3,6 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
-use Swag\MigrationMagento\Migration\Logging\DuplicateSeoUrlRunLog;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SeoUrlDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -182,14 +181,6 @@ class SeoUrlConverter extends MagentoConverter
             );
         } else {
             if ($uniqueUrlMapping['entityUuid'] !== $converted['id']) {
-                $this->loggingService->addLogEntry(
-                    new DuplicateSeoUrlRunLog(
-                        $migrationContext->getRunUuid(),
-                        DefaultEntities::SEO_URL,
-                        $data['url_rewrite_id']
-                    )
-                );
-
                 return new ConvertStruct(null, $this->originalData);
             }
         }
