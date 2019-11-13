@@ -15,6 +15,7 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
@@ -306,7 +307,7 @@ class OrderConverter extends MagentoConverter
         if (isset($data['orders']['store_id'])) {
             $salesChannelMapping = $this->mappingService->getMapping(
                 $this->connectionId,
-                DefaultEntities::SALES_CHANNEL . '_store',
+                MagentoDefaultEntities::STORE,
                 $data['orders']['store_id'],
                 $context
             );

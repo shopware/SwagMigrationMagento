@@ -5,6 +5,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\Registry\LanguageRegistry;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\LanguageDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Exception\LocaleNotFoundException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
@@ -65,7 +66,7 @@ class LanguageConverter extends MagentoConverter
             foreach ($data['stores'] as $storeId) {
                 $this->mappingService->getOrCreateMapping(
                     $this->connectionId,
-                    DefaultEntities::SALES_CHANNEL . '_store_language',
+                    MagentoDefaultEntities::STORE_LANGUAGE,
                     $storeId,
                     $this->context,
                     null,
@@ -106,7 +107,7 @@ class LanguageConverter extends MagentoConverter
         foreach ($data['stores'] as $storeId) {
             $languageMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
-                DefaultEntities::SALES_CHANNEL . '_store_language',
+                MagentoDefaultEntities::STORE_LANGUAGE,
                 $storeId,
                 $this->context,
                 null,

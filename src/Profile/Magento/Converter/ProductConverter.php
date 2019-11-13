@@ -674,7 +674,7 @@ class ProductConverter extends MagentoConverter
 
         $uuids = $this->mappingService->getUuidList(
             $this->connectionId,
-            DefaultEntities::SALES_CHANNEL . '_default_store',
+            MagentoDefaultEntities::STORE_DEFAULT,
             '0',
             $this->context
         );
@@ -705,7 +705,7 @@ class ProductConverter extends MagentoConverter
     {
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
-            DefaultEntities::SALES_CHANNEL . '_store',
+            MagentoDefaultEntities::STORE,
             (string) $storeId,
             $this->context
         );

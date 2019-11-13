@@ -7,6 +7,7 @@ use Shopware\Core\Framework\Api\Util\AccessKeyHelper;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SalesChannelDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
@@ -121,7 +122,7 @@ class SalesChannelConverter extends MagentoConverter
             foreach ($data['stores'] as $store) {
                 $mapping = $this->mappingService->getOrCreateMapping(
                     $this->connectionId,
-                    DefaultEntities::SALES_CHANNEL . '_store',
+                    MagentoDefaultEntities::STORE,
                     $store['store_id'],
                     $context,
                     null,
@@ -132,7 +133,7 @@ class SalesChannelConverter extends MagentoConverter
 
                 $this->mappingService->createListItemMapping(
                     $this->connectionId,
-                    DefaultEntities::SALES_CHANNEL . '_default_store',
+                    MagentoDefaultEntities::STORE_DEFAULT,
                     '0',
                     $this->context,
                     null,
