@@ -5,6 +5,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NewsletterRecipientDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
@@ -57,7 +58,7 @@ class NewsletterRecipientConverter extends MagentoConverter
 
         $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            DefaultEntities::SALES_CHANNEL . '_store_language',
+            MagentoDefaultEntities::STORE_LANGUAGE,
             $data['store_id'],
             $context
         );
@@ -129,7 +130,7 @@ class NewsletterRecipientConverter extends MagentoConverter
     {
         $salesChannelMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            DefaultEntities::SALES_CHANNEL . '_store',
+            MagentoDefaultEntities::STORE,
             $data['store_id'],
             $this->context
         );

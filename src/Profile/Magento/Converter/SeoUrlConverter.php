@@ -5,6 +5,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Logging\DuplicateSeoUrlRunLog;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SeoUrlDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -51,7 +52,7 @@ class SeoUrlConverter extends MagentoConverter
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
-            DefaultEntities::SALES_CHANNEL . '_store',
+            MagentoDefaultEntities::STORE,
             $data['store_id'],
             $context
         );

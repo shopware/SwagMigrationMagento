@@ -7,6 +7,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductReviewConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductReviewDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
@@ -91,7 +92,7 @@ class ProductReviewConverterTest extends TestCase
 
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
-            DefaultEntities::SALES_CHANNEL . '_store',
+            MagentoDefaultEntities::STORE,
             '1',
             $context,
             null,
@@ -173,7 +174,7 @@ class ProductReviewConverterTest extends TestCase
     {
         $productReviewData = require __DIR__ . '/../../../_fixtures/product_review_data.php';
 
-        $this->mappingService->deleteDummyMapping(DefaultEntities::SALES_CHANNEL . '_store', '1');
+        $this->mappingService->deleteDummyMapping(MagentoDefaultEntities::STORE, '1');
 
         $context = Context::createDefaultContext();
         $convertResult = $this->productReviewConverter->convert($productReviewData[0], $context, $this->migrationContext);
