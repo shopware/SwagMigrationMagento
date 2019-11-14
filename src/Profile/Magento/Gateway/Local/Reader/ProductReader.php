@@ -9,6 +9,12 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class ProductReader extends AbstractReader implements LocalReaderInterface
 {
+    public static $ALLOWED_PRODUCT_TYPES = [
+        'simple',
+        'configurable',
+        'downloadable',
+    ];
+
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
@@ -36,9 +42,7 @@ SELECT
     stock.min_qty             as stockmin,
     stock.min_sale_qty        as minpurchase,
     stock.max_sale_qty        as maxpurchase,
-    price_includes_tax.value  as priceIncludesTax,
-    relation.parent_id        as parentId
-    
+    price_includes_tax.value  as priceIncludesTax
 FROM catalog_product_entity product
 
 -- join stocks
@@ -46,22 +50,36 @@ LEFT JOIN cataloginventory_stock_item stock
 ON stock.product_id = product.entity_id
 AND stock.stock_id = 1
 
--- join parent for sorting
-LEFT JOIN catalog_product_relation relation
-ON product.entity_id = relation.child_id
-
 -- join price includes tax configuration
 LEFT JOIN core_config_data price_includes_tax
 ON price_includes_tax.path = 'tax/calculation/price_includes_tax'
 AND price_includes_tax.scope = 'default'
 
-ORDER BY relation.parent_id ASC
+WHERE product.type_id IN (?)
+
+ORDER BY 
+  case 
+    WHEN product.type_id = 'configurable' THEN 1
+    ELSE 2
+  END ASC
 
 LIMIT ?
 OFFSET ?;
 SQL;
 
-        return $this->connection->executeQuery($sql, [$migrationContext->getLimit(), $migrationContext->getOffset()], [\PDO::PARAM_INT, \PDO::PARAM_INT])->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery(
+            $sql,
+            [
+                self::$ALLOWED_PRODUCT_TYPES,
+                $migrationContext->getLimit(),
+                $migrationContext->getOffset(),
+            ],
+            [
+                Connection::PARAM_STR_ARRAY,
+                \PDO::PARAM_INT,
+                \PDO::PARAM_INT,
+            ]
+        )->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     protected function appendDefaultAttributes(array $ids, array &$fetchedProducts): void
@@ -202,6 +220,7 @@ SQL;
         $configuratorSettings = $this->fetchConfiguratorSettings($ids);
         $options = $this->fetchOptions($ids);
         $visibility = $this->fetchVisibility($ids);
+        $parents = $this->fetchParents($ids);
 
         foreach ($fetchedProducts as &$product) {
             $productId = $product['entity_id'];
@@ -226,6 +245,9 @@ SQL;
             }
             if (isset($visibility[$productId])) {
                 $product['visibility'] = $visibility[$productId];
+            }
+            if (isset($parents[$productId])) {
+                $product['parentId'] = $parents[$productId];
             }
 
             $resultSet[] = $product;
@@ -329,6 +351,7 @@ SQL;
         $query->innerJoin('product', 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id');
         $query->innerJoin('product', 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
         $query->innerJoin('product', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 1');
+        $query->innerJoin('product', 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = product.entity_id');
         $query->innerJoin('product', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('product.entity_type_id = (SELECT entity_type_id FROM eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
@@ -350,9 +373,11 @@ SQL;
 
         $query->from('catalog_product_entity', 'product');
 
+        $query->innerJoin('product', 'catalog_product_relation', 'relation', 'relation.child_id = product.entity_id');
         $query->innerJoin('product', 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = product.entity_id');
         $query->innerJoin('product', 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
         $query->innerJoin('product', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 1');
+        $query->innerJoin('product', 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = relation.parent_id');
         $query->innerJoin('product', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('product.entity_type_id = (SELECT entity_type_id FROM eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
@@ -376,5 +401,37 @@ SQL;
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchParents(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('relation.child_id productId');
+        $query->addSelect('relation.parent_id parentId');
+
+        $query->from('catalog_product_relation', 'relation');
+        $query->innerJoin('relation', 'catalog_product_entity', 'product', 'product.entity_id = relation.parent_id');
+
+        $query->where('relation.child_id in (:ids)');
+        $query->andwhere('product.type_id in (:types)');
+        $query->orderBy('product.created_at', 'DESC');
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('types', self::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+
+        $fetchedParents = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+
+        $parents = [];
+        foreach ($fetchedParents as $parent) {
+            $productId = $parent['productId'];
+
+            if (isset($parents[$productId])) {
+                continue;
+            }
+
+            $parents[$productId] = $parent['parentId'];
+        }
+
+        return $parents;
     }
 }
