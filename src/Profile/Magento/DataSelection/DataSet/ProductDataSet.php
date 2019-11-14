@@ -2,6 +2,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet;
 
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DataSet\CountingInformationStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DataSet\CountingQueryStruct;
@@ -23,8 +24,10 @@ class ProductDataSet extends DataSet
 
     public function getCountingInformation(): ?CountingInformationStruct
     {
+        $productTypes = '\'' . implode('\', \'', ProductReader::$ALLOWED_PRODUCT_TYPES) . '\'';
+
         $information = new CountingInformationStruct(self::getEntity());
-        $information->addQueryStruct(new CountingQueryStruct('catalog_product_entity'));
+        $information->addQueryStruct(new CountingQueryStruct('catalog_product_entity', 'type_id IN (' . $productTypes . ')'));
 
         return $information;
     }

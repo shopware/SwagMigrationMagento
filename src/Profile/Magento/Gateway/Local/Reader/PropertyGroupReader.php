@@ -52,7 +52,7 @@ class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
         $query->addSelect('eav.attribute_code as groupName');
         $query->from('eav_attribute', 'eav');
 
-        $query->innerJoin('eav', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_filterable = 1');
+        $query->innerJoin('eav', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id');
 
         $query->innerJoin('eav', 'eav_attribute_option', 'options', 'options.attribute_id = eav.attribute_id');
 

@@ -187,18 +187,20 @@ class ProductConverter extends MagentoConverter
             $this->setProperties($converted, $data);
         }
 
-        /*
-         * Set configurator settings
-         */
-        if (isset($data['configuratorSettings'])) {
-            $this->setConfiguratorSettings($converted, $data);
-        }
-
-        /*
-         * Set options
-         */
-        if (isset($data['options'])) {
-            $this->setOptions($converted, $data);
+        if (isset($data['type_id']) && $data['type_id'] === 'configurable') {
+            /*
+             * Set configurator settings
+             */
+            if (isset($data['configuratorSettings'])) {
+                $this->setConfiguratorSettings($converted, $data);
+            }
+        } else {
+            /*
+             * Set options
+             */
+            if (isset($data['options'], $converted['parentId'])) {
+                $this->setOptions($converted, $data);
+            }
         }
 
         if (isset($data['media'])) {
