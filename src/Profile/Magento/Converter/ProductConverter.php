@@ -728,7 +728,7 @@ class ProductConverter extends MagentoConverter
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::PRODUCT_VISIBILITY,
-                $this->oldIdentifier . '_' . $storeId,
+                $this->oldIdentifier . '_' . $salesChannelUuid,
                 $this->context
             );
             $this->mappingIds[] = $mapping['id'];
