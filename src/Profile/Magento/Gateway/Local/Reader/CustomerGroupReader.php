@@ -19,7 +19,7 @@ class CustomerGroupReader extends AbstractReader implements LocalReaderInterface
     {
         $this->setConnection($migrationContext);
 
-        $ids = $this->fetchIdentifiers('customer_group', 'customer_group_id', $migrationContext->getOffset(), $migrationContext->getLimit());
+        $ids = $this->fetchIdentifiers($this->tablePrefix . 'customer_group', 'customer_group_id', $migrationContext->getOffset(), $migrationContext->getLimit());
         $fetchedCustomerGroups = $this->mapData($this->fetchCustomerGroups($ids), [], ['groups']);
 
         return $fetchedCustomerGroups;
@@ -29,8 +29,8 @@ class CustomerGroupReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('customer_group', 'groups');
-        $this->addTableSelection($query, 'customer_group', 'groups');
+        $query->from($this->tablePrefix . 'customer_group', 'groups');
+        $this->addTableSelection($query, $this->tablePrefix . 'customer_group', 'groups');
 
         $query->where('customer_group_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);

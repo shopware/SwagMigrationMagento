@@ -31,7 +31,7 @@ class CountryReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_config_data', 'currency');
+        $query->from($this->tablePrefix . 'core_config_data', 'currency');
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value');
         $query->andwhere('path = \'general/country/allow\'');

@@ -10,12 +10,12 @@ use Shopware\Core\System\Currency\CurrencyEntity;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
+use Swag\MigrationMagento\Profile\Magento\Gateway\TableReaderInterface;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\EnvironmentInformation;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
-use SwagMigrationAssistant\Profile\Shopware\Gateway\TableReaderInterface;
 
 class Magento19LocalGateway implements MagentoGatewayInterface
 {
@@ -135,24 +135,30 @@ class Magento19LocalGateway implements MagentoGatewayInterface
 
     public function readTable(MigrationContextInterface $migrationContext, string $tableName, array $filter = []): array
     {
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
+        $tableName = $tablePrefix . $tableName;
+
         return $this->localTableReader->read($migrationContext, $tableName, $filter);
     }
 
     public function readPayments(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        $sql = "
-        SELECT payment.* FROM
-                      (
-                      SELECT
-                             REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
-                             config.*
-                      FROM core_config_data config
-                      WHERE path LIKE 'payment/%/title'
-                        AND scope = 'default'
-                      ) AS payment
-        WHERE payment.payment_id IN (SELECT DISTINCT(method) FROM sales_flat_order_payment)
-        ";
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
+
+        $sql = <<<SQL
+SELECT payment.* 
+FROM
+    (
+        SELECT
+            REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
+            config.*
+        FROM {$tablePrefix}core_config_data config
+        WHERE path LIKE 'payment/%/title'
+        AND scope = 'default'
+    ) AS payment
+WHERE payment.payment_id IN (SELECT DISTINCT(method) FROM {$tablePrefix}sales_flat_order_payment);
+SQL;
 
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -160,28 +166,42 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     public function readCarriers(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        $sql = "
-        SELECT carrier.* FROM
-              (
-                  SELECT
-                    REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
-                    config.*
-                  FROM core_config_data config
-                  WHERE path LIKE 'carriers/%/title'
-                        AND scope = 'default'
-              ) AS carrier,
-              
-              (
-                  SELECT
-                    REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
-                  FROM core_config_data config
-                  WHERE path LIKE 'carriers/%/active'
-                        AND scope = 'default'
-                        AND value = true
-              ) AS carrier_active
-        WHERE carrier.carrier_id = carrier_active.carrier_id
-        ";
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
+        $sql = <<<SQL
+SELECT 
+    carrier.* 
+FROM
+      (
+          SELECT
+            REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
+            config.*
+          FROM {$tablePrefix}core_config_data config
+          WHERE path LIKE 'carriers/%/title'
+                AND scope = 'default'
+      ) AS carrier,
+      
+      (
+          SELECT
+            REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
+          FROM {$tablePrefix}core_config_data config
+          WHERE path LIKE 'carriers/%/active'
+                AND scope = 'default'
+                AND value = true
+      ) AS carrier_active
+WHERE carrier.carrier_id = carrier_active.carrier_id;
+SQL;
 
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    protected function getTablePrefixFromCredentials(MigrationContextInterface $migrationContext): string
+    {
+        $tablePrefix = '';
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        if (isset($credentials['tablePrefix'])) {
+            $tablePrefix = $credentials['tablePrefix'];
+        }
+
+        return $tablePrefix;
     }
 }

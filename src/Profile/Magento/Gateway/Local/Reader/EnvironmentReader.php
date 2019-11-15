@@ -31,7 +31,7 @@ class EnvironmentReader extends AbstractReader
         $query = $this->connection->createQueryBuilder();
 
         return $query->select('value')
-            ->from('core_config_data')
+            ->from($this->tablePrefix . 'core_config_data')
             ->where('scope = "default"')
             ->andWhere('path = "general/locale/code"')
             ->execute()
@@ -43,7 +43,7 @@ class EnvironmentReader extends AbstractReader
         $query = $this->connection->createQueryBuilder();
 
         return $query->select('value')
-            ->from('core_config_data')
+            ->from($this->tablePrefix . 'core_config_data')
             ->where('scope = "default"')
             ->andWhere('path = "currency/options/base"')
             ->execute()
@@ -53,27 +53,5 @@ class EnvironmentReader extends AbstractReader
     protected function getAdditionalData(): array
     {
         return [];
-//        $query = $this->connection->createQueryBuilder();
-
-//        $query->from('s_core_shops', 'shop');
-//        $query->addSelect('shop.id as identifier');
-//        $this->addTableSelection($query, 's_core_shops', 'shop');
-//
-//        $query->leftJoin('shop', 's_core_locales', 'locale', 'shop.locale_id = locale.id');
-//        $this->addTableSelection($query, 's_core_locales', 'locale');
-//
-//        $query->orderBy('shop.main_id');
-//
-//        $fetchedShops = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
-//        $shops = $this->mapData($fetchedShops, [], ['shop']);
-//
-//        foreach ($shops as $key => &$shop) {
-//            if (!empty($shop['main_id'])) {
-//                $shops[$shop['main_id']]['children'][] = $shop;
-//                unset($shops[$key]);
-//            }
-//        }
-//
-//        return array_values($shops);
     }
 }

@@ -39,14 +39,14 @@ class ProductCustomFieldReader extends AbstractReader implements LocalReaderInte
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('eav_attribute', 'eav');
-        $this->addTableSelection($query, 'eav_attribute', 'eav');
-        $query->innerJoin('eav', 'eav_entity_type', 'et', 'eav.entity_type_id = et.entity_type_id AND et.entity_type_code = \'catalog_product\'');
+        $query->from($this->tablePrefix . 'eav_attribute', 'eav');
+        $this->addTableSelection($query, $this->tablePrefix . 'eav_attribute', 'eav');
+        $query->innerJoin('eav', $this->tablePrefix . 'eav_entity_type', 'et', 'eav.entity_type_id = et.entity_type_id AND et.entity_type_code = \'catalog_product\'');
 
-        $query->innerJoin('eav', 'core_config_data', 'defaultLocale', 'defaultLocale.scope = \'default\' AND defaultLocale.path = \'general/locale/code\'');
+        $query->innerJoin('eav', $this->tablePrefix . 'core_config_data', 'defaultLocale', 'defaultLocale.scope = \'default\' AND defaultLocale.path = \'general/locale/code\'');
         $query->addSelect('defaultLocale.value AS `eav.defaultLocale`');
 
-        $query->innerJoin('eav', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 0');
+        $query->innerJoin('eav', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 0');
 
         $query->where('eav.frontend_input != \'\'');
         $query->andWhere('eav.is_user_defined = 1');
@@ -65,9 +65,9 @@ SELECT DISTINCT
     attribute.attribute_id,
     optionValue.option_id,
     optionValue.value
-FROM eav_attribute_option_value optionValue
-INNER JOIN eav_attribute_option attributeOption ON optionValue.option_id = attributeOption.option_id
-INNER JOIN eav_attribute attribute ON attribute.attribute_id = attributeOption.attribute_id
+FROM {$this->tablePrefix}eav_attribute_option_value optionValue
+INNER JOIN {$this->tablePrefix}eav_attribute_option attributeOption ON optionValue.option_id = attributeOption.option_id
+INNER JOIN {$this->tablePrefix}eav_attribute attribute ON attribute.attribute_id = attributeOption.attribute_id
 WHERE attribute.attribute_id IN (?);
 SQL;
 

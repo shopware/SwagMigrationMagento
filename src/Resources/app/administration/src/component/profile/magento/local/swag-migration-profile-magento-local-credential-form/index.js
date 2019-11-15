@@ -22,7 +22,8 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 dbUser: '',
                 dbPassword: '',
                 dbName: '',
-                installationRoot: ''
+                installationRoot: '',
+                tablePrefix: ''
             }
         };
     },

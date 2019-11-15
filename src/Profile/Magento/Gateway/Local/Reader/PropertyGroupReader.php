@@ -49,16 +49,15 @@ class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
 
         $query->addSelect('eav.attribute_id as identifier');
         $query->addSelect('eav.attribute_id as groupId');
-        $query->addSelect('eav.attribute_code as groupName');
-        $query->from('eav_attribute', 'eav');
+        $query->addSelect('eav.frontend_label as groupName');
+        $query->from($this->tablePrefix . 'eav_attribute', 'eav');
 
-        $query->innerJoin('eav', 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id');
-
-        $query->innerJoin('eav', 'eav_attribute_option', 'options', 'options.attribute_id = eav.attribute_id');
+        $query->innerJoin('eav', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id');
+        $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option', 'options', 'options.attribute_id = eav.attribute_id');
 
         $query->addSelect('option_value.option_id as optionId');
         $query->addSelect('option_value.value as optionValue');
-        $query->innerJoin('eav', 'eav_attribute_option_value', 'option_value', 'option_value.option_id = options.option_id AND option_value.store_id = 0');
+        $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = options.option_id AND option_value.store_id = 0');
 
         $query->where('eav.is_user_defined = 1');
 

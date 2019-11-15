@@ -19,7 +19,7 @@ class MediaReader extends AbstractReader implements LocalReaderInterface
     {
         $this->setConnection($migrationContext);
 
-        $paths = $this->fetchIdentifiers('catalog_product_entity_media_gallery', 'value', $migrationContext->getOffset(), $migrationContext->getLimit(), true);
+        $paths = $this->fetchIdentifiers($this->tablePrefix . 'catalog_product_entity_media_gallery', 'value', $migrationContext->getOffset(), $migrationContext->getLimit(), true);
         $fetchedMedia = $this->fetchMedia($paths);
         $fetchedMedia = $this->utf8ize($fetchedMedia);
 
@@ -30,12 +30,12 @@ class MediaReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('catalog_product_entity_media_gallery', 'media');
+        $query->from($this->tablePrefix . 'catalog_product_entity_media_gallery', 'media');
         $query->addSelect('DISTINCT media.value as path');
 
         $query->leftJoin(
             'media',
-            'catalog_product_entity_media_gallery_value',
+            $this->tablePrefix . 'catalog_product_entity_media_gallery_value',
             'media_details',
             'media.value_id = media_details.value_id AND media_details.store_id = 0'
         );

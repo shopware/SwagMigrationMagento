@@ -3,11 +3,10 @@
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet;
 
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSet;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CountryDataSet extends DataSet
+class CountryDataSet extends MagentoDataSet
 {
     public static function getEntity(): string
     {

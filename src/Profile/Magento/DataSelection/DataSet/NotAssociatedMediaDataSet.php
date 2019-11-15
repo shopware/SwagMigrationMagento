@@ -4,10 +4,9 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSet;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class NotAssociatedMediaDataSet extends DataSet
+class NotAssociatedMediaDataSet extends MagentoDataSet
 {
     public static function getEntity(): string
     {

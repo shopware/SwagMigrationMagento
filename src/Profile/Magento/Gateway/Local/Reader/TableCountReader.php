@@ -46,7 +46,7 @@ class TableCountReader
     public function readTotals(MigrationContextInterface $migrationContext, Context $context): array
     {
         $dataSets = $this->dataSetRegistry->getDataSets($migrationContext);
-        $countingInformation = $this->getCountingInformation($dataSets);
+        $countingInformation = $this->getCountingInformation($dataSets, $migrationContext);
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
 
         $totals = [];
@@ -96,13 +96,13 @@ class TableCountReader
      *
      * @return CountingInformationStruct[]
      */
-    private function getCountingInformation(array $dataSets): array
+    private function getCountingInformation(array $dataSets, MigrationContextInterface $migrationContext): array
     {
         $countingInformation = [];
 
         foreach ($dataSets as $dataSet) {
-            if ($dataSet->getCountingInformation() !== null) {
-                $countingInformation[] = $dataSet->getCountingInformation();
+            if ($dataSet->getCountingInformation($migrationContext) !== null) {
+                $countingInformation[] = $dataSet->getCountingInformation($migrationContext);
             }
         }
 

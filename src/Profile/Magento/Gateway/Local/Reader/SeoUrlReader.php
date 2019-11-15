@@ -36,10 +36,10 @@ class SeoUrlReader extends AbstractReader implements LocalReaderInterface
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('core_url_rewrite', 'seo');
-        $this->addTableSelection($query, 'core_url_rewrite', 'seo');
+        $query->from($this->tablePrefix . 'core_url_rewrite', 'seo');
+        $this->addTableSelection($query, $this->tablePrefix . 'core_url_rewrite', 'seo');
 
-        $query->leftJoin('seo', 'core_config_data', 'locale', 'locale.scope_id = seo.store_id AND locale.scope = \'stores\' AND locale.path = \'general/locale/code\'');
+        $query->leftJoin('seo', $this->tablePrefix . 'core_config_data', 'locale', 'locale.scope_id = seo.store_id AND locale.scope = \'stores\' AND locale.path = \'general/locale/code\'');
         $query->addSelect('locale.value AS `seo.locale`');
 
         $query->setFirstResult($migrationContext->getOffset());

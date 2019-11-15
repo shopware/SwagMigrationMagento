@@ -22,7 +22,7 @@
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\ReaderRegistry"/>
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader"/>
-            <argument type="service" id="SwagMigrationAssistant\Profile\Shopware\Gateway\Local\Reader\LocalTableReader"/>
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LocalTableReader"/>
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader"/>
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
             <argument type="service" id="currency.repository"/>
@@ -37,6 +37,10 @@
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSetRegistry"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LocalTableReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
         </service>
 
         <!-- Data Selections for Magento -->

@@ -18,7 +18,7 @@ class NewsletterRecipientReader extends AbstractReader implements LocalReaderInt
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
-        $ids = $this->fetchIdentifiers('newsletter_subscriber', 'subscriber_id', $migrationContext->getOffset(), $migrationContext->getLimit());
+        $ids = $this->fetchIdentifiers($this->tablePrefix . 'newsletter_subscriber', 'subscriber_id', $migrationContext->getOffset(), $migrationContext->getLimit());
         $fetchedRecipients = $this->mapData($this->fetchNewsletterRecipients($ids, $migrationContext), [], ['recipient']);
 
         $customerIds = array_values(
@@ -49,8 +49,8 @@ class NewsletterRecipientReader extends AbstractReader implements LocalReaderInt
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('newsletter_subscriber', 'recipient');
-        $this->addTableSelection($query, 'newsletter_subscriber', 'recipient');
+        $query->from($this->tablePrefix . 'newsletter_subscriber', 'recipient');
+        $this->addTableSelection($query, $this->tablePrefix . 'newsletter_subscriber', 'recipient');
         $query->where('recipient.subscriber_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
@@ -61,9 +61,9 @@ class NewsletterRecipientReader extends AbstractReader implements LocalReaderInt
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('customer_entity', 'customer');
+        $query->from($this->tablePrefix . 'customer_entity', 'customer');
         $query->addSelect('customer.entity_id');
-        $this->addTableSelection($query, 'customer_entity', 'customer');
+        $this->addTableSelection($query, $this->tablePrefix . 'customer_entity', 'customer');
         $query->where('customer.entity_id IN (:ids)');
         $query->orderBy('customer.entity_id');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);

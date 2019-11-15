@@ -31,7 +31,9 @@
                             "dbPasswordLabel": "Passwort",
                             "dbPasswordPlaceholder": "Passwort eintragen",
                             "installationRoot": "Ordner der Shopinstallation",
-                            "installationRootPlaceholder": "Root-Verzeichnis eingeben"
+                            "installationRootPlaceholder": "Root-Verzeichnis eingeben",
+                            "tablePrefix": "Datenbank Tabellenprefix",
+                            "tablePrefixPlaceholder": "Datenbank Tabellenprefix"
                         }
                     }
                 }
