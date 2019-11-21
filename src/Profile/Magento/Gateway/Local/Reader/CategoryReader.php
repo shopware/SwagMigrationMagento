@@ -42,25 +42,28 @@ SELECT
     image.value as image
 FROM
     {$this->tablePrefix}catalog_category_entity AS category
+    
+LEFT JOIN {$this->tablePrefix}eav_attribute attribute
+    ON category.entity_type_id = attribute.entity_type_id
         
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar as name 
     ON category.entity_id = name.entity_id
-    AND name.attribute_id = 41
+    AND name.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'name')
     AND name.store_id = 0
         
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_int status 
     ON category.entity_id = status.entity_id
-    AND status.attribute_id = 42
+    AND status.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'is_active')
     AND status.store_id = 0
                  
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS description 
     ON category.entity_id = description.entity_id
-    AND description.attribute_id = 44
+    AND description.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'description')
     AND description.store_id = 0
                  
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS image 
     ON category.entity_id = image.entity_id
-    AND image.attribute_id = 45
+    AND image.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'image')
     AND image.store_id = 0
                  
 LEFT JOIN {$this->tablePrefix}core_config_data AS defaultLocale 
