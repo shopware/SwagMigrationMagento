@@ -150,6 +150,7 @@ SELECT
     product.entity_id,
     attribute.attribute_id,
     attribute.attribute_code,
+       attribute.frontend_input,
     CASE attribute.backend_type
        WHEN 'varchar' THEN product_varchar.value
        WHEN 'int' THEN product_int.value
