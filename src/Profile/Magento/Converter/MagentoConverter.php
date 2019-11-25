@@ -94,7 +94,12 @@ abstract class MagentoConverter extends Converter
             if (in_array($attribute['attribute_code'], $blacklist, true)) {
                 continue;
             }
-            $result['migration_' . $connectionName . '_' . $entityName . '_' . $attribute['attribute_id']] = $attribute['value'];
+
+            $value = $attribute['value'];
+            if (isset($attribute['frontend_input']) && $attribute['frontend_input'] == 'boolean') {
+                $value = (bool)$value;
+            }
+            $result['migration_' . $connectionName . '_' . $entityName . '_' . $attribute['attribute_id']] = $value;
         }
 
         return $result;
