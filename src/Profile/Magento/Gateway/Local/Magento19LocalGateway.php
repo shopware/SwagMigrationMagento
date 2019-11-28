@@ -72,6 +72,11 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         return self::GATEWAY_NAME;
     }
 
+    public function getSnippetName(): string
+    {
+        return 'swag-migration.wizard.pages.connectionCreate.gateways.magentoLocal';
+    }
+
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile;
