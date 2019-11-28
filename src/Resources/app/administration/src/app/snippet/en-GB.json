@@ -17,6 +17,11 @@
         },
         "wizard": {
             "pages": {
+                "connectionCreate": {
+                    "gateways": {
+                        "magentoLocal": "Local database"
+                    }
+                },
                 "credentials": {
                     "magento": {
                         "local": {

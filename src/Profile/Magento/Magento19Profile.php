@@ -12,6 +12,8 @@ class Magento19Profile implements ProfileInterface
 
     public const SOURCE_SYSTEM_VERSION = '1.9';
 
+    public const AUTHOR_NAME = 'shopware AG';
+
     public function getName(): string
     {
         return self::PROFILE_NAME;
@@ -25,5 +27,10 @@ class Magento19Profile implements ProfileInterface
     public function getVersion(): string
     {
         return self::SOURCE_SYSTEM_VERSION;
+    }
+
+    public function getAuthorName(): string
+    {
+        return self::AUTHOR_NAME;
     }
 }
