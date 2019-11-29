@@ -190,6 +190,10 @@ class ProductConverter extends MagentoConverter
         $this->convertValue($converted, 'stock', $data, 'instock', self::TYPE_INTEGER);
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
+        $this->convertValue($converted, 'description', $data, 'description');
+        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
+        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
+        $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
 
         /*
          * Set parent
@@ -247,13 +251,34 @@ class ProductConverter extends MagentoConverter
             $converted['customFields'] = $this->getAttributes($data['attributes'], DefaultEntities::PRODUCT, $migrationContext->getConnection()->getName());
         }
 
+        if (isset($data['translations'])) {
+            $converted['translations'] = $this->getTranslations(
+                $data['translations'],
+                DefaultEntities::PRODUCT,
+                [
+                    'name' => 'name',
+                    'description' => 'description',
+                    'meta_title' => 'metaTitle',
+                    'meta_description' => 'metaDescription',
+                    'meta_keyword' => 'keywords',
+                ],
+                $context
+            );
+
+            if (isset($converted['translations'])) {
+                foreach ($converted['translations'] as &$translation) {
+                    $translation['productId'] = $converted['id'];
+                }
+            }
+        }
+
         $this->updateMainMapping($migrationContext, $context);
 
         if (empty($data)) {
             $data = null;
         }
 
-        return new ConvertStruct($converted, null, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
     protected function setCategories(array &$converted, array &$data): void

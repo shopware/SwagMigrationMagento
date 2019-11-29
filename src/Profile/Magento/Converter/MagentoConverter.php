@@ -2,6 +2,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Framework\Context;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -103,5 +105,45 @@ abstract class MagentoConverter extends Converter
         }
 
         return $result;
+    }
+
+    protected function getTranslations(array $translations, string $entityName, array $defaultEntities, Context $context): array
+    {
+        $connectionName = str_replace(' ', '', $this->migrationContext->getConnection()->getName());
+        $connectionName = preg_replace('/[^A-Za-z0-9\-]/', '', $connectionName);
+
+        $localeTranslation = [];
+        foreach ($translations as $store => $translationValues) {
+            $languageMapping = $this->mappingService->getMapping(
+                $this->migrationContext->getConnection()->getId(),
+                DefaultEntities::STORE_LANGUAGE,
+                (string) $store,
+                $context
+            );
+
+            if ($languageMapping === null) {
+                continue;
+            }
+            $this->mappingIds[] = $languageMapping['id'];
+            $languageId = $languageMapping['entityUuid'];
+
+            foreach ($translationValues as $key => $attributeData) {
+                if (!isset($attributeData['attribute_id'], $attributeData['value'])) {
+                    continue;
+                }
+
+                if (isset($defaultEntities[$key])) {
+                    $newKey = $defaultEntities[$key];
+                    $localeTranslation[$languageId][$newKey] = $attributeData['value'];
+
+                    continue;
+                }
+
+                $localeTranslation[$languageId]['languageId'] = $languageId;
+                $localeTranslation[$languageId]['customFields']['migration_' . $connectionName . '_' . $entityName . '_' . $attributeData['attribute_id']] = $attributeData['value'];
+            }
+        }
+
+        return $localeTranslation;
     }
 }

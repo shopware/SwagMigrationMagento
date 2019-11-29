@@ -38,6 +38,7 @@ class ProductReader extends AbstractReader
         $ids = array_column($fetchedProducts, 'entity_id');
         $this->appendDefaultAttributes($ids, $fetchedProducts);
         $this->appendCustomAttributes($ids, $fetchedProducts);
+        $this->appendTranslationAttributes($ids, $fetchedProducts);
 
         return $this->appendAssociatedData($fetchedProducts, $ids);
     }
@@ -84,8 +85,8 @@ AND price_includes_tax.scope = 'default'
 
 WHERE product.type_id IN (?)
 
-ORDER BY 
-  CASE 
+ORDER BY
+  CASE
     WHEN product.type_id = 'configurable' THEN 1
     ELSE 2
   END ASC
@@ -109,10 +110,96 @@ SQL;
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    protected function appendTranslationAttributes(array $ids, array &$fetchedProducts): void
+    {
+        $sql = <<<SQL
+SELECT
+    product.entity_id,
+    attribute.attribute_id,
+    attribute.attribute_code,
+    CASE attribute.backend_type
+       WHEN 'varchar' THEN product_varchar.value
+       WHEN 'int' THEN product_int.value
+       WHEN 'text' THEN product_text.value
+       WHEN 'decimal' THEN product_decimal.value
+       WHEN 'datetime' THEN product_datetime.value
+       ELSE attribute.backend_type
+    END AS value,
+    CASE attribute.backend_type
+         WHEN 'varchar' THEN product_varchar.store_id
+         WHEN 'int' THEN product_int.store_id
+         WHEN 'text' THEN product_text.store_id
+         WHEN 'decimal' THEN product_decimal.store_id
+         WHEN 'datetime' THEN product_datetime.store_id
+         ELSE null
+           END AS store_id
+FROM {$this->tablePrefix}catalog_product_entity AS product
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
+    ON product.entity_type_id = attribute.entity_type_id
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar
+    ON product.entity_id = product_varchar.entity_id
+    AND attribute.attribute_id = product_varchar.attribute_id
+    AND attribute.backend_type = 'varchar'
+    AND product_varchar.store_id != '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_int AS product_int
+    ON product.entity_id = product_int.entity_id
+    AND attribute.attribute_id = product_int.attribute_id
+    AND attribute.backend_type = 'int'
+    AND product_int.store_id != '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_text AS product_text
+    ON product.entity_id = product_text.entity_id
+    AND attribute.attribute_id = product_text.attribute_id
+    AND attribute.backend_type = 'text'
+    AND product_text.store_id != '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_decimal AS product_decimal
+    ON product.entity_id = product_decimal.entity_id
+    AND attribute.attribute_id = product_decimal.attribute_id
+    AND attribute.backend_type = 'decimal'
+    AND product_decimal.store_id != '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_datetime AS product_datetime
+    ON product.entity_id = product_datetime.entity_id
+    AND attribute.attribute_id = product_datetime.attribute_id
+    AND attribute.backend_type = 'datetime'
+    AND product_datetime.store_id != '0'
+WHERE product.entity_id IN (?)
+AND attribute.frontend_input IS NOT NULL
+AND CASE attribute.backend_type
+    WHEN 'varchar' THEN product_varchar.value
+    WHEN 'int' THEN product_int.value
+    WHEN 'text' THEN product_text.value
+    WHEN 'decimal' THEN product_decimal.value
+    WHEN 'datetime' THEN product_datetime.value
+    ELSE null
+    END IS NOT NULL
+GROUP BY product.entity_id, attribute_id, attribute_code, value, store_id;
+SQL;
+        $fetchedAttributes = $this->connection->executeQuery(
+            $sql,
+            [$ids],
+            [Connection::PARAM_STR_ARRAY]
+        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+
+        foreach ($fetchedProducts as &$fetchedProduct) {
+            if (isset($fetchedAttributes[$fetchedProduct['entity_id']])) {
+                $attributes = $fetchedAttributes[$fetchedProduct['entity_id']];
+
+                foreach ($attributes as $attribute) {
+                    $store_id = $attribute['store_id'];
+                    $attribute_id = $attribute['attribute_id'];
+                    $attribute_code = $attribute['attribute_code'];
+                    $value = $attribute['value'];
+
+                    $fetchedProduct['translations'][$store_id][$attribute_code]['value'] = $value;
+                    $fetchedProduct['translations'][$store_id][$attribute_code]['attribute_id'] = $attribute_id;
+                }
+            }
+        }
+    }
+
     protected function appendDefaultAttributes(array $ids, array &$fetchedProducts): void
     {
         $sql = <<<SQL
-SELECT 
+SELECT
     product.entity_id,
     attribute.attribute_code,
     CASE attribute.backend_type
@@ -124,28 +211,33 @@ SELECT
        ELSE attribute.backend_type
     END AS value
 FROM {$this->tablePrefix}catalog_product_entity product
-LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute 
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
     ON product.entity_type_id = attribute.entity_type_id
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar 
-    ON product.entity_id = product_varchar.entity_id 
-    AND attribute.attribute_id = product_varchar.attribute_id 
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar
+    ON product.entity_id = product_varchar.entity_id
+    AND attribute.attribute_id = product_varchar.attribute_id
     AND attribute.backend_type = 'varchar'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_int AS product_int 
-    ON product.entity_id = product_int.entity_id 
-    AND attribute.attribute_id = product_int.attribute_id 
+    AND product_varchar.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_int AS product_int
+    ON product.entity_id = product_int.entity_id
+    AND attribute.attribute_id = product_int.attribute_id
     AND attribute.backend_type = 'int'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_text AS product_text 
-    ON product.entity_id = product_text.entity_id 
-    AND attribute.attribute_id = product_text.attribute_id 
+    AND product_int.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_text AS product_text
+    ON product.entity_id = product_text.entity_id
+    AND attribute.attribute_id = product_text.attribute_id
     AND attribute.backend_type = 'text'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_decimal AS product_decimal 
-    ON product.entity_id = product_decimal.entity_id 
-    AND attribute.attribute_id = product_decimal.attribute_id 
+    AND product_text.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_decimal AS product_decimal
+    ON product.entity_id = product_decimal.entity_id
+    AND attribute.attribute_id = product_decimal.attribute_id
     AND attribute.backend_type = 'decimal'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_datetime AS product_datetime 
-    ON product.entity_id = product_datetime.entity_id 
-    AND attribute.attribute_id = product_datetime.attribute_id 
+    AND product_decimal.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_datetime AS product_datetime
+    ON product.entity_id = product_datetime.entity_id
+    AND attribute.attribute_id = product_datetime.attribute_id
     AND attribute.backend_type = 'datetime'
+    AND product_datetime.store_id = '0'
 WHERE product.entity_id IN (?)
 AND (attribute.is_user_defined = 0 OR attribute.attribute_code IN (?))
 AND attribute.backend_type != 'static'
@@ -173,7 +265,7 @@ SQL;
     protected function appendCustomAttributes(array $ids, array &$fetchedProducts): void
     {
         $sql = <<<SQL
-SELECT 
+SELECT
     product.entity_id,
     attribute.attribute_id,
     attribute.attribute_code,
@@ -187,31 +279,36 @@ SELECT
        ELSE attribute.backend_type
     END AS value
 FROM {$this->tablePrefix}catalog_product_entity product
-INNER JOIN {$this->tablePrefix}eav_attribute AS attribute 
+INNER JOIN {$this->tablePrefix}eav_attribute AS attribute
     ON product.entity_type_id = attribute.entity_type_id
 INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS attributeSetting
     ON attribute.attribute_id = attributeSetting.attribute_id
     AND attributeSetting.is_configurable = 0
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar 
-    ON product.entity_id = product_varchar.entity_id 
-    AND attribute.attribute_id = product_varchar.attribute_id 
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar
+    ON product.entity_id = product_varchar.entity_id
+    AND attribute.attribute_id = product_varchar.attribute_id
     AND attribute.backend_type = 'varchar'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_int AS product_int 
-    ON product.entity_id = product_int.entity_id 
-    AND attribute.attribute_id = product_int.attribute_id 
+    AND product_varchar.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_int AS product_int
+    ON product.entity_id = product_int.entity_id
+    AND attribute.attribute_id = product_int.attribute_id
     AND attribute.backend_type = 'int'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_text AS product_text 
-    ON product.entity_id = product_text.entity_id 
-    AND attribute.attribute_id = product_text.attribute_id 
+    AND product_int.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_text AS product_text
+    ON product.entity_id = product_text.entity_id
+    AND attribute.attribute_id = product_text.attribute_id
     AND attribute.backend_type = 'text'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_decimal AS product_decimal 
-    ON product.entity_id = product_decimal.entity_id 
-    AND attribute.attribute_id = product_decimal.attribute_id 
+    AND product_text.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_decimal AS product_decimal
+    ON product.entity_id = product_decimal.entity_id
+    AND attribute.attribute_id = product_decimal.attribute_id
     AND attribute.backend_type = 'decimal'
-LEFT JOIN {$this->tablePrefix}catalog_product_entity_datetime AS product_datetime 
-    ON product.entity_id = product_datetime.entity_id 
-    AND attribute.attribute_id = product_datetime.attribute_id 
+    AND product_decimal.store_id = '0'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity_datetime AS product_datetime
+    ON product.entity_id = product_datetime.entity_id
+    AND attribute.attribute_id = product_datetime.attribute_id
     AND attribute.backend_type = 'datetime'
+    AND product_datetime.store_id = '0'
 WHERE product.entity_id IN (?)
 AND attribute.is_user_defined = 1
 AND attribute.frontend_input IS NOT NULL
@@ -289,7 +386,7 @@ SQL;
     protected function fetchProductCategories(array $ids): array
     {
         $sql = <<<SQL
-SELECT 
+SELECT
     productCategory.product_id,
     productCategory.product_id AS productId,
     productCategory.category_id AS categoryId
@@ -310,7 +407,7 @@ SELECT
     mediaGalleryValue.label AS description,
     mediaGalleryValue.position,
     IF(mediaGalleryValue.position=1, 1, 0) AS main
-FROM 
+FROM
     {$this->tablePrefix}catalog_product_entity_media_gallery mediaGallery,
     {$this->tablePrefix}catalog_product_entity_media_gallery_value mediaGalleryValue
 WHERE mediaGallery.entity_id IN (?)
@@ -325,7 +422,7 @@ SQL;
     {
         $sql = <<<SQL
 SELECT
-    price.entity_id, 
+    price.entity_id,
     price.*,
     customerGroup.customer_group_code AS customerGroupCode
 FROM {$this->tablePrefix}catalog_product_entity_tier_price price
