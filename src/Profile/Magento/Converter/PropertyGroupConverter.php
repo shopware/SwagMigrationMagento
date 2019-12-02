@@ -82,6 +82,11 @@ class PropertyGroupConverter extends MagentoConverter
         $this->getProperties($data, $converted);
         unset($data['options']);
 
+        if (isset($data['translations'])) {
+            $converted['translations'] = $this->getTranslations($data['translations'], DefaultEntities::PROPERTY_GROUP, ['name' => 'name'], $this->context);
+        }
+        unset($data['translations']);
+
         $this->updateMainMapping($migrationContext, $context);
 
         if (empty($data)) {

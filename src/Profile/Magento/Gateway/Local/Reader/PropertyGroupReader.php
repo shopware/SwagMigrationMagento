@@ -51,14 +51,29 @@ class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
             }
         }
 
-        $translations = $this->fetchTranslations($optionIds);
+        $groupIds = array_column($groups, 'id');
+        $optionTranslations = $this->fetchOptionTranslations($optionIds);
+        $groupTranslations = $this->fetchGroupTranslations($groupIds);
 
         foreach ($groups as &$group) {
+            $groupId = $group['id'];
+
+            if (isset($groupTranslations[$groupId])) {
+                foreach ($groupTranslations[$groupId] as $translation) {
+                    $store_id = $translation['store_id'];
+                    $attribute_id = $translation['attribute_id'];
+                    $value = $translation['value'];
+
+                    $group['translations'][$store_id]['name']['value'] = $value;
+                    $group['translations'][$store_id]['name']['attribute_id'] = $attribute_id;
+                }
+            }
+
             foreach ($group['options'] as &$option) {
                 $optionId = $option['id'];
 
-                if (isset($translations[$optionId])) {
-                    foreach ($translations[$optionId] as $translation) {
+                if (isset($optionTranslations[$optionId])) {
+                    foreach ($optionTranslations[$optionId] as $translation) {
                         $store_id = $translation['store_id'];
                         $attribute_id = $translation['attribute_id'];
                         $value = $translation['value'];
@@ -114,7 +129,7 @@ SQL;
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    protected function fetchTranslations(array $ids): array
+    protected function fetchOptionTranslations(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -127,6 +142,22 @@ SQL;
         $query->innerJoin('attributeOption', $this->tablePrefix . 'eav_attribute_option_value', 'optionValue', 'optionValue.option_id = attributeOption.option_id AND optionValue.store_id != 0');
 
         $query->where('attributeOption.option_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchGroupTranslations(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('attributeLabel.attribute_id AS identifier');
+        $query->addSelect('attributeLabel.attribute_id');
+        $query->addSelect('attributeLabel.store_id');
+        $query->addSelect('attributeLabel.value');
+        $query->from($this->tablePrefix . 'eav_attribute_label', 'attributeLabel');
+
+        $query->where('attributeLabel.attribute_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
