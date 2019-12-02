@@ -195,6 +195,27 @@ class CategoryConverter extends MagentoConverter
         }
         unset($data['image']);
 
+        if (isset($data['translations'])) {
+            $converted['translations'] = $this->getTranslations(
+                $data['translations'],
+                DefaultEntities::CATEGORY,
+                [
+                    'name' => 'name',
+                    'description' => 'description',
+                    'meta_title' => 'metaTitle',
+                    'meta_keywords' => 'keywords',
+                    'meta_description' => 'metaDescription',
+                ],
+                $this->context
+            );
+
+            foreach ($converted['translations'] as &$translation) {
+                $translation['categoryId'] = $converted['id'];
+            }
+            unset($translation);
+        }
+        unset($data['translations']);
+
         $this->updateMainMapping($migrationContext, $context);
 
         // There is no equivalent field

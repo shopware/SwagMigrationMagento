@@ -9,7 +9,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
+class PropertyGroupReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
@@ -31,6 +31,7 @@ class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
         $fetchedPropertyGroups = $this->fetchPropertyGroups($migrationContext);
 
         $groups = [];
+        $optionIds = [];
         foreach ($fetchedPropertyGroups as $group) {
             foreach ($group as $option) {
                 $groupId = $option['groupId'];

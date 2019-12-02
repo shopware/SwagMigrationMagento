@@ -103,6 +103,7 @@ class LanguageConverter extends MagentoConverter
             $this->context,
             $this->checksum
         );
+        $languageUuid = $this->mainMapping['entityUuid'];
 
         foreach ($data['stores'] as $storeId) {
             $languageMapping = $this->mappingService->getOrCreateMapping(
@@ -118,7 +119,7 @@ class LanguageConverter extends MagentoConverter
         }
         unset($data['stores']);
 
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $languageUuid;
         $converted['name'] = $languageData['name'];
         $converted['localeId'] = $localeUuid;
         $converted['translationCodeId'] = $localeUuid;

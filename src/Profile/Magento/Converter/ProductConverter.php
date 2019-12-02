@@ -272,6 +272,7 @@ class ProductConverter extends MagentoConverter
                 unset($translation);
             }
         }
+        unset($data['translations']);
 
         $this->updateMainMapping($migrationContext, $context);
 
