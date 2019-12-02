@@ -269,6 +269,7 @@ class ProductConverter extends MagentoConverter
                 foreach ($converted['translations'] as &$translation) {
                     $translation['productId'] = $converted['id'];
                 }
+                unset($translation);
             }
         }
 
