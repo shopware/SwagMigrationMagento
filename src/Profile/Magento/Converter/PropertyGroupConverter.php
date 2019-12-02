@@ -48,6 +48,7 @@ class PropertyGroupConverter extends MagentoConverter
         $this->generateChecksum($data);
         $this->originalData = $data;
         $this->context = $context;
+        $this->migrationContext = $migrationContext;
         $this->runId = $migrationContext->getRunUuid();
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->oldIdentifier = $data['id'];
@@ -101,9 +102,15 @@ class PropertyGroupConverter extends MagentoConverter
             );
             $this->mappingIds[] = $mapping['id'];
 
+            $translations = [];
+            if (isset($option['translations'])) {
+                $translations = $this->getTranslations($option['translations'], DefaultEntities::PROPERTY_GROUP_OPTION, ['name' => 'name'], $this->context);
+            }
+
             $converted['options'][] = [
                 'id' => $mapping['entityUuid'],
                 'name' => $option['name'],
+                'translations' => $translations,
             ];
         }
     }

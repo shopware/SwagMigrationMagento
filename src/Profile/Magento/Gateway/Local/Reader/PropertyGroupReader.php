@@ -2,13 +2,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\Connection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class PropertyGroupReader extends AbstractReader
+class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
@@ -42,10 +43,30 @@ class PropertyGroupReader extends AbstractReader
                     ];
                 }
 
+                $optionIds[] = $option['optionId'];
                 $groups[$groupId]['options'][] = [
                     'id' => $option['optionId'],
                     'name' => $option['optionValue'],
                 ];
+            }
+        }
+
+        $translations = $this->fetchTranslations($optionIds);
+
+        foreach ($groups as &$group) {
+            foreach ($group['options'] as &$option) {
+                $optionId = $option['id'];
+
+                if (isset($translations[$optionId])) {
+                    foreach ($translations[$optionId] as $translation) {
+                        $store_id = $translation['store_id'];
+                        $attribute_id = $translation['attribute_id'];
+                        $value = $translation['value'];
+
+                        $option['translations'][$store_id]['name']['value'] = $value;
+                        $option['translations'][$store_id]['name']['attribute_id'] = $attribute_id;
+                    }
+                }
             }
         }
 
@@ -89,6 +110,24 @@ SQL;
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchTranslations(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('optionValue.option_id');
+        $query->addSelect('optionValue.store_id');
+        $query->addSelect('attributeOption.attribute_id');
+        $query->addSelect('optionValue.value');
+        $query->from($this->tablePrefix . 'eav_attribute_option', 'attributeOption');
+
+        $query->innerJoin('attributeOption', $this->tablePrefix . 'eav_attribute_option_value', 'optionValue', 'optionValue.option_id = attributeOption.option_id AND optionValue.store_id != 0');
+
+        $query->where('attributeOption.option_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
