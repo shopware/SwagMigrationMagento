@@ -3,16 +3,25 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
-class CustomerReader extends AbstractReader implements LocalReaderInterface
+class CustomerReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CUSTOMER;
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
     }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
@@ -44,6 +53,19 @@ class CustomerReader extends AbstractReader implements LocalReaderInterface
         $fetchedCustomers = $this->utf8ize($fetchedCustomers);
 
         return $this->cleanupResultSet($fetchedCustomers);
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        $this->setConnection($migrationContext);
+
+        $sql = <<<SQL
+SELECT COUNT(*)
+FROM {$this->tablePrefix}customer_entity;
+SQL;
+        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+
+        return new TotalStruct(DefaultEntities::CUSTOMER, $total);
     }
 
     private function fetchCustomers(array $ids): array

@@ -3,16 +3,25 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
-class ProductReviewReader extends AbstractReader implements LocalReaderInterface
+class ProductReviewReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_REVIEW;
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
     }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
@@ -39,6 +48,20 @@ class ProductReviewReader extends AbstractReader implements LocalReaderInterface
         }
 
         return $this->utf8ize($fetchedProductReviews);
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        $this->setConnection($migrationContext);
+
+        $sql = <<<SQL
+SELECT COUNT(*)
+FROM {$this->tablePrefix}review AS review
+INNER JOIN {$this->tablePrefix}review_entity AS re ON re.entity_id = review.entity_id AND re.entity_code = 'product';
+SQL;
+        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+
+        return new TotalStruct(DefaultEntities::PRODUCT_REVIEW, $total);
     }
 
     protected function fetchProductReviews(MigrationContextInterface $migrationContext): array

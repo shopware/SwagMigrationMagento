@@ -3,13 +3,15 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
-class ProductReader extends AbstractReader implements LocalReaderInterface
+class ProductReader extends AbstractReader
 {
-    public static $ALLOWED_PRODUCT_TYPES = [
+    protected static $ALLOWED_PRODUCT_TYPES = [
         'simple',
         'configurable',
         'downloadable',
@@ -18,7 +20,14 @@ class ProductReader extends AbstractReader implements LocalReaderInterface
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT;
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
     }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
@@ -31,6 +40,24 @@ class ProductReader extends AbstractReader implements LocalReaderInterface
         $this->appendCustomAttributes($ids, $fetchedProducts);
 
         return $this->appendAssociatedData($fetchedProducts, $ids);
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        $this->setConnection($migrationContext);
+
+        $sql = <<<SQL
+SELECT COUNT(*)
+FROM {$this->tablePrefix}catalog_product_entity
+WHERE type_id IN (?);
+SQL;
+        $total = (int) $this->connection->executeQuery(
+            $sql,
+            [self::$ALLOWED_PRODUCT_TYPES],
+            [Connection::PARAM_STR_ARRAY]
+        )->fetchColumn();
+
+        return new TotalStruct(DefaultEntities::PRODUCT, $total);
     }
 
     protected function fetchProducts(MigrationContextInterface $migrationContext): array

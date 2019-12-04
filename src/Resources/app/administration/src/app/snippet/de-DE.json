@@ -41,6 +41,11 @@
                             "tablePrefixPlaceholder": "Datenbank Tabellenprefix"
                         }
                     }
+                },
+                "connectionCreate": {
+                    "gateways": {
+                        "magentoLocal": "Lokale Datenbank"
+                    }
                 }
             }
         }

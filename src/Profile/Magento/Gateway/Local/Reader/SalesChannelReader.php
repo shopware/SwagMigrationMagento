@@ -3,16 +3,25 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
-class SalesChannelReader extends AbstractReader implements LocalReaderInterface
+class SalesChannelReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SALES_CHANNEL;
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
     }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
@@ -83,6 +92,20 @@ class SalesChannelReader extends AbstractReader implements LocalReaderInterface
         }
 
         return $this->cleanupResultSet($fetchedWebsites);
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        $this->setConnection($migrationContext);
+
+        $sql = <<<SQL
+SELECT COUNT(*)
+FROM {$this->tablePrefix}core_website
+WHERE website_id != 0;
+SQL;
+        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+
+        return new TotalStruct(DefaultEntities::SALES_CHANNEL, $total);
     }
 
     private function fetchWebsites(MigrationContextInterface $migrationContext): array

@@ -6,8 +6,9 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\DBAL\Schema\Column;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
+use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
-use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
 abstract class AbstractReader implements ReaderInterface
 {
@@ -40,6 +41,16 @@ abstract class AbstractReader implements ReaderInterface
         if (isset($credentials['tablePrefix'])) {
             $this->tablePrefix = $credentials['tablePrefix'];
         }
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return false;
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        return null;
     }
 
     protected function fetchDefaultLocale(): string

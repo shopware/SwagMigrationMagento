@@ -2,10 +2,44 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\Connection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
+use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class EnvironmentReader extends AbstractReader
+class EnvironmentReader implements EnvironmentReaderInterface
 {
+    /**
+     * @var ConnectionFactoryInterface
+     */
+    protected $connectionFactory;
+
+    /**
+     * @var Connection
+     */
+    protected $connection;
+
+    /**
+     * @var string
+     */
+    protected $tablePrefix;
+
+    public function __construct(ConnectionFactoryInterface $connectionFactory)
+    {
+        $this->connectionFactory = $connectionFactory;
+        $this->tablePrefix = '';
+    }
+
+    protected function setConnection(MigrationContextInterface $migrationContext): void
+    {
+        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        if (isset($credentials['tablePrefix'])) {
+            $this->tablePrefix = $credentials['tablePrefix'];
+        }
+    }
+
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);

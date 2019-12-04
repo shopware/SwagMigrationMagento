@@ -3,16 +3,25 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
-class ProductCustomFieldReader extends AbstractReader implements LocalReaderInterface
+class ProductCustomFieldReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_CUSTOM_FIELD;
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
     }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
@@ -33,6 +42,21 @@ class ProductCustomFieldReader extends AbstractReader implements LocalReaderInte
         }
 
         return $customFields;
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        $this->setConnection($migrationContext);
+
+        $sql = <<<SQL
+SELECT COUNT(*)
+FROM {$this->tablePrefix}eav_attribute AS eav
+INNER JOIN {$this->tablePrefix}eav_entity_type et ON et.entity_type_id = eav.entity_type_id AND et.entity_type_code = 'catalog_product'
+WHERE eav.frontend_input != '' AND eav.is_user_defined = 1 AND eav.attribute_code NOT IN ('manufacturer', 'cost');
+SQL;
+        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+
+        return new TotalStruct(DefaultEntities::PRODUCT_CUSTOM_FIELD, $total);
     }
 
     protected function fetchCustomFields(MigrationContextInterface $migrationContext): array

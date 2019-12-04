@@ -6,7 +6,7 @@ use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class ManufacturerReader extends AbstractReader implements LocalReaderInterface
+class ManufacturerReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
