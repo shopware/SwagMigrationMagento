@@ -74,6 +74,24 @@ class ProductConverter extends MagentoConverter
         return $data['entity_id'];
     }
 
+    public function getMediaUuids(array $converted): ?array
+    {
+        $mediaUuids = [];
+        foreach ($converted as $data) {
+            if (isset($data['media'])) {
+                foreach ($data['media'] as $media) {
+                    if (!isset($media['media'])) {
+                        continue;
+                    }
+
+                    $mediaUuids[] = $media['media']['id'];
+                }
+            }
+        }
+
+        return $mediaUuids;
+    }
+
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);

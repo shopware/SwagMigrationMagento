@@ -18,18 +18,4 @@ class CategoryDataSet extends DataSet
     {
         return $migrationContext->getProfile() instanceof Magento19Profile;
     }
-
-    public function getMediaUuids(array $converted): ?array
-    {
-        $mediaUuids = [];
-        foreach ($converted as $data) {
-            if (!isset($data['media']['id'])) {
-                continue;
-            }
-
-            $mediaUuids[] = $data['media']['id'];
-        }
-
-        return $mediaUuids;
-    }
 }
