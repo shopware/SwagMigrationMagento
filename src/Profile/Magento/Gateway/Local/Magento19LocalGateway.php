@@ -13,8 +13,8 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\TableReaderInterface;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\EnvironmentInformation;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
-use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistryInterface;
+use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
 
 class Magento19LocalGateway implements MagentoGatewayInterface

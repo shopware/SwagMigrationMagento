@@ -33,16 +33,6 @@ abstract class AbstractReader implements ReaderInterface
         $this->tablePrefix = '';
     }
 
-    protected function setConnection(MigrationContextInterface $migrationContext): void
-    {
-        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
-        if (isset($credentials['tablePrefix'])) {
-            $this->tablePrefix = $credentials['tablePrefix'];
-        }
-    }
-
     public function supportsTotal(MigrationContextInterface $migrationContext): bool
     {
         return false;
@@ -51,6 +41,16 @@ abstract class AbstractReader implements ReaderInterface
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         return null;
+    }
+
+    protected function setConnection(MigrationContextInterface $migrationContext): void
+    {
+        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        if (isset($credentials['tablePrefix'])) {
+            $this->tablePrefix = $credentials['tablePrefix'];
+        }
     }
 
     protected function fetchDefaultLocale(): string

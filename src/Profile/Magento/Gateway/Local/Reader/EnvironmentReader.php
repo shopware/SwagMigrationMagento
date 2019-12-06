@@ -30,16 +30,6 @@ class EnvironmentReader implements EnvironmentReaderInterface
         $this->tablePrefix = '';
     }
 
-    protected function setConnection(MigrationContextInterface $migrationContext): void
-    {
-        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
-        if (isset($credentials['tablePrefix'])) {
-            $this->tablePrefix = $credentials['tablePrefix'];
-        }
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -53,6 +43,16 @@ class EnvironmentReader implements EnvironmentReaderInterface
         ];
 
         return $resultSet;
+    }
+
+    protected function setConnection(MigrationContextInterface $migrationContext): void
+    {
+        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        if (isset($credentials['tablePrefix'])) {
+            $this->tablePrefix = $credentials['tablePrefix'];
+        }
     }
 
     protected function getHost(): string
