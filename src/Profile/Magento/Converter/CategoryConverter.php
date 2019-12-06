@@ -61,6 +61,20 @@ class CategoryConverter extends MagentoConverter
         $this->mediaFileService = $mediaFileService;
     }
 
+    public function getMediaUuids(array $converted): ?array
+    {
+        $mediaUuids = [];
+        foreach ($converted as $data) {
+            if (!isset($data['media']['id'])) {
+                continue;
+            }
+
+            $mediaUuids[] = $data['media']['id'];
+        }
+
+        return $mediaUuids;
+    }
+
     public function getSourceIdentifier(array $data): string
     {
         return $data['entity_id'];
