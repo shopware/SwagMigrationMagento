@@ -13,17 +13,11 @@
         <!-- Magento ConnectionFactory -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
 
-        <!-- Magento ReaderRegistry for all data readers -->
-        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\ReaderRegistry">
-            <argument type="tagged" tag="shopware.migration.magento_local_reader"/>
-        </service>
-
         <!-- Shopware Profile Gateways -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway">
-            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\ReaderRegistry"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistry"/>
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader"/>
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LocalTableReader"/>
-            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader"/>
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
             <argument type="service" id="currency.repository"/>
             <tag name="shopware.migration.gateway"/>
@@ -31,12 +25,6 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader">
             <argument id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" type="service"/>
-        </service>
-
-        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader">
-            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <argument type="service" id="SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSetRegistry"/>
-            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LocalTableReader">
@@ -144,87 +132,87 @@
         <!-- Readers which contain the sql queries -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SalesChannelReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CategoryReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\OrderReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CountryReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CurrencyReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\MediaReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NotAssociatedMediaReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ManufacturerReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerGroupReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\PropertyGroupReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LanguageReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductCustomFieldReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReviewReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SeoUrlReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NewsletterRecipientReader">
             <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
-            <tag name="shopware.migration.magento_local_reader"/>
+            <tag name="shopware.migration.reader"/>
         </service>
 
         <!-- Premapping readers -->

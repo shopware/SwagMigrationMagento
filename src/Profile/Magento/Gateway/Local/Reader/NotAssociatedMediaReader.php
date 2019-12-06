@@ -3,10 +3,11 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class NotAssociatedMediaReader extends AbstractReader implements LocalReaderInterface
+class NotAssociatedMediaReader extends AbstractReader
 {
     /**
      * @var string
@@ -16,6 +17,7 @@ class NotAssociatedMediaReader extends AbstractReader implements LocalReaderInte
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === DefaultEntities::NOT_ASSOCIATED_MEDIA;
     }
 

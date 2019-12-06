@@ -2,16 +2,25 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\TotalStruct;
 
-class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
+class PropertyGroupReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
-        && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PROPERTY_GROUP;
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
+            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PROPERTY_GROUP;
+    }
+
+    public function supportsTotal(MigrationContextInterface $migrationContext): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento19Profile
+            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
     }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
@@ -41,6 +50,23 @@ class PropertyGroupReader extends AbstractReader implements LocalReaderInterface
         }
 
         return $groups;
+    }
+
+    public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
+    {
+        $this->setConnection($migrationContext);
+
+        $sql = <<<SQL
+SELECT COUNT(*)
+FROM {$this->tablePrefix}eav_attribute AS eav
+INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS eav_settings ON eav_settings.attribute_id = eav.attribute_id
+INNER JOIN {$this->tablePrefix}eav_attribute_option AS options ON options.attribute_id = eav.attribute_id
+INNER JOIN {$this->tablePrefix}eav_attribute_option_value as option_value ON option_value.option_id = options.option_id AND option_value.store_id = 0
+WHERE eav.is_user_defined = 1;
+SQL;
+        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+
+        return new TotalStruct(DefaultEntities::PROPERTY_GROUP, $total);
     }
 
     public function fetchPropertyGroups(MigrationContextInterface $migrationContext): array

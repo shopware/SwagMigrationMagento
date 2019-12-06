@@ -8,13 +8,13 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Currency\CurrencyEntity;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\TableCountReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\Gateway\TableReaderInterface;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\EnvironmentInformation;
+use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
+use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
-use SwagMigrationAssistant\Migration\Profile\ReaderInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
 
 class Magento19LocalGateway implements MagentoGatewayInterface
@@ -22,7 +22,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     public const GATEWAY_NAME = 'local';
 
     /**
-     * @var ReaderRegistry
+     * @var ReaderRegistryInterface
      */
     private $readerRegistry;
 
@@ -32,14 +32,9 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     private $connectionFactory;
 
     /**
-     * @var ReaderInterface
+     * @var EnvironmentReaderInterface
      */
     private $localEnvironmentReader;
-
-    /**
-     * @var TableCountReader
-     */
-    private $localTableCountReader;
 
     /**
      * @var EntityRepositoryInterface
@@ -52,17 +47,15 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     private $localTableReader;
 
     public function __construct(
-        ReaderRegistry $readerRegistry,
-        ReaderInterface $localEnvironmentReader,
+        ReaderRegistryInterface $readerRegistry,
+        EnvironmentReaderInterface $localEnvironmentReader,
         TableReaderInterface $localTableReader,
-        TableCountReader $localTableCountReader,
         ConnectionFactoryInterface $connectionFactory,
         EntityRepositoryInterface $currencyRepository
     ) {
         $this->readerRegistry = $readerRegistry;
         $this->localEnvironmentReader = $localEnvironmentReader;
         $this->localTableReader = $localTableReader;
-        $this->localTableCountReader = $localTableCountReader;
         $this->connectionFactory = $connectionFactory;
         $this->currencyRepository = $currencyRepository;
     }
@@ -135,7 +128,15 @@ class Magento19LocalGateway implements MagentoGatewayInterface
 
     public function readTotals(MigrationContextInterface $migrationContext, Context $context): array
     {
-        return $this->localTableCountReader->readTotals($migrationContext, $context);
+        $readers = $this->readerRegistry->getReaderForTotal($migrationContext);
+
+        $totals = [];
+        foreach ($readers as $reader) {
+            $total = $reader->readTotal($migrationContext);
+            $totals[$total->getEntityName()] = $total;
+        }
+
+        return $totals;
     }
 
     public function readTable(MigrationContextInterface $migrationContext, string $tableName, array $filter = []): array
