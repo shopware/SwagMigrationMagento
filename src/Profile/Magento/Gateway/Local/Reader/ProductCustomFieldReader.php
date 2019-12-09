@@ -50,8 +50,8 @@ class ProductCustomFieldReader extends AbstractReader
 
         $sql = <<<SQL
 SELECT COUNT(*)
-FROM {$this->tablePrefix}eav_attribute AS eav
-INNER JOIN {$this->tablePrefix}eav_entity_type et ON et.entity_type_id = eav.entity_type_id AND et.entity_type_code = 'catalog_product'
+FROM {$this->tablePrefix}eav_attribute eav
+INNER JOIN {$this->tablePrefix}eav_entity_type AS et ON et.entity_type_id = eav.entity_type_id AND et.entity_type_code = 'catalog_product'
 WHERE eav.frontend_input != '' AND eav.is_user_defined = 1 AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
@@ -90,8 +90,8 @@ SELECT DISTINCT
     optionValue.option_id,
     optionValue.value
 FROM {$this->tablePrefix}eav_attribute_option_value optionValue
-INNER JOIN {$this->tablePrefix}eav_attribute_option attributeOption ON optionValue.option_id = attributeOption.option_id
-INNER JOIN {$this->tablePrefix}eav_attribute attribute ON attribute.attribute_id = attributeOption.attribute_id
+INNER JOIN {$this->tablePrefix}eav_attribute_option AS attributeOption ON optionValue.option_id = attributeOption.option_id
+INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute_id = attributeOption.attribute_id
 WHERE attribute.attribute_id IN (?);
 SQL;
 

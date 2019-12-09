@@ -205,8 +205,8 @@ SQL;
     private function fetchCarriers(): array
     {
         $sql = <<<SQL
-SELECT carrier.* FROM
-      (
+SELECT carrier.* 
+FROM (
           SELECT
             REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
             config.*
@@ -253,11 +253,11 @@ SQL;
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'currency');
-        $query->addSelect('scope_id as store_id');
-        $query->addSelect('value as currencies');
+        $query->addSelect('scope_id AS store_id');
+        $query->addSelect('value AS currencies');
 
         $query->andWhere('scope = \'stores\'');
-        $query->andWhere('scope_id in (:storeId)');
+        $query->andWhere('scope_id IN (:storeId)');
         $query->andWhere('path = \'currency/options/allow\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
@@ -275,12 +275,12 @@ SQL;
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'currency');
-        $query->addSelect('scope_id as store_id');
+        $query->addSelect('scope_id AS store_id');
         $query->addSelect('path');
         $query->addSelect('value');
 
         $query->andWhere('scope = \'stores\'');
-        $query->andWhere('scope_id in (:storeId)');
+        $query->andWhere('scope_id IN (:storeId)');
         $query->andWhere('path = \'general/country/allow\' OR path = \'general/country/default\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
@@ -305,10 +305,10 @@ SQL;
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'locales');
-        $query->addSelect('scope_id as store_id');
-        $query->addSelect('value as locale');
+        $query->addSelect('scope_id AS store_id');
+        $query->addSelect('value AS locale');
 
-        $query->orWhere('scope = \'stores\' AND scope_id in (:storeId) AND path = \'general/locale/code\'');
+        $query->orWhere('scope = \'stores\' AND scope_id IN (:storeId) AND path = \'general/locale/code\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
         $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);

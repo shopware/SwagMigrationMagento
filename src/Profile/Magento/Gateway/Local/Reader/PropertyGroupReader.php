@@ -61,7 +61,7 @@ SELECT COUNT(*)
 FROM {$this->tablePrefix}eav_attribute AS eav
 INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS eav_settings ON eav_settings.attribute_id = eav.attribute_id
 INNER JOIN {$this->tablePrefix}eav_attribute_option AS options ON options.attribute_id = eav.attribute_id
-INNER JOIN {$this->tablePrefix}eav_attribute_option_value as option_value ON option_value.option_id = options.option_id AND option_value.store_id = 0
+INNER JOIN {$this->tablePrefix}eav_attribute_option_value AS option_value ON option_value.option_id = options.option_id AND option_value.store_id = 0
 WHERE eav.is_user_defined = 1;
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
@@ -73,16 +73,16 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->addSelect('eav.attribute_id as identifier');
-        $query->addSelect('eav.attribute_id as groupId');
-        $query->addSelect('eav.frontend_label as groupName');
+        $query->addSelect('eav.attribute_id AS identifier');
+        $query->addSelect('eav.attribute_id AS groupId');
+        $query->addSelect('eav.frontend_label AS groupName');
         $query->from($this->tablePrefix . 'eav_attribute', 'eav');
 
         $query->innerJoin('eav', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id');
         $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option', 'options', 'options.attribute_id = eav.attribute_id');
 
-        $query->addSelect('option_value.option_id as optionId');
-        $query->addSelect('option_value.value as optionValue');
+        $query->addSelect('option_value.option_id AS optionId');
+        $query->addSelect('option_value.value AS optionValue');
         $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = options.option_id AND option_value.store_id = 0');
 
         $query->where('eav.is_user_defined = 1');
