@@ -133,7 +133,7 @@ SELECT
          WHEN 'datetime' THEN product_datetime.store_id
          ELSE null
            END AS store_id
-FROM {$this->tablePrefix}catalog_product_entity AS product
+FROM {$this->tablePrefix}catalog_product_entity product
 LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
     ON product.entity_type_id = attribute.entity_type_id
 LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar

@@ -73,6 +73,18 @@ return [
         'use_config_email_template' => null,
         'use_config_is_redeemable' => null,
         'use_config_lifetime' => null,
+        'translations' => [
+            '1' => [
+                'name' => [
+                    'attribute_id' => 100,
+                    'value' => 'EN - Produktübersetzung',
+                ],
+                'oneAttribute' => [
+                    'attribute_id' => 200,
+                    'value' => 'attributeValue',
+                ],
+            ],
+        ],
         'visibility' => [
             0 => [
                 'store_id' => '0',

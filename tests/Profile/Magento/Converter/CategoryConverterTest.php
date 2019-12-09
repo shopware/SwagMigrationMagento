@@ -7,6 +7,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
@@ -45,18 +46,32 @@ class CategoryConverterTest extends TestCase
      */
     private $migrationContext;
 
+    /**
+     * @var string
+     */
+    private $languageUuid;
+
     protected function setUp(): void
     {
         $mediaFileService = new DummyMediaFileService();
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->categoryConverter = new CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
         $this->connection->setId(Uuid::randomHex());
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
+
+        $this->languageUuid = Uuid::randomHex();
+        $mappingService->createMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            '1',
+            null,
+            null,
+            $this->languageUuid
+        );
 
         $this->migrationContext = new MigrationContext(
             new Magento19Profile(),
@@ -69,6 +84,7 @@ class CategoryConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
+        $this->categoryConverter = new CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
     }
 
     public function testSupports(): void
@@ -89,8 +105,17 @@ class CategoryConverterTest extends TestCase
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->languageUuid, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame(
+            $categoryData[0]['translations']['1']['name']['value'],
+            $converted['translations'][$this->languageUuid]['name']
+        );
+        static::assertSame(
+            $categoryData[0]['translations']['1']['oneAttribute']['value'],
+            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_category_200']
+        );
     }
 
     public function testConvertWithParent(): void

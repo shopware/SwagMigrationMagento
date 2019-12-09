@@ -155,9 +155,9 @@ SELECT
          ELSE null
     END AS store_id
 FROM
-    {$this->tablePrefix}catalog_category_entity AS category
+    {$this->tablePrefix}catalog_category_entity category
 
-LEFT JOIN {$this->tablePrefix}eav_attribute attribute
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
     ON category.entity_type_id = attribute.entity_type_id
 
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS category_varchar

@@ -80,6 +80,7 @@ class ManufacturerConverter extends MagentoConverter
                 unset($translation);
             }
         }
+        unset($data['translations']);
 
         if (empty($data)) {
             $data = null;

@@ -4,10 +4,34 @@ return [
     0 => [
         'id' => '92',
         'name' => 'color',
+        'translations' => [
+            '1' => [
+                'name' => [
+                    'attribute_id' => 100,
+                    'value' => 'Farbe',
+                ],
+                'oneAttribute' => [
+                    'attribute_id' => 200,
+                    'value' => 'attributeValue',
+                ],
+            ],
+        ],
         'options' => [
             0 => [
                 'id' => '12',
                 'name' => 'Grey',
+                'translations' => [
+                    '1' => [
+                        'name' => [
+                            'attribute_id' => 100,
+                            'value' => 'Grau',
+                        ],
+                        'oneAttribute' => [
+                            'attribute_id' => 200,
+                            'value' => 'attributeValue',
+                        ],
+                    ],
+                ],
             ],
             1 => [
                 'id' => '13',

@@ -7,6 +7,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
@@ -41,11 +42,15 @@ class ManufacturerConverterTest extends TestCase
      */
     private $migrationContext;
 
+    /**
+     * @var string
+     */
+    private $languageUuid;
+
     protected function setUp(): void
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->manufacturerConverter = new ManufacturerConverter($mappingService, $this->loggingService);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -61,6 +66,18 @@ class ManufacturerConverterTest extends TestCase
             0,
             250
         );
+
+        $this->languageUuid = Uuid::randomHex();
+        $mappingService->createMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            '1',
+            null,
+            null,
+            $this->languageUuid
+        );
+
+        $this->manufacturerConverter = new ManufacturerConverter($mappingService, $this->loggingService);
     }
 
     public function testSupports(): void
@@ -82,5 +99,14 @@ class ManufacturerConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame(
+            $manufacturerData[0]['translations']['1']['name']['value'],
+            $converted['translations'][$this->languageUuid]['name']
+        );
+        static::assertSame(
+            $manufacturerData[0]['translations']['1']['oneAttribute']['value'],
+            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_product_manufacturer_200']
+        );
     }
 }
