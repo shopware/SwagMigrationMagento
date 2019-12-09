@@ -11,7 +11,7 @@ use SwagMigrationAssistant\Migration\TotalStruct;
 
 class ProductReader extends AbstractReader
 {
-    protected static $ALLOWED_PRODUCT_TYPES = [
+    public static $ALLOWED_PRODUCT_TYPES = [
         'simple',
         'configurable',
         'downloadable',

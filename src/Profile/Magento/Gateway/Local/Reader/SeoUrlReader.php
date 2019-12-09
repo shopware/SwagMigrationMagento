@@ -2,6 +2,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\Connection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -47,10 +48,11 @@ class SeoUrlReader extends AbstractReader
 
         $sql = <<<SQL
 SELECT COUNT(*)
-FROM {$this->tablePrefix}core_url_rewrite
-WHERE options IS NULL;
+FROM {$this->tablePrefix}core_url_rewrite seo
+LEFT JOIN {$this->tablePrefix}catalog_product_entity AS product ON product.entity_id = seo.product_id
+WHERE seo.options IS NULL AND product.type_id IN (?);
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [Connection::PARAM_STR_ARRAY])->fetchColumn();
 
         return new TotalStruct(DefaultEntities::SEO_URL, $total);
     }
@@ -62,10 +64,14 @@ SQL;
         $query->from($this->tablePrefix . 'core_url_rewrite', 'seo');
         $this->addTableSelection($query, $this->tablePrefix . 'core_url_rewrite', 'seo');
 
+        $query->leftJoin('seo', $this->tablePrefix . 'catalog_product_entity', 'product', 'seo.product_id = product.entity_id');
+
         $query->leftJoin('seo', $this->tablePrefix . 'core_config_data', 'locale', 'locale.scope_id = seo.store_id AND locale.scope = \'stores\' AND locale.path = \'general/locale/code\'');
         $query->addSelect('locale.value AS `seo.locale`');
 
         $query->where('seo.options IS NULL');
+        $query->andWhere('product.type_id IN (:types)');
+        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());

@@ -57,9 +57,11 @@ class ProductReviewReader extends AbstractReader
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}review AS review
-INNER JOIN {$this->tablePrefix}review_entity AS re ON re.entity_id = review.entity_id AND re.entity_code = 'product';
+INNER JOIN {$this->tablePrefix}review_entity AS re ON re.entity_id = review.entity_id AND re.entity_code = 'product'
+LEFT JOIN {$this->tablePrefix}catalog_product_entity AS product ON review.entity_pk_value = product.entity_id
+WHERE product.type_id IN (?)
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [Connection::PARAM_STR_ARRAY])->fetchColumn();
 
         return new TotalStruct(DefaultEntities::PRODUCT_REVIEW, $total);
     }
@@ -79,6 +81,8 @@ SQL;
         $query->innerJoin('review', $this->tablePrefix . 'review_detail', 'detail', 'detail.review_id = review.review_id');
         $this->addTableSelection($query, $this->tablePrefix . 'review_detail', 'detail');
 
+        $query->leftJoin('review', $this->tablePrefix . 'catalog_product_entity', 'product', 'review.entity_pk_value = product.entity_id');
+
         $query->leftJoin(
             'detail',
             $this->tablePrefix . 'core_config_data',
@@ -86,6 +90,9 @@ SQL;
             'locale.scope_id = detail.store_id AND locale.scope = \'stores\' AND path = \'general/locale/code\''
         );
         $query->addSelect('locale.value AS `detail.locale`');
+
+        $query->andWhere('product.type_id IN (:types)');
+        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
