@@ -65,27 +65,27 @@ SQL;
         $sql = <<<SQL
 SELECT
     product.*,
-    stock.qty                 as instock,
-    stock.min_qty             as stockmin,
-    stock.min_sale_qty        as minpurchase,
-    stock.max_sale_qty        as maxpurchase,
-    price_includes_tax.value  as priceIncludesTax
+    stock.qty                 AS instock,
+    stock.min_qty             AS stockmin,
+    stock.min_sale_qty        AS minpurchase,
+    stock.max_sale_qty        AS maxpurchase,
+    price_includes_tax.value  AS priceIncludesTax
 FROM {$this->tablePrefix}catalog_product_entity product
 
 -- join stocks
-LEFT JOIN {$this->tablePrefix}cataloginventory_stock_item stock
+LEFT JOIN {$this->tablePrefix}cataloginventory_stock_item AS stock
 ON stock.product_id = product.entity_id
 AND stock.stock_id = 1
 
 -- join price includes tax configuration
-LEFT JOIN {$this->tablePrefix}core_config_data price_includes_tax
+LEFT JOIN {$this->tablePrefix}core_config_data AS price_includes_tax
 ON price_includes_tax.path = 'tax/calculation/price_includes_tax'
 AND price_includes_tax.scope = 'default'
 
 WHERE product.type_id IN (?)
 
 ORDER BY 
-  case 
+  CASE 
     WHEN product.type_id = 'configurable' THEN 1
     ELSE 2
   END ASC
@@ -123,7 +123,7 @@ SELECT
        WHEN 'datetime' THEN product_datetime.value
        ELSE attribute.backend_type
     END AS value
-FROM {$this->tablePrefix}catalog_product_entity AS product
+FROM {$this->tablePrefix}catalog_product_entity product
 LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute 
     ON product.entity_type_id = attribute.entity_type_id
 LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar 
@@ -186,7 +186,7 @@ SELECT
        WHEN 'datetime' THEN product_datetime.value
        ELSE attribute.backend_type
     END AS value
-FROM {$this->tablePrefix}catalog_product_entity AS product
+FROM {$this->tablePrefix}catalog_product_entity product
 INNER JOIN {$this->tablePrefix}eav_attribute AS attribute 
     ON product.entity_type_id = attribute.entity_type_id
 INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS attributeSetting
@@ -291,8 +291,8 @@ SQL;
         $sql = <<<SQL
 SELECT 
     productCategory.product_id,
-    productCategory.product_id as productId,
-    productCategory.category_id as categoryId
+    productCategory.product_id AS productId,
+    productCategory.category_id AS categoryId
 FROM {$this->tablePrefix}catalog_category_product productCategory
 WHERE productCategory.product_id IN (?)
 ORDER BY productCategory.position
@@ -305,11 +305,11 @@ SQL;
     {
         $sql = <<<SQL
 SELECT
-    mediaGallery.entity_id as productId,
-    mediaGallery.value as image,
-    mediaGalleryValue.label as description,
+    mediaGallery.entity_id AS productId,
+    mediaGallery.value AS image,
+    mediaGalleryValue.label AS description,
     mediaGalleryValue.position,
-    IF(mediaGalleryValue.position=1, 1, 0) as main
+    IF(mediaGalleryValue.position=1, 1, 0) AS main
 FROM 
     {$this->tablePrefix}catalog_product_entity_media_gallery mediaGallery,
     {$this->tablePrefix}catalog_product_entity_media_gallery_value mediaGalleryValue
@@ -327,9 +327,9 @@ SQL;
 SELECT
     price.entity_id, 
     price.*,
-    customerGroup.customer_group_code as customerGroupCode
+    customerGroup.customer_group_code AS customerGroupCode
 FROM {$this->tablePrefix}catalog_product_entity_tier_price price
-LEFT JOIN {$this->tablePrefix}customer_group customerGroup ON customerGroup.customer_group_id = price.customer_group_id
+LEFT JOIN {$this->tablePrefix}customer_group AS customerGroup ON customerGroup.customer_group_id = price.customer_group_id
 WHERE price.entity_id IN (?)
 ORDER BY price.entity_id, price.all_groups DESC, price.customer_group_id, price.qty;
 SQL;
@@ -341,12 +341,12 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->select('DISTINCT product.entity_id identifier');
-        $query->addSelect('product.entity_id parentId');
-        $query->addSelect('eav.attribute_id as groupId');
-        $query->addSelect('eav.attribute_code groupName');
-        $query->addSelect('option_value.option_id as optionId');
-        $query->addSelect('option_value.value optionValue');
+        $query->select('DISTINCT product.entity_id AS identifier');
+        $query->addSelect('product.entity_id AS parentId');
+        $query->addSelect('eav.attribute_id AS groupId');
+        $query->addSelect('eav.attribute_code AS groupName');
+        $query->addSelect('option_value.option_id AS optionId');
+        $query->addSelect('option_value.value AS optionValue');
 
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
 
@@ -356,7 +356,7 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_filterable = 1');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
@@ -366,12 +366,12 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->select('DISTINCT product.entity_id identifier');
-        $query->addSelect('product.entity_id parentId');
-        $query->addSelect('eav.attribute_id as groupId');
-        $query->addSelect('eav.attribute_code groupName');
-        $query->addSelect('option_value.option_id as optionId');
-        $query->addSelect('option_value.value optionValue');
+        $query->select('DISTINCT product.entity_id AS identifier');
+        $query->addSelect('product.entity_id AS parentId');
+        $query->addSelect('eav.attribute_id AS groupId');
+        $query->addSelect('eav.attribute_code AS groupName');
+        $query->addSelect('option_value.option_id AS optionId');
+        $query->addSelect('option_value.value AS optionValue');
 
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
 
@@ -382,7 +382,7 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
@@ -392,12 +392,12 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->select('DISTINCT product.entity_id identifier');
-        $query->addSelect('product.entity_id productId');
-        $query->addSelect('eav.attribute_id as groupId');
-        $query->addSelect('eav.attribute_code groupName');
-        $query->addSelect('option_value.option_id as optionId');
-        $query->addSelect('option_value.value optionValue');
+        $query->select('DISTINCT product.entity_id AS identifier');
+        $query->addSelect('product.entity_id AS productId');
+        $query->addSelect('eav.attribute_id AS groupId');
+        $query->addSelect('eav.attribute_code AS groupName');
+        $query->addSelect('option_value.option_id AS optionId');
+        $query->addSelect('option_value.value AS optionValue');
 
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
 
@@ -408,7 +408,7 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = relation.parent_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id in (:ids)');
+        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
@@ -435,8 +435,8 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->select('relation.child_id productId');
-        $query->addSelect('relation.parent_id parentId');
+        $query->select('relation.child_id AS productId');
+        $query->addSelect('relation.parent_id AS parentId');
 
         $query->from($this->tablePrefix . 'catalog_product_relation', 'relation');
         $query->innerJoin('relation', $this->tablePrefix . 'catalog_product_entity', 'product', 'product.entity_id = relation.parent_id');

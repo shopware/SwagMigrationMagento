@@ -86,7 +86,7 @@ abstract class AbstractReader implements ReaderInterface
             $selection = str_replace(
                 ['#tableAlias#', '#column#'],
                 [$tableAlias, $column->getName()],
-                '`#tableAlias#`.`#column#` as `#tableAlias#.#column#`'
+                '`#tableAlias#`.`#column#` AS `#tableAlias#.#column#`'
             );
 
             $query->addSelect($selection);
@@ -196,7 +196,7 @@ SELECT
        WHEN 'datetime' THEN {$entity}_datetime.value
        ELSE attribute.backend_type
     END AS value
-FROM {$this->tablePrefix}{$entity}_entity AS {$entity}
+FROM {$this->tablePrefix}{$entity}_entity {$entity}
 LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute 
     ON {$entity}.entity_type_id = attribute.entity_type_id
 LEFT JOIN {$this->tablePrefix}{$entity}_entity_varchar AS {$entity}_varchar 

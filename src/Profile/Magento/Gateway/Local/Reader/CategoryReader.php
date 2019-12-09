@@ -59,21 +59,21 @@ SELECT
     name.value AS name,
     description.value AS description,
     status.value AS status,
-    sibling.entity_id as previousSiblingId,
-    defaultLocale.value as defaultLocale,
-    image.value as image
+    sibling.entity_id AS previousSiblingId,
+    defaultLocale.value AS defaultLocale,
+    image.value AS image
 FROM
-    {$this->tablePrefix}catalog_category_entity AS category
+    {$this->tablePrefix}catalog_category_entity category
     
-LEFT JOIN {$this->tablePrefix}eav_attribute attribute
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
     ON category.entity_type_id = attribute.entity_type_id
         
-LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar as name 
+LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS name 
     ON category.entity_id = name.entity_id
     AND name.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'name')
     AND name.store_id = 0
         
-LEFT JOIN {$this->tablePrefix}catalog_category_entity_int status 
+LEFT JOIN {$this->tablePrefix}catalog_category_entity_int AS status 
     ON category.entity_id = status.entity_id
     AND status.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'is_active')
     AND status.store_id = 0

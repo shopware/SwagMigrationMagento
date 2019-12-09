@@ -85,13 +85,13 @@ SQL;
         $sql = <<<SQL
 SELECT 
     customer_address.*,
-    directory_country.iso2_code as country_iso2,
-    directory_country.iso3_code as country_iso3
-FROM {$this->tablePrefix}customer_address_entity as customer_address
-LEFT JOIN {$this->tablePrefix}eav_attribute attribute ON attribute.entity_type_id = customer_address.entity_type_id AND attribute.attribute_code = 'country_id'
-LEFT JOIN {$this->tablePrefix}customer_address_entity_varchar country_attribute ON attribute.attribute_id = country_attribute.attribute_id AND country_attribute.entity_id = customer_address.entity_id
-LEFT JOIN {$this->tablePrefix}directory_country directory_country ON directory_country.country_id = country_attribute.value
- WHERE customer_address.parent_id in (?);
+    directory_country.iso2_code AS country_iso2,
+    directory_country.iso3_code AS country_iso3
+FROM {$this->tablePrefix}customer_address_entity customer_address
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.entity_type_id = customer_address.entity_type_id AND attribute.attribute_code = 'country_id'
+LEFT JOIN {$this->tablePrefix}customer_address_entity_varchar AS country_attribute ON attribute.attribute_id = country_attribute.attribute_id AND country_attribute.entity_id = customer_address.entity_id
+LEFT JOIN {$this->tablePrefix}directory_country AS directory_country ON directory_country.country_id = country_attribute.value
+ WHERE customer_address.parent_id IN (?);
 SQL;
 
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
