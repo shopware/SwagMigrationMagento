@@ -71,12 +71,19 @@ class NotAssociatedMediaConverter extends MagentoConverter
         );
         $converted['id'] = $this->mainMapping['entityUuid'];
 
+        $fileMatches = [];
+        preg_match('/^\/*(.+\/)*(.+)\..+$/', $data['path'], $fileMatches);
+        $fileName = $converted['id'];
+        if (isset($fileMatches[2])) {
+            $fileName = $fileMatches[2];
+        }
+
         $this->mediaFileService->saveMediaFile(
             [
                 'runId' => $migrationContext->getRunUuid(),
                 'entity' => MediaDataSet::getEntity(),
                 'uri' => '/media/wysiwyg/' . $data['path'],
-                'fileName' => $converted['id'],
+                'fileName' => $fileName,
                 'fileSize' => 0,
                 'mediaId' => $converted['id'],
             ]
