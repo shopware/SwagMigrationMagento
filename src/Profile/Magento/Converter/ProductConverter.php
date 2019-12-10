@@ -634,6 +634,12 @@ class ProductConverter extends MagentoConverter
 
             if (!isset($mediaData['description'])) {
                 $mediaData['description'] = $newMedia['id'];
+
+                $fileMatches = [];
+                preg_match('/^\/(.+\/)*(.+)\..+$/', $mediaData['image'], $fileMatches);
+                if (isset($fileMatches[2])) {
+                    $mediaData['description'] = $fileMatches[2];
+                }
             }
 
             $this->mediaFileService->saveMediaFile(
