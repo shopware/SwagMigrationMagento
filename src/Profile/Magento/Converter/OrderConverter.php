@@ -305,6 +305,8 @@ class OrderConverter extends MagentoConverter
         $converted['addresses'][] = $billingAddress;
         unset($data['billingAddress']);
 
+        $converted['deepLinkCode'] = md5($converted['id']);
+
         /*
          * Set sales channel
          */
