@@ -680,6 +680,10 @@ class ProductConverter extends MagentoConverter
             }
         }
 
+        if ($cover === null && !empty($mediaObjects)) {
+            $cover = $mediaObjects[0];
+        }
+
         return ['media' => $mediaObjects, 'cover' => $cover];
     }
 
