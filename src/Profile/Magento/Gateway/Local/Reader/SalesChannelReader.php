@@ -172,8 +172,19 @@ SQL;
 
         $defaults = $query->execute()->fetch(\PDO::FETCH_ASSOC);
 
+        if ($defaults['defaultAllowedCurrencies'] === null) {
+            $defaults['defaultAllowedCountries'] = '';
+        }
         $defaults['defaultAllowedCurrencies'] = explode(',', $defaults['defaultAllowedCurrencies']);
+
+        if ($defaults['defaultAllowedCountries'] === null) {
+            $defaults['defaultAllowedCountries'] = '';
+        }
         $defaults['defaultAllowedCountries'] = explode(',', $defaults['defaultAllowedCountries']);
+
+        if ($defaults['defaultLocale'] === null) {
+            $defaults['defaultLocale'] = '';
+        }
         $defaults['defaultLocale'] = str_replace('_', '-', $defaults['defaultLocale']);
 
         return $defaults;
@@ -269,7 +280,9 @@ SQL;
         $storeCurrencies = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         foreach ($storeCurrencies as $key => $storeCurrency) {
-            $storeCurrencies[$key] = explode(',', $storeCurrency['currencies']);
+            if (isset($storeCurrency['currencies'])) {
+                $storeCurrencies[$key] = explode(',', $storeCurrency['currencies']);
+            }
         }
 
         return $storeCurrencies;
@@ -295,7 +308,9 @@ SQL;
         foreach ($configurations as $key => $storeConfig) {
             foreach ($storeConfig as $config) {
                 if ($config['path'] === 'general/country/allow') {
-                    $storeCountryConfig[$key]['allowedCountries'] = explode(',', $config['value']);
+                    if (isset($storeCountryConfig[$key]['allowedCountries'])) {
+                        $storeCountryConfig[$key]['allowedCountries'] = explode(',', $config['value']);
+                    }
                 } else {
                     $storeCountryConfig[$key]['defaultCountry'] = $config['value'];
                 }
