@@ -196,6 +196,11 @@ class ProductConverter extends MagentoConverter
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
 
+        $converted['active'] = false;
+        if (isset($data['status']) && $data['status'] === '1') {
+            $converted['active'] = true;
+        }
+
         /*
          * Set parent
          */
