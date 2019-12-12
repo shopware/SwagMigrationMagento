@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\Connection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -35,6 +36,7 @@ class PropertyGroupReader extends AbstractReader
         $fetchedPropertyGroups = $this->fetchPropertyGroups($migrationContext);
 
         $groups = [];
+        $optionIds = [];
         foreach ($fetchedPropertyGroups as $group) {
             foreach ($group as $option) {
                 $groupId = $option['groupId'];
@@ -47,10 +49,45 @@ class PropertyGroupReader extends AbstractReader
                     ];
                 }
 
+                $optionIds[] = $option['optionId'];
                 $groups[$groupId]['options'][] = [
                     'id' => $option['optionId'],
                     'name' => $option['optionValue'],
                 ];
+            }
+        }
+
+        $groupIds = array_column($groups, 'id');
+        $optionTranslations = $this->fetchOptionTranslations($optionIds);
+        $groupTranslations = $this->fetchGroupTranslations($groupIds);
+
+        foreach ($groups as &$group) {
+            $groupId = $group['id'];
+
+            if (isset($groupTranslations[$groupId])) {
+                foreach ($groupTranslations[$groupId] as $translation) {
+                    $store_id = $translation['store_id'];
+                    $attribute_id = $translation['attribute_id'];
+                    $value = $translation['value'];
+
+                    $group['translations'][$store_id]['name']['value'] = $value;
+                    $group['translations'][$store_id]['name']['attribute_id'] = $attribute_id;
+                }
+            }
+
+            foreach ($group['options'] as &$option) {
+                $optionId = $option['id'];
+
+                if (isset($optionTranslations[$optionId])) {
+                    foreach ($optionTranslations[$optionId] as $translation) {
+                        $store_id = $translation['store_id'];
+                        $attribute_id = $translation['attribute_id'];
+                        $value = $translation['value'];
+
+                        $option['translations'][$store_id]['name']['value'] = $value;
+                        $option['translations'][$store_id]['name']['attribute_id'] = $attribute_id;
+                    }
+                }
             }
         }
 
@@ -94,6 +131,40 @@ SQL;
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchOptionTranslations(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('optionValue.option_id');
+        $query->addSelect('optionValue.store_id');
+        $query->addSelect('attributeOption.attribute_id');
+        $query->addSelect('optionValue.value');
+        $query->from($this->tablePrefix . 'eav_attribute_option', 'attributeOption');
+
+        $query->innerJoin('attributeOption', $this->tablePrefix . 'eav_attribute_option_value', 'optionValue', 'optionValue.option_id = attributeOption.option_id AND optionValue.store_id != 0');
+
+        $query->where('attributeOption.option_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchGroupTranslations(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('attributeLabel.attribute_id AS identifier');
+        $query->addSelect('attributeLabel.attribute_id');
+        $query->addSelect('attributeLabel.store_id');
+        $query->addSelect('attributeLabel.value');
+        $query->from($this->tablePrefix . 'eav_attribute_label', 'attributeLabel');
+
+        $query->where('attributeLabel.attribute_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }

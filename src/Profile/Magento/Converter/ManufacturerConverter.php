@@ -68,6 +68,25 @@ class ManufacturerConverter extends MagentoConverter
 
         $this->convertValue($converted, 'name', $data, 'value');
 
+        if (isset($data['translations'])) {
+            $converted['translations'] = $this->getTranslations(
+                $data['translations'],
+                DefaultEntities::PRODUCT_MANUFACTURER,
+                [
+                    'name' => 'name',
+                ],
+                $context
+            );
+
+            if (isset($converted['translations'])) {
+                foreach ($converted['translations'] as &$translation) {
+                    $translation['manufacturerId'] = $converted['id'];
+                }
+                unset($translation);
+            }
+        }
+        unset($data['translations']);
+
         if (empty($data)) {
             $data = null;
         }

@@ -106,6 +106,7 @@ class ProductConverter extends MagentoConverter
         $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runUuid = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['entity_id'];
+        unset($data['entity_id']);
         $converted = [];
 
         /*
@@ -175,6 +176,7 @@ class ProductConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
+        unset($data['price']);
 
         /*
          * Set main id
@@ -182,7 +184,7 @@ class ProductConverter extends MagentoConverter
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $migrationContext->getConnection()->getId(),
             DefaultEntities::PRODUCT,
-            $data['entity_id'],
+            $this->oldIdentifier,
             $context,
             $this->checksum
         );
@@ -191,10 +193,15 @@ class ProductConverter extends MagentoConverter
         if (isset($data['prices'])) {
             $converted['prices'] = $this->getPrices($data['prices'], $converted);
         }
+        unset($data['prices']);
 
         $this->convertValue($converted, 'stock', $data, 'instock', self::TYPE_INTEGER);
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
+        $this->convertValue($converted, 'description', $data, 'description');
+        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
+        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
+        $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
 
         $converted['active'] = false;
         if (isset($data['status']) && $data['status'] === '1') {
@@ -207,6 +214,7 @@ class ProductConverter extends MagentoConverter
         if (isset($data['parentId'])) {
             $this->setParent($converted, $data);
         }
+        unset($data['parentId']);
 
         /*
          * Set properties
@@ -214,6 +222,7 @@ class ProductConverter extends MagentoConverter
         if (isset($data['properties'])) {
             $this->setProperties($converted, $data);
         }
+        unset($data['properties']);
 
         if (isset($data['type_id']) && $data['type_id'] === 'configurable') {
             /*
@@ -222,6 +231,7 @@ class ProductConverter extends MagentoConverter
             if (isset($data['configuratorSettings'])) {
                 $this->setConfiguratorSettings($converted, $data);
             }
+            unset($data['configuratorSettings'], $data['type_id']);
         } else {
             /*
              * Set options
@@ -229,6 +239,7 @@ class ProductConverter extends MagentoConverter
             if (isset($data['options'], $converted['parentId'])) {
                 $this->setOptions($converted, $data);
             }
+            unset($data['options']);
         }
 
         if (isset($data['media'])) {
@@ -248,22 +259,111 @@ class ProductConverter extends MagentoConverter
         if (isset($data['visibility'])) {
             $this->setVisibility($converted, $data);
         }
+        unset($data['visibility']);
 
         if (isset($data['categories'])) {
             $this->setCategories($converted, $data);
         }
+        unset($data['categories']);
 
         if (isset($data['attributes'])) {
             $converted['customFields'] = $this->getAttributes($data['attributes'], DefaultEntities::PRODUCT, $migrationContext->getConnection()->getName());
         }
+        unset($data['attributes']);
+
+        if (isset($data['translations'])) {
+            $converted['translations'] = $this->getTranslations(
+                $data['translations'],
+                DefaultEntities::PRODUCT,
+                [
+                    'name' => 'name',
+                    'description' => 'description',
+                    'meta_title' => 'metaTitle',
+                    'meta_description' => 'metaDescription',
+                    'meta_keyword' => 'keywords',
+                ],
+                $context
+            );
+
+            if (isset($converted['translations'])) {
+                foreach ($converted['translations'] as &$translation) {
+                    $translation['productId'] = $converted['id'];
+                }
+                unset($translation);
+            }
+        }
+        unset($data['translations']);
 
         $this->updateMainMapping($migrationContext, $context);
+
+        // Not used keys
+        unset(
+            $data['entity_type_id'],
+            $data['attribute_set_id'],
+            $data['has_options'],
+            $data['required_options'],
+            $data['created_at'],
+            $data['updated_at'],
+            $data['stockmin'],
+            $data['minpurchase'],
+            $data['maxpurchase'],
+            $data['priceIncludesTax'],
+            $data['allow_message'],
+            $data['cost'],
+            $data['country_of_manufacture'],
+            $data['custom_design'],
+            $data['custom_design_from'],
+            $data['custom_design_to'],
+            $data['custom_layout_update'],
+            $data['email_template'],
+            $data['gallery'],
+            $data['gift_message_available'],
+            $data['gift_wrapping_available'],
+            $data['gift_wrapping_price'],
+            $data['group_price'],
+            $data['image'],
+            $data['image_label'],
+            $data['is_recurring'],
+            $data['is_redeemable'],
+            $data['lifetime'],
+            $data['media_gallery'],
+            $data['minimal_price'],
+            $data['msrp'],
+            $data['msrp_display_actual_price_type'],
+            $data['msrp_enabled'],
+            $data['news_from_date'],
+            $data['news_to_date'],
+            $data['old_id'],
+            $data['open_amount_max'],
+            $data['open_amount_min'],
+            $data['options_container'],
+            $data['page_layout'],
+            $data['price_view'],
+            $data['recurring_profile'],
+            $data['short_description'],
+            $data['small_image'],
+            $data['small_image_label'],
+            $data['special_from_date'],
+            $data['special_price'],
+            $data['special_to_date'],
+            $data['status'],
+            $data['thumbnail'],
+            $data['thumbnail_label'],
+            $data['tier_price'],
+            $data['url_key'],
+            $data['url_path'],
+            $data['use_config_allow_message'],
+            $data['use_config_email_template'],
+            $data['use_config_is_redeemable'],
+            $data['use_config_lifetime'],
+            $data['weight']
+        );
 
         if (empty($data)) {
             $data = null;
         }
 
-        return new ConvertStruct($converted, null, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
     }
 
     protected function setCategories(array &$converted, array &$data): void

@@ -12,6 +12,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
@@ -55,13 +56,16 @@ class ProductConverterTest extends TestCase
      */
     private $mappingService;
 
+    /**
+     * @var string
+     */
+    private $languageUuid;
+
     protected function setUp(): void
     {
         $mediaFileService = new DummyMediaFileService();
         $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-
-        $this->productConverter = new ProductConverter($this->mappingService, $this->loggingService, $mediaFileService);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -138,6 +142,18 @@ class ProductConverterTest extends TestCase
             null,
             Uuid::randomHex()
         );
+
+        $this->languageUuid = Uuid::randomHex();
+        $this->mappingService->createMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            '1',
+            null,
+            null,
+            $this->languageUuid
+        );
+
+        $this->productConverter = new ProductConverter($this->mappingService, $this->loggingService, $mediaFileService);
     }
 
     public function testSupports(): void
@@ -159,6 +175,15 @@ class ProductConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame(
+            $productData[0]['translations']['1']['name']['value'],
+            $converted['translations'][$this->languageUuid]['name']
+        );
+        static::assertSame(
+            $productData[0]['translations']['1']['oneAttribute']['value'],
+            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_product_200']
+        );
     }
 
     public function testConvertChildFirst(): void

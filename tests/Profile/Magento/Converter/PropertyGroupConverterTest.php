@@ -12,6 +12,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
@@ -46,17 +47,33 @@ class PropertyGroupConverterTest extends TestCase
      */
     private $migrationContext;
 
+    /**
+     * @var string
+     */
+    private $languageUuid;
+
     protected function setUp(): void
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->propertyGroupConverter = new PropertyGroupConverter($mappingService, $this->loggingService);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
         $this->connection->setId(Uuid::randomHex());
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
+
+        $this->languageUuid = Uuid::randomHex();
+        $mappingService->createMapping(
+            $this->connection->getId(),
+            DefaultEntities::STORE_LANGUAGE,
+            '1',
+            null,
+            null,
+            $this->languageUuid
+        );
+
+        $this->propertyGroupConverter = new PropertyGroupConverter($mappingService, $this->loggingService);
 
         $this->migrationContext = new MigrationContext(
             new Magento19Profile(),
@@ -87,6 +104,25 @@ class PropertyGroupConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
+        static::assertCount(1, $converted['options'][0]['translations']);
+
+        static::assertSame(
+            $propertyGroupData[0]['options'][0]['translations']['1']['name']['value'],
+            $converted['options'][0]['translations'][$this->languageUuid]['name']
+        );
+        static::assertSame(
+            $propertyGroupData[0]['options'][0]['translations']['1']['oneAttribute']['value'],
+            $converted['options'][0]['translations'][$this->languageUuid]['customFields']['migration_shopware_property_group_option_200']
+        );
+
+        static::assertSame(
+            $propertyGroupData[0]['translations']['1']['name']['value'],
+            $converted['translations'][$this->languageUuid]['name']
+        );
+        static::assertSame(
+            $propertyGroupData[0]['translations']['1']['oneAttribute']['value'],
+            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_property_group_200']
+        );
     }
 
     public function testConvertWithoutName(): void
