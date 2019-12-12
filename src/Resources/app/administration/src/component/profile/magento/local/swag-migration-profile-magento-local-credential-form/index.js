@@ -32,7 +32,7 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
         credentials: {
             immediate: true,
             handler(newCredentials) {
-                if (newCredentials === null) {
+                if (newCredentials === null || Object.keys(newCredentials).length < 1) {
                     this.emitCredentials(this.inputCredentials);
                     return;
                 }
