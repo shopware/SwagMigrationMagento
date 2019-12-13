@@ -136,27 +136,29 @@ class ProductReviewConverter extends MagentoConverter
         }
         $converted['salesChannelId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
-        unset($data['store_id']);
 
-        $converted['languageId'] = $this->mappingService->getLanguageUuid(
+        $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            $data['locale'],
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            $data['store_id'],
             $context
         );
 
-        if ($converted['languageId'] === null) {
+        if ($languageMapping === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
-                    DefaultEntities::LANGUAGE,
-                    $data['locale'],
+                    MagentoDefaultEntities::STORE_LANGUAGE,
+                    $data['store_id'],
                     DefaultEntities::PRODUCT_REVIEW
                 )
             );
 
             return new ConvertStruct(null, $this->originalData);
         }
-        unset($data['locale']);
+        $converted['languageId'] = $languageMapping['entityUuid'];
+        $this->mappingIds[] = $languageMapping['id'];
+        unset($data['store_id']);
 
         $this->convertValue($converted, 'title', $data, 'title');
         if (empty($converted['title'])) {

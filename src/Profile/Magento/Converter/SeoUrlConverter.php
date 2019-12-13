@@ -76,25 +76,28 @@ class SeoUrlConverter extends MagentoConverter
         $converted['salesChannelId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
-        $converted['languageId'] = $this->mappingService->getLanguageUuid(
+        $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            $data['locale'],
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            $data['store_id'],
             $context
         );
-        if ($converted['languageId'] === null) {
+
+        if ($languageMapping === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
-                    DefaultEntities::LANGUAGE,
-                    $data['locale'],
+                    MagentoDefaultEntities::STORE_LANGUAGE,
+                    $data['store_id'],
                     DefaultEntities::SEO_URL
                 )
             );
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $this->mappingIds[] = $converted['languageId'];
-        unset($data['_locale']);
+        $converted['languageId'] = $languageMapping['entityUuid'];
+        $this->mappingIds[] = $languageMapping['id'];
+        unset($data['store_id']);
 
         if (isset($data['product_id'])) {
             $converted['isModified'] = false;

@@ -91,7 +91,7 @@ class PropertyGroupReader extends AbstractReader
             }
         }
 
-        return $groups;
+        return $this->utf8ize($groups);
     }
 
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct

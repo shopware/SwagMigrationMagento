@@ -39,14 +39,13 @@ class ProductCustomFieldReader extends AbstractReader
 
         foreach ($customFields as &$customField) {
             $attributeId = $customField['attribute_id'];
-            $customField['defaultLocale'] = str_replace('_', '-', $customField['defaultLocale']);
 
             if (isset($options[$attributeId])) {
                 $customField['options'] = $options[$attributeId];
             }
         }
 
-        return $customFields;
+        return $this->utf8ize($customFields);
     }
 
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
@@ -71,9 +70,6 @@ SQL;
         $query->from($this->tablePrefix . 'eav_attribute', 'eav');
         $this->addTableSelection($query, $this->tablePrefix . 'eav_attribute', 'eav');
         $query->innerJoin('eav', $this->tablePrefix . 'eav_entity_type', 'et', 'eav.entity_type_id = et.entity_type_id AND et.entity_type_code = \'catalog_product\'');
-
-        $query->innerJoin('eav', $this->tablePrefix . 'core_config_data', 'defaultLocale', 'defaultLocale.scope = \'default\' AND defaultLocale.path = \'general/locale/code\'');
-        $query->addSelect('defaultLocale.value AS `eav.defaultLocale`');
 
         $query->innerJoin('eav', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 0');
 
