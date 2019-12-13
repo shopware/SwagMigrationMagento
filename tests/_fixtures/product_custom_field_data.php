@@ -24,7 +24,6 @@ return [
         'default_value' => '',
         'is_unique' => '0',
         'note' => null,
-        'defaultLocale' => 'de-DE',
         'options' => [
             0 => [
                 'option_id' => '186',
@@ -66,7 +65,6 @@ return [
         'default_value' => null,
         'is_unique' => '0',
         'note' => null,
-        'defaultLocale' => 'de-DE',
     ],
     2 => [
         'attribute_id' => '213',
@@ -86,7 +84,6 @@ return [
         'default_value' => '0',
         'is_unique' => '0',
         'note' => null,
-        'defaultLocale' => 'de-DE',
     ],
     3 => [
         'attribute_id' => '210',
@@ -106,7 +103,6 @@ return [
         'default_value' => 'ROO',
         'is_unique' => '0',
         'note' => null,
-        'defaultLocale' => 'de-DE',
     ],
     4 => [
         'attribute_id' => '214',
@@ -126,6 +122,5 @@ return [
         'default_value' => null,
         'is_unique' => '0',
         'note' => null,
-        'defaultLocale' => 'de-DE',
     ],
 ];

@@ -16,7 +16,6 @@ return [
         'detail' => 'I wanted to dislike these because I had spent so much $ on them. But then I couldn\'t live without them. They?re simply fabulous!',
         'nickname' => 'Stacy L',
         'customer_id' => '136',
-        'locale' => 'en-GB',
         'ratings' => [
             0 => [
                 'vote_id' => '151',

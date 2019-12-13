@@ -107,8 +107,8 @@ class ProductReviewConverterTest extends TestCase
 
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
-            DefaultEntities::LANGUAGE,
-            'en-GB',
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            '1',
             $context,
             null,
             null,
@@ -198,7 +198,7 @@ class ProductReviewConverterTest extends TestCase
     {
         $productReviewData = require __DIR__ . '/../../../_fixtures/product_review_data.php';
 
-        $this->mappingService->deleteDummyMapping(DefaultEntities::LANGUAGE, 'en-GB');
+        $this->mappingService->deleteDummyMapping(MagentoDefaultEntities::STORE_LANGUAGE, '1');
 
         $context = Context::createDefaultContext();
         $convertResult = $this->productReviewConverter->convert($productReviewData[0], $context, $this->migrationContext);
@@ -209,7 +209,7 @@ class ProductReviewConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_LANGUAGE');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['locale']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_STORE_LANGUAGE');
+        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['store_id']);
     }
 }
