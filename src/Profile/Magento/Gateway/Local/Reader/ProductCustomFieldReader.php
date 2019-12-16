@@ -46,7 +46,7 @@ class ProductCustomFieldReader extends AbstractReader
             }
         }
 
-        return $customFields;
+        return $this->utf8ize($customFields);
     }
 
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
