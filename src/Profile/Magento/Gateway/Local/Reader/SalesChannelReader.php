@@ -76,7 +76,12 @@ class SalesChannelReader extends AbstractReader
                     }
 
                     if (isset($storeCountryConfig[$storeId])) {
-                        $website['countries'] = array_merge($website['countries'], $storeCountryConfig[$storeId]['allowedCountries']);
+                        $allowedCountries = [];
+                        if (isset($storeCountryConfig[$storeId]['allowedCountries'])) {
+                            $allowedCountries = $storeCountryConfig[$storeId]['allowedCountries'];
+                        }
+
+                        $website['countries'] = array_merge($website['countries'], $allowedCountries);
                     }
 
                     if (isset($locales['stores'][$storeId])) {
@@ -221,14 +226,14 @@ SQL;
     private function fetchCarriers(): array
     {
         $sql = <<<SQL
-SELECT carrier.* 
+SELECT carrier.*
 FROM (
           SELECT
             REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
             config.*
           FROM {$this->tablePrefix}core_config_data config
           WHERE path LIKE 'carriers/%/title' AND scope = 'default'
-      ) AS carrier,              
+      ) AS carrier,
       (
           SELECT
             REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
@@ -244,7 +249,7 @@ SQL;
     private function fetchPayments(): array
     {
         $sql = <<<SQL
-SELECT payment.* 
+SELECT payment.*
 FROM (
       SELECT
              REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
