@@ -8,7 +8,7 @@
 return [
     0 => [
         'identifier' => '44',
-        'customerSalutation' => 'mr',
+        'customerSalutation' => '1',
         'orders' => [
             'entity_id' => '44',
             'state' => 'new',

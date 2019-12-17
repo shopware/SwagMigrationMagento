@@ -94,7 +94,7 @@ class CustomerConverterTest extends TestCase
         $mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::SALUTATION,
-            'mr',
+            '1',
             $context,
             null,
             null,

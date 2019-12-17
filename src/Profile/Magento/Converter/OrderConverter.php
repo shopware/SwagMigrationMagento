@@ -184,8 +184,30 @@ class OrderConverter extends MagentoConverter
         /*
          * Set salutation
          */
-        $salutation = $data['orders']['customer_salutation'] ?? 'mr';
-        $this->salutationUuid = $this->getSalutation($salutation);
+        if (isset($data['orders']['customer_salutation'])) {
+            $this->salutationUuid = $this->getSalutation($data['orders']['customer_salutation']);
+        } else {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::SALUTATION,
+                'default_salutation',
+                $this->context
+            );
+
+            if ($mapping === null) {
+                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                    $this->runId,
+                    DefaultEntities::ORDER,
+                    $this->oldIdentifier,
+                    'salutation'
+                ));
+
+                return new ConvertStruct(null, $data);
+            }
+            $this->mappingIds[] = $mapping['id'];
+            $this->salutationUuid = $mapping['entityUuid'];
+        }
+
         if ($this->salutationUuid === null) {
             return new ConvertStruct(null, $this->originalData);
         }
@@ -345,15 +367,24 @@ class OrderConverter extends MagentoConverter
         );
 
         if ($salutationMapping === null) {
-            $this->loggingService->addLogEntry(new UnknownEntityLog(
-                $this->runId,
+            $salutationMapping = $this->mappingService->getMapping(
+                $this->connectionId,
                 DefaultEntities::SALUTATION,
-                $salutation,
-                DefaultEntities::CUSTOMER,
-                $this->oldIdentifier
-            ));
+                'default_salutation',
+                $this->context
+            );
 
-            return null;
+            if ($salutationMapping === null) {
+                $this->loggingService->addLogEntry(new UnknownEntityLog(
+                    $this->runId,
+                    DefaultEntities::SALUTATION,
+                    $salutation,
+                    DefaultEntities::CUSTOMER,
+                    $this->oldIdentifier
+                ));
+
+                return null;
+            }
         }
         $this->mappingIds[] = $salutationMapping['id'];
 

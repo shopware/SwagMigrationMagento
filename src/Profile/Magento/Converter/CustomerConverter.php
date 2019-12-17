@@ -174,7 +174,31 @@ class CustomerConverter extends MagentoConverter
         /*
          * Set salutation
          */
-        $salutationUuid = $this->getSalutation($data['gender']);
+        $salutationUuid = null;
+        if (isset($data['gender'])) {
+            $salutationUuid = $this->getSalutation($data['gender']);
+        } else {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::SALUTATION,
+                'default_salutation',
+                $this->context
+            );
+
+            if ($mapping === null) {
+                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                    $this->runId,
+                    DefaultEntities::CUSTOMER,
+                    $this->oldIdentifier,
+                    'salutation'
+                ));
+
+                return new ConvertStruct(null, $data);
+            }
+            $this->mappingIds[] = $mapping['id'];
+            $salutationUuid = $mapping['entityUuid'];
+        }
+
         if ($salutationUuid === null) {
             return new ConvertStruct(null, $this->originalData);
         }
@@ -396,37 +420,34 @@ class CustomerConverter extends MagentoConverter
         }
     }
 
-    protected function getSalutation(?string $gender): ?string
+    protected function getSalutation(string $gender): ?string
     {
-        switch ($gender) {
-            case '1':
-                $salutation = 'mr';
-                break;
-            case '2':
-                $salutation = 'mrs';
-                break;
-            default:
-                $salutation = 'not_specified';
-                break;
-        }
-
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
             SalutationReader::getMappingName(),
-            $salutation,
+            $gender,
             $this->context
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry(new UnknownEntityLog(
-                $this->runId,
-                DefaultEntities::SALUTATION,
-                $salutation,
-                DefaultEntities::CUSTOMER,
-                $this->oldIdentifier
-            ));
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                SalutationReader::getMappingName(),
+                'default_salutation',
+                $this->context
+            );
 
-            return null;
+            if ($mapping === null) {
+                $this->loggingService->addLogEntry(new UnknownEntityLog(
+                    $this->runId,
+                    DefaultEntities::SALUTATION,
+                    $gender,
+                    DefaultEntities::CUSTOMER,
+                    $this->oldIdentifier
+                ));
+
+                return null;
+            }
         }
         $this->mappingIds[] = $mapping['id'];
 

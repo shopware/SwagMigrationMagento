@@ -217,6 +217,7 @@
 
         <!-- Premapping readers -->
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
             <argument type="service" id="salutation.repository"/>
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
