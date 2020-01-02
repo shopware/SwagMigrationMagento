@@ -11,6 +11,7 @@ use Shopware\Core\Framework\Context;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CustomFieldConverter extends Converter
@@ -38,6 +39,26 @@ abstract class CustomFieldConverter extends Converter
             return new ConvertStruct(null, $data);
         }
 
+        $defaultLocale = $this->mappingService->getValue(
+            $migrationContext->getConnection()->getId(),
+            DefaultEntities::LOCALE,
+            'global_default',
+            $context
+        );
+
+        if ($defaultLocale === null) {
+            $this->loggingService->addLogEntry(
+                new AssociationRequiredMissingLog(
+                    $migrationContext->getRunUuid(),
+                    DefaultEntities::LOCALE,
+                    'global_default',
+                    DefaultEntities::CUSTOM_FIELD_SET
+                )
+            );
+
+            return new ConvertStruct(null, $data);
+        }
+
         $mapping = $this->mappingService->getOrCreateMapping(
             $migrationContext->getConnection()->getId(),
             DefaultEntities::CUSTOM_FIELD_SET,
@@ -55,7 +76,7 @@ abstract class CustomFieldConverter extends Converter
 
         $converted['config'] = [
             'label' => [
-                $data['defaultLocale'] => ucfirst($this->getCustomFieldEntityName()) . ' migration custom fields (attributes)',
+                $defaultLocale => ucfirst($this->getCustomFieldEntityName()) . ' migration custom fields (attributes)',
             ],
             'translated' => true,
         ];
@@ -86,7 +107,7 @@ abstract class CustomFieldConverter extends Converter
                 'id' => $this->mainMapping['entityUuid'],
                 'name' => $converted['name'] . '_' . $data['attribute_id'],
                 'type' => $type,
-                'config' => $this->getConfiguredCustomFieldData($data),
+                'config' => $this->getConfiguredCustomFieldData($data, $defaultLocale),
             ],
         ];
         unset(
@@ -96,7 +117,6 @@ abstract class CustomFieldConverter extends Converter
             $data['options'],
             $data['frontend_input'],
             $data['frontend_label'],
-            $data['defaultLocale'],
 
             // There is no equivalent field
             $data['entity_type_id'],
@@ -125,19 +145,18 @@ abstract class CustomFieldConverter extends Converter
 
     abstract protected function getCustomFieldEntityName(): string;
 
-    protected function getConfiguredCustomFieldData(array $data): array
+    protected function getConfiguredCustomFieldData(array $data, string $defaultLocale): array
     {
-        $locale = $data['defaultLocale'];
         $attributeData = [
             'componentName' => 'sw-field',
             'label' => [
-                $locale => $data['frontend_label'],
+                $defaultLocale => $data['frontend_label'],
             ],
             'helpText' => [
-                $locale => null,
+                $defaultLocale => null,
             ],
             'placeholder' => [
-                $locale => null,
+                $defaultLocale => null,
             ],
             'type' => 'text',
             'customFieldType' => 'text',
@@ -186,7 +205,7 @@ abstract class CustomFieldConverter extends Converter
                 $options[] = [
                     'value' => $option['option_id'],
                     'label' => [
-                        $locale => $option['value'],
+                        $defaultLocale => $option['value'],
                     ],
                 ];
             }

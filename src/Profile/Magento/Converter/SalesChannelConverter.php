@@ -181,6 +181,24 @@ class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
+
+        $this->mappingService->pushValueMapping(
+            $this->connectionId,
+            DefaultEntities::LOCALE,
+            'global_default',
+            $data['defaultLocale']
+        );
+
+        $this->mappingService->getOrCreateMapping(
+            $this->connectionId,
+            DefaultEntities::LANGUAGE,
+            'global_default',
+            $this->context,
+            null,
+            null,
+            $languageUuid
+        );
+
         $converted['languageId'] = $languageUuid;
         $converted['languages'] = $this->getSalesChannelLanguages($languageUuid, $data, $context);
         unset($data['locales']);

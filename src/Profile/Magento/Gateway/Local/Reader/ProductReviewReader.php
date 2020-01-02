@@ -88,14 +88,6 @@ SQL;
 
         $query->leftJoin('review', $this->tablePrefix . 'catalog_product_entity', 'product', 'review.entity_pk_value = product.entity_id');
 
-        $query->leftJoin(
-            'detail',
-            $this->tablePrefix . 'core_config_data',
-            'locale',
-            'locale.scope_id = detail.store_id AND locale.scope = \'stores\' AND path = \'general/locale/code\''
-        );
-        $query->addSelect('locale.value AS `detail.locale`');
-
         $query->andWhere('product.type_id IN (:types)');
         $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
 

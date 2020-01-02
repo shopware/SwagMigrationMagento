@@ -100,6 +100,11 @@ class DummyMagentoMappingService extends MagentoMappingService
         return $this->values[$entityName][$oldIdentifier] ?? null;
     }
 
+    public function pushValueMapping(string $connectionId, string $entity, string $oldIdentifier, string $value): void
+    {
+        $this->values[$entity][$oldIdentifier] = $value;
+    }
+
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array
     {
         return isset($this->mappings[md5($entityName . $identifier)])

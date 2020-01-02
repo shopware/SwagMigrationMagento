@@ -15,6 +15,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFie
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -55,7 +56,6 @@ class ProductCustomFieldConverterTest extends TestCase
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->productCustomFieldConverter = new ProductCustomFieldConverter($mappingService, $this->loggingService);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -71,6 +71,15 @@ class ProductCustomFieldConverterTest extends TestCase
             0,
             250
         );
+
+        $mappingService->pushValueMapping(
+            $this->connection->getId(),
+            DefaultEntities::LOCALE,
+            'global_default',
+            'de-DE'
+        );
+
+        $this->productCustomFieldConverter = new ProductCustomFieldConverter($mappingService, $this->loggingService);
     }
 
     public function testSupports(): void

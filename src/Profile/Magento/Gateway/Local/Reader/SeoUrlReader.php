@@ -71,9 +71,6 @@ SQL;
 
         $query->leftJoin('seo', $this->tablePrefix . 'catalog_product_entity', 'product', 'seo.product_id = product.entity_id');
 
-        $query->leftJoin('seo', $this->tablePrefix . 'core_config_data', 'locale', 'locale.scope_id = seo.store_id AND locale.scope = \'stores\' AND locale.path = \'general/locale/code\'');
-        $query->addSelect('locale.value AS `seo.locale`');
-
         $query->where('seo.options IS NULL');
         $query->andWhere('product.type_id IN (:types)');
         $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
