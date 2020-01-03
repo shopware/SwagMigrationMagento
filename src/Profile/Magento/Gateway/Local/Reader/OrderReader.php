@@ -76,7 +76,7 @@ SQL;
 
         $query->from($this->tablePrefix . 'sales_flat_order', 'orders');
         $query->addSelect('orders.entity_id as identifier');
-        $query->addSelect('IF(orders.customer_gender=2, \'mrs\', \'mr\') as customerSalutation');
+        $query->addSelect('orders.customer_gender as customerSalutation');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order', 'orders');
 
         $query->leftjoin('orders', $this->tablePrefix . 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');

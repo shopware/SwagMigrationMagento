@@ -115,9 +115,15 @@ class DummyMagentoMappingService extends MagentoMappingService
     public function deleteMapping(string $entityUuid, string $connectionId, Context $context): void
     {
         foreach ($this->writeArray as $writeMapping) {
-            if ($writeMapping['profile'] === $connectionId && $writeMapping['entityUuid'] === $entityUuid) {
+            if ($writeMapping['connectionId'] === $connectionId && $writeMapping['entityUuid'] === $entityUuid) {
                 unset($writeMapping);
                 break;
+            }
+        }
+
+        foreach ($this->mappings as $hash => $mapping) {
+            if ($mapping['entityUuid'] === $entityUuid) {
+                unset($this->mappings[$hash]);
             }
         }
     }

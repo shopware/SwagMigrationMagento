@@ -52,16 +52,23 @@ class OrderConverterTest extends TestCase
      */
     private $migrationContext;
 
+    private $mappingService;
+
+    /**
+     * @var string
+     */
+    private $defaultSalutation;
+
     protected function setUp(): void
     {
-        $mappingService = new DummyMagentoMappingService();
+        $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
 
         $rounding = new PriceRounding();
         $taxRuleCalculator = new TaxRuleCalculator($rounding);
         $taxCalculator = new TaxCalculator($taxRuleCalculator);
 
-        $this->orderConverter = new OrderConverter($mappingService, $this->loggingService, $taxCalculator);
+        $this->orderConverter = new OrderConverter($this->mappingService, $this->loggingService, $taxCalculator);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -79,7 +86,7 @@ class OrderConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::CUSTOMER,
             '28',
@@ -89,17 +96,28 @@ class OrderConverterTest extends TestCase
             Uuid::randomHex()
         );
 
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::SALUTATION,
-            'mr',
+            '1',
             $context,
             null,
             null,
             Uuid::randomHex()
         );
 
-        $mappingService->getOrCreateMapping(
+        $this->defaultSalutation = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::SALUTATION,
+            'default_salutation',
+            $context,
+            null,
+            null,
+            $this->defaultSalutation
+        );
+
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::CURRENCY,
             'USD',
@@ -109,7 +127,7 @@ class OrderConverterTest extends TestCase
             Uuid::randomHex()
         );
 
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             OrderStateReader::getMappingName(),
             'pending',
@@ -119,7 +137,7 @@ class OrderConverterTest extends TestCase
             Uuid::randomHex()
         );
 
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::PAYMENT_METHOD,
             'checkmo',
@@ -129,7 +147,7 @@ class OrderConverterTest extends TestCase
             Uuid::randomHex()
         );
 
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::COUNTRY,
             'US',
@@ -175,11 +193,12 @@ class OrderConverterTest extends TestCase
 
     public function testConvertWithInvalidSalutation(): void
     {
+        $context = Context::createDefaultContext();
+        $this->mappingService->deleteMapping($this->defaultSalutation, $this->connection->getId(), $context);
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $order = $orderData[0];
         $order['orders']['customer_salutation'] = 'mrs';
 
-        $context = Context::createDefaultContext();
         $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
 
         static::assertNotNull($convertResult->getUnmapped());
