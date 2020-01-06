@@ -166,7 +166,9 @@ class CustomerConverter extends MagentoConverter
         $this->convertValue($converted, 'lastName', $data, 'lastname');
         $this->convertValue($converted, 'birthday', $data, 'dob', self::TYPE_DATETIME);
         $this->convertValue($converted, 'customerNumber', $data, 'increment_id');
-
+        if (isset($data['password_hash'])) {
+            $this->setPassword($data, $converted);
+        }
         if (!isset($converted['customerNumber']) || $converted['customerNumber'] === '') {
             $converted['customerNumber'] = 'number-' . $this->oldIdentifier;
         }
@@ -477,5 +479,14 @@ class CustomerConverter extends MagentoConverter
         $this->mappingIds[] = $paymentMethodMapping['id'];
 
         return $paymentMethodMapping['entityUuid'];
+    }
+
+    protected function setPassword(array &$data, array &$converted): void
+    {
+        $converted['legacyPassword'] = $data['password_hash'];
+        // we assume md5 as default for Magento 1.9.x
+        // This has to be overriden if differs
+        $converted['legacyEncoder'] = 'Magento19';
+        unset($data['password_hash']);
     }
 }
