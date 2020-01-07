@@ -23,6 +23,10 @@
             <tag name="shopware.migration.gateway"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\PasswordEncoder\MagentoEncoder">
+            <tag name="shopware.legacy_encoder"/>
+        </service>
+
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader">
             <argument id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory" type="service"/>
         </service>
