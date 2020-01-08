@@ -13,6 +13,8 @@ final class DefaultEntities
 
     public const PRODUCT_CONFIGURATOR_SETTING = 'product_configurator_setting';
 
+    public const ROOT_CATEGORY = 'root_category';
+
     public const STORE = 'store';
 
     public const STORE_DEFAULT = 'default_store';
