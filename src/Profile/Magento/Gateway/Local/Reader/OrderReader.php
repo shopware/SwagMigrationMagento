@@ -79,9 +79,6 @@ SQL;
         $query->addSelect('orders.customer_gender as customerSalutation');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order', 'orders');
 
-        $query->leftjoin('orders', $this->tablePrefix . 'sales_flat_quote', 'quote', 'orders.quote_id = quote.entity_id');
-        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_quote', 'quote');
-
         $query->leftJoin('orders', $this->tablePrefix . 'sales_flat_order_payment', 'orders_payment', 'orders.entity_id = orders_payment.parent_id');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_payment', 'orders_payment');
 
