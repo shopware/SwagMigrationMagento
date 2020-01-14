@@ -89,6 +89,7 @@ class CategoryConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
         $this->categoryConverter = new CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
     }
 
@@ -104,7 +105,7 @@ class CategoryConverterTest extends TestCase
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
         $context = Context::createDefaultContext();
-        $convertResult = $this->categoryConverter->convert($categoryData[0], $context, $this->migrationContext);
+        $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
 
@@ -114,11 +115,11 @@ class CategoryConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
 
         static::assertSame(
-            $categoryData[0]['translations']['1']['name']['value'],
+            $categoryData[1]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
         );
         static::assertSame(
-            $categoryData[0]['translations']['1']['oneAttribute']['value'],
+            $categoryData[1]['translations']['1']['oneAttribute']['value'],
             $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_category_200']
         );
     }
@@ -128,8 +129,8 @@ class CategoryConverterTest extends TestCase
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
         $context = Context::createDefaultContext();
-        $this->categoryConverter->convert($categoryData[0], $context, $this->migrationContext);
-        $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
+        $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
+        $convertResult = $this->categoryConverter->convert($categoryData[2], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
         static::assertNull($convertResult->getUnmapped());
@@ -144,7 +145,7 @@ class CategoryConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         try {
-            $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
+            $this->categoryConverter->convert($categoryData[2], $context, $this->migrationContext);
         } catch (\Exception $e) {
             /* @var ParentEntityForChildNotFoundException $e */
             static::assertInstanceOf(ParentEntityForChildNotFoundException::class, $e);
