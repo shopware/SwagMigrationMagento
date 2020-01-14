@@ -23,18 +23,6 @@ return [
         'previousSiblingId' => null,
         'defaultLocale' => 'de-DE',
         'image' => null,
-        'translations' => [
-            '1' => [
-                'name' => [
-                    'attribute_id' => 100,
-                    'value' => 'Stammkategorie',
-                ],
-                'oneAttribute' => [
-                    'attribute_id' => 200,
-                    'value' => 'attributeValue',
-                ],
-            ],
-        ],
     ],
 
     1 => [
@@ -54,6 +42,18 @@ return [
         'previousSiblingId' => null,
         'defaultLocale' => 'de-DE',
         'image' => null,
+        'translations' => [
+            '1' => [
+                'name' => [
+                    'attribute_id' => 100,
+                    'value' => 'Hauptkategorie',
+                ],
+                'oneAttribute' => [
+                    'attribute_id' => 200,
+                    'value' => 'attributeValue',
+                ],
+            ],
+        ],
     ],
 
     2 => [
@@ -99,6 +99,25 @@ return [
         'entity_type_id' => '3',
         'attribute_set_id' => '3',
         'parent_id' => '2',
+        'created_at' => '2013-01-25 11:47:41',
+        'updated_at' => '2015-05-19 05:38:59',
+        'path' => '1/2/6',
+        'position' => '4',
+        'level' => '2',
+        'children_count' => '4',
+        'name' => 'Accessories',
+        'description' => null,
+        'status' => '1',
+        'previousSiblingId' => '5',
+        'defaultLocale' => 'de-DE',
+        'image' => null,
+    ],
+
+    5 => [
+        'entity_id' => '7',
+        'entity_type_id' => '3',
+        'attribute_set_id' => '3',
+        'parent_id' => '8',
         'created_at' => '2013-01-25 11:47:41',
         'updated_at' => '2015-05-19 05:38:59',
         'path' => '1/2/6',
