@@ -15,7 +15,6 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Language\LanguageEntity;
 use Shopware\Core\System\Locale\LocaleEntity;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingService;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaults;
 use SwagMigrationAssistant\Exception\LocaleNotFoundException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -266,14 +265,5 @@ class DummyMagentoMappingService extends MagentoMappingService
     public function getTaxRate(string $uuid, Context $context): ?float
     {
         return 19.0;
-    }
-
-    public function getRootCategoryMapping(string $id, string $connectionId, Context $context): ?array
-    {
-        if (isset($this->mappings[md5(MagentoDefaults::ROOT_CATEGORY . $id)])) {
-            return $this->mappings[md5(MagentoDefaults::ROOT_CATEGORY . $id)];
-        }
-
-        return null;
     }
 }
