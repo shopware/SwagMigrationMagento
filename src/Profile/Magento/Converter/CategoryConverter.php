@@ -11,6 +11,7 @@ use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaults;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -93,6 +94,9 @@ class CategoryConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        $this->connectionId = $migrationContext->getConnection()->getId();
+        $this->context = $context;
+
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
@@ -105,13 +109,25 @@ class CategoryConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
 
+        // Ignore the magento root category
+        if (isset($data['parent_id']) && $data['parent_id'] === '0') {
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                MagentoDefaults::ROOT_CATEGORY,
+                $data['entity_id'],
+                $this->context
+            );
+            $this->mappingIds[] = $mapping['id'];
+
+            return new ConvertStruct(null, $data);
+        }
+        $rootCategoryMapping = $this->mappingService->getMapping($this->connectionId, MagentoDefaults::ROOT_CATEGORY, $data['parent_id'], $context);
+
         /*
          * Set main data
          */
         $this->generateChecksum($data);
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runId = $migrationContext->getRunUuid();
-        $this->context = $context;
         $this->migrationContext = $migrationContext;
         $this->entity_id = $data['entity_id'];
 
@@ -126,7 +142,7 @@ class CategoryConverter extends MagentoConverter
         /*
          * Set parent category and afterCategory with a root category, if a previous category is not found
          */
-        if (isset($data['parent_id']) && $data['parent_id'] !== '0') {
+        if (isset($data['parent_id']) && !$this->parentIsRoot($data, $rootCategoryMapping)) {
             $parentMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 DefaultEntities::CATEGORY,
@@ -310,5 +326,18 @@ class CategoryConverter extends MagentoConverter
         );
 
         return $categoryMedia;
+    }
+
+    private function parentIsRoot(array $data, ?array $rootCategoryMapping): bool
+    {
+        if ($rootCategoryMapping === null || !isset($rootCategoryMapping['oldIdentifier'])) {
+            return false;
+        }
+
+        if ($rootCategoryMapping['oldIdentifier'] !== $data['parent_id']) {
+            return false;
+        }
+
+        return true;
     }
 }

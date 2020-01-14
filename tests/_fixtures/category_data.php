@@ -23,18 +23,6 @@ return [
         'previousSiblingId' => null,
         'defaultLocale' => 'de-DE',
         'image' => null,
-        'translations' => [
-            '1' => [
-                'name' => [
-                    'attribute_id' => 100,
-                    'value' => 'Stammkategorie',
-                ],
-                'oneAttribute' => [
-                    'attribute_id' => 200,
-                    'value' => 'attributeValue',
-                ],
-            ],
-        ],
     ],
 
     1 => [
@@ -54,6 +42,18 @@ return [
         'previousSiblingId' => null,
         'defaultLocale' => 'de-DE',
         'image' => null,
+        'translations' => [
+            '1' => [
+                'name' => [
+                    'attribute_id' => 100,
+                    'value' => 'Hauptkategorie',
+                ],
+                'oneAttribute' => [
+                    'attribute_id' => 200,
+                    'value' => 'attributeValue',
+                ],
+            ],
+        ],
     ],
 
     2 => [
