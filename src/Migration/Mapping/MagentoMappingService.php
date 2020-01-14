@@ -20,10 +20,8 @@ use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\StateMachine\Aggregation\StateMachineState\StateMachineStateEntity;
 use Shopware\Core\System\StateMachine\StateMachineEntity;
 use Shopware\Core\System\Tax\TaxEntity;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaults;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
-use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingEntity;
 
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
 {
@@ -155,46 +153,5 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         }
 
         return $tax->getTaxRate();
-    }
-
-    public function getRootCategoryMapping(string $id, string $connectionId, Context $context): ?array
-    {
-        if (isset($this->mappings[md5(MagentoDefaults::ROOT_CATEGORY . $id)])) {
-            return $this->mappings[md5(MagentoDefaults::ROOT_CATEGORY . $id)];
-        }
-        /** @var EntitySearchResult $result */
-        $result = $context->disableCache(function (Context $context) use ($connectionId) {
-            $criteria = new Criteria();
-            $criteria->addFilter(new EqualsFilter('connectionId', $connectionId));
-            $criteria->addFilter(new EqualsFilter('entity', MagentoDefaults::ROOT_CATEGORY));
-
-            return $this->migrationMappingRepo->search($criteria, $context);
-        });
-
-        if ($result->count() > 0) {
-            $matchingEntry = null;
-            $elements = $result->getEntities()->getElements();
-            /** @var SwagMigrationMappingEntity $mapping */
-            foreach ($elements as $mapping) {
-                $entityName = $mapping->getEntity();
-                $oldIdentifier = $mapping->getOldIdentifier();
-                $this->mappings[md5($entityName . $oldIdentifier)] = [
-                    'id' => $mapping->getId(),
-                    'connectionId' => $mapping->getConnectionId(),
-                    'entity' => $entityName,
-                    'oldIdentifier' => $oldIdentifier,
-                    'entityValue' => $mapping->getEntityValue(),
-                ];
-
-                if ($oldIdentifier === $id) {
-                    $matchingEntry = $this->mappings[md5($entityName . $oldIdentifier)];
-                }
-            }
-            unset($result);
-
-            return $matchingEntry;
-        }
-
-        return null;
     }
 }
