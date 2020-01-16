@@ -71,9 +71,6 @@ SELECT
 FROM
     {$this->tablePrefix}catalog_category_entity category
 
-LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
-    ON category.entity_type_id = attribute.entity_type_id
-
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS name
     ON category.entity_id = name.entity_id
     AND name.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'name')
