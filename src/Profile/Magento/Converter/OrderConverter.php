@@ -113,10 +113,6 @@ class OrderConverter extends MagentoConverter
          * Checking required fields and logging missing ones
          */
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-        if (!isset($data['orders']['customer_id'])) {
-            $fields[] = 'customer_id';
-        }
-
         if (!isset($data['orders']['entity_id'])) {
             $fields[] = 'entity_id';
         }
@@ -159,199 +155,54 @@ class OrderConverter extends MagentoConverter
         $this->uuid = $converted['id'];
 
         /*
-         * Set customer
+         * Set sales channel
          */
-        $customerMapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::CUSTOMER,
-            $data['orders']['customer_id'],
-            $this->context
-        );
-
-        if ($customerMapping === null) {
-            throw new AssociationEntityRequiredMissingException(
-                DefaultEntities::ORDER,
-                DefaultEntities::CUSTOMER
-            );
+        $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
+        if (isset($data['orders']['store_id'])) {
+            $this->convertSalesChannel($converted, $data);
         }
 
-        $converted['orderCustomer'] = [
-            'customerId' => $customerMapping['entityUuid'],
-        ];
-        $this->mappingIds[] = $customerMapping['id'];
-        unset($customerMapping);
-
-        /*
-         * Set salutation
-         */
-        if (isset($data['orders']['customer_salutation'])) {
-            $this->salutationUuid = $this->getSalutation($data['orders']['customer_salutation']);
-        } else {
-            $mapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                DefaultEntities::SALUTATION,
-                'default_salutation',
-                $this->context
-            );
-
-            if ($mapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'salutation'
-                ));
-
-                return new ConvertStruct(null, $data);
-            }
-            $this->mappingIds[] = $mapping['id'];
-            $this->salutationUuid = $mapping['entityUuid'];
-        }
-
-        if ($this->salutationUuid === null) {
+        if (!$this->convertOrderCustomer($converted, $data)) {
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
-        unset($data['customerSalutation']);
-
-        $this->convertValue($converted['orderCustomer'], 'email', $data['orders'], 'customer_email');
-        $this->convertValue($converted['orderCustomer'], 'firstName', $data['orders'], 'customer_firstname');
-        $this->convertValue($converted['orderCustomer'], 'lastName', $data['orders'], 'customer_lastname');
 
         $this->convertValue($converted, 'orderNumber', $data['orders'], 'increment_id');
         $this->convertValue($converted, 'currencyFactor', $data['orders'], 'store_to_order_rate', self::TYPE_FLOAT);
         $this->convertValue($converted, 'orderDateTime', $data['orders'], 'created_at', self::TYPE_DATETIME);
 
-        /*
-         * Set currency
-         */
-        $currencyUuid = null;
-        if (isset($data['orders']['order_currency_code'])) {
-            $currencyUuid = $this->mappingService->getCurrencyUuid(
-                $this->connectionId,
-                $data['orders']['order_currency_code'],
-                $this->context
-            );
-        }
-        if ($currencyUuid === null) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::ORDER,
-                $this->oldIdentifier,
-                'currency'
-            ));
-
+        if (!$this->convertCurrency($converted, $data)) {
             return new ConvertStruct(null, $this->originalData);
         }
 
-        $converted['currencyId'] = $currencyUuid;
-
-        /*
-         * Set order state
-         */
-        $stateMapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            OrderStateReader::getMappingName(),
-            (string) $data['orders']['status'],
-            $this->context
-        );
-
-        if ($stateMapping === null) {
-            $this->loggingService->addLogEntry(new UnknownEntityLog(
-                $this->runId,
-                'order_state',
-                (string) $data['orders']['status'],
-                DefaultEntities::ORDER,
-                $this->oldIdentifier
-            ));
-
+        if (!$this->convertOrderStatus($converted, $data)) {
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['stateId'] = $stateMapping['entityUuid'];
-        $this->mappingIds[] = $stateMapping['id'];
-
-        $shippingCosts = new CalculatedPrice(
-            (float) $data['orders']['shipping_amount'],
-            (float) $data['orders']['shipping_amount'],
-            new CalculatedTaxCollection(),
-            new TaxRuleCollection()
-        );
 
         /*
          * Set line items, shipping costs and transactions
          */
         if (isset($data['items'])) {
-            $taxRules = $this->getTaxRules($data);
-            $taxStatus = CartPrice::TAX_STATE_GROSS;
-
-            $converted['lineItems'] = $this->getLineItems($data['items'], $taxRules, $taxStatus, $context);
-
-            $converted['price'] = new CartPrice(
-                (float) $data['orders']['grand_total'],
-                (float) $data['orders']['subtotal_incl_tax'],
-                (float) $data['orders']['subtotal_incl_tax'] - (float) $data['orders']['shipping_amount'],
-                new CalculatedTaxCollection([]),
-                $taxRules,
-                $taxStatus
-            );
-
-            $converted['shippingCosts'] = $shippingCosts;
-
-            $this->getTransactions($data, $converted);
-            unset($data['items'], $data['orders']['payment']);
+            $this->convertOrderItems($converted, $data);
         }
 
         /*
          * Set deliveries
          */
         if (isset($data['shipments'])) {
-            $converted['deliveries'] = $this->getDeliveries($data, $converted, $shippingCosts);
+            $converted['deliveries'] = $this->getDeliveries($data, $converted);
         }
         unset($data['shippingAddress']);
 
-        /*
-         * Set billing address
-         */
-        $billingAddress = $this->getAddress($data['billingAddress']);
-        if (empty($billingAddress)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::ORDER,
-                $this->oldIdentifier,
-                'billingAddress'
-            ));
-
+        if (!$this->convertBillingAddress($converted, $data)) {
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['billingAddressId'] = $billingAddress['id'];
-        $converted['addresses'][] = $billingAddress;
-        unset($data['billingAddress']);
 
         $converted['deepLinkCode'] = md5($converted['id']);
-
-        /*
-         * Set sales channel
-         */
-        $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
-        if (isset($data['orders']['store_id'])) {
-            $salesChannelMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                MagentoDefaultEntities::STORE,
-                $data['orders']['store_id'],
-                $context
-            );
-
-            if ($salesChannelMapping !== null) {
-                $this->mappingIds[] = $salesChannelMapping['id'];
-                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
-            }
-        }
         unset($data['orders'], $data['identifier']);
 
         if (empty($data)) {
             $data = null;
         }
-
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id']);
@@ -476,8 +327,9 @@ class OrderConverter extends MagentoConverter
         return $lineItems;
     }
 
-    protected function getDeliveries(array $data, array $converted, CalculatedPrice $shippingCosts): array
+    protected function getDeliveries(array $data, array $converted): array
     {
+        $shippingCosts = $this->getShippingCosts((float) $data['orders']['shipping_amount']);
         $deliveries = [];
         foreach ($data['shipments'] as $shipment) {
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -588,12 +440,12 @@ class OrderConverter extends MagentoConverter
         return $shippingMethodMapping['entityUuid'];
     }
 
-    protected function getAddress(array $originalData): array
+    protected function getAddress(array $originalData, $entityName = DefaultEntities::ORDER_ADDRESS): array
     {
         $address = [];
         $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
-            DefaultEntities::ORDER_ADDRESS,
+            $entityName,
             $originalData['entity_id'],
             $this->context
         );
@@ -735,5 +587,263 @@ class OrderConverter extends MagentoConverter
         $this->mappingIds[] = $paymentMethodMapping['id'];
 
         return $paymentMethodMapping['entityUuid'];
+    }
+
+    /**
+     * @throws AssociationEntityRequiredMissingException
+     */
+    protected function convertOrderCustomer(array &$converted, array &$data): bool
+    {
+        $guestOrder = false;
+        if (isset($data['orders']['customer_id']) && $data['orders']['customer_is_guest'] === '0') {
+            $customerMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CUSTOMER,
+                $data['orders']['customer_id'],
+                $this->context
+            );
+
+            if ($customerMapping === null) {
+                throw new AssociationEntityRequiredMissingException(
+                    DefaultEntities::ORDER,
+                    DefaultEntities::CUSTOMER
+                );
+            }
+            $converted['orderCustomer'] = [
+                'customerId' => $customerMapping['entityUuid'],
+            ];
+            $this->mappingIds[] = $customerMapping['id'];
+            unset($customerMapping);
+        } else {
+            $guestOrder = true;
+            $converted['orderCustomer'] = [
+                'customer' => [],
+            ];
+            $this->convertValue($converted['orderCustomer']['customer'], 'email', $data['orders'], 'customer_email', self::TYPE_STRING, false);
+            $this->convertValue($converted['orderCustomer']['customer'], 'firstName', $data['orders'], 'customer_firstname', self::TYPE_STRING, false);
+            $this->convertValue($converted['orderCustomer']['customer'], 'lastName', $data['orders'], 'customer_lastname', self::TYPE_STRING, false);
+            $converted['orderCustomer']['customer']['guest'] = true;
+        }
+        $this->convertValue($converted['orderCustomer'], 'email', $data['orders'], 'customer_email');
+        $this->convertValue($converted['orderCustomer'], 'firstName', $data['orders'], 'customer_firstname');
+        $this->convertValue($converted['orderCustomer'], 'lastName', $data['orders'], 'customer_lastname');
+
+        /*
+         * Set salutation
+         */
+        if (isset($data['orders']['customer_salutation'])) {
+            $this->salutationUuid = $this->getSalutation($data['orders']['customer_salutation']);
+        } else {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::SALUTATION,
+                'default_salutation',
+                $this->context
+            );
+
+            if ($mapping === null) {
+                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                    $this->runId,
+                    DefaultEntities::ORDER,
+                    $this->oldIdentifier,
+                    'salutation'
+                ));
+
+                return false;
+            }
+            $this->mappingIds[] = $mapping['id'];
+            $this->salutationUuid = $mapping['entityUuid'];
+        }
+
+        if ($this->salutationUuid === null) {
+            return false;
+        }
+        $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
+
+        if ($guestOrder === true) {
+            $converted['orderCustomer']['customer']['salutationId'] = $this->salutationUuid;
+            $customerGroupMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CUSTOMER_GROUP,
+                $data['orders']['customer_group_id'],
+                $this->context
+            );
+
+            if ($customerGroupMapping === null) {
+                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                    $this->runId,
+                    DefaultEntities::ORDER,
+                    $this->oldIdentifier,
+                    'customer_group_id'
+                ));
+
+                return false;
+            }
+
+            $languageMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                MagentoDefaultEntities::STORE_LANGUAGE,
+                $data['orders']['store_id'],
+                $this->context
+            );
+            if ($languageMapping === null) {
+                return false;
+            }
+
+            $paymentMethodUuid = $this->getPaymentMethod($data);
+            if ($paymentMethodUuid === null) {
+                return false;
+            }
+
+            $this->mappingIds[] = $languageMapping['id'];
+            $this->mappingIds[] = $customerGroupMapping['id'];
+            $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityUuid'];
+            $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
+            $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityUuid'];
+            $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
+
+            $converted['orderCustomer']['customer']['customerNumber'] = $data['orders']['increment_id'] . '-guest';
+
+            $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+            if (empty($billingAddress)) {
+                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                    $this->runId,
+                    DefaultEntities::ORDER,
+                    $this->oldIdentifier,
+                    'billingAddress'
+                ));
+
+                return false;
+            }
+            $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
+            $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
+            $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+            if (empty($shippingAddress)) {
+                $shippingAddress = $billingAddress;
+            }
+            $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
+        }
+        unset($data['customerSalutation']);
+
+        return true;
+    }
+
+    protected function convertSalesChannel(array &$converted, array &$data): void
+    {
+        $salesChannelMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            MagentoDefaultEntities::STORE,
+            $data['orders']['store_id'],
+            $this->context
+        );
+
+        if ($salesChannelMapping !== null) {
+            $this->mappingIds[] = $salesChannelMapping['id'];
+            $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+        }
+    }
+
+    protected function convertCurrency(array &$converted, array &$data): bool
+    {
+        $currencyUuid = null;
+        if (isset($data['orders']['order_currency_code'])) {
+            $currencyUuid = $this->mappingService->getCurrencyUuid(
+                $this->connectionId,
+                $data['orders']['order_currency_code'],
+                $this->context
+            );
+        }
+        if ($currencyUuid === null) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::ORDER,
+                $this->oldIdentifier,
+                'currency'
+            ));
+
+            return false;
+        }
+        $converted['currencyId'] = $currencyUuid;
+
+        return true;
+    }
+
+    protected function convertOrderStatus(array &$converted, array &$data): bool
+    {
+        $stateMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            OrderStateReader::getMappingName(),
+            (string) $data['orders']['status'],
+            $this->context
+        );
+
+        if ($stateMapping === null) {
+            $this->loggingService->addLogEntry(new UnknownEntityLog(
+                $this->runId,
+                'order_state',
+                (string) $data['orders']['status'],
+                DefaultEntities::ORDER,
+                $this->oldIdentifier
+            ));
+
+            return false;
+        }
+        $converted['stateId'] = $stateMapping['entityUuid'];
+        $this->mappingIds[] = $stateMapping['id'];
+
+        return true;
+    }
+
+    protected function convertOrderItems(array &$converted, array &$data): void
+    {
+        $shippingCosts = $this->getShippingCosts((float) $data['orders']['shipping_amount']);
+        $taxRules = $this->getTaxRules($data);
+        $taxStatus = CartPrice::TAX_STATE_GROSS;
+
+        $converted['lineItems'] = $this->getLineItems($data['items'], $taxRules, $taxStatus, $this->context);
+
+        $converted['price'] = new CartPrice(
+            (float) $data['orders']['grand_total'],
+            (float) $data['orders']['subtotal_incl_tax'],
+            (float) $data['orders']['subtotal_incl_tax'] - (float) $data['orders']['shipping_amount'],
+            new CalculatedTaxCollection([]),
+            $taxRules,
+            $taxStatus
+        );
+
+        $converted['shippingCosts'] = $shippingCosts;
+
+        $this->getTransactions($data, $converted);
+        unset($data['items'], $data['orders']['payment']);
+    }
+
+    protected function convertBillingAddress(array &$converted, array &$data): bool
+    {
+        $billingAddress = $this->getAddress($data['billingAddress']);
+        if (empty($billingAddress)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::ORDER,
+                $this->oldIdentifier,
+                'billingAddress'
+            ));
+
+            return false;
+        }
+        $converted['billingAddressId'] = $billingAddress['id'];
+        $converted['addresses'][] = $billingAddress;
+        unset($data['billingAddress']);
+
+        return true;
+    }
+
+    private function getShippingCosts(float $amount): CalculatedPrice
+    {
+        return new CalculatedPrice(
+            $amount,
+            $amount,
+            new CalculatedTaxCollection(),
+            new TaxRuleCollection()
+        );
     }
 }
