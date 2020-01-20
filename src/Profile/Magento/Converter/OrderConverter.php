@@ -18,6 +18,7 @@ use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -77,6 +78,11 @@ class OrderConverter extends MagentoConverter
     protected $salutationUuid;
 
     /**
+     * @var NumberRangeValueGeneratorInterface
+     */
+    protected $numberRangeValueGenerator;
+
+    /**
      * @var string[]
      */
     protected static $requiredDataFieldKeys = [
@@ -89,11 +95,13 @@ class OrderConverter extends MagentoConverter
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
-        TaxCalculator $taxCalculator
+        TaxCalculator $taxCalculator,
+        NumberRangeValueGeneratorInterface $numberRangeValueGenerator
     ) {
         parent::__construct($mappingService, $loggingService);
 
         $this->taxCalculator = $taxCalculator;
+        $this->numberRangeValueGenerator = $numberRangeValueGenerator;
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool
@@ -701,8 +709,7 @@ class OrderConverter extends MagentoConverter
             $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
             $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityUuid'];
             $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
-
-            $converted['orderCustomer']['customer']['customerNumber'] = $data['orders']['increment_id'] . '-guest';
+            $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
             $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             if (empty($billingAddress)) {

@@ -12,7 +12,9 @@ use Shopware\Core\Checkout\Cart\Price\PriceRounding;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Checkout\Cart\Tax\TaxRuleCalculator;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -27,6 +29,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class OrderConverterTest extends TestCase
 {
+    use KernelTestBehaviour;
+
     /**
      * @var OrderConverter
      */
@@ -68,7 +72,7 @@ class OrderConverterTest extends TestCase
         $taxRuleCalculator = new TaxRuleCalculator($rounding);
         $taxCalculator = new TaxCalculator($taxRuleCalculator);
 
-        $this->orderConverter = new OrderConverter($this->mappingService, $this->loggingService, $taxCalculator);
+        $this->orderConverter = new OrderConverter($this->mappingService, $this->loggingService, $taxCalculator, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
