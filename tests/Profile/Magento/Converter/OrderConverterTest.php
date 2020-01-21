@@ -300,7 +300,7 @@ class OrderConverterTest extends TestCase
         static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
 
         if ($property === 'orders') {
-            static::assertSame($logs[0]['parameters']['emptyField'], 'orders,customer_id,entity_id');
+            static::assertSame($logs[0]['parameters']['emptyField'], 'orders,entity_id');
         } else {
             static::assertSame($logs[0]['parameters']['emptyField'], $property);
         }

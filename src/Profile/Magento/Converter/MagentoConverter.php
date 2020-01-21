@@ -35,7 +35,8 @@ abstract class MagentoConverter extends Converter
         string $newKey,
         array &$sourceData,
         string $sourceKey,
-        string $castType = self::TYPE_STRING
+        string $castType = self::TYPE_STRING,
+        bool $unset = true
     ): void {
         if ($sourceData[$sourceKey] !== null && $sourceData[$sourceKey] !== '') {
             switch ($castType) {
@@ -59,7 +60,9 @@ abstract class MagentoConverter extends Converter
             }
             $newData[$newKey] = $sourceValue;
         }
-        unset($sourceData[$sourceKey]);
+        if ($unset === true) {
+            unset($sourceData[$sourceKey]);
+        }
     }
 
     protected function validDate(string $value): bool
