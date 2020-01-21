@@ -24,6 +24,8 @@ return [
         'default_value' => '',
         'is_unique' => '0',
         'note' => null,
+        'setId' => '16',
+        'setName' => 'Home & Decor',
         'options' => [
             0 => [
                 'option_id' => '186',
@@ -65,6 +67,8 @@ return [
         'default_value' => null,
         'is_unique' => '0',
         'note' => null,
+        'setId' => '11',
+        'setName' => 'Accessories',
     ],
     2 => [
         'attribute_id' => '213',
@@ -84,6 +88,8 @@ return [
         'default_value' => '0',
         'is_unique' => '0',
         'note' => null,
+        'setId' => '1',
+        'setName' => 'Mein Set',
     ],
     3 => [
         'attribute_id' => '210',
@@ -103,6 +109,8 @@ return [
         'default_value' => 'ROO',
         'is_unique' => '0',
         'note' => null,
+        'setId' => '1',
+        'setName' => 'Mein Set',
     ],
     4 => [
         'attribute_id' => '214',
@@ -122,5 +130,7 @@ return [
         'default_value' => null,
         'is_unique' => '0',
         'note' => null,
+        'setId' => '1',
+        'setName' => 'Mein Set',
     ],
 ];
