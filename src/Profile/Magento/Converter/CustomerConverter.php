@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -18,6 +19,8 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 
@@ -37,6 +40,11 @@ class CustomerConverter extends MagentoConverter
      * @var Context
      */
     protected $context;
+
+    /**
+     * @var NumberRangeValueGeneratorInterface
+     */
+    protected $numberRangeValueGenerator;
 
     /**
      * @var string[]
@@ -66,6 +74,16 @@ class CustomerConverter extends MagentoConverter
      * @var string
      */
     protected $oldIdentifier;
+
+    public function __construct(
+        MappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        NumberRangeValueGeneratorInterface $numberRangeValueGenerator
+    ) {
+        parent::__construct($mappingService, $loggingService);
+
+        $this->numberRangeValueGenerator = $numberRangeValueGenerator;
+    }
 
     public function supports(MigrationContextInterface $migrationContext): bool
     {
@@ -165,13 +183,11 @@ class CustomerConverter extends MagentoConverter
         $this->convertValue($converted, 'firstName', $data, 'firstname');
         $this->convertValue($converted, 'lastName', $data, 'lastname');
         $this->convertValue($converted, 'birthday', $data, 'dob', self::TYPE_DATETIME);
-        $this->convertValue($converted, 'customerNumber', $data, 'increment_id');
         if (isset($data['password_hash'])) {
             $this->setPassword($data, $converted);
         }
-        if (!isset($converted['customerNumber']) || $converted['customerNumber'] === '') {
-            $converted['customerNumber'] = 'number-' . $this->oldIdentifier;
-        }
+        $converted['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
+        unset($data['increment_id']);
 
         /*
          * Set salutation

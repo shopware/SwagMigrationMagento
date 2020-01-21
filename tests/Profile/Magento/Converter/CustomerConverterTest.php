@@ -10,7 +10,9 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -23,6 +25,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class CustomerConverterTest extends TestCase
 {
+    use KernelTestBehaviour;
+
     /**
      * @var CustomerConverter
      */
@@ -72,7 +76,7 @@ class CustomerConverterTest extends TestCase
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->customerConverter = new CustomerConverter($mappingService, $this->loggingService);
+        $this->customerConverter = new CustomerConverter($mappingService, $this->loggingService, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -212,7 +216,7 @@ class CustomerConverterTest extends TestCase
         static::assertArrayHasKey('addresses', $converted);
         static::assertSame(Defaults::SALES_CHANNEL, $converted['salesChannelId']);
         static::assertSame('Berg', $converted['lastName']);
-        static::assertSame('number-95', $converted['customerNumber']);
+        static::assertSame('10001', $converted['customerNumber']);
         static::assertCount(0, $this->loggingService->getLoggingArray());
     }
 
