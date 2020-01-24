@@ -208,6 +208,11 @@ class ProductConverter extends MagentoConverter
         if (isset($data['meta_keyword'])) {
             $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
         }
+        unset(
+            $data['meta_title'],
+            $data['meta_description'],
+            $data['meta_keyword']
+        );
 
         $converted['active'] = false;
         if (isset($data['status']) && $data['status'] === '1') {

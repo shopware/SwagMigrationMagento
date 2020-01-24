@@ -71,7 +71,9 @@ SELECT
     stock.qty                 AS instock,
     stock.min_qty             AS stockmin,
     stock.min_sale_qty        AS minpurchase,
-    stock.max_sale_qty        AS maxpurchase
+    stock.max_sale_qty        AS maxpurchase,
+    relation.parent_id        AS parentId,
+    parent.type_id            AS parentType
 FROM {$this->tablePrefix}catalog_product_entity product
 
 -- join stocks
@@ -79,13 +81,15 @@ LEFT JOIN {$this->tablePrefix}cataloginventory_stock_item AS stock
 ON stock.product_id = product.entity_id
 AND stock.stock_id = 1
 
+LEFT JOIN {$this->tablePrefix}catalog_product_relation AS relation
+ON relation.child_id = product.entity_id
+
+LEFT JOIN {$this->tablePrefix}catalog_product_entity AS parent
+ON relation.parent_id = parent.entity_id
+
 WHERE product.type_id IN (?)
 
-ORDER BY
-  CASE
-    WHEN product.type_id = 'configurable' THEN 1
-    ELSE 2
-  END ASC
+ORDER BY relation.parent_id, product.entity_id
 
 LIMIT ?
 OFFSET ?;
@@ -182,20 +186,19 @@ SQL;
             $backendType = $attribute['backend_type'];
             $userDefined = $attribute['is_user_defined'];
             $attributeCode = $attribute['attribute_code'];
-            if ($storeId !== '0'
-                || $backendType === 'static'
-                || ($userDefined !== '0' && !in_array($attributeCode, ['manufacturer', 'cost']))
-            ) {
+            if ($storeId !== '0' || $backendType === 'static') {
                 continue;
             }
-            $value = $attribute['value'];
-            $defaultAttributes[$attributeCode] = $value;
+            if ($userDefined === '0' || in_array($attributeCode, ['manufacturer', 'cost'], true)) {
+                $value = $attribute['value'];
+                $defaultAttributes[$attributeCode] = $value;
+            }
         }
         $fetchedProduct = array_merge($fetchedProduct, $defaultAttributes);
         unset($defaultAttributes);
     }
 
-    protected function appendCustomAttributes(array $attributes, array &$fetchedProduct)
+    protected function appendCustomAttributes(array $attributes, array &$fetchedProduct): void
     {
         foreach ($attributes as $attribute) {
             $storeId = $attribute['store_id'];
@@ -235,11 +238,16 @@ SQL;
         $configuratorSettings = $this->fetchConfiguratorSettings($ids);
         $options = $this->fetchOptions($ids);
         $visibility = $this->fetchVisibility($ids);
-        $parents = $this->fetchParents($ids);
 
         foreach ($fetchedProducts as &$product) {
             $productId = $product['entity_id'];
 
+            if (isset($attributes[$productId])) {
+                $productAttributes = $attributes[$productId];
+                $this->appendDefaultAttributes($productAttributes, $product);
+                $this->appendCustomAttributes($productAttributes, $product);
+                $this->appendTranslations($productAttributes, $product);
+            }
             if (isset($categories[$productId])) {
                 $product['categories'] = $categories[$productId];
             }
@@ -261,14 +269,13 @@ SQL;
             if (isset($visibility[$productId])) {
                 $product['visibility'] = $visibility[$productId];
             }
-            if (isset($parents[$productId])) {
-                $product['parentId'] = $parents[$productId];
-            }
-            if (isset($attributes[$productId])) {
-                $productAttributes = $attributes[$productId];
-                $this->appendDefaultAttributes($productAttributes, $product);
-                $this->appendCustomAttributes($productAttributes, $product);
-                $this->appendTranslations($productAttributes, $product);
+            // if parent is unsupported type which will not be migrated
+            // we remove relation and migrate as single product
+            // example: part of bundle, which is not supported yet
+            if (isset($product['parentType'])
+                && !in_array($product['parentType'], self::$ALLOWED_PRODUCT_TYPES, true)
+            ) {
+                $product['parentId'] = null;
             }
 
             $resultSet[] = $product;
@@ -282,8 +289,7 @@ SQL;
             $properties,
             $configuratorSettings,
             $options,
-            $visibility,
-            $parents
+            $visibility
         );
 
         $resultSet = $this->utf8ize($resultSet);
@@ -434,37 +440,5 @@ SQL;
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
-    }
-
-    protected function fetchParents(array $ids): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->select('relation.child_id AS productId');
-        $query->addSelect('relation.parent_id AS parentId');
-
-        $query->from($this->tablePrefix . 'catalog_product_relation', 'relation');
-        $query->innerJoin('relation', $this->tablePrefix . 'catalog_product_entity', 'product', 'product.entity_id = relation.parent_id');
-
-        $query->where('relation.child_id IN (:ids)');
-        $query->andWhere('product.type_id IN (:types)');
-        $query->orderBy('product.created_at', 'DESC');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
-        $query->setParameter('types', self::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
-
-        $fetchedParents = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
-
-        $parents = [];
-        foreach ($fetchedParents as $parent) {
-            $productId = $parent['productId'];
-
-            if (isset($parents[$productId])) {
-                continue;
-            }
-
-            $parents[$productId] = $parent['parentId'];
-        }
-
-        return $parents;
     }
 }
