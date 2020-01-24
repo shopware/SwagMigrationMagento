@@ -199,9 +199,15 @@ class ProductConverter extends MagentoConverter
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
         $this->convertValue($converted, 'description', $data, 'description');
-        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
-        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
-        $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
+        if (isset($data['meta_title'])) {
+            $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
+        }
+        if (isset($data['meta_description'])) {
+            $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
+        }
+        if (isset($data['meta_keyword'])) {
+            $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
+        }
 
         $converted['active'] = false;
         if (isset($data['status']) && $data['status'] === '1') {
@@ -307,7 +313,6 @@ class ProductConverter extends MagentoConverter
             $data['stockmin'],
             $data['minpurchase'],
             $data['maxpurchase'],
-            $data['priceIncludesTax'],
             $data['allow_message'],
             $data['cost'],
             $data['country_of_manufacture'],
