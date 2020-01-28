@@ -36,12 +36,57 @@ class ProductCustomFieldReader extends AbstractReader
         $customFields = $this->fetchCustomFields($migrationContext);
         $ids = array_column($customFields, 'attribute_id');
         $options = $this->fetchSelectOptions($ids);
+        $optionIds = [];
 
-        foreach ($customFields as &$customField) {
+        foreach ($options as $attributeId => $attributeOptions) {
+            foreach ($attributeOptions as $option) {
+                $optionIds[] = $option['option_id'];
+            }
+        }
+        $attributeTranslations = $this->fetchAttributeTranslations($ids);
+        $optionTranslations = $this->fetchAttributeOptionTranslations($optionIds);
+        $locales = $this->fetchLocales();
+
+        foreach ($options as $attributeId => &$optionList) {
+            foreach ($optionList as &$option) {
+                $optionId = $option['option_id'];
+
+                if (isset($optionTranslations[$optionId])) {
+                    foreach ($optionTranslations[$optionId] as $optionTranslation) {
+                        $store_id = $optionTranslation['store_id'];
+                        $value = $optionTranslation['value'];
+
+                        if (isset($locales[$store_id])) {
+                            $translation = [
+                                'value' => $value,
+                                'locale' => $locales[$store_id],
+                            ];
+                            $option['translations'][] = $translation;
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($customFields as $key => &$customField) {
             $attributeId = $customField['attribute_id'];
-
             if (isset($options[$attributeId])) {
                 $customField['options'] = $options[$attributeId];
+            }
+
+            if (isset($attributeTranslations[$attributeId])) {
+                foreach ($attributeTranslations[$attributeId] as $attributeTranslation) {
+                    $store_id = $attributeTranslation['store_id'];
+                    $value = $attributeTranslation['value'];
+
+                    if (isset($locales[$store_id])) {
+                        $translation = [
+                            'value' => $value,
+                            'locale' => $locales[$store_id],
+                        ];
+                        $customField['translations'][] = $translation;
+                    }
+                }
             }
         }
 
@@ -56,7 +101,11 @@ class ProductCustomFieldReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}eav_attribute eav
 INNER JOIN {$this->tablePrefix}eav_entity_type AS et ON et.entity_type_id = eav.entity_type_id AND et.entity_type_code = 'catalog_product'
-WHERE eav.frontend_input != '' AND eav.is_user_defined = 1 AND eav.attribute_code NOT IN ('manufacturer', 'cost');
+INNER JOIN {$this->tablePrefix}eav_entity_attribute AS eea ON eav.attribute_id = eea.attribute_id
+INNER JOIN {$this->tablePrefix}eav_attribute_set AS attributeSet ON attributeSet.attribute_set_id = eea.attribute_set_id
+WHERE eav.frontend_input != '' 
+AND eav.is_user_defined = 1
+AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
 
@@ -71,7 +120,10 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'eav_attribute', 'eav');
         $query->innerJoin('eav', $this->tablePrefix . 'eav_entity_type', 'et', 'eav.entity_type_id = et.entity_type_id AND et.entity_type_code = \'catalog_product\'');
 
-        $query->innerJoin('eav', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 0');
+        $query->innerJoin('et', $this->tablePrefix . 'eav_entity_attribute', 'eea', 'eav.attribute_id = eea.attribute_id');
+        $query->innerJoin('eea', $this->tablePrefix . 'eav_attribute_set', 'attributeSet', 'attributeSet.attribute_set_id = eea.attribute_set_id');
+        $query->addSelect('eea.attribute_set_id AS setId');
+        $query->addSelect('attributeSet.attribute_set_name AS setName');
 
         $query->where('eav.frontend_input != \'\'');
         $query->andWhere('eav.is_user_defined = 1');
@@ -80,7 +132,7 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        return $this->mapData($query->execute()->fetchAll(\PDO::FETCH_ASSOC), [], ['eav']);
+        return $this->mapData($query->execute()->fetchAll(\PDO::FETCH_ASSOC), [], ['eav', 'setId', 'setName']);
     }
 
     protected function fetchSelectOptions(array $ids): array
@@ -93,9 +145,61 @@ SELECT DISTINCT
 FROM {$this->tablePrefix}eav_attribute_option_value optionValue
 INNER JOIN {$this->tablePrefix}eav_attribute_option AS attributeOption ON optionValue.option_id = attributeOption.option_id
 INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute_id = attributeOption.attribute_id
-WHERE attribute.attribute_id IN (?);
+WHERE attribute.attribute_id IN (?) AND store_id = 0;
 SQL;
 
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchAttributeOptionTranslations(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('optionValue.option_id');
+        $query->addSelect('optionValue.store_id');
+        $query->addSelect('attributeOption.attribute_id');
+        $query->addSelect('optionValue.value');
+        $query->from($this->tablePrefix . 'eav_attribute_option', 'attributeOption');
+
+        $query->innerJoin('attributeOption', $this->tablePrefix . 'eav_attribute_option_value', 'optionValue', 'optionValue.option_id = attributeOption.option_id AND optionValue.store_id != 0');
+
+        $query->where('attributeOption.option_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchAttributeTranslations(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('attributeLabel.attribute_id AS identifier');
+        $query->addSelect('attributeLabel.attribute_id');
+        $query->addSelect('attributeLabel.store_id');
+        $query->addSelect('attributeLabel.value');
+        $query->from($this->tablePrefix . 'eav_attribute_label', 'attributeLabel');
+
+        $query->where('attributeLabel.attribute_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    private function fetchLocales(): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('scope_id AS store_id');
+        $query->addSelect('value AS locale');
+        $query->from($this->tablePrefix . 'core_config_data', 'locales');
+
+        $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
+
+        $locales = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        foreach ($locales as $storeId => &$locale) {
+            $locale = str_replace('_', '-', $locale);
+        }
+
+        return $locales;
     }
 }

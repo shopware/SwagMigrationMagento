@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Cocur\Slugify\Slugify;
 use Shopware\Core\Framework\Context;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
@@ -16,6 +17,11 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CustomFieldConverter extends Converter
 {
+    /**
+     * @var MigrationContextInterface
+     */
+    protected $migrationContext;
+
     protected $typeMapping = [
         'price' => 'float',
         'select' => 'select',
@@ -27,12 +33,13 @@ abstract class CustomFieldConverter extends Converter
 
     public function getSourceIdentifier(array $data): string
     {
-        return $data['attribute_id'];
+        return $data['attribute_id'] . '_' . $data['setId'];
     }
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
+        $this->migrationContext = $migrationContext;
         $type = $this->validateType($data);
 
         if ($type === null) {
@@ -62,28 +69,24 @@ abstract class CustomFieldConverter extends Converter
         $mapping = $this->mappingService->getOrCreateMapping(
             $migrationContext->getConnection()->getId(),
             DefaultEntities::CUSTOM_FIELD_SET,
-            $this->getCustomFieldEntityName() . 'CustomFieldSet',
+            $data['setId'],
             $context
         );
         $converted['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
-        $connectionName = $migrationContext->getConnection()->getName();
-        $connectionName = str_replace(' ', '', $connectionName);
-        $connectionName = preg_replace('/[^A-Za-z0-9\-]/', '', $connectionName);
-
-        $converted['name'] = 'migration_' . $connectionName . '_' . $this->getCustomFieldEntityName();
+        $converted['name'] = $data['setName'];
 
         $converted['config'] = [
             'label' => [
-                $defaultLocale => ucfirst($this->getCustomFieldEntityName()) . ' migration custom fields (attributes)',
+                $defaultLocale => $data['setName'],
             ],
             'translated' => true,
         ];
         $mapping = $this->mappingService->getOrCreateMapping(
             $migrationContext->getConnection()->getId(),
             DefaultEntities::CUSTOM_FIELD_SET_RELATION,
-            $this->getCustomFieldEntityName() . 'CustomFieldSetRelation',
+            $this->getCustomFieldEntityName() . 'CustomFieldSetRelation-' . $data['setId'],
             $context
         );
         $this->mappingIds[] = $mapping['id'];
@@ -98,14 +101,15 @@ abstract class CustomFieldConverter extends Converter
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $migrationContext->getConnection()->getId(),
             $migrationContext->getDataSet()::getEntity(),
-            $data['attribute_id'],
+            $data['attribute_id'] . '_' . $data['setId'],
             $context,
             $this->checksum
         );
+        $slugify = new Slugify(['separator' => '_']);
         $converted['customFields'] = [
             [
                 'id' => $this->mainMapping['entityUuid'],
-                'name' => $converted['name'] . '_' . $data['attribute_id'],
+                'name' => $slugify->slugify($data['setName']) . '_' . $data['attribute_code'],
                 'type' => $type,
                 'config' => $this->getConfiguredCustomFieldData($data, $defaultLocale),
             ],
@@ -117,6 +121,8 @@ abstract class CustomFieldConverter extends Converter
             $data['options'],
             $data['frontend_input'],
             $data['frontend_label'],
+            $data['setId'],
+            $data['setName'],
 
             // There is no equivalent field
             $data['entity_type_id'],
@@ -162,6 +168,12 @@ abstract class CustomFieldConverter extends Converter
             'customFieldType' => 'text',
         ];
 
+        if (isset($data['translations'])) {
+            foreach ($data['translations'] as $translation) {
+                $attributeData['label'][$translation['locale']] = $translation['value'];
+            }
+        }
+
         if ($data['frontend_input'] === 'text') {
             $attributeData['type'] = 'text';
             $attributeData['customFieldType'] = 'text';
@@ -200,14 +212,22 @@ abstract class CustomFieldConverter extends Converter
         }
 
         if ($data['frontend_input'] === 'select') {
+            $slugify = new Slugify(['separator' => '_']);
             $options = [];
             foreach ($data['options'] as $option) {
-                $options[] = [
-                    'value' => $option['option_id'],
+                $optionData = [
+                    'value' => $slugify->slugify($option['value']),
                     'label' => [
                         $defaultLocale => $option['value'],
                     ],
                 ];
+
+                if (isset($option['translations'])) {
+                    foreach ($option['translations'] as $translation) {
+                        $optionData['label'][$translation['locale']] = $translation['value'];
+                    }
+                }
+                $options[] = $optionData;
             }
 
             $attributeData['componentName'] = 'sw-single-select';

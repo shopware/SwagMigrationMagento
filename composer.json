@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "shopware/core": "6.1.*",
-        "swag/migration-assistant": "0.40.*"
+        "shopware/core": "~6.1.0",
+        "swag/migration-assistant": "1.0.*"
     },
     "extra": {
         "shopware-plugin-class": "Swag\\MigrationMagento\\SwagMigrationMagento",

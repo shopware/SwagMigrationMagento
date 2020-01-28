@@ -325,7 +325,7 @@ SQL;
         return $storeCountryConfig;
     }
 
-    private function fetchLocales($storeIds): array
+    private function fetchLocales(array $storeIds): array
     {
         $query = $this->connection->createQueryBuilder();
 
