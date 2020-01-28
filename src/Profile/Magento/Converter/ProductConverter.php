@@ -219,6 +219,14 @@ class ProductConverter extends MagentoConverter
             $converted['active'] = true;
         }
 
+        if (isset($data['minpurchase'])) {
+            $this->convertValue($converted, 'minPurchase', $data, 'minpurchase', self::TYPE_INTEGER);
+        }
+        if (isset($data['maxpurchase'])) {
+            $this->convertValue($converted, 'maxPurchase', $data, 'maxpurchase', self::TYPE_INTEGER);
+        }
+        unset($data['minpurchase'], $data['maxpurchase']);
+
         /*
          * Set parent
          */
@@ -316,8 +324,6 @@ class ProductConverter extends MagentoConverter
             $data['created_at'],
             $data['updated_at'],
             $data['stockmin'],
-            $data['minpurchase'],
-            $data['maxpurchase'],
             $data['allow_message'],
             $data['cost'],
             $data['country_of_manufacture'],
@@ -436,21 +442,7 @@ class ProductConverter extends MagentoConverter
 
     protected function setTax(string $taxClassId, array &$converted): bool
     {
-        $mapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::TAX,
-            $taxClassId,
-            $this->context
-        );
-
-        if ($mapping !== null) {
-            $this->mappingIds[] = $mapping['id'];
-            $converted['taxId'] = $mapping['entityUuid'];
-
-            return true;
-        }
-
-        if ((int) $taxClassId === 0) {
+        if ($taxClassId === '0') {
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 DefaultEntities::TAX,
@@ -464,6 +456,20 @@ class ProductConverter extends MagentoConverter
                 'name' => '0%',
             ];
             $this->mappingIds[] = $mapping['id'];
+
+            return true;
+        }
+
+        $mapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::TAX,
+            $taxClassId,
+            $this->context
+        );
+
+        if ($mapping !== null) {
+            $this->mappingIds[] = $mapping['id'];
+            $converted['taxId'] = $mapping['entityUuid'];
 
             return true;
         }
