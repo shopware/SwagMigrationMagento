@@ -128,6 +128,7 @@ SQL;
         $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = options.option_id AND option_value.store_id = 0');
 
         $query->where('eav.is_user_defined = 1');
+        $query->andWhere('eav.attribute_code NOT IN (\'manufacturer\', \'cost\')');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());

@@ -219,7 +219,6 @@ class CategoryConverter extends MagentoConverter
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations(
                 $data['translations'],
-                DefaultEntities::CATEGORY,
                 [
                     'name' => 'name',
                     'description' => 'description',

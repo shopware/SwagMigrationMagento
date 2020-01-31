@@ -106,6 +106,7 @@ class CategoryConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
+        $attributeSetId = $categoryData[1]['attribute_set_id'];
 
         $converted = $convertResult->getConverted();
 
@@ -117,10 +118,6 @@ class CategoryConverterTest extends TestCase
         static::assertSame(
             $categoryData[1]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
-        );
-        static::assertSame(
-            $categoryData[1]['translations']['1']['oneAttribute']['value'],
-            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_category_200']
         );
     }
 

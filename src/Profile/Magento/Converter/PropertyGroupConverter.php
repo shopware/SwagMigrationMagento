@@ -88,7 +88,7 @@ class PropertyGroupConverter extends MagentoConverter
         unset($data['options']);
 
         if (isset($data['translations'])) {
-            $converted['translations'] = $this->getTranslations($data['translations'], DefaultEntities::PROPERTY_GROUP, ['name' => 'name'], $this->context);
+            $converted['translations'] = $this->getTranslations($data['translations'], ['name' => 'name'], $this->context);
         }
         unset($data['translations']);
 
@@ -114,7 +114,7 @@ class PropertyGroupConverter extends MagentoConverter
 
             $translations = [];
             if (isset($option['translations'])) {
-                $translations = $this->getTranslations($option['translations'], DefaultEntities::PROPERTY_GROUP_OPTION, ['name' => 'name'], $this->context);
+                $translations = $this->getTranslations($option['translations'], ['name' => 'name'], $this->context);
             }
 
             $converted['options'][] = [

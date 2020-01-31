@@ -286,14 +286,13 @@ class ProductConverter extends MagentoConverter
         unset($data['categories']);
 
         if (isset($data['attributes'])) {
-            $converted['customFields'] = $this->getAttributes($data['attributes'], DefaultEntities::PRODUCT, $migrationContext->getConnection()->getName());
+            $converted['customFields'] = $this->getAttributes($data['attributes'], (int) $data['attribute_set_id']);
         }
         unset($data['attributes']);
 
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations(
                 $data['translations'],
-                DefaultEntities::PRODUCT,
                 [
                     'name' => 'name',
                     'description' => 'description',
@@ -301,7 +300,8 @@ class ProductConverter extends MagentoConverter
                     'meta_description' => 'metaDescription',
                     'meta_keyword' => 'keywords',
                 ],
-                $context
+                $context,
+                (int) $data['attribute_set_id']
             );
 
             if (isset($converted['translations'])) {

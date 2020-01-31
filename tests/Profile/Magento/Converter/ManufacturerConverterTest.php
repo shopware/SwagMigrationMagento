@@ -109,9 +109,5 @@ class ManufacturerConverterTest extends TestCase
             $manufacturerData[0]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
         );
-        static::assertSame(
-            $manufacturerData[0]['translations']['1']['oneAttribute']['value'],
-            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_product_manufacturer_200']
-        );
     }
 }
