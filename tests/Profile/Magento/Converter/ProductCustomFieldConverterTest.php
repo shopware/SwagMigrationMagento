@@ -7,7 +7,6 @@
 
 namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 
-use Cocur\Slugify\Slugify;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -47,11 +46,6 @@ class ProductCustomFieldConverterTest extends TestCase
      * @var MigrationContextInterface
      */
     private $migrationContext;
-
-    /**
-     * @var string
-     */
-    private $euroMappingUuid;
 
     protected function setUp(): void
     {
@@ -98,15 +92,14 @@ class ProductCustomFieldConverterTest extends TestCase
         $convertResult = $this->productCustomFieldConverter->convert($customFieldData[0], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
-        $slugify = new Slugify(['separator' => '_']);
-        $technicalName = $slugify->slugify('Home & Decor_' . $customFieldData[0]['attribute_code']);
+        $technicalName = 'migration_attribute_' . $customFieldData[0]['setId'] . '_' . $customFieldData[0]['attribute_code'] . '_' . $customFieldData[0]['attribute_id'];
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
         static::assertArrayHasKey('config', $converted['customFields'][0]);
         static::assertArrayHasKey('name', $converted);
-        static::assertSame('Home & Decor', $converted['name']);
+        static::assertSame('migration_set_16', $converted['name']);
         static::assertArrayHasKey('options', $converted['customFields'][0]['config']);
         static::assertArrayHasKey('name', $converted['customFields'][0]);
         static::assertSame($technicalName, $converted['customFields'][0]['name']);
@@ -127,7 +120,7 @@ class ProductCustomFieldConverterTest extends TestCase
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
         static::assertArrayHasKey('name', $converted);
-        static::assertSame('Accessories', $converted['name']);
+        static::assertSame('migration_set_11', $converted['name']);
         static::assertArrayHasKey('config', $converted['customFields'][0]);
         static::assertSame('html', $converted['customFields'][0]['type']);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -146,7 +139,7 @@ class ProductCustomFieldConverterTest extends TestCase
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
         static::assertArrayHasKey('name', $converted);
-        static::assertSame('Mein Set', $converted['name']);
+        static::assertSame('migration_set_1', $converted['name']);
         static::assertArrayHasKey('config', $converted['customFields'][0]);
         static::assertSame('bool', $converted['customFields'][0]['type']);
         static::assertNotNull($convertResult->getMappingUuid());

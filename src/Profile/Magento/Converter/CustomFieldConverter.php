@@ -7,7 +7,6 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
-use Cocur\Slugify\Slugify;
 use Shopware\Core\Framework\Context;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
@@ -75,8 +74,7 @@ abstract class CustomFieldConverter extends Converter
         $converted['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
-        $converted['name'] = $data['setName'];
-
+        $converted['name'] = 'migration_set_' . $data['setId'];
         $converted['config'] = [
             'label' => [
                 $defaultLocale => $data['setName'],
@@ -105,11 +103,10 @@ abstract class CustomFieldConverter extends Converter
             $context,
             $this->checksum
         );
-        $slugify = new Slugify(['separator' => '_']);
         $converted['customFields'] = [
             [
                 'id' => $this->mainMapping['entityUuid'],
-                'name' => $slugify->slugify($data['setName']) . '_' . $data['attribute_code'],
+                'name' => 'migration_attribute_' . $data['setId'] . '_' . $data['attribute_code'] . '_' . $data['attribute_id'],
                 'type' => $type,
                 'config' => $this->getConfiguredCustomFieldData($data, $defaultLocale),
             ],
@@ -212,11 +209,10 @@ abstract class CustomFieldConverter extends Converter
         }
 
         if ($data['frontend_input'] === 'select') {
-            $slugify = new Slugify(['separator' => '_']);
             $options = [];
             foreach ($data['options'] as $option) {
                 $optionData = [
-                    'value' => $slugify->slugify($option['value']),
+                    'value' => $option['option_id'],
                     'label' => [
                         $defaultLocale => $option['value'],
                     ],

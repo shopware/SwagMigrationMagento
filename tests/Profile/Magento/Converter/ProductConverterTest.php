@@ -182,7 +182,7 @@ class ProductConverterTest extends TestCase
         );
         static::assertSame(
             $productData[0]['translations']['1']['oneAttribute']['value'],
-            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_product_200']
+            $converted['translations'][$this->languageUuid]['customFields']['migration_attribute_13_oneAttribute_200']
         );
     }
 

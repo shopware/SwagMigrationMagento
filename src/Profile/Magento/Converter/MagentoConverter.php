@@ -93,12 +93,9 @@ abstract class MagentoConverter extends Converter
         return $emptyFields;
     }
 
-    protected function getAttributes(array $attributes, string $entityName, string $connectionName, array $blacklist = []): array
+    protected function getAttributes(array $attributes, int $attributeSetId, array $blacklist = []): array
     {
         $result = [];
-        // remove unwanted characters from connection name
-        $connectionName = str_replace(' ', '', $connectionName);
-        $connectionName = preg_replace('/[^A-Za-z0-9\-]/', '', $connectionName);
 
         foreach ($attributes as $attribute) {
             if (in_array($attribute['attribute_code'], $blacklist, true)) {
@@ -109,17 +106,14 @@ abstract class MagentoConverter extends Converter
             if (isset($attribute['frontend_input']) && $attribute['frontend_input'] === 'boolean') {
                 $value = (bool) $value;
             }
-            $result['migration_' . $connectionName . '_' . $entityName . '_' . $attribute['attribute_id']] = $value;
+            $result['migration_attribute_' . $attributeSetId . '_' . $attribute['attribute_code'] . '_' . $attribute['attribute_id']] = $value;
         }
 
         return $result;
     }
 
-    protected function getTranslations(array $translations, string $entityName, array $defaultEntities, Context $context): array
+    protected function getTranslations(array $translations, array $defaultEntities, Context $context, ?int $attributeSetId = null): array
     {
-        $connectionName = str_replace(' ', '', $this->migrationContext->getConnection()->getName());
-        $connectionName = preg_replace('/[^A-Za-z0-9\-]/', '', $connectionName);
-
         $localeTranslation = [];
         foreach ($translations as $store => $translationValues) {
             $languageMapping = $this->mappingService->getMapping(
@@ -135,20 +129,23 @@ abstract class MagentoConverter extends Converter
             $this->mappingIds[] = $languageMapping['id'];
             $languageId = $languageMapping['entityUuid'];
 
-            foreach ($translationValues as $key => $attributeData) {
+            foreach ($translationValues as $attributeCode => $attributeData) {
                 if (!isset($attributeData['attribute_id'], $attributeData['value'])) {
                     continue;
                 }
 
-                if (isset($defaultEntities[$key])) {
-                    $newKey = $defaultEntities[$key];
+                if (isset($defaultEntities[$attributeCode])) {
+                    $newKey = $defaultEntities[$attributeCode];
                     $localeTranslation[$languageId][$newKey] = $attributeData['value'];
 
                     continue;
                 }
 
+                if ($attributeSetId === null) {
+                    continue;
+                }
                 $localeTranslation[$languageId]['languageId'] = $languageId;
-                $localeTranslation[$languageId]['customFields']['migration_' . $connectionName . '_' . $entityName . '_' . $attributeData['attribute_id']] = $attributeData['value'];
+                $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $attributeData['value'];
             }
         }
 

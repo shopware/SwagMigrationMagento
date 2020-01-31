@@ -71,7 +71,6 @@ class ManufacturerConverter extends MagentoConverter
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations(
                 $data['translations'],
-                DefaultEntities::PRODUCT_MANUFACTURER,
                 [
                     'name' => 'name',
                 ],

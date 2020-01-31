@@ -110,18 +110,10 @@ class PropertyGroupConverterTest extends TestCase
             $propertyGroupData[0]['options'][0]['translations']['1']['name']['value'],
             $converted['options'][0]['translations'][$this->languageUuid]['name']
         );
-        static::assertSame(
-            $propertyGroupData[0]['options'][0]['translations']['1']['oneAttribute']['value'],
-            $converted['options'][0]['translations'][$this->languageUuid]['customFields']['migration_shopware_property_group_option_200']
-        );
 
         static::assertSame(
             $propertyGroupData[0]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
-        );
-        static::assertSame(
-            $propertyGroupData[0]['translations']['1']['oneAttribute']['value'],
-            $converted['translations'][$this->languageUuid]['customFields']['migration_shopware_property_group_200']
         );
     }
 
