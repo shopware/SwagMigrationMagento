@@ -212,7 +212,7 @@ abstract class CustomFieldConverter extends Converter
             $options = [];
             foreach ($data['options'] as $option) {
                 $optionData = [
-                    'value' => $option['option_id'],
+                    'value' => 'option_' . $option['option_id'],
                     'label' => [
                         $defaultLocale => $option['value'],
                     ],
