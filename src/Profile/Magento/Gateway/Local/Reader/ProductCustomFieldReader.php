@@ -52,18 +52,23 @@ class ProductCustomFieldReader extends AbstractReader
                 $optionId = $option['option_id'];
 
                 if (isset($optionTranslations[$optionId])) {
+                    $untranslatedLocales = $locales;
                     foreach ($optionTranslations[$optionId] as $optionTranslation) {
-                        $store_id = $optionTranslation['store_id'];
+                        $storeId = $optionTranslation['store_id'];
                         $value = $optionTranslation['value'];
 
-                        if (isset($locales[$store_id])) {
+                        if (isset($locales[$storeId])) {
+                            unset($untranslatedLocales[$storeId]);
                             $translation = [
                                 'value' => $value,
-                                'locale' => $locales[$store_id],
+                                'locale' => $locales[$storeId],
                             ];
                             $option['translations'][] = $translation;
                         }
                     }
+                    $this->setFallbackTranslations($option, $untranslatedLocales, 'value');
+                } else {
+                    $this->setFallbackTranslations($option, $locales, 'value');
                 }
             }
         }
@@ -75,18 +80,23 @@ class ProductCustomFieldReader extends AbstractReader
             }
 
             if (isset($attributeTranslations[$attributeId])) {
+                $untranslatedLocales = $locales;
                 foreach ($attributeTranslations[$attributeId] as $attributeTranslation) {
-                    $store_id = $attributeTranslation['store_id'];
+                    $storeId = $attributeTranslation['store_id'];
                     $value = $attributeTranslation['value'];
 
-                    if (isset($locales[$store_id])) {
+                    if (isset($locales[$storeId])) {
+                        unset($untranslatedLocales[$storeId]);
                         $translation = [
                             'value' => $value,
-                            'locale' => $locales[$store_id],
+                            'locale' => $locales[$storeId],
                         ];
                         $customField['translations'][] = $translation;
                     }
                 }
+                $this->setFallbackTranslations($customField, $untranslatedLocales);
+            } else {
+                $this->setFallbackTranslations($customField, $locales);
             }
         }
 
@@ -201,5 +211,16 @@ SQL;
         }
 
         return $locales;
+    }
+
+    private function setFallbackTranslations(array &$valueObject, array $locales, $property = 'frontend_label'): void
+    {
+        foreach ($locales as $locale) {
+            $translation = [
+                'value' => $valueObject[$property],
+                'locale' => $locale,
+            ];
+            $valueObject['translations'][] = $translation;
+        }
     }
 }
