@@ -106,6 +106,9 @@ abstract class MagentoConverter extends Converter
             if (isset($attribute['frontend_input']) && $attribute['frontend_input'] === 'boolean') {
                 $value = (bool) $value;
             }
+            if (isset($attribute['frontend_input']) && $attribute['frontend_input'] === 'select') {
+                $value = 'option_' . $value;
+            }
             $result['migration_attribute_' . $attributeSetId . '_' . $attribute['attribute_code'] . '_' . $attribute['attribute_id']] = $value;
         }
 
