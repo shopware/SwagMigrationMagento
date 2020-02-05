@@ -147,8 +147,16 @@ abstract class MagentoConverter extends Converter
                 if ($attributeSetId === null) {
                     continue;
                 }
+
+                $value = $attributeData['value'];
+                if (isset($attributeData['frontend_input']) && $attributeData['frontend_input'] === 'boolean') {
+                    $value = (bool) $value;
+                }
+                if (isset($attributeData['frontend_input']) && $attributeData['frontend_input'] === 'select') {
+                    $value = 'option_' . $value;
+                }
                 $localeTranslation[$languageId]['languageId'] = $languageId;
-                $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $attributeData['value'];
+                $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $value;
             }
         }
 

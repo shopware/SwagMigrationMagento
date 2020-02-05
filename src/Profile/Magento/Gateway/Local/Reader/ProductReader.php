@@ -167,7 +167,8 @@ AND CASE attribute.backend_type
     WHEN 'decimal' THEN product_decimal.value
     WHEN 'datetime' THEN product_datetime.value
     ELSE null
-    END IS NOT NULL;
+    END IS NOT NULL
+ORDER BY store_id, attribute_id;   
 SQL;
         $fetchedAttributes = $this->connection->executeQuery(
             $sql,
@@ -210,19 +211,25 @@ SQL;
         }
     }
 
-    protected function appendTranslations(array $attributes, array &$fetchedProduct): void
+    protected function appendTranslations(array $attributes, array $locales, array &$fetchedProduct): void
     {
         foreach ($attributes as $attribute) {
             $storeId = $attribute['store_id'];
-            if ($storeId === '0') {
-                continue;
-            }
             $attributeId = $attribute['attribute_id'];
+            $frontendInput = $attribute['frontend_input'];
             $attributeCode = $attribute['attribute_code'];
             $value = $attribute['value'];
-
+            if ($storeId === '0') {
+                foreach ($locales as $localeStoreId => $locale) {
+                    $fetchedProduct['translations'][$localeStoreId][$attributeCode]['value'] = $value;
+                    $fetchedProduct['translations'][$localeStoreId][$attributeCode]['attribute_id'] = $attributeId;
+                    $fetchedProduct['translations'][$localeStoreId][$attributeCode]['frontend_input'] = $frontendInput;
+                }
+                continue;
+            }
             $fetchedProduct['translations'][$storeId][$attributeCode]['value'] = $value;
             $fetchedProduct['translations'][$storeId][$attributeCode]['attribute_id'] = $attributeId;
+            $fetchedProduct['translations'][$storeId][$attributeCode]['frontend_input'] = $frontendInput;
         }
     }
 
@@ -238,6 +245,7 @@ SQL;
         $configuratorSettings = $this->fetchConfiguratorSettings($ids);
         $options = $this->fetchOptions($ids);
         $visibility = $this->fetchVisibility($ids);
+        $locales = $this->fetchLocales();
 
         foreach ($fetchedProducts as &$product) {
             $productId = $product['entity_id'];
@@ -246,7 +254,7 @@ SQL;
                 $productAttributes = $attributes[$productId];
                 $this->appendDefaultAttributes($productAttributes, $product);
                 $this->appendCustomAttributes($productAttributes, $product);
-                $this->appendTranslations($productAttributes, $product);
+                $this->appendTranslations($productAttributes, $locales, $product);
             }
             if (isset($categories[$productId])) {
                 $product['categories'] = $categories[$productId];
@@ -440,5 +448,23 @@ SQL;
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    private function fetchLocales(): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('scope_id AS store_id');
+        $query->addSelect('value AS locale');
+        $query->from($this->tablePrefix . 'core_config_data', 'locales');
+
+        $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
+
+        $locales = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        foreach ($locales as $storeId => &$locale) {
+            $locale = str_replace('_', '-', $locale);
+        }
+
+        return $locales;
     }
 }
