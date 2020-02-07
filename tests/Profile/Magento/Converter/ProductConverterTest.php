@@ -184,6 +184,10 @@ class ProductConverterTest extends TestCase
             $productData[0]['translations']['1']['oneAttribute']['value'],
             $converted['translations'][$this->languageUuid]['customFields']['migration_attribute_13_oneAttribute_200']
         );
+        static::assertSame(
+            1.5,
+            $converted['weight']
+        );
     }
 
     public function testConvertChildFirst(): void

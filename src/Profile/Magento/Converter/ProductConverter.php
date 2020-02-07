@@ -196,6 +196,7 @@ class ProductConverter extends MagentoConverter
         unset($data['prices']);
 
         $this->convertValue($converted, 'stock', $data, 'instock', self::TYPE_INTEGER);
+        $this->convertValue($converted, 'weight', $data, 'weight', self::TYPE_FLOAT);
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
         $this->convertValue($converted, 'description', $data, 'description');
@@ -371,8 +372,7 @@ class ProductConverter extends MagentoConverter
             $data['use_config_allow_message'],
             $data['use_config_email_template'],
             $data['use_config_is_redeemable'],
-            $data['use_config_lifetime'],
-            $data['weight']
+            $data['use_config_lifetime']
         );
 
         if (empty($data)) {
