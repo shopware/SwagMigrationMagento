@@ -38,7 +38,7 @@ abstract class MagentoConverter extends Converter
         string $castType = self::TYPE_STRING,
         bool $unset = true
     ): void {
-        if ($sourceData[$sourceKey] !== null && $sourceData[$sourceKey] !== '') {
+        if (isset($sourceData[$sourceKey]) && $sourceData[$sourceKey] !== '') {
             switch ($castType) {
                 case self::TYPE_BOOLEAN:
                     $sourceValue = (bool) $sourceData[$sourceKey];
@@ -139,7 +139,12 @@ abstract class MagentoConverter extends Converter
 
                 if (isset($defaultEntities[$attributeCode])) {
                     $newKey = $defaultEntities[$attributeCode];
-                    $localeTranslation[$languageId][$newKey] = $attributeData['value'];
+
+                    if (is_array($newKey)) {
+                        $localeTranslation[$languageId][$newKey['key']] = $this->trimValue($attributeData['value'], $newKey['maxChars']);
+                    } else {
+                        $localeTranslation[$languageId][$newKey] = $attributeData['value'];
+                    }
 
                     continue;
                 }
@@ -161,5 +166,10 @@ abstract class MagentoConverter extends Converter
         }
 
         return $localeTranslation;
+    }
+
+    protected function trimValue(string $value, int $limit = 255): string
+    {
+        return mb_substr($value, 0, $limit);
     }
 }

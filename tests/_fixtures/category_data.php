@@ -42,6 +42,9 @@ return [
         'previousSiblingId' => null,
         'defaultLocale' => 'de-DE',
         'image' => null,
+        'meta_title' => 'meta title',
+        'meta_description' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem',
+        'meta_keywords' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem',
         'translations' => [
             '1' => [
                 'name' => [
@@ -51,6 +54,18 @@ return [
                 'oneAttribute' => [
                     'attribute_id' => 200,
                     'value' => 'attributeValue',
+                ],
+                'meta_title' => [
+                    'attribute_id' => 203,
+                    'value' => 'meta title',
+                ],
+                'meta_keywords' => [
+                    'attribute_id' => 201,
+                    'value' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem',
+                ],
+                'meta_description' => [
+                    'attribute_id' => 202,
+                    'value' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem',
                 ],
             ],
         ],

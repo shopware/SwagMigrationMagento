@@ -188,6 +188,14 @@ class ProductConverterTest extends TestCase
             1.5,
             $converted['weight']
         );
+        static::assertSame(
+            mb_substr($productData[0]['meta_keyword'], 0, 255),
+            $converted['keywords']
+        );
+        static::assertSame(
+            mb_substr($productData[0]['translations']['1']['meta_keyword']['value'], 0, 255),
+            $converted['translations'][$this->languageUuid]['keywords']
+        );
     }
 
     public function testConvertChildFirst(): void

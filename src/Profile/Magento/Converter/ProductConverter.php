@@ -200,20 +200,13 @@ class ProductConverter extends MagentoConverter
         $this->convertValue($converted, 'productNumber', $data, 'sku');
         $this->convertValue($converted, 'name', $data, 'name');
         $this->convertValue($converted, 'description', $data, 'description');
-        if (isset($data['meta_title'])) {
-            $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
+        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
+        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
+        $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
+
+        if (isset($converted['keywords'])) {
+            $converted['keywords'] = $this->trimValue($converted['keywords']);
         }
-        if (isset($data['meta_description'])) {
-            $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
-        }
-        if (isset($data['meta_keyword'])) {
-            $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
-        }
-        unset(
-            $data['meta_title'],
-            $data['meta_description'],
-            $data['meta_keyword']
-        );
 
         $converted['active'] = false;
         if (isset($data['status']) && $data['status'] === '1') {
@@ -299,7 +292,7 @@ class ProductConverter extends MagentoConverter
                     'description' => 'description',
                     'meta_title' => 'metaTitle',
                     'meta_description' => 'metaDescription',
-                    'meta_keyword' => 'keywords',
+                    'meta_keyword' => ['key' => 'keywords', 'maxChars' => 255],
                 ],
                 $context,
                 (int) $data['attribute_set_id']

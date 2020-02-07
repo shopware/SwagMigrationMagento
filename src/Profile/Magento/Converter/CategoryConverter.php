@@ -197,9 +197,19 @@ class CategoryConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['entity_id']);
 
-        $this->convertValue($converted, 'description', $data, 'description', self::TYPE_STRING);
+        $this->convertValue($converted, 'description', $data, 'description');
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
         $this->convertValue($converted, 'active', $data, 'status', self::TYPE_BOOLEAN);
+        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
+        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
+        $this->convertValue($converted, 'keywords', $data, 'meta_keywords');
+
+        if (isset($converted['metaDescription'])) {
+            $converted['metaDescription'] = $this->trimValue($converted['metaDescription']);
+        }
+        if (isset($converted['keywords'])) {
+            $converted['keywords'] = $this->trimValue($converted['keywords']);
+        }
 
         /*
          * Set translations
@@ -223,8 +233,8 @@ class CategoryConverter extends MagentoConverter
                     'name' => 'name',
                     'description' => 'description',
                     'meta_title' => 'metaTitle',
-                    'meta_keywords' => 'keywords',
-                    'meta_description' => 'metaDescription',
+                    'meta_keywords' => ['key' => 'keywords', 'maxChars' => 255],
+                    'meta_description' => ['key' => 'metaDescription', 'maxChars' => 255],
                 ],
                 $this->context
             );
