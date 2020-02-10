@@ -95,7 +95,7 @@ return [
                 'value' => '1',
             ],
         ],
-        'weight' => null,
+        'weight' => '1.5000',
         'attributes' => [
             0 => [
                 'attribute_id' => '175',
