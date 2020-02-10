@@ -42,9 +42,9 @@ return [
         'lifetime' => null,
         'manufacturer' => null,
         'media_gallery' => null,
-        'meta_description' => null,
-        'meta_keyword' => null,
-        'meta_title' => null,
+        'meta_description' => 'This is a meta description',
+        'meta_keyword' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lore',
+        'meta_title' => 'This is a meta title',
         'minimal_price' => null,
         'msrp' => null,
         'msrp_display_actual_price_type' => '4',
@@ -86,6 +86,10 @@ return [
                 'oneAttribute' => [
                     'attribute_id' => 200,
                     'value' => 'attributeValue',
+                ],
+                'meta_keyword' => [
+                    'attribute_id' => 201,
+                    'value' => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lore',
                 ],
             ],
         ],

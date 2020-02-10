@@ -67,7 +67,10 @@ SELECT
     status.value AS status,
     sibling.entity_id AS previousSiblingId,
     defaultLocale.value AS defaultLocale,
-    image.value AS image
+    image.value AS image,
+    meta_description.value AS meta_description,
+    meta_keywords.value AS meta_keywords,
+    meta_title.value AS meta_title
 FROM
     {$this->tablePrefix}catalog_category_entity category
 
@@ -90,6 +93,21 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS image
     ON category.entity_id = image.entity_id
     AND image.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'image')
     AND image.store_id = 0
+    
+LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS meta_description
+    ON category.entity_id = meta_description.entity_id
+    AND meta_description.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'meta_description')
+    AND meta_description.store_id = 0
+
+LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS meta_title
+    ON category.entity_id = meta_title.entity_id
+    AND meta_title.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'meta_title')
+    AND meta_title.store_id = 0
+
+LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS meta_keywords
+    ON category.entity_id = meta_keywords.entity_id
+    AND meta_keywords.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'meta_keywords')
+    AND meta_keywords.store_id = 0          
 
 LEFT JOIN {$this->tablePrefix}core_config_data AS defaultLocale
     ON defaultLocale.scope = 'default' AND defaultLocale.path = 'general/locale/code'
@@ -122,7 +140,7 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity AS sibling
                     LIMIT 1)
 WHERE category.entity_id IN (?)
 
-ORDER BY level, position
+ORDER BY level, position;
 SQL;
 
         return $this->connection->executeQuery(
