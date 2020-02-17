@@ -140,7 +140,7 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity AS sibling
                     LIMIT 1)
 WHERE category.entity_id IN (?)
 
-ORDER BY level, position;
+ORDER BY parent_id, position;
 SQL;
 
         return $this->connection->executeQuery(
