@@ -37,6 +37,12 @@
                             "dbPasswordPlaceholder": "Passwort eintragen",
                             "installationRoot": "Ordner der Shopinstallation",
                             "installationRootPlaceholder": "Root-Verzeichnis eingeben",
+                            "installationRootHelp": "Lokaler Pfad zur Quellsystem-Installation. Der Migrationsprozess versucht die Medien lokal vom angegebenen Quellpfad zur Shopware 6 Installation zu kopieren.",
+                            "shopUrlActiveLabel": "Medien-Migration per Download",
+                            "shopUrlActiveHelp": "Diese Option aktivieren, wenn der Medienpfad des Quellsystems nicht lokal durch den Migrations-Assistenten erreichbar ist.",
+                            "shopUrl": "Quellsystem Url",
+                            "shopUrlPlaceholder": "Url des Quellsystems eingeben",
+                            "shopUrlHelp": "Der Migrationsprozess lädt die Medien über die Shop-Url des Quellsystems herunter.",
                             "tablePrefix": "Datenbank Tabellenprefix",
                             "tablePrefixPlaceholder": "Datenbank Tabellenprefix"
                         }

@@ -23,8 +23,10 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 dbPassword: '',
                 dbName: '',
                 installationRoot: '',
+                shopUrl: '',
                 tablePrefix: ''
-            }
+            },
+            shopUrlActive: false
         };
     },
 
@@ -38,6 +40,13 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 }
 
                 this.inputCredentials = newCredentials;
+                if (this.inputCredentials.shopUrl !== undefined
+                    && this.inputCredentials.shopUrl !== 'http://'
+                    && this.inputCredentials.shopUrl !== 'https://'
+                ) {
+                    this.shopUrlActive = true;
+                }
+
                 this.emitOnChildRouteReadyChanged(
                     this.areCredentialsValid(this.inputCredentials)
                 );
@@ -49,18 +58,37 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
             handler(newInputCredentials) {
                 this.emitCredentials(newInputCredentials);
             }
+        },
+
+        shopUrlActive(newValue) {
+            if (newValue === true) {
+                this.inputCredentials.installationRoot = '';
+            } else {
+                this.inputCredentials.shopUrl = '';
+            }
+            this.emitCredentials(this.inputCredentials);
         }
     },
 
     methods: {
         areCredentialsValid(newInputCredentials) {
-            return (newInputCredentials.dbHost !== '' &&
-                newInputCredentials.dbPort !== '' &&
-                newInputCredentials.dbName !== '' &&
-                newInputCredentials.dbUser !== '' &&
-                newInputCredentials.dbPassword !== '' &&
-                newInputCredentials.installationRoot !== ''
+            return (
+                this.validateInput(newInputCredentials.dbHost) &&
+                this.validateInput(newInputCredentials.dbPort) &&
+                this.validateInput(newInputCredentials.dbName) &&
+                this.validateInput(newInputCredentials.dbUser) &&
+                this.validateInput(newInputCredentials.dbPassword) &&
+                ((this.shopUrlActive === false && this.validateInput(newInputCredentials.installationRoot)) ||
+                (this.shopUrlActive === true && this.validateShopUrl(newInputCredentials.shopUrl)))
             );
+        },
+
+        validateInput(input) {
+            return input !== undefined && input !== null && input !== '';
+        },
+
+        validateShopUrl(input) {
+            return input !== undefined && this.validateInput(input) && input !== 'http://' && input !== 'https://';
         },
 
         emitOnChildRouteReadyChanged(isReady) {
