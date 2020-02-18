@@ -34,7 +34,7 @@ class CustomerGroupReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $ids = $this->fetchIdentifiers($this->tablePrefix . 'customer_group', 'customer_group_id', $migrationContext->getOffset(), $migrationContext->getLimit());
-        $fetchedCustomerGroups = $this->mapData($this->fetchCustomerGroups($ids), [], ['groups']);
+        $fetchedCustomerGroups = $this->mapData($this->fetchCustomerGroups($ids), [], ['customergroup']);
 
         return $fetchedCustomerGroups;
     }
@@ -56,8 +56,8 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from($this->tablePrefix . 'customer_group', 'groups');
-        $this->addTableSelection($query, $this->tablePrefix . 'customer_group', 'groups');
+        $query->from($this->tablePrefix . 'customer_group', 'customergroup');
+        $this->addTableSelection($query, $this->tablePrefix . 'customer_group', 'customergroup');
 
         $query->where('customer_group_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
