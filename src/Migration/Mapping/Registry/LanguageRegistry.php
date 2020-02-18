@@ -22,6 +22,9 @@ class LanguageRegistry extends AbstractMappingRegistry
         'en-GB' => [
             'name' => 'English',
         ],
+        'en-IE' => [
+            'name' => 'English',
+        ],
         'en-US' => [
             'name' => 'English',
         ],
