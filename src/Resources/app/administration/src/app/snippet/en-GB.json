@@ -37,6 +37,12 @@
                             "dbPasswordPlaceholder": "Enter password",
                             "installationRoot": "Shop installation folder",
                             "installationRootPlaceholder": "Enter installation root",
+                            "installationRootHelp": "Local path of source system installation. Migration process will try to copy media locally from given path to Shopware 6 destination.",
+                            "shopUrl": "Source system url",
+                            "shopUrlActiveLabel": "Migrate media via download",
+                            "shopUrlActiveHelp": "Activate this option if the media path of the source system is not locally accessible by the Migration Assistant.",
+                            "shopUrlPlaceholder": "Enter url of the source system",
+                            "shopUrlHelp": "Migration process will download media via shop-url of the source system.",
                             "tablePrefix": "Database tableprefix",
                             "tablePrefixPlaceholder": "Database table prefix"
                         }

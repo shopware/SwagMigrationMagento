@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
@@ -28,8 +29,12 @@ class NotAssociatedMediaReader extends AbstractReader
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
-        $installationRoot = $migrationContext->getConnection()->getCredentialFields()['installationRoot'];
+        $installationRoot = $this->getInstallationRoot($migrationContext);
         $this->sourcePath = $installationRoot . '/media/wysiwyg/';
+
+        if ($installationRoot === '' || is_dir($this->sourcePath) === false) {
+            throw new MediaPathNotReachableException($this->sourcePath);
+        }
 
         $files = [];
         $this->dirToArray($this->sourcePath, $files);
@@ -49,5 +54,20 @@ class NotAssociatedMediaReader extends AbstractReader
                 }
             }
         }
+    }
+
+    private function getInstallationRoot(MigrationContextInterface $migrationContext): string
+    {
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
+
+        if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
+            return '';
+        }
+        $installRoot = $credentials['installationRoot'];
+        ltrim($installRoot, '/');
+        rtrim($installRoot, '/');
+        $installRoot = '/' . $installRoot;
+
+        return $installRoot;
     }
 }
