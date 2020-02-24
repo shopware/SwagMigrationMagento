@@ -172,7 +172,7 @@ FROM
       SELECT
              REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
       FROM {$tablePrefix}core_config_data config
-      WHERE path LIKE 'payment/%/active' AND scope = 'default' AND value = true
+      WHERE path LIKE 'payment/%/active' AND scope = 'default' AND (value = true OR REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') IN (SELECT DISTINCT(method) FROM {$tablePrefix}sales_flat_order_payment))
       ) AS payment_active
 WHERE payment.payment_id = payment_active.payment_id;
 SQL;
