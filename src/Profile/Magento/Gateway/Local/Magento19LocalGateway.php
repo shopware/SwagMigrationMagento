@@ -167,8 +167,14 @@ FROM
         FROM {$tablePrefix}core_config_data config
         WHERE path LIKE 'payment/%/title'
         AND scope = 'default'
-    ) AS payment
-WHERE payment.payment_id IN (SELECT DISTINCT(method) FROM {$tablePrefix}sales_flat_order_payment);
+    ) AS payment,
+    (
+      SELECT
+             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
+      FROM {$tablePrefix}core_config_data config
+      WHERE path LIKE 'payment/%/active' AND scope = 'default' AND value = true
+      ) AS payment_active
+WHERE payment.payment_id = payment_active.payment_id;
 SQL;
 
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);

@@ -256,6 +256,7 @@ class CategoryConverter extends MagentoConverter
             $data['updated_at'],
             $data['path'],
             $data['position'],
+            $data['calcLevel'],
             $data['children_count']
         );
 

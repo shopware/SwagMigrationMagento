@@ -33,8 +33,9 @@ class CategoryReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        $ids = $this->fetchIdentifiers($this->tablePrefix . 'catalog_category_entity', 'entity_id', $migrationContext->getOffset(), $migrationContext->getLimit());
-        $fetchedCategories = $this->fetchCategories($ids);
+        $fetchedCategories = $this->fetchCategories($migrationContext);
+        $ids = array_column($fetchedCategories, 'entity_id');
+
         $this->appendTranslations($ids, $fetchedCategories);
 
         foreach ($fetchedCategories as &$category) {
@@ -57,11 +58,12 @@ SQL;
         return new TotalStruct(DefaultEntities::CATEGORY, $total);
     }
 
-    public function fetchCategories(array $ids): array
+    public function fetchCategories(MigrationContextInterface $migrationContext): array
     {
         $sql = <<<SQL
 SELECT
     category.*,
+    (LENGTH(category.`path`) - LENGTH(REPLACE(category.`path`, '/', ''))) as calcLevel,
     name.value AS name,
     description.value AS description,
     status.value AS status,
@@ -93,7 +95,7 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS image
     ON category.entity_id = image.entity_id
     AND image.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'image')
     AND image.store_id = 0
-    
+
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS meta_description
     ON category.entity_id = meta_description.entity_id
     AND meta_description.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'meta_description')
@@ -107,7 +109,7 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS meta_title
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS meta_keywords
     ON category.entity_id = meta_keywords.entity_id
     AND meta_keywords.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'meta_keywords')
-    AND meta_keywords.store_id = 0          
+    AND meta_keywords.store_id = 0
 
 LEFT JOIN {$this->tablePrefix}core_config_data AS defaultLocale
     ON defaultLocale.scope = 'default' AND defaultLocale.path = 'general/locale/code'
@@ -138,15 +140,16 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity AS sibling
                     AND category.parent_id = previous.parent_id
                     ORDER BY previous.position DESC
                     LIMIT 1)
-WHERE category.entity_id IN (?)
 
-ORDER BY parent_id, position;
+ORDER BY calcLevel, parent_id, position
+LIMIT ? OFFSET ?;
+
 SQL;
 
         return $this->connection->executeQuery(
             $sql,
-            [$ids],
-            [Connection::PARAM_STR_ARRAY]
+            [$migrationContext->getLimit(), $migrationContext->getOffset()],
+            [\PDO::PARAM_INT, \PDO::PARAM_INT]
         )->fetchAll(\PDO::FETCH_ASSOC);
     }
 
