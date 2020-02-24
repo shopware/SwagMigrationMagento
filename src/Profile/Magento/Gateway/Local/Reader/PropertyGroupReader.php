@@ -129,6 +129,7 @@ SQL;
 
         $query->where('eav.is_user_defined = 1');
         $query->andWhere('eav.attribute_code NOT IN (\'manufacturer\', \'cost\')');
+        $query->orderBy('eav.attribute_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());

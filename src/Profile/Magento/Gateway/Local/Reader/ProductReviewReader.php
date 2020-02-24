@@ -90,6 +90,7 @@ SQL;
 
         $query->andWhere('product.type_id IN (:types)');
         $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+        $query->addOrderBy('review.entity_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
