@@ -210,20 +210,22 @@ abstract class CustomFieldConverter extends Converter
 
         if ($data['frontend_input'] === 'select') {
             $options = [];
-            foreach ($data['options'] as $option) {
-                $optionData = [
-                    'value' => 'option_' . $option['option_id'],
-                    'label' => [
-                        $defaultLocale => $option['value'],
-                    ],
-                ];
+            if (isset($data['options'])) {
+                foreach ($data['options'] as $option) {
+                    $optionData = [
+                        'value' => 'option_' . $option['option_id'],
+                        'label' => [
+                            $defaultLocale => $option['value'],
+                        ],
+                    ];
 
-                if (isset($option['translations'])) {
-                    foreach ($option['translations'] as $translation) {
-                        $optionData['label'][$translation['locale']] = $translation['value'];
+                    if (isset($option['translations'])) {
+                        foreach ($option['translations'] as $translation) {
+                            $optionData['label'][$translation['locale']] = $translation['value'];
+                        }
                     }
+                    $options[] = $optionData;
                 }
-                $options[] = $optionData;
             }
 
             $attributeData['componentName'] = 'sw-single-select';
