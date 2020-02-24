@@ -4,8 +4,8 @@
 
 ### Important this plugin needs the current master and is not compatible with the EA2 version of Shopware 6 or the Migration Assistant. Please use current master branches of Shopware Platform and Migration Assistant
 
-This plugin adds a magento 1.9 profile to the Migration Assistant for Shopware 6. You can use this profile together with the 
-[SwagMigrationAssistant](https://github.com/shopware/SwagMigrationAssistant) to migrate the data of your Magento 1.9 shop to Shopware 6.
+This plugin adds a magento 1.9.x profile to the Migration Assistant for Shopware 6. You can use this profile together with the 
+[SwagMigrationAssistant](https://github.com/shopware/SwagMigrationAssistant) to migrate the data of your Magento 1.9.x shop to Shopware 6.
 
 Currently you can migrate the following data:
 - Languages
