@@ -290,9 +290,8 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         //Do download requests and store the promises
         $client = new Client([
             'verify' => false,
-            'base_uri' => $shopUrl,
         ]);
-        $promises = $this->doMediaDownloadRequests($media, $mappedWorkload, $client);
+        $promises = $this->doMediaDownloadRequests($media, $mappedWorkload, $client, $shopUrl);
 
         // Wait for the requests to complete, even if some of them fail
         /** @var array $results */
@@ -373,13 +372,13 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
      * @param SwagMigrationMediaFileEntity[] $media
      * @param MediaProcessWorkloadStruct[]   $mappedWorkload
      */
-    private function doMediaDownloadRequests(array $media, array &$mappedWorkload, Client $client): array
+    private function doMediaDownloadRequests(array $media, array &$mappedWorkload, Client $client, string $shopUrl): array
     {
         $promises = [];
         foreach ($media as $mediaFile) {
             $uuid = mb_strtolower($mediaFile->getMediaId());
             $additionalData = [];
-            $additionalData['uri'] = $mediaFile->getUri();
+            $additionalData['uri'] = $shopUrl . $mediaFile->getUri();
             $additionalData['file_size'] = $mediaFile->getFileSize();
             $additionalData['file_name'] = $mediaFile->getFileName();
             $mappedWorkload[$uuid]->setAdditionalData($additionalData);
