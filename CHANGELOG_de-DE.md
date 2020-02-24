@@ -1,3 +1,12 @@
+# 1.1.0
+- PT-11324 - Produktgewicht wird nun migriert
+- PT-11347 - Optimiert die Medien-Migration
+- PT-11429 - Kategoriesortierung angepasst (colinmurphy)
+- PT-11453 - Optimiert die Kategoriesortierung
+- NTR - Migriert Meta-Daten von Produkten und Kategorien
+- NTR - Optimiert das Pre-Mapping der Zahlungsmethoden
+- NTR - Behebt ein Problem bei der Migration von Custom Fields
+
 # 1.0.0
 - PT-11183 - Kundenpasswörter migrieren
 - PT-11251 - Standard Nummernkreis aus SW6 für Kunden nutzen

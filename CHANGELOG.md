@@ -1,3 +1,12 @@
+# 1.1.0
+- PT-11324 - Migrate product weight
+- PT-11347 - Optimize media migration
+- PT-11429 - Order categories based on parent (colinmurphy)
+- PT-11453 - Optimize category sorting with limit and offset
+- NTR - Migrate meta data for products and categories
+- NTR - Optimize payment premapping
+- NTR - Fix custom field migration of selection type without options
+
 # 1.0.0
 - PT-11183 - Migrate customer passwords
 - PT-11251 - Use default number range for magento customers
