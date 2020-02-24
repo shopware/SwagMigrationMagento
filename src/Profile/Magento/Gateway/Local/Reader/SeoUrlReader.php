@@ -74,6 +74,7 @@ SQL;
         $query->where('seo.options IS NULL');
         $query->andWhere('product.type_id IN (:types)');
         $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+        $query->addOrderBy('seo.url_rewrite_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());

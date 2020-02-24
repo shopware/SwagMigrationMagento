@@ -127,6 +127,8 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'core_website', 'website');
 
         $query->andWhere('website_id != 0');
+        $query->addOrderBy('website.website_id');
+
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 

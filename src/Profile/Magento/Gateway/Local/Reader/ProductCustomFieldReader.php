@@ -113,7 +113,7 @@ FROM {$this->tablePrefix}eav_attribute eav
 INNER JOIN {$this->tablePrefix}eav_entity_type AS et ON et.entity_type_id = eav.entity_type_id AND et.entity_type_code = 'catalog_product'
 INNER JOIN {$this->tablePrefix}eav_entity_attribute AS eea ON eav.attribute_id = eea.attribute_id
 INNER JOIN {$this->tablePrefix}eav_attribute_set AS attributeSet ON attributeSet.attribute_set_id = eea.attribute_set_id
-WHERE eav.frontend_input != '' 
+WHERE eav.frontend_input != ''
 AND eav.is_user_defined = 1
 AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
@@ -138,6 +138,7 @@ SQL;
         $query->where('eav.frontend_input != \'\'');
         $query->andWhere('eav.is_user_defined = 1');
         $query->andWhere('eav.attribute_code NOT IN (\'manufacturer\', \'cost\')');
+        $query->addOrderBy('eav.attribute_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
