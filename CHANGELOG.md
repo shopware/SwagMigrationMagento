@@ -1,3 +1,6 @@
+# 1.1.1
+- NTR - Solves an issue with version compatibility
+
 # 1.1.0
 - PT-11324 - Migrate product weight
 - PT-11347 - Optimize media migration
