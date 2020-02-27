@@ -1,3 +1,6 @@
+# 1.1.1
+- Behebt ein Problem mit Versionskompatibilität
+
 # 1.1.0
 - PT-11324 - Produktgewicht wird nun migriert
 - PT-11347 - Optimiert die Medien-Migration
