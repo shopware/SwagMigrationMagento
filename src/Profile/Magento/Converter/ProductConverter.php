@@ -58,6 +58,11 @@ class ProductConverter extends MagentoConverter
      */
     protected $mappingService;
 
+    /**
+     * @var bool
+     */
+    private $priceIsGross;
+
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
@@ -163,7 +168,8 @@ class ProductConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-
+        $this->priceIsGross = $data['priceIsGross'];
+        unset($data['priceIsGross']);
         $converted['price'] = $this->getPrice($data, $converted);
 
         if (empty($converted['price'])) {
@@ -493,22 +499,26 @@ class ProductConverter extends MagentoConverter
         $currencyUuid = $currencyMapping['entityUuid'];
         $this->mappingIds[] = $currencyMapping['id'];
 
-        $gross = round((float) $priceData['price'] * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
-
+        if ($this->priceIsGross === true) {
+            $netPrice = round((float) $priceData['price'] / (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+            $grossPrice = (float) $priceData['price'];
+        } else {
+            $netPrice = (float) $priceData['price'];
+            $grossPrice = round((float) $priceData['price'] * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+        }
         $price = [];
         if ($currencyUuid !== Defaults::CURRENCY) {
             $price[] = [
                 'currencyId' => Defaults::CURRENCY,
-                'gross' => $gross,
-                'net' => (float) $priceData['price'],
+                'gross' => $grossPrice,
+                'net' => $netPrice,
                 'linked' => true,
             ];
         }
-
         $price[] = [
             'currencyId' => $currencyUuid,
-            'gross' => $gross,
-            'net' => (float) $priceData['price'],
+            'gross' => $grossPrice,
+            'net' => $netPrice,
             'linked' => true,
         ];
 

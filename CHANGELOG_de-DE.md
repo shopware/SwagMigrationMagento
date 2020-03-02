@@ -1,5 +1,8 @@
+# NEXT
+- PT-11464 - Berücksichtigt die Grundeinstellung der Preispflege in Magento
+
 # 1.1.1
-- Behebt ein Problem mit Versionskompatibilität
+- NTR - Behebt ein Problem mit Versionskompatibilität
 
 # 1.1.0
 - PT-11324 - Produktgewicht wird nun migriert

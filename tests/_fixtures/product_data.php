@@ -77,6 +77,7 @@ return [
         'use_config_email_template' => null,
         'use_config_is_redeemable' => null,
         'use_config_lifetime' => null,
+        'priceIsGross' => false,
         'translations' => [
             '1' => [
                 'name' => [
@@ -348,6 +349,7 @@ return [
         'use_config_email_template' => null,
         'use_config_is_redeemable' => null,
         'use_config_lifetime' => null,
+        'priceIsGross' => true,
         'visibility' => [
             0 => [
                 'store_id' => '0',

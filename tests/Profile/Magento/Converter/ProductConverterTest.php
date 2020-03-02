@@ -287,4 +287,29 @@ class ProductConverterTest extends TestCase
         static::assertSame($logs[0]['parameters']['sourceId'], $product['entity_id']);
         static::assertSame($logs[0]['parameters']['emptyField'], 'currency');
     }
+
+    public function testConvertWithPriceIsGross(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertSame(190.0, $converted['price'][0]['net']);
+    }
+
+    public function testConvertWithPriceIsNet(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+        $productData[0]['priceIsGross'] = true;
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertSame(159.66, $converted['price'][0]['net']);
+    }
 }
