@@ -38,8 +38,12 @@ class ProductReader extends AbstractReader
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
+        $priceIsGross = $this->getPriceConfiguration();
 
         $fetchedProducts = $this->fetchProducts($migrationContext);
+        foreach ($fetchedProducts as &$fetchedProduct) {
+            $fetchedProduct['priceIsGross'] = $priceIsGross;
+        }
         $ids = array_column($fetchedProducts, 'entity_id');
 
         return $this->appendAssociatedData($fetchedProducts, $ids);
@@ -158,7 +162,7 @@ LEFT JOIN {$this->tablePrefix}catalog_product_entity_datetime AS product_datetim
     ON product.entity_id = product_datetime.entity_id
     AND attribute.attribute_id = product_datetime.attribute_id
     AND attribute.backend_type = 'datetime'
-WHERE product.entity_id IN (?)    
+WHERE product.entity_id IN (?)
 AND attribute.frontend_input IS NOT NULL
 AND CASE attribute.backend_type
     WHEN 'varchar' THEN product_varchar.value
@@ -168,7 +172,7 @@ AND CASE attribute.backend_type
     WHEN 'datetime' THEN product_datetime.value
     ELSE null
     END IS NOT NULL
-ORDER BY store_id, attribute_id;   
+ORDER BY store_id, attribute_id;
 SQL;
         $fetchedAttributes = $this->connection->executeQuery(
             $sql,
@@ -466,5 +470,15 @@ SQL;
         }
 
         return $locales;
+    }
+
+    private function getPriceConfiguration()
+    {
+        $query = $this->connection->createQueryBuilder();
+        $query->addSelect('value');
+        $query->from($this->tablePrefix . 'core_config_data');
+        $query->orWhere('scope = \'default\' AND path = \'tax/calculation/price_includes_tax\'');
+
+        return (bool) $query->execute()->fetchColumn();
     }
 }

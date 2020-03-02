@@ -1,3 +1,6 @@
+# NEXT
+- PT-11464 - Recognizes basic settings of price management in Magento
+
 # 1.1.1
 - NTR - Solves an issue with version compatibility
 
