@@ -1,5 +1,6 @@
 # NEXT
 - PT-11464 - Recognizes basic settings of price management in Magento
+- PT-11465 - Fixed incorrect migration of min and max purchase
 
 # 1.1.1
 - NTR - Solves an issue with version compatibility
