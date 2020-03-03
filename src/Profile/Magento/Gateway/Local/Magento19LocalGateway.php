@@ -214,14 +214,15 @@ SQL;
     public function readGenders(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
         $query = $connection->createQueryBuilder();
 
         $query->select('attrOption.option_id');
         $query->addSelect('attrOptionValue.value');
-        $query->from('eav_attribute', 'attr');
+        $query->from($tablePrefix . 'eav_attribute', 'attr');
 
-        $query->innerJoin('attr', 'eav_attribute_option', 'attrOption', 'attrOption.attribute_id = attr.attribute_id');
-        $query->innerJoin('attrOption', 'eav_attribute_option_value', 'attrOptionValue', 'attrOption.option_id = attrOptionValue.option_id');
+        $query->innerJoin('attr', $tablePrefix . 'eav_attribute_option', 'attrOption', 'attrOption.attribute_id = attr.attribute_id');
+        $query->innerJoin('attrOption', $tablePrefix . 'eav_attribute_option_value', 'attrOptionValue', 'attrOption.option_id = attrOptionValue.option_id');
 
         $query->where('attr.attribute_code = \'gender\' AND is_user_defined = false AND store_id = 0');
 

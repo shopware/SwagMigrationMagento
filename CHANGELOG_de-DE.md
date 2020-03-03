@@ -1,6 +1,7 @@
 # NEXT
 - PT-11464 - Berücksichtigt die Grundeinstellung der Preispflege in Magento
 - PT-11465 - Behebt ein Problem bei der Migration von minimum und maximum Bestellmengen
+- NTR - Behebt ein Problem einer Datenbank-Abfrage ohne Tabellenprefix
 
 # 1.1.1
 - NTR - Behebt ein Problem mit Versionskompatibilität
