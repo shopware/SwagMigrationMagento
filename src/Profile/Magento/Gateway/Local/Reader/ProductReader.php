@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\Struct\StockConfigurationStruct;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -39,10 +40,17 @@ class ProductReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
         $priceIsGross = $this->getPriceConfiguration();
+        $stockConfiguration = $this->getStockConfiguration();
 
         $fetchedProducts = $this->fetchProducts($migrationContext);
         foreach ($fetchedProducts as &$fetchedProduct) {
             $fetchedProduct['priceIsGross'] = $priceIsGross;
+            if (((bool) $fetchedProduct['useMinPurchaseConfig']) === true) {
+                $fetchedProduct['minpurchase'] = $stockConfiguration->getMinPurchase();
+            }
+            if (((bool) $fetchedProduct['useMaxPurchaseConfig']) === true) {
+                $fetchedProduct['maxpurchase'] = $stockConfiguration->getMaxPurchase();
+            }
         }
         $ids = array_column($fetchedProducts, 'entity_id');
 
@@ -72,12 +80,14 @@ SQL;
         $sql = <<<SQL
 SELECT
     product.*,
-    stock.qty                 AS instock,
-    stock.min_qty             AS stockmin,
-    stock.min_sale_qty        AS minpurchase,
-    stock.max_sale_qty        AS maxpurchase,
-    relation.parent_id        AS parentId,
-    parent.type_id            AS parentType
+    stock.qty                       AS instock,
+    stock.min_qty                   AS stockmin,
+    stock.min_sale_qty              AS minpurchase,
+    stock.use_config_min_sale_qty   AS useMinPurchaseConfig,
+    stock.max_sale_qty              AS maxpurchase,
+    stock.use_config_max_sale_qty   AS useMaxPurchaseConfig,
+    relation.parent_id              AS parentId,
+    parent.type_id                  AS parentType
 FROM {$this->tablePrefix}catalog_product_entity product
 
 -- join stocks
@@ -472,7 +482,7 @@ SQL;
         return $locales;
     }
 
-    private function getPriceConfiguration()
+    private function getPriceConfiguration(): bool
     {
         $query = $this->connection->createQueryBuilder();
         $query->addSelect('value');
@@ -480,5 +490,31 @@ SQL;
         $query->orWhere('scope = \'default\' AND path = \'tax/calculation/price_includes_tax\'');
 
         return (bool) $query->execute()->fetchColumn();
+    }
+
+    private function getStockConfiguration(): StockConfigurationStruct
+    {
+        $minPurchase = 1;
+        $maxPurchase = 10000;
+
+        $query = $this->connection->createQueryBuilder();
+        $query->addSelect('path, value');
+        $query->from($this->tablePrefix . 'core_config_data');
+        $query->andWhere('scope = \'default\'');
+        $query->andWhere('path = \'cataloginventory/item_options/min_sale_qty\' OR path = \'cataloginventory/item_options/max_sale_qty\'');
+
+        $result = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+
+        if (isset($result['cataloginventory/item_options/min_sale_qty'])
+            && is_numeric($result['cataloginventory/item_options/min_sale_qty'])
+        ) {
+            $minPurchase = (int) $result['cataloginventory/item_options/min_sale_qty'];
+        }
+
+        if (isset($result['cataloginventory/item_options/max_sale_qty'])) {
+            $maxPurchase = (int) $result['cataloginventory/item_options/max_sale_qty'];
+        }
+
+        return new StockConfigurationStruct($minPurchase, $maxPurchase);
     }
 }
