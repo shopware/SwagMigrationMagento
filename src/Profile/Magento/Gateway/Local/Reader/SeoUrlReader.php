@@ -55,7 +55,8 @@ class SeoUrlReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}core_url_rewrite seo
 LEFT JOIN {$this->tablePrefix}catalog_product_entity AS product ON product.entity_id = seo.product_id
-WHERE seo.options IS NULL AND product.type_id IN (?);
+WHERE seo.options IS NULL
+AND (product.type_id IN (?) OR (seo.product_id IS NULL AND seo.category_id IS NOT NULL));
 SQL;
         $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [Connection::PARAM_STR_ARRAY])->fetchColumn();
 
@@ -72,7 +73,7 @@ SQL;
         $query->leftJoin('seo', $this->tablePrefix . 'catalog_product_entity', 'product', 'seo.product_id = product.entity_id');
 
         $query->where('seo.options IS NULL');
-        $query->andWhere('product.type_id IN (:types)');
+        $query->andWhere('product.type_id IN (:types) OR (seo.product_id IS NULL AND seo.category_id IS NOT NULL)');
         $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
         $query->addOrderBy('seo.url_rewrite_id');
 
