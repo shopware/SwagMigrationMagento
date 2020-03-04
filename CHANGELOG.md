@@ -1,6 +1,7 @@
 # NEXT
 - PT-11464 - Recognizes basic settings of price management in Magento
 - PT-11465 - Fixed incorrect migration of min and max purchase
+- PT-11468 - Fix seo url reader for categories
 - NTR - Fix query missing table prefix
 
 # 1.1.1

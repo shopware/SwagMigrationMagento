@@ -1,6 +1,7 @@
 # NEXT
 - PT-11464 - Berücksichtigt die Grundeinstellung der Preispflege in Magento
 - PT-11465 - Behebt ein Problem bei der Migration von minimum und maximum Bestellmengen
+- PT-11468 - Behebt ein Problem bei der SEO-Url Migration von Kategorien
 - NTR - Behebt ein Problem einer Datenbank-Abfrage ohne Tabellenprefix
 
 # 1.1.1
