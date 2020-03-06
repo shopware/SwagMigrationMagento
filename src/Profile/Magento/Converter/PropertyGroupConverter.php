@@ -84,6 +84,17 @@ class PropertyGroupConverter extends MagentoConverter
         ];
         unset($data['name']);
 
+        if (!isset($data['options'])) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::PROPERTY_GROUP,
+                $this->oldIdentifier,
+                'options'
+            ));
+
+            return new ConvertStruct(null, $this->originalData);
+        }
+
         $this->getProperties($data, $converted);
         unset($data['options']);
 

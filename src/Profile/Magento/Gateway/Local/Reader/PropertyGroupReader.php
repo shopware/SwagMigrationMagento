@@ -34,36 +34,13 @@ class PropertyGroupReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $fetchedPropertyGroups = $this->fetchPropertyGroups($migrationContext);
+        $propertyIds = array_column($fetchedPropertyGroups, 'id');
+        $groupTranslations = $this->fetchGroupTranslations($propertyIds);
+        $fetchedOptions = $this->fetchOptions($propertyIds);
 
         $groups = [];
         $optionIds = [];
-        foreach ($fetchedPropertyGroups as $group) {
-            foreach ($group as $option) {
-                $groupId = $option['groupId'];
-
-                if (!isset($groups[$groupId])) {
-                    $groups[$groupId] = [
-                        'id' => $groupId,
-                        'name' => $option['groupName'],
-                        'options' => [],
-                    ];
-                }
-
-                $optionIds[] = $option['optionId'];
-                $groups[$groupId]['options'][] = [
-                    'id' => $option['optionId'],
-                    'name' => $option['optionValue'],
-                ];
-            }
-        }
-
-        $groupIds = array_column($groups, 'id');
-        $optionTranslations = $this->fetchOptionTranslations($optionIds);
-        $groupTranslations = $this->fetchGroupTranslations($groupIds);
-
-        foreach ($groups as &$group) {
-            $groupId = $group['id'];
-
+        foreach ($fetchedPropertyGroups as $groupId => &$group) {
             if (isset($groupTranslations[$groupId])) {
                 foreach ($groupTranslations[$groupId] as $translation) {
                     $store_id = $translation['store_id'];
@@ -75,6 +52,29 @@ class PropertyGroupReader extends AbstractReader
                 }
             }
 
+            if (!isset($fetchedOptions[$groupId])) {
+                continue;
+            }
+
+            foreach ($fetchedOptions[$groupId] as $option) {
+                $optionId = $option['optionId'];
+
+                if (!isset($optionIds[$optionId])) {
+                    $optionIds[] = $optionId;
+                }
+
+                $group['options'][] = [
+                    'id' => $optionId,
+                    'name' => $option['optionValue'],
+                ];
+            }
+
+            $groups[] = $group;
+        }
+
+        $optionTranslations = $this->fetchOptionTranslations($optionIds);
+
+        foreach ($groups as &$group) {
             foreach ($group['options'] as &$option) {
                 $optionId = $option['id'];
 
@@ -102,9 +102,7 @@ class PropertyGroupReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}eav_attribute AS eav
 INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS eav_settings ON eav_settings.attribute_id = eav.attribute_id
-INNER JOIN {$this->tablePrefix}eav_attribute_option AS options ON options.attribute_id = eav.attribute_id
-INNER JOIN {$this->tablePrefix}eav_attribute_option_value AS option_value ON option_value.option_id = options.option_id AND option_value.store_id = 0
-WHERE eav.is_user_defined = 1;
+WHERE eav.is_user_defined = 1 AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1) AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
 
@@ -116,25 +114,20 @@ SQL;
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('eav.attribute_id AS identifier');
-        $query->addSelect('eav.attribute_id AS groupId');
-        $query->addSelect('eav.frontend_label AS groupName');
+        $query->addSelect('eav.attribute_id AS id');
+        $query->addSelect('eav.frontend_label AS name');
         $query->from($this->tablePrefix . 'eav_attribute', 'eav');
 
         $query->innerJoin('eav', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id');
-        $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option', 'options', 'options.attribute_id = eav.attribute_id');
 
-        $query->addSelect('option_value.option_id AS optionId');
-        $query->addSelect('option_value.value AS optionValue');
-        $query->innerJoin('eav', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = options.option_id AND option_value.store_id = 0');
-
-        $query->where('eav.is_user_defined = 1');
+        $query->where('eav.is_user_defined = 1 AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
         $query->andWhere('eav.attribute_code NOT IN (\'manufacturer\', \'cost\')');
         $query->orderBy('eav.attribute_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
     }
 
     protected function fetchOptionTranslations(array $ids): array
@@ -166,6 +159,22 @@ SQL;
         $query->from($this->tablePrefix . 'eav_attribute_label', 'attributeLabel');
 
         $query->where('attributeLabel.attribute_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+
+        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+    }
+
+    protected function fetchOptions(array $ids): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->addSelect('options.attribute_id AS identifier');
+        $query->addSelect('option_value.option_id AS optionId');
+        $query->addSelect('option_value.value AS optionValue');
+        $query->from($this->tablePrefix . 'eav_attribute_option', 'options');
+        $query->innerJoin('options', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = options.option_id AND option_value.store_id = 0');
+
+        $query->where('options.attribute_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
