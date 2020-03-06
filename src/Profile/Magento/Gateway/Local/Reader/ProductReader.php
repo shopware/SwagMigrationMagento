@@ -256,13 +256,13 @@ SQL;
         $media = $this->fetchProductMedia($ids);
         $prices = $this->fetchProductPrices($ids);
         $properties = $this->fetchProperties($ids);
-        $varcharProperties = $this->fetchVarcharProperties($ids);
+        $multiSelectProperties = $this->fetchMultiSelectProperties($ids);
         $configuratorSettings = $this->fetchConfiguratorSettings($ids);
         $options = $this->fetchOptions($ids);
         $visibility = $this->fetchVisibility($ids);
         $locales = $this->fetchLocales();
 
-        foreach ($varcharProperties as $productId => $productProperties) {
+        foreach ($multiSelectProperties as $productId => $productProperties) {
             foreach ($productProperties as $property) {
                 if (!isset($property['optionValue'])) {
                     continue;
@@ -412,7 +412,7 @@ SQL;
         return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    protected function fetchVarcharProperties(array $ids): array
+    protected function fetchMultiSelectProperties(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 

@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- PT-11490 - Improve custom field and property migration
+
 # 1.1.2
 - PT-11464 - Recognizes basic settings of price management in Magento
 - PT-11465 - Fixed incorrect migration of min and max purchase
