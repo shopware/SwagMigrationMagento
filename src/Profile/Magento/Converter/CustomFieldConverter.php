@@ -24,6 +24,7 @@ abstract class CustomFieldConverter extends Converter
     protected $typeMapping = [
         'price' => 'float',
         'select' => 'select',
+        'multiselect' => 'select',
         'textarea' => 'html',
         'text' => 'text',
         'date' => 'datetime',
@@ -208,7 +209,7 @@ abstract class CustomFieldConverter extends Converter
             return $attributeData;
         }
 
-        if ($data['frontend_input'] === 'select') {
+        if ($data['frontend_input'] === 'select' || $data['frontend_input'] === 'multiselect') {
             $options = [];
             if (isset($data['options'])) {
                 foreach ($data['options'] as $option) {
@@ -229,6 +230,9 @@ abstract class CustomFieldConverter extends Converter
             }
 
             $attributeData['componentName'] = 'sw-single-select';
+            if ($data['frontend_input'] === 'multiselect') {
+                $attributeData['componentName'] = 'sw-multi-select';
+            }
             $attributeData['type'] = 'select';
             $attributeData['customFieldType'] = 'select';
             $attributeData['options'] = $options;

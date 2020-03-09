@@ -109,6 +109,16 @@ abstract class MagentoConverter extends Converter
             if (isset($attribute['frontend_input']) && $attribute['frontend_input'] === 'select') {
                 $value = 'option_' . $value;
             }
+            if (isset($attribute['frontend_input']) && $attribute['frontend_input'] === 'multiselect') {
+                $explodedValue = explode(',', $value);
+
+                $options = [];
+                foreach ($explodedValue as $currentOption) {
+                    $options[] = 'option_' . $currentOption;
+                }
+
+                $value = $options;
+            }
             $result['migration_attribute_' . $attributeSetId . '_' . $attribute['attribute_code'] . '_' . $attribute['attribute_id']] = $value;
         }
 

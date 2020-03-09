@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- PT-11490 - Verbesserung der Migration von Zusatzfeldern und Eigenschaften
+
 # 1.1.2
 - PT-11464 - Berücksichtigt die Grundeinstellung der Preispflege in Magento
 - PT-11465 - Behebt ein Problem bei der Migration von minimum und maximum Bestellmengen
