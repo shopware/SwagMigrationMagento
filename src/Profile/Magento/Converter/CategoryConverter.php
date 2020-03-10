@@ -218,6 +218,10 @@ class CategoryConverter extends MagentoConverter
         $this->setCategoryTranslation($data, $converted);
         unset($data['defaultLocale']);
 
+        if ($converted['translations'] === []) {
+            unset($converted['translations']);
+        }
+
         /*
          * Set category image
          */

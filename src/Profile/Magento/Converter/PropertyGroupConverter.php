@@ -100,6 +100,10 @@ class PropertyGroupConverter extends MagentoConverter
 
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations($data['translations'], ['name' => 'name'], $this->context);
+
+            if ($converted['translations'] === []) {
+                unset($converted['translations']);
+            }
         }
         unset($data['translations']);
 
