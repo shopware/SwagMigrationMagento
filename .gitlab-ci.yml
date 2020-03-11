@@ -13,6 +13,7 @@ default:
     before_script:
         - zip -rq plugin.zip .
         - git clone --branch 6.1 http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/development.git
+        - rm -rf development/platform
         - git clone --branch 6.1 http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/platform.git development/platform
         - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/services/migration-assistant.git development/custom/plugins/SwagMigrationAssistant
         - unzip -q plugin.zip -d development/custom/plugins/SwagMigrationMagento
