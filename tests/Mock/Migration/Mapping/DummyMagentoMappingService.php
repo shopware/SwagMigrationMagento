@@ -112,6 +112,37 @@ class DummyMagentoMappingService extends MagentoMappingService
             : [];
     }
 
+    public function updateMapping(
+        string $connectionId,
+        string $entityName,
+        string $oldIdentifier,
+        array $updateData,
+        Context $context
+    ): array {
+        $mapping = $this->getMapping($connectionId, $entityName, $oldIdentifier, $context);
+
+        if ($mapping === null) {
+            return $this->createMapping(
+                $connectionId,
+                $entityName,
+                $oldIdentifier,
+                $updateData['checksum'] ?? null,
+                $updateData['additionalData'] ?? null,
+                $updateData['entityUuid'] ?? null
+            );
+        }
+
+        $mapping = array_merge($mapping, $updateData);
+        $this->saveMapping($mapping);
+
+        // required for tests
+        if (isset($mapping['entityValue'])) {
+            $this->values[$entityName][$oldIdentifier] = $mapping['entityValue'];
+        }
+
+        return $mapping;
+    }
+
     public function deleteMapping(string $entityUuid, string $connectionId, Context $context): void
     {
         foreach ($this->writeArray as $writeMapping) {

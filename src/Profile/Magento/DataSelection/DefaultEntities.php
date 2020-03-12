@@ -9,6 +9,8 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 final class DefaultEntities
 {
+    public const GUEST_CUSTOMER = 'guest_customer';
+
     public const NOT_ASSOCIATED_MEDIA = 'not_associated_media';
 
     public const PRODUCT_CONFIGURATOR_SETTING = 'product_configurator_setting';

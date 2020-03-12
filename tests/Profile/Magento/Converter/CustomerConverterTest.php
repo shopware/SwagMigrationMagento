@@ -10,7 +10,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter;
@@ -25,7 +25,7 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class CustomerConverterTest extends TestCase
 {
-    use KernelTestBehaviour;
+    use IntegrationTestBehaviour;
 
     /**
      * @var CustomerConverter
@@ -148,16 +148,29 @@ class CustomerConverterTest extends TestCase
 
     public function testConvert(): void
     {
-        $currencyData = require __DIR__ . '/../../../_fixtures/customer_data.php';
+        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
 
         $context = Context::createDefaultContext();
-        $convertResult = $this->customerConverter->convert($currencyData[0], $context, $this->migrationContext);
+        $convertResult = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame('10000', $converted['customerNumber']);
+    }
+
+    public function testCustomerNumberGeneration(): void
+    {
+        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
+        $context = Context::createDefaultContext();
+
+        $convertResultOne = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);
+        $convertResultTwo = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);
+
+        static::assertSame($convertResultOne->getConverted()['customerNumber'], $convertResultTwo->getConverted()['customerNumber']);
     }
 
     public function requiredProperties(): array
@@ -216,7 +229,7 @@ class CustomerConverterTest extends TestCase
         static::assertArrayHasKey('addresses', $converted);
         static::assertSame(Defaults::SALES_CHANNEL, $converted['salesChannelId']);
         static::assertSame('Berg', $converted['lastName']);
-        static::assertSame('10001', $converted['customerNumber']);
+        static::assertSame('10000', $converted['customerNumber']);
         static::assertCount(0, $this->loggingService->getLoggingArray());
     }
 
