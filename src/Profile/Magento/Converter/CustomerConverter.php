@@ -186,7 +186,12 @@ class CustomerConverter extends MagentoConverter
         if (isset($data['password_hash'])) {
             $this->setPassword($data, $converted);
         }
-        $converted['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
+        $customerNumber = $this->mappingService->getValue($this->connectionId, DefaultEntities::CUSTOMER, $this->oldIdentifier, $this->context);
+        if ($customerNumber === null) {
+            $customerNumber = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
+            $this->mainMapping['entityValue'] = $customerNumber;
+        }
+        $converted['customerNumber'] = $customerNumber;
         unset($data['increment_id']);
 
         /*

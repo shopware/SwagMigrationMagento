@@ -8,15 +8,15 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Checkout\Cart\Price\PriceRounding;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Checkout\Cart\Tax\TaxRuleCalculator;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
@@ -29,7 +29,7 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class OrderConverterTest extends TestCase
 {
-    use KernelTestBehaviour;
+    use IntegrationTestBehaviour;
 
     /**
      * @var OrderConverter
@@ -68,8 +68,7 @@ class OrderConverterTest extends TestCase
         $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
 
-        $rounding = new PriceRounding();
-        $taxRuleCalculator = new TaxRuleCalculator($rounding);
+        $taxRuleCalculator = new TaxRuleCalculator();
         $taxCalculator = new TaxCalculator($taxRuleCalculator);
 
         $this->orderConverter = new OrderConverter($this->mappingService, $this->loggingService, $taxCalculator, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
@@ -159,6 +158,24 @@ class OrderConverterTest extends TestCase
             null,
             null,
             Uuid::randomHex()
+        );
+
+        $customerGroupUuid = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::CUSTOMER_GROUP,
+            '0',
+            $context,
+            null,
+            null,
+            $customerGroupUuid
+        );
+
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            '1',
+            $context
         );
     }
 
@@ -308,5 +325,27 @@ class OrderConverterTest extends TestCase
         } else {
             static::assertSame($logs[0]['parameters']['emptyField'], $property);
         }
+    }
+
+    public function testConvertWithRepeatedGuestMigration(): void
+    {
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+
+        $context = Context::createDefaultContext();
+
+        $orderData[0]['orders']['customer_id'] = null;
+        $orderData[0]['orders']['customer_is_guest'] = '1';
+        $orderData[0]['orders']['customer_group_id'] = '0';
+
+        $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+
+        static::assertArrayHasKey('customerId', $converted['orderCustomer']);
+
+        $secondConvertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
+        $convertedSecond = $secondConvertResult->getConverted();
+
+        static::assertArrayHasKey('customerId', $convertedSecond['orderCustomer']);
+        static::assertSame($converted['orderCustomer']['customerId'], $convertedSecond['orderCustomer']['customerId']);
     }
 }

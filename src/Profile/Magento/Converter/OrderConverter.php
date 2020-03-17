@@ -624,8 +624,17 @@ class OrderConverter extends MagentoConverter
             unset($customerMapping);
         } else {
             $guestOrder = true;
+            $guestCustomerMapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                MagentoDefaultEntities::GUEST_CUSTOMER,
+                $this->oldIdentifier . $data['orders']['customer_email'],
+                $this->context
+            );
             $converted['orderCustomer'] = [
-                'customer' => [],
+                'customerId' => $guestCustomerMapping['entityUuid'],
+                'customer' => [
+                    'id' => $guestCustomerMapping['entityUuid'],
+                ],
             ];
             $this->convertValue($converted['orderCustomer']['customer'], 'email', $data['orders'], 'customer_email', self::TYPE_STRING, false);
             $this->convertValue($converted['orderCustomer']['customer'], 'firstName', $data['orders'], 'customer_firstname', self::TYPE_STRING, false);
