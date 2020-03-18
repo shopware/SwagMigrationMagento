@@ -1,5 +1,6 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 1.2.0
 - PT-11490 - Improve custom field and property migration
+- PT-11533 - Fix guest migrations
 
 # 1.1.2
 - PT-11464 - Recognizes basic settings of price management in Magento
