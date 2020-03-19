@@ -224,26 +224,12 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         $updateableMediaEntities = [];
         foreach ($mediaFiles->getElements() as $mediaFile) {
             /* @var SwagMigrationMediaFileEntity $mediaFile */
-            $updateableMediaEntities[] = [
-                'id' => $mediaFile->getId(),
-                'processed' => true,
-            ];
-        }
-
-        if (!empty($failureUuids)) {
-            $mediaFileIds = [];
-            $mediaIds = [];
-            foreach ($failureUuids as $mediaFileId => $mediaId) {
-                $mediaFileIds[] = [
-                    'id' => $mediaFileId,
-                ];
-                $mediaIds[] = [
-                    'id' => $mediaId,
+            if (!in_array($mediaFile->getMediaId(), $failureUuids, true)) {
+                $updateableMediaEntities[] = [
+                    'id' => $mediaFile->getId(),
+                    'processed' => true,
                 ];
             }
-
-            $this->mediaFileRepo->delete($mediaFileIds, $context);
-            $this->mediaRepo->delete($mediaIds, $context);
         }
 
         if (empty($updateableMediaEntities)) {
