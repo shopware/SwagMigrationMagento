@@ -1,3 +1,6 @@
+# 1.2.1
+- PT-11525 - Optimiert den Migrationsprozess für Medien
+
 # 1.2.0
 - PT-11490 - Verbesserung der Migration von Zusatzfeldern und Eigenschaften
 - PT-11533 - Behebt ein Problem bei der Migration von Gastbestellern
