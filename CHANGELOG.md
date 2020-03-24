@@ -1,3 +1,6 @@
+# 1.2.1
+- PT-11525 - Optimize media migration process
+
 # 1.2.0
 - PT-11490 - Improve custom field and property migration
 - PT-11533 - Fix guest migrations
