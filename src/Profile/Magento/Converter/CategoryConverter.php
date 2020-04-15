@@ -200,6 +200,7 @@ class CategoryConverter extends MagentoConverter
         $this->convertValue($converted, 'description', $data, 'description');
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
         $this->convertValue($converted, 'active', $data, 'status', self::TYPE_BOOLEAN);
+        $this->convertValue($converted, 'visible', $data, 'visible', self::TYPE_BOOLEAN);
         $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
         $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
         $this->convertValue($converted, 'keywords', $data, 'meta_keywords');
