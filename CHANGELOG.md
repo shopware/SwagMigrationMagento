@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- PT-11618 - Fix error with too many open database connections
+
 # 1.2.1
 - PT-11525 - Optimize media migration process
 
