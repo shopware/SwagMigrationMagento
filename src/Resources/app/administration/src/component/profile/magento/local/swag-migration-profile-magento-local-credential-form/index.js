@@ -43,6 +43,7 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 if (this.inputCredentials.shopUrl !== undefined
                     && this.inputCredentials.shopUrl !== 'http://'
                     && this.inputCredentials.shopUrl !== 'https://'
+                    && this.inputCredentials.shopUrl !== ''
                 ) {
                     this.shopUrlActive = true;
                 }
