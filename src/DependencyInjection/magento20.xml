@@ -189,6 +189,12 @@
             <tag name="shopware.migration.converter"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento20\Converter\Magento20NotAssociatedMediaConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
+            <tag name="shopware.migration.converter"/>
+        </service>
+
         <service id="Swag\MigrationMagento\Profile\Magento20\Converter\Magento20PropertyGroupConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter">
             <tag name="shopware.migration.converter"/>

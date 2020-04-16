@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento2\Media;
 
 use GuzzleHttp\Client;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
+use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class Magento2LocalMediaProcessor extends LocalMediaProcessor
 {
@@ -34,5 +35,10 @@ abstract class Magento2LocalMediaProcessor extends LocalMediaProcessor
         }
 
         return $promises;
+    }
+
+    protected function getInstallationRoot(MigrationContextInterface $migrationContext): string
+    {
+        return parent::getInstallationRoot($migrationContext) . self::PUBLIC_PATH;
     }
 }
