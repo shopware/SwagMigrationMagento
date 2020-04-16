@@ -67,6 +67,7 @@ SELECT
     name.value AS name,
     description.value AS description,
     status.value AS status,
+    visible.value AS visible,
     sibling.entity_id AS previousSiblingId,
     defaultLocale.value AS defaultLocale,
     image.value AS image,
@@ -84,6 +85,11 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity_varchar AS name
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_int AS status
     ON category.entity_id = status.entity_id
     AND status.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'is_active')
+    AND status.store_id = 0
+
+LEFT JOIN {$this->tablePrefix}catalog_category_entity_int AS visible
+    ON category.entity_id = visible.entity_id
+    AND visible.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'include_in_menu')
     AND status.store_id = 0
 
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS description
