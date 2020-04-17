@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- PT-11618 - Behebt ein Problem mit zu vielen offenen Datenbankverbindungen per CLI 
+
 # 1.2.1
 - PT-11525 - Optimiert den Migrationsprozess für Medien
 
