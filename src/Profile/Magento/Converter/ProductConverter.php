@@ -761,7 +761,7 @@ class ProductConverter extends MagentoConverter
             $newMedia['id'] = $mapping['entityUuid'];
             $this->mappingIds[] = $mapping['id'];
 
-            if (!isset($mediaData['description'])) {
+            if (!isset($mediaData['description']) || empty($mediaData['description'])) {
                 $mediaData['description'] = $newMedia['id'];
 
                 $fileMatches = [];
