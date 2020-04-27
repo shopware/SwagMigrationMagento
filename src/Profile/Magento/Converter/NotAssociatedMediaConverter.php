@@ -8,17 +8,15 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NotAssociatedMediaDataSet;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class NotAssociatedMediaConverter extends MagentoConverter
+abstract class NotAssociatedMediaConverter extends MagentoConverter
 {
     /**
      * @var MediaFileServiceInterface
@@ -31,19 +29,13 @@ class NotAssociatedMediaConverter extends MagentoConverter
     protected $connectionId;
 
     public function __construct(
-        MappingServiceInterface $mappingService,
+        MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         MediaFileServiceInterface $mediaFileService
     ) {
         parent::__construct($mappingService, $loggingService);
 
         $this->mediaFileService = $mediaFileService;
-    }
-
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === NotAssociatedMediaDataSet::getEntity();
     }
 
     public function getSourceIdentifier(array $data): string
@@ -64,7 +56,11 @@ class NotAssociatedMediaConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
-        $this->connectionId = $migrationContext->getConnection()->getId();
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(

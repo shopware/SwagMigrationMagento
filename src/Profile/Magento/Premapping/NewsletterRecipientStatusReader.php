@@ -9,16 +9,16 @@ namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\NewsletterRecipientDataSelection;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
 use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
-class NewsletterRecipientStatusReader extends AbstractPremappingReader
+abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
 {
-    private const MAPPING_NAME = 'newsletter_status';
+    protected const MAPPING_NAME = 'newsletter_status';
 
     public static function getMappingName(): string
     {
@@ -27,7 +27,7 @@ class NewsletterRecipientStatusReader extends AbstractPremappingReader
 
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface
             && in_array(NewsletterRecipientDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 
@@ -44,6 +44,8 @@ class NewsletterRecipientStatusReader extends AbstractPremappingReader
      */
     protected function getMapping(MigrationContextInterface $migrationContext): array
     {
+        $mapping = [];
+        $connection = $migrationContext->getConnection();
         $choices = [
             '1' => 'Subscribed',
             '2' => 'Not active',
@@ -51,9 +53,13 @@ class NewsletterRecipientStatusReader extends AbstractPremappingReader
             '4' => 'Unconfirmed',
             'default_newsletter_recipient_status' => 'Standard newsletter status',
         ];
-        $mapping = [];
 
-        if ($migrationContext->getConnection()->getPremapping() === null) {
+        if ($connection === null) {
+            return $mapping;
+        }
+
+        $connectionPremapping = $connection->getPremapping();
+        if ($connectionPremapping === null) {
             foreach ($choices as $key => $choice) {
                 $mapping[] = new PremappingEntityStruct((string) $key, $choice, '');
             }
@@ -61,7 +67,7 @@ class NewsletterRecipientStatusReader extends AbstractPremappingReader
             return $mapping;
         }
 
-        foreach ($migrationContext->getConnection()->getPremapping() as $premapping) {
+        foreach ($connectionPremapping as $premapping) {
             if ($premapping['entity'] !== self::MAPPING_NAME) {
                 continue;
             }
@@ -84,6 +90,7 @@ class NewsletterRecipientStatusReader extends AbstractPremappingReader
      */
     protected function getChoices(): array
     {
+        $choices = [];
         $choices[] = new PremappingChoiceStruct('notSet', 'Not set');
         $choices[] = new PremappingChoiceStruct('optIn', 'OptIn');
         $choices[] = new PremappingChoiceStruct('optOut', 'OptOut');

@@ -20,12 +20,10 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
-use Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader;
+use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
+use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
@@ -35,7 +33,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 
-class OrderConverter extends MagentoConverter
+abstract class OrderConverter extends MagentoConverter
 {
     /**
      * @var MagentoMappingServiceInterface
@@ -104,12 +102,6 @@ class OrderConverter extends MagentoConverter
         $this->numberRangeValueGenerator = $numberRangeValueGenerator;
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === OrderDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['orders']['entity_id'];
@@ -143,10 +135,25 @@ class OrderConverter extends MagentoConverter
         $this->originalData = $data;
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
-
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
         $this->oldIdentifier = $data['orders']['entity_id'];
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
+
+        if ($this->oldIdentifier === null) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::ORDER,
+                $data['identifier'],
+                'entity_id'
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
 
         /*
          * Set main mapping
@@ -158,6 +165,8 @@ class OrderConverter extends MagentoConverter
             $this->context,
             $this->checksum
         );
+
+        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['orders']['entity_id']);
         $this->uuid = $converted['id'];
@@ -208,19 +217,20 @@ class OrderConverter extends MagentoConverter
         $converted['deepLinkCode'] = md5($converted['id']);
         unset($data['orders'], $data['identifier']);
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
         $this->updateMainMapping($migrationContext, $context);
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     protected function getSalutation(string $salutation): ?string
     {
         $salutationMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            SalutationReader::getMappingName(),
+            Magento19SalutationReader::getMappingName(),
             $salutation,
             $this->context
         );
@@ -347,6 +357,8 @@ class OrderConverter extends MagentoConverter
                 $this->context
             );
             $this->mappingIds[] = $mapping['id'];
+
+            $delivery = [];
             $delivery['id'] = $mapping['entityUuid'];
 
             $deliveryStateMapping = $this->mappingService->getMapping(
@@ -448,7 +460,7 @@ class OrderConverter extends MagentoConverter
         return $shippingMethodMapping['entityUuid'];
     }
 
-    protected function getAddress(array $originalData, $entityName = DefaultEntities::ORDER_ADDRESS): array
+    protected function getAddress(array $originalData, string $entityName = DefaultEntities::ORDER_ADDRESS): array
     {
         $address = [];
         $mapping = $this->mappingService->getOrCreateMapping(
@@ -649,7 +661,11 @@ class OrderConverter extends MagentoConverter
          * Set salutation
          */
         if (isset($data['orders']['customer_salutation'])) {
-            $this->salutationUuid = $this->getSalutation($data['orders']['customer_salutation']);
+            $salutationUuid = $this->getSalutation($data['orders']['customer_salutation']);
+
+            if ($salutationUuid !== null) {
+                $this->salutationUuid = $salutationUuid;
+            }
         } else {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -788,7 +804,7 @@ class OrderConverter extends MagentoConverter
     {
         $stateMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            OrderStateReader::getMappingName(),
+            Magento19OrderStateReader::getMappingName(),
             (string) $data['orders']['status'],
             $this->context
         );
@@ -819,8 +835,8 @@ class OrderConverter extends MagentoConverter
         $converted['lineItems'] = $this->getLineItems($data['items'], $taxRules, $taxStatus, $this->context);
 
         $converted['price'] = new CartPrice(
-            (float) $data['orders']['grand_total'],
             (float) $data['orders']['subtotal_incl_tax'],
+            (float) $data['orders']['grand_total'],
             (float) $data['orders']['subtotal_incl_tax'] - (float) $data['orders']['shipping_amount'],
             new CalculatedTaxCollection([]),
             $taxRules,

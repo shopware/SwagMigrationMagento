@@ -9,15 +9,13 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\Registry\LanguageRegistry;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\LanguageDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Exception\LocaleNotFoundException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class LanguageConverter extends MagentoConverter
+abstract class LanguageConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -39,12 +37,6 @@ class LanguageConverter extends MagentoConverter
      */
     protected $context;
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === LanguageDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['locale'];
@@ -57,8 +49,13 @@ class LanguageConverter extends MagentoConverter
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
         $this->oldIdentifier = $data['locale'];
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         $languageUuid = $this->mappingService->getLanguageUuid(
             $this->connectionId,
@@ -124,6 +121,7 @@ class LanguageConverter extends MagentoConverter
         }
         unset($data['stores']);
 
+        $converted = [];
         $converted['id'] = $languageUuid;
         $converted['name'] = $languageData['name'];
         $converted['localeId'] = $localeUuid;

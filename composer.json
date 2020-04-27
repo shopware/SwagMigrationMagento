@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "shopware/core": "~6.1.0",
+        "shopware/core": "~6.2.0",
         "swag/migration-assistant": "~1.0"
     },
     "extra": {
@@ -28,7 +28,11 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Swag\\MigrationMagento\\Test\\": "tests/"
+            "Swag\\MigrationMagento\\Test\\": "tests/",
+            "SwagMigrationAssistant\\": "../SwagMigrationAssistant"
         }
+    },
+    "suggest": {
+        "ext-sodium": "Allows you to use the argon2id13 encoder to migrate customer passwords of Magento 2."
     }
 }

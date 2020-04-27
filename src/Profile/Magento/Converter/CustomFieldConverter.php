@@ -21,6 +21,9 @@ abstract class CustomFieldConverter extends Converter
      */
     protected $migrationContext;
 
+    /**
+     * @var string[]
+     */
     protected $typeMapping = [
         'price' => 'float',
         'select' => 'select',
@@ -30,6 +33,11 @@ abstract class CustomFieldConverter extends Converter
         'date' => 'datetime',
         'boolean' => 'bool',
     ];
+
+    /**
+     * @var string
+     */
+    protected $connectionId;
 
     public function getSourceIdentifier(array $data): string
     {
@@ -42,12 +50,18 @@ abstract class CustomFieldConverter extends Converter
         $this->migrationContext = $migrationContext;
         $type = $this->validateType($data);
 
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
+
         if ($type === null) {
             return new ConvertStruct(null, $data);
         }
 
         $defaultLocale = $this->mappingService->getValue(
-            $migrationContext->getConnection()->getId(),
+            $this->connectionId,
             DefaultEntities::LOCALE,
             'global_default',
             $context
@@ -67,11 +81,13 @@ abstract class CustomFieldConverter extends Converter
         }
 
         $mapping = $this->mappingService->getOrCreateMapping(
-            $migrationContext->getConnection()->getId(),
+            $this->connectionId,
             DefaultEntities::CUSTOM_FIELD_SET,
             $data['setId'],
             $context
         );
+
+        $converted = [];
         $converted['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
@@ -83,7 +99,7 @@ abstract class CustomFieldConverter extends Converter
             'translated' => true,
         ];
         $mapping = $this->mappingService->getOrCreateMapping(
-            $migrationContext->getConnection()->getId(),
+            $this->connectionId,
             DefaultEntities::CUSTOM_FIELD_SET_RELATION,
             $this->getCustomFieldEntityName() . 'CustomFieldSetRelation-' . $data['setId'],
             $context
@@ -98,7 +114,7 @@ abstract class CustomFieldConverter extends Converter
         ];
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
-            $migrationContext->getConnection()->getId(),
+            $this->connectionId,
             $migrationContext->getDataSet()::getEntity(),
             $data['attribute_id'] . '_' . $data['setId'],
             $context,
@@ -243,7 +259,7 @@ abstract class CustomFieldConverter extends Converter
         return [];
     }
 
-    protected function validateType($data): ?string
+    protected function validateType(array $data): ?string
     {
         $frontendInput = $data['frontend_input'];
 

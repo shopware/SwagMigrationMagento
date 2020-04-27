@@ -12,5 +12,5 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 interface ConnectionFactoryInterface
 {
-    public function createDatabaseConnection(MigrationContextInterface $migrationContext): Connection;
+    public function createDatabaseConnection(MigrationContextInterface $migrationContext): ?Connection;
 }

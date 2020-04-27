@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -41,6 +42,7 @@ class EnvironmentReader implements EnvironmentReaderInterface
         $locale = $this->getDefaultShopLocale();
 
         $resultSet = [
+            'isMagento2' => $this->isMagento2(),
             'defaultShopLanguage' => $locale,
             'host' => $this->getHost(),
             'additionalData' => $this->getAdditionalData(),
@@ -52,9 +54,18 @@ class EnvironmentReader implements EnvironmentReaderInterface
 
     protected function setConnection(MigrationContextInterface $migrationContext): void
     {
-        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        $connection = $migrationContext->getConnection();
+        if ($connection === null) {
+            return;
+        }
 
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        if ($dbConnection === null) {
+            return;
+        }
+
+        $this->connection = $dbConnection;
+        $credentials = $connection->getCredentialFields();
         if (isset($credentials['tablePrefix'])) {
             $this->tablePrefix = $credentials['tablePrefix'];
         }
@@ -65,28 +76,43 @@ class EnvironmentReader implements EnvironmentReaderInterface
         return '';
     }
 
-    protected function getDefaultShopLocale()
+    protected function getDefaultShopLocale(): string
     {
         $query = $this->connection->createQueryBuilder();
 
-        return $query->select('value')
+        $query = $query->select('value')
             ->from($this->tablePrefix . 'core_config_data')
             ->where('scope = "default"')
             ->andWhere('path = "general/locale/code"')
-            ->execute()
-            ->fetch(\PDO::FETCH_COLUMN);
+            ->execute();
+
+        if (!($query instanceof ResultStatement)) {
+            return '';
+        }
+
+        return $query->fetch(\PDO::FETCH_COLUMN);
     }
 
-    protected function getDefaultCurrency()
+    protected function getDefaultCurrency(): string
     {
         $query = $this->connection->createQueryBuilder();
 
-        return $query->select('value')
+        $query = $query->select('value')
             ->from($this->tablePrefix . 'core_config_data')
             ->where('scope = "default"')
             ->andWhere('path = "currency/options/base"')
-            ->execute()
-            ->fetch(\PDO::FETCH_COLUMN);
+            ->execute();
+
+        if (!($query instanceof ResultStatement)) {
+            return '';
+        }
+
+        return $query->fetch(\PDO::FETCH_COLUMN);
+    }
+
+    protected function isMagento2(): bool
+    {
+        return $this->connection->getSchemaManager()->tablesExist($this->tablePrefix . 'store_website');
     }
 
     protected function getAdditionalData(): array

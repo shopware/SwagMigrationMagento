@@ -8,13 +8,11 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerGroupDataSet;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CustomerGroupConverter extends MagentoConverter
+abstract class CustomerGroupConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -26,12 +24,6 @@ class CustomerGroupConverter extends MagentoConverter
      */
     protected $context;
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CustomerGroupDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['customer_group_id'];
@@ -40,8 +32,13 @@ class CustomerGroupConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
@@ -50,6 +47,8 @@ class CustomerGroupConverter extends MagentoConverter
             $context,
             $this->checksum
         );
+
+        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['customer_group_id'], $data['tax_class_id']);
 
@@ -57,10 +56,11 @@ class CustomerGroupConverter extends MagentoConverter
 
         $this->updateMainMapping($migrationContext, $context);
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 }

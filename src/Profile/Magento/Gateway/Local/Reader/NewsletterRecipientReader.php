@@ -8,27 +8,18 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class NewsletterRecipientReader extends AbstractReader
+abstract class NewsletterRecipientReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::NEWSLETTER_RECIPIENT;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
+    /**
+     * @psalm-suppress PossiblyInvalidArgument
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -72,7 +63,7 @@ SQL;
         return new TotalStruct(DefaultEntities::NEWSLETTER_RECIPIENT, $total);
     }
 
-    private function fetchNewsletterRecipients(array $ids, MigrationContextInterface $migrationContext): array
+    protected function fetchNewsletterRecipients(array $ids, MigrationContextInterface $migrationContext): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -81,10 +72,15 @@ SQL;
         $query->where('recipient.subscriber_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function fetchCustomers(array $ids): array
+    protected function fetchCustomers(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -95,8 +91,13 @@ SQL;
         $query->orderBy('customer.entity_id');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
         $fetchedCustomers = $this->mapData(
-            $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE),
+            $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE),
             [],
             ['customer']
         );

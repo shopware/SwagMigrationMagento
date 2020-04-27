@@ -20,8 +20,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Exception\NoFileSystemPermissionsException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\CannotGetFileRunLog;
@@ -38,22 +37,27 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
     /**
      * @var EntityRepositoryInterface
      */
-    private $mediaFileRepo;
+    protected $mediaFileRepo;
 
     /**
      * @var EntityRepositoryInterface
      */
-    private $mediaRepo;
+    protected $mediaRepo;
 
     /**
      * @var FileSaver
      */
-    private $fileSaver;
+    protected $fileSaver;
 
     /**
      * @var LoggingServiceInterface
      */
-    private $loggingService;
+    protected $loggingService;
+
+    /**
+     * @var MigrationContextInterface
+     */
+    protected $migrationContext;
 
     public function __construct(
         EntityRepositoryInterface $migrationMediaFileRepo,
@@ -70,7 +74,6 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
             && $migrationContext->getDataSet()::getEntity() === MediaDataSet::getEntity();
     }
 
@@ -81,6 +84,7 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         int $fileChunkByteSize
     ): array {
         $mappedWorkload = [];
+        $this->migrationContext = $migrationContext;
         $runId = $migrationContext->getRunUuid();
 
         foreach ($workload as $work) {
@@ -101,7 +105,7 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
 
         /** @var SwagMigrationMediaFileEntity[] $media */
         $media = $this->getMediaFiles(array_keys($mappedWorkload), $migrationContext->getRunUuid(), $context);
-        $mappedWorkload = $this->getMediaPathMapping($media, $mappedWorkload, $migrationContext);
+        $mappedWorkload = $this->getMediaPathMapping($media, $mappedWorkload);
 
         $installationRoot = $this->getInstallationRoot($migrationContext);
 
@@ -126,6 +130,56 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         return $this->copyMediaFiles($media, $mappedWorkload, $migrationContext, $context);
     }
 
+    /**
+     * Start all the download requests for the media in parallel (async) and return the promise array.
+     *
+     * @param SwagMigrationMediaFileEntity[] $media
+     * @param MediaProcessWorkloadStruct[]   $mappedWorkload
+     */
+    protected function doMediaDownloadRequests(array $media, array &$mappedWorkload, Client $client, string $shopUrl): array
+    {
+        $promises = [];
+        foreach ($media as $mediaFile) {
+            $uuid = mb_strtolower($mediaFile->getMediaId());
+            $additionalData = [];
+            $additionalData['uri'] = $shopUrl . $mediaFile->getUri();
+
+            $additionalData['file_size'] = $mediaFile->getFileSize();
+            $additionalData['file_name'] = $mediaFile->getFileName();
+            $mappedWorkload[$uuid]->setAdditionalData($additionalData);
+
+            $promise = $this->doNormalDownloadRequest($mappedWorkload[$uuid], $client);
+
+            if ($promise !== null) {
+                $promises[$uuid] = $promise;
+            }
+        }
+
+        return $promises;
+    }
+
+    protected function doNormalDownloadRequest(MediaProcessWorkloadStruct $workload, Client $client): ?Promise\PromiseInterface
+    {
+        $additionalData = $workload->getAdditionalData();
+
+        try {
+            $promise = $client->getAsync(
+                $additionalData['uri'],
+                [
+                    'query' => ['alt' => 'media'],
+                ]
+            );
+
+            $workload->setCurrentOffset($additionalData['file_size']);
+            $workload->setState(MediaProcessWorkloadStruct::FINISH_STATE);
+        } catch (\Exception $exception) {
+            $promise = null;
+            $workload->setErrorCount($workload->getErrorCount() + 1);
+        }
+
+        return $promise;
+    }
+
     private function getMediaFiles(array $mediaIds, string $runId, Context $context): array
     {
         $criteria = new Criteria();
@@ -141,7 +195,7 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
      *
      * @return MediaProcessWorkloadStruct[]
      */
-    private function getMediaPathMapping(array $media, array $mappedWorkload, MigrationContextInterface $migrationContext): array
+    private function getMediaPathMapping(array $media, array $mappedWorkload): array
     {
         /** @var SwagMigrationMediaFileEntity $mediaFile */
         foreach ($media as $mediaFile) {
@@ -241,14 +295,18 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
 
     private function getInstallationRoot(MigrationContextInterface $migrationContext): string
     {
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        $connection = $migrationContext->getConnection();
+        if ($connection === null) {
+            return '';
+        }
 
+        $credentials = $connection->getCredentialFields();
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
             return '';
         }
         $installRoot = $credentials['installationRoot'];
-        ltrim($installRoot, '/');
-        rtrim($installRoot, '/');
+        $installRoot = ltrim($installRoot, '/');
+        $installRoot = rtrim($installRoot, '/');
         $installRoot = '/' . $installRoot;
 
         return $installRoot;
@@ -256,8 +314,12 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
 
     private function getShopUrl(MigrationContextInterface $migrationContext): string
     {
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        $connection = $migrationContext->getConnection();
+        if ($connection === null) {
+            return '';
+        }
 
+        $credentials = $connection->getCredentialFields();
         if (!isset($credentials['shopUrl'])) {
             return '';
         }
@@ -350,54 +412,5 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         $this->loggingService->saveLogging($context);
 
         return array_values($mappedWorkload);
-    }
-
-    /**
-     * Start all the download requests for the media in parallel (async) and return the promise array.
-     *
-     * @param SwagMigrationMediaFileEntity[] $media
-     * @param MediaProcessWorkloadStruct[]   $mappedWorkload
-     */
-    private function doMediaDownloadRequests(array $media, array &$mappedWorkload, Client $client, string $shopUrl): array
-    {
-        $promises = [];
-        foreach ($media as $mediaFile) {
-            $uuid = mb_strtolower($mediaFile->getMediaId());
-            $additionalData = [];
-            $additionalData['uri'] = $shopUrl . $mediaFile->getUri();
-            $additionalData['file_size'] = $mediaFile->getFileSize();
-            $additionalData['file_name'] = $mediaFile->getFileName();
-            $mappedWorkload[$uuid]->setAdditionalData($additionalData);
-
-            $promise = $this->doNormalDownloadRequest($mappedWorkload[$uuid], $client);
-
-            if ($promise !== null) {
-                $promises[$uuid] = $promise;
-            }
-        }
-
-        return $promises;
-    }
-
-    private function doNormalDownloadRequest(MediaProcessWorkloadStruct $workload, Client $client): ?Promise\PromiseInterface
-    {
-        $additionalData = $workload->getAdditionalData();
-
-        try {
-            $promise = $client->getAsync(
-                $additionalData['uri'],
-                [
-                    'query' => ['alt' => 'media'],
-                ]
-            );
-
-            $workload->setCurrentOffset($additionalData['file_size']);
-            $workload->setState(MediaProcessWorkloadStruct::FINISH_STATE);
-        } catch (\Exception $exception) {
-            $promise = null;
-            $workload->setErrorCount($workload->getErrorCount() + 1);
-        }
-
-        return $promise;
     }
 }

@@ -8,24 +8,14 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class NotAssociatedMediaReader extends AbstractReader
+abstract class NotAssociatedMediaReader extends AbstractReader
 {
     /**
      * @var string
      */
-    private $sourcePath;
-
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::NOT_ASSOCIATED_MEDIA;
-    }
+    protected $sourcePath;
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
@@ -42,10 +32,10 @@ class NotAssociatedMediaReader extends AbstractReader
         return $files;
     }
 
-    private function dirToArray(string $dir, array &$result): void
+    protected function dirToArray(string $dir, array &$result): void
     {
         $cdir = scandir($dir, 1);
-        foreach ($cdir as $key => $value) {
+        foreach ($cdir as $value) {
             if (!in_array($value, ['.', '..'], true)) {
                 if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
                     $this->dirToArray($dir . $value . DIRECTORY_SEPARATOR, $result);
@@ -58,14 +48,18 @@ class NotAssociatedMediaReader extends AbstractReader
 
     private function getInstallationRoot(MigrationContextInterface $migrationContext): string
     {
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        $connection = $migrationContext->getConnection();
+        if ($connection === null) {
+            return '';
+        }
 
+        $credentials = $connection->getCredentialFields();
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
             return '';
         }
         $installRoot = $credentials['installationRoot'];
-        ltrim($installRoot, '/');
-        rtrim($installRoot, '/');
+        $installRoot = ltrim($installRoot, '/');
+        $installRoot = rtrim($installRoot, '/');
         $installRoot = '/' . $installRoot;
 
         return $installRoot;

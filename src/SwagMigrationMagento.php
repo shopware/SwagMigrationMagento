@@ -22,6 +22,11 @@ class SwagMigrationMagento extends Plugin
         parent::build($container);
 
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/DependencyInjection/'));
+        $loader->load('magento.xml');
         $loader->load('magento19.xml');
+        $loader->load('magento20.xml');
+        $loader->load('magento21.xml');
+        $loader->load('magento22.xml');
+        $loader->load('magento23.xml');
     }
 }

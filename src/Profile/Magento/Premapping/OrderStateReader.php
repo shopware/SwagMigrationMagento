@@ -16,7 +16,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\StateMachine\Aggregation\StateMachineState\StateMachineStateEntity;
 use Shopware\Core\System\StateMachine\StateMachineEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -25,7 +25,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\ShopwareGatewayInterface;
 
-class OrderStateReader extends AbstractPremappingReader
+abstract class OrderStateReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'order_state';
 
@@ -66,7 +66,7 @@ class OrderStateReader extends AbstractPremappingReader
 
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface
             && in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 

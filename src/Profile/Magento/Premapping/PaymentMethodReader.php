@@ -11,8 +11,8 @@ use Shopware\Core\Checkout\Payment\PaymentMethodEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
+use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -20,7 +20,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
-class PaymentMethodReader extends AbstractPremappingReader
+abstract class PaymentMethodReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'payment_method';
 
@@ -54,7 +54,7 @@ class PaymentMethodReader extends AbstractPremappingReader
 
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile;
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface;
     }
 
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
@@ -107,8 +107,13 @@ class PaymentMethodReader extends AbstractPremappingReader
 
         $choices = [];
         foreach ($paymentMethods as $paymentMethod) {
-            $this->preselectionDictionary[$paymentMethod->getName()] = $paymentMethod->getId();
-            $choices[] = new PremappingChoiceStruct($paymentMethod->getId(), $paymentMethod->getName());
+            $paymentMethodName = $paymentMethod->getName();
+            if ($paymentMethodName === null) {
+                continue;
+            }
+
+            $this->preselectionDictionary[$paymentMethodName] = $paymentMethod->getId();
+            $choices[] = new PremappingChoiceStruct($paymentMethod->getId(), $paymentMethodName);
         }
 
         return $choices;

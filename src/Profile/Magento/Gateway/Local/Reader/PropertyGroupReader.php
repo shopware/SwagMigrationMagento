@@ -8,27 +8,18 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class PropertyGroupReader extends AbstractReader
+abstract class PropertyGroupReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PROPERTY_GROUP;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
+    /**
+     * @psalm-suppress PossiblyInvalidArgument
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -127,7 +118,12 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
     }
 
     protected function fetchOptionTranslations(array $ids): array
@@ -145,7 +141,12 @@ SQL;
         $query->where('attributeOption.option_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchGroupTranslations(array $ids): array
@@ -161,7 +162,12 @@ SQL;
         $query->where('attributeLabel.attribute_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchOptions(array $ids): array
@@ -177,6 +183,11 @@ SQL;
         $query->where('options.attribute_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 }

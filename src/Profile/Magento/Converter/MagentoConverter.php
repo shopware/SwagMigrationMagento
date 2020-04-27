@@ -8,8 +8,10 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\Converter;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class MagentoConverter extends Converter
@@ -29,6 +31,13 @@ abstract class MagentoConverter extends Converter
      * @var array
      */
     protected $originalData;
+
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService
+    ) {
+        parent::__construct($mappingService, $loggingService);
+    }
 
     protected function convertValue(
         array &$newData,
@@ -125,12 +134,20 @@ abstract class MagentoConverter extends Converter
         return $result;
     }
 
+    /**
+     * @psalm-suppress PossiblyInvalidArrayOffset
+     */
     protected function getTranslations(array $translations, array $defaultEntities, Context $context, ?int $attributeSetId = null): array
     {
+        $connection = $this->migrationContext->getConnection();
+        if ($connection === null) {
+            return [];
+        }
+
         $localeTranslation = [];
         foreach ($translations as $store => $translationValues) {
             $languageMapping = $this->mappingService->getMapping(
-                $this->migrationContext->getConnection()->getId(),
+                $connection->getId(),
                 DefaultEntities::STORE_LANGUAGE,
                 (string) $store,
                 $context
@@ -170,8 +187,11 @@ abstract class MagentoConverter extends Converter
                 if (isset($attributeData['frontend_input']) && $attributeData['frontend_input'] === 'select') {
                     $value = 'option_' . $value;
                 }
-                $localeTranslation[$languageId]['languageId'] = $languageId;
-                $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $value;
+
+                if ($languageId !== null) {
+                    $localeTranslation[$languageId]['languageId'] = $languageId;
+                    $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $value;
+                }
             }
         }
 

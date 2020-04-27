@@ -14,9 +14,19 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class ConnectionFactory implements ConnectionFactoryInterface
 {
-    public function createDatabaseConnection(MigrationContextInterface $migrationContext): Connection
+    public function createDatabaseConnection(MigrationContextInterface $migrationContext): ?Connection
     {
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        $connection = $migrationContext->getConnection();
+
+        if ($connection === null) {
+            return null;
+        }
+
+        $credentials = $connection->getCredentialFields();
+
+        if ($credentials === null) {
+            return null;
+        }
 
         $connectionParams = [
             'dbname' => $credentials['dbName'] ?? '',

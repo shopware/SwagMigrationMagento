@@ -8,27 +8,16 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class CustomerReader extends AbstractReader
+abstract class CustomerReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CUSTOMER;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
+    /**
+     * @psalm-suppress PossiblyInvalidArgument
+     * @psalm-suppress ReferenceConstraintViolation
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -73,7 +62,7 @@ SQL;
         return new TotalStruct(DefaultEntities::CUSTOMER, $total);
     }
 
-    private function fetchCustomers(array $ids): array
+    protected function fetchCustomers(array $ids): array
     {
         $sql = <<<SQL
 SELECT customer.*
@@ -85,10 +74,10 @@ SQL;
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function fetchAddresses(array $ids): array
+    protected function fetchAddresses(array $ids): array
     {
         $sql = <<<SQL
-SELECT 
+SELECT
     customer_address.*,
     directory_country.iso2_code AS country_iso2,
     directory_country.iso3_code AS country_iso3

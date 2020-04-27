@@ -10,9 +10,8 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -20,11 +19,10 @@ use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 
-class CustomerConverter extends MagentoConverter
+abstract class CustomerConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -76,19 +74,13 @@ class CustomerConverter extends MagentoConverter
     protected $oldIdentifier;
 
     public function __construct(
-        MappingServiceInterface $mappingService,
+        MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         NumberRangeValueGeneratorInterface $numberRangeValueGenerator
     ) {
         parent::__construct($mappingService, $loggingService);
 
         $this->numberRangeValueGenerator = $numberRangeValueGenerator;
-    }
-
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CustomerDataSet::getEntity();
     }
 
     public function getSourceIdentifier(array $data): string
@@ -118,9 +110,14 @@ class CustomerConverter extends MagentoConverter
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
         $this->oldIdentifier = $data['entity_id'];
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
         unset($data['entity_id']);
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         /*
          * Set main mapping
@@ -143,6 +140,8 @@ class CustomerConverter extends MagentoConverter
             $this->mainMapping['entityUuid']
         );
         $this->mappingIds[] = $mapping['id'];
+
+        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
 
         /*
@@ -183,8 +182,8 @@ class CustomerConverter extends MagentoConverter
         $this->convertValue($converted, 'firstName', $data, 'firstname');
         $this->convertValue($converted, 'lastName', $data, 'lastname');
         $this->convertValue($converted, 'birthday', $data, 'dob', self::TYPE_DATETIME);
-        if (isset($data['password_hash'])) {
-            $this->setPassword($data, $converted);
+        if (isset($data['password_hash']) && !$this->setPassword($data, $converted)) {
+            return new ConvertStruct(null, $data);
         }
         $customerNumber = $this->mappingService->getValue($this->connectionId, DefaultEntities::CUSTOMER, $this->oldIdentifier, $this->context);
         if ($customerNumber === null) {
@@ -197,7 +196,6 @@ class CustomerConverter extends MagentoConverter
         /*
          * Set salutation
          */
-        $salutationUuid = null;
         if (isset($data['gender'])) {
             $salutationUuid = $this->getSalutation($data['gender']);
         } else {
@@ -296,11 +294,12 @@ class CustomerConverter extends MagentoConverter
             $data['taxvat']
         );
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     protected function getAddresses(array &$originalData, array &$converted, string $customerUuid): void
@@ -394,7 +393,7 @@ class CustomerConverter extends MagentoConverter
         $this->checkUnsetDefaultBillingAddress($originalData, $converted);
     }
 
-    protected function checkUnsetDefaultShippingAndDefaultBillingAddress(array &$originalData, array &$converted, $addresses): void
+    protected function checkUnsetDefaultShippingAndDefaultBillingAddress(array &$originalData, array &$converted, array $addresses): void
     {
         if (!isset($converted['defaultBillingAddressId']) && !isset($converted['defaultShippingAddressId'])) {
             $converted['defaultBillingAddressId'] = $addresses[0]['id'];
@@ -502,12 +501,14 @@ class CustomerConverter extends MagentoConverter
         return $paymentMethodMapping['entityUuid'];
     }
 
-    protected function setPassword(array &$data, array &$converted): void
+    protected function setPassword(array &$data, array &$converted): bool
     {
         $converted['legacyPassword'] = $data['password_hash'];
         // we assume md5 as default for Magento 1.9.x
-        // This has to be overriden if differs
+        // This has to be overridden if differs
         $converted['legacyEncoder'] = 'Magento19';
         unset($data['password_hash']);
+
+        return true;
     }
 }

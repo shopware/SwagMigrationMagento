@@ -9,6 +9,9 @@ namespace Swag\MigrationMagento\Migration\Mapping\Registry;
 
 class CountryRegistry extends AbstractMappingRegistry
 {
+    /**
+     * @var array
+     */
     protected static $mapping = [
         'AT' => [
             'iso3' => 'AUT',

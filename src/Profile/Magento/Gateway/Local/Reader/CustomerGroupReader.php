@@ -8,27 +8,13 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class CustomerGroupReader extends AbstractReader
+abstract class CustomerGroupReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CUSTOMER_GROUP;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -52,7 +38,7 @@ SQL;
         return new TotalStruct(DefaultEntities::CUSTOMER_GROUP, $total);
     }
 
-    private function fetchCustomerGroups(array $ids): array
+    protected function fetchCustomerGroups(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -62,6 +48,11 @@ SQL;
         $query->where('customer_group_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 }

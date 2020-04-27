@@ -8,16 +8,14 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductReviewDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class ProductReviewConverter extends MagentoConverter
+abstract class ProductReviewConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -29,12 +27,6 @@ class ProductReviewConverter extends MagentoConverter
      */
     protected $oldIdentifier;
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === ProductReviewDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['review_id'];
@@ -44,9 +36,14 @@ class ProductReviewConverter extends MagentoConverter
     {
         $this->generateChecksum($data);
         $this->originalData = $data;
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->oldIdentifier = $data['review_id'];
         unset($data['review_id']);
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -82,11 +79,13 @@ class ProductReviewConverter extends MagentoConverter
         unset($data['productId']);
 
         if (!isset($data['customer_id'])) {
-            new EmptyNecessaryFieldRunLog(
-                $migrationContext->getRunUuid(),
-                DefaultEntities::PRODUCT_REVIEW,
-                $this->oldIdentifier,
-                'customer_id'
+            $this->loggingService->addLogEntry(
+                new EmptyNecessaryFieldRunLog(
+                    $migrationContext->getRunUuid(),
+                    DefaultEntities::PRODUCT_REVIEW,
+                    $this->oldIdentifier,
+                    'customer_id'
+                )
             );
 
             return new ConvertStruct(null, $data);
@@ -184,11 +183,12 @@ class ProductReviewConverter extends MagentoConverter
             $data['nickname']
         );
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     protected function setPoints(array &$converted, array &$data): void

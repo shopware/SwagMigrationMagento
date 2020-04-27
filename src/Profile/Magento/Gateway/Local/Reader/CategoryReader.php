@@ -8,27 +8,12 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class CategoryReader extends AbstractReader
+abstract class CategoryReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CATEGORY;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -51,7 +36,8 @@ class CategoryReader extends AbstractReader
 
         $sql = <<<SQL
 SELECT COUNT(*)
-FROM {$this->tablePrefix}catalog_category_entity;
+FROM {$this->tablePrefix}catalog_category_entity
+WHERE parent_id != 0;
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
 

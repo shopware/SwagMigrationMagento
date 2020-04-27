@@ -10,13 +10,11 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\CurrencyRegistry;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CurrencyConverter extends MagentoConverter
+abstract class CurrencyConverter extends MagentoConverter
 {
     /**
      * @var MagentoMappingServiceInterface
@@ -33,12 +31,6 @@ class CurrencyConverter extends MagentoConverter
      */
     protected $oldIdentifier;
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CurrencyDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['isoCode'];
@@ -47,13 +39,18 @@ class CurrencyConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->oldIdentifier = $data['isoCode'];
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $currencyValue = CurrencyRegistry::get($this->oldIdentifier);
 
         if ($currencyValue === null) {
             return new ConvertStruct(null, $data);
         }
         unset($data['isoCode']);
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         $this->generateChecksum($data);
         $currencyUuid = $this->mappingService->getCurrencyUuid(
@@ -64,7 +61,7 @@ class CurrencyConverter extends MagentoConverter
 
         if ($currencyUuid === null) {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
-                $migrationContext->getConnection()->getId(),
+                $this->connectionId,
                 DefaultEntities::CURRENCY,
                 $this->oldIdentifier,
                 $context,
@@ -94,6 +91,7 @@ class CurrencyConverter extends MagentoConverter
         );
         $this->mappingIds[] = $defaultCurrencyMapping['id'];
 
+        $converted = [];
         $converted['id'] = $currencyUuid;
         $converted['name'] = $currencyValue['name'];
         $converted['symbol'] = $currencyValue['symbol'];
@@ -118,6 +116,7 @@ class CurrencyConverter extends MagentoConverter
                 $languageUuid = $uuid;
             }
 
+            $localeTranslation = [];
             $localeTranslation['languageId'] = $languageUuid;
             $localeTranslation['name'] = $value;
             $converted['translations'][$languageUuid] = $localeTranslation;

@@ -7,20 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CurrencyReader extends AbstractReader
+abstract class CurrencyReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CURRENCY;
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -38,7 +29,7 @@ class CurrencyReader extends AbstractReader
         return $currencies;
     }
 
-    private function fetchCurrencies(): array
+    protected function fetchCurrencies(): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -46,11 +37,16 @@ class CurrencyReader extends AbstractReader
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value');
         $query->andWhere('path = \'currency/options/allow\'');
+        $query = $query->execute();
 
-        $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $configurations = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         $currencyConfig = [];
-        foreach ($configurations as $key => $config) {
+        foreach ($configurations as $config) {
             if (isset($config['value'])) {
                 $currencyConfig = array_merge($currencyConfig, explode(',', $config['value']));
             }
@@ -59,16 +55,19 @@ class CurrencyReader extends AbstractReader
         return array_values(array_unique($currencyConfig));
     }
 
-    private function fetchBaseCurrency(): string
+    protected function fetchBaseCurrency(): string
     {
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'baseCurrency');
         $query->addSelect('value');
         $query->andwhere('path = \'currency/options/base\' AND scope = \'default\'');
+        $query = $query->execute();
 
-        $baseCurrency = $query->execute()->fetch(\PDO::FETCH_COLUMN);
+        if (!($query instanceof ResultStatement)) {
+            return '';
+        }
 
-        return $baseCurrency;
+        return $query->fetch(\PDO::FETCH_COLUMN);
     }
 }
