@@ -8,27 +8,17 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class ProductCustomFieldReader extends AbstractReader
+abstract class ProductCustomFieldReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_CUSTOM_FIELD;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
+    /**
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -38,7 +28,7 @@ class ProductCustomFieldReader extends AbstractReader
         $options = $this->fetchSelectOptions($ids);
         $optionIds = [];
 
-        foreach ($options as $attributeId => $attributeOptions) {
+        foreach ($options as $attributeOptions) {
             foreach ($attributeOptions as $option) {
                 $optionIds[] = $option['option_id'];
             }
@@ -143,7 +133,12 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        return $this->mapData($query->execute()->fetchAll(\PDO::FETCH_ASSOC), [], ['eav', 'setId', 'setName']);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $this->mapData($query->fetchAll(\PDO::FETCH_ASSOC), [], ['eav', 'setId', 'setName']);
     }
 
     protected function fetchSelectOptions(array $ids): array
@@ -177,7 +172,12 @@ SQL;
         $query->where('attributeOption.option_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchAttributeTranslations(array $ids): array
@@ -193,10 +193,15 @@ SQL;
         $query->where('attributeLabel.attribute_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    private function fetchLocales(): array
+    protected function fetchLocales(): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -206,7 +211,12 @@ SQL;
 
         $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
 
-        $locales = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $locales = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
         foreach ($locales as $storeId => &$locale) {
             $locale = str_replace('_', '-', $locale);
         }
@@ -214,7 +224,7 @@ SQL;
         return $locales;
     }
 
-    private function setFallbackTranslations(array &$valueObject, array $locales, $property = 'frontend_label'): void
+    protected function setFallbackTranslations(array &$valueObject, array $locales, string $property = 'frontend_label'): void
     {
         foreach ($locales as $locale) {
             $translation = [

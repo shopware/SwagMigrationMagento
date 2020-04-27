@@ -7,20 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class LanguageReader extends AbstractReader
+abstract class LanguageReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::LANGUAGE;
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -49,8 +40,12 @@ class LanguageReader extends AbstractReader
         $query->addSelect('localeconfig.value as locale');
         $query->addSelect('defaultlocale.value as defaultLocale');
 
-        $configurations = $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
 
+        $configurations = $query->fetchAll(\PDO::FETCH_ASSOC);
         $storeConfigs = [];
         foreach ($configurations as $storeConfig) {
             if ($storeConfig['locale'] === null) {

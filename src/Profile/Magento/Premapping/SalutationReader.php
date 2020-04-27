@@ -16,7 +16,7 @@ use Shopware\Core\System\Salutation\SalutationEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -24,7 +24,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
-class SalutationReader extends AbstractPremappingReader
+abstract class SalutationReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'salutation';
 
@@ -58,7 +58,7 @@ class SalutationReader extends AbstractPremappingReader
 
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface
             && (in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true)
             || in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true));
     }
@@ -141,7 +141,6 @@ class SalutationReader extends AbstractPremappingReader
 
     private function getPreselectionValue(string $sourceId, Context $context): ?string
     {
-        $preselectionValue = null;
         switch ($sourceId) {
             case '1':
                 $criteria = new Criteria();

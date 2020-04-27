@@ -11,9 +11,7 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Api\Util\AccessKeyHelper;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SalesChannelDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
@@ -23,7 +21,7 @@ use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class SalesChannelConverter extends MagentoConverter
+abstract class SalesChannelConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -69,12 +67,6 @@ class SalesChannelConverter extends MagentoConverter
         parent::__construct($mappingService, $loggingService);
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === SalesChannelDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['website_id'];
@@ -103,9 +95,14 @@ class SalesChannelConverter extends MagentoConverter
         $this->generateChecksum($data);
         $this->originalData = $data;
         $this->context = $context;
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runId = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['website_id'];
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         /*
          * Set main mapping
@@ -117,6 +114,8 @@ class SalesChannelConverter extends MagentoConverter
             $context,
             $this->checksum
         );
+
+        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['website_id']);
 
@@ -231,19 +230,23 @@ class SalesChannelConverter extends MagentoConverter
         /*
          * Set navigation category
          */
-        $categoryMapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::CATEGORY,
-            $data['store_group']['root_category_id'],
-            $context
-        );
+        $mainCategory = $data['store_group']['root_category_id'];
+        $categoryMapping = null;
+        if ($mainCategory !== null) {
+            $categoryMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CATEGORY,
+                $mainCategory,
+                $context
+            );
+        }
 
         if ($categoryMapping === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::CATEGORY,
-                    $data['store_group']['root_category_id'],
+                    $mainCategory ?? '',
                     DefaultEntities::SALES_CHANNEL
                 )
             );
@@ -338,15 +341,17 @@ class SalesChannelConverter extends MagentoConverter
             $data['visibility']
         );
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     protected function getSalesChannelLanguages(string $languageUuid, array $data, Context $context): array
     {
+        $languages = [];
         $languages[$languageUuid] = [
             'id' => $languageUuid,
         ];
@@ -374,6 +379,7 @@ class SalesChannelConverter extends MagentoConverter
 
     protected function getSalesChannelCurrencies(string $currencyUuid, array $data, Context $context): array
     {
+        $currencies = [];
         $currencies[$currencyUuid] = [
             'id' => $currencyUuid,
         ];
@@ -401,6 +407,7 @@ class SalesChannelConverter extends MagentoConverter
 
     protected function getSalesChannelCountries(string $countryUuid, array $data, Context $context): array
     {
+        $countries = [];
         $countries[$countryUuid] = [
             'id' => $countryUuid,
         ];
@@ -495,7 +502,16 @@ class SalesChannelConverter extends MagentoConverter
     protected function getSalesChannelTranslation(array &$salesChannel, array $data): void
     {
         $language = $this->mappingService->getDefaultLanguage($this->context);
-        if ($language->getLocale()->getCode() === $data['defaultLocale']) {
+        if ($language === null) {
+            return;
+        }
+
+        $locale = $language->getLocale();
+        if ($locale === null) {
+            return;
+        }
+
+        if ($locale->getCode() === $data['defaultLocale']) {
             return;
         }
 
@@ -512,8 +528,10 @@ class SalesChannelConverter extends MagentoConverter
         $localeTranslation['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
         $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
-        $localeTranslation['languageId'] = $languageUuid;
 
-        $salesChannel['translations'][$languageUuid] = $localeTranslation;
+        if ($languageUuid !== null) {
+            $localeTranslation['languageId'] = $languageUuid;
+            $salesChannel['translations'][$languageUuid] = $localeTranslation;
+        }
     }
 }

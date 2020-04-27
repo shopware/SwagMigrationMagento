@@ -8,33 +8,22 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\Struct\StockConfigurationStruct;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class ProductReader extends AbstractReader
+abstract class ProductReader extends AbstractReader
 {
+    /**
+     * @var string[]
+     */
     public static $ALLOWED_PRODUCT_TYPES = [
         'simple',
         'configurable',
         'downloadable',
     ];
-
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
@@ -44,6 +33,7 @@ class ProductReader extends AbstractReader
 
         $fetchedProducts = $this->fetchProducts($migrationContext);
         foreach ($fetchedProducts as &$fetchedProduct) {
+            $fetchedProduct['instock'] = $fetchedProduct['instock'] ?? 0;
             $fetchedProduct['priceIsGross'] = $priceIsGross;
             if (((bool) $fetchedProduct['useMinPurchaseConfig']) === true) {
                 $fetchedProduct['minpurchase'] = $stockConfiguration->getMinPurchase();
@@ -151,7 +141,7 @@ SELECT
     END AS store_id
 FROM {$this->tablePrefix}catalog_product_entity product
 LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
-    ON product.entity_type_id = attribute.entity_type_id
+        ON attribute.entity_type_id = (SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type entityType WHERE entity_type_code = 'catalog_product')
 LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar
     ON product.entity_id = product_varchar.entity_id
     AND attribute.attribute_id = product_varchar.attribute_id
@@ -234,7 +224,7 @@ SQL;
             $attributeCode = $attribute['attribute_code'];
             $value = $attribute['value'];
             if ($storeId === '0') {
-                foreach ($locales as $localeStoreId => $locale) {
+                foreach (array_keys($locales) as $localeStoreId) {
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['value'] = $value;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['attribute_id'] = $attributeId;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['frontend_input'] = $frontendInput;
@@ -247,7 +237,11 @@ SQL;
         }
     }
 
-    protected function appendAssociatedData(array $fetchedProducts, array $ids)
+    /**
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     */
+    protected function appendAssociatedData(array $fetchedProducts, array $ids): array
     {
         $resultSet = [];
 
@@ -331,9 +325,7 @@ SQL;
             $visibility
         );
 
-        $resultSet = $this->utf8ize($resultSet);
-
-        return $resultSet;
+        return $this->utf8ize($resultSet);
     }
 
     protected function fetchProductCategories(array $ids): array
@@ -351,7 +343,7 @@ SQL;
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    protected function fetchProductMedia(array $ids)
+    protected function fetchProductMedia(array $ids): array
     {
         $sql = <<<SQL
 SELECT
@@ -406,10 +398,15 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
+        $query->where('eav.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchMultiSelectProperties(array $ids): array
@@ -433,7 +430,12 @@ SQL;
         $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchConfiguratorSettings(array $ids): array
@@ -459,7 +461,12 @@ SQL;
         $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchOptions(array $ids): array
@@ -485,7 +492,12 @@ SQL;
         $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
     protected function fetchVisibility(array $ids): array
@@ -502,20 +514,29 @@ SQL;
         $query->orderBy('product_int.value');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    private function fetchLocales(): array
+    protected function fetchLocales(): array
     {
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('scope_id AS store_id');
         $query->addSelect('value AS locale');
         $query->from($this->tablePrefix . 'core_config_data', 'locales');
-
         $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
 
-        $locales = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $locales = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
         foreach ($locales as $storeId => &$locale) {
             $locale = str_replace('_', '-', $locale);
         }
@@ -523,17 +544,22 @@ SQL;
         return $locales;
     }
 
-    private function getPriceConfiguration(): bool
+    protected function getPriceConfiguration(): bool
     {
         $query = $this->connection->createQueryBuilder();
         $query->addSelect('value');
         $query->from($this->tablePrefix . 'core_config_data');
         $query->orWhere('scope = \'default\' AND path = \'tax/calculation/price_includes_tax\'');
 
-        return (bool) $query->execute()->fetchColumn();
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return false;
+        }
+
+        return (bool) $query->fetchColumn();
     }
 
-    private function getStockConfiguration(): StockConfigurationStruct
+    protected function getStockConfiguration(): StockConfigurationStruct
     {
         $minPurchase = 1;
         $maxPurchase = 10000;
@@ -544,7 +570,12 @@ SQL;
         $query->andWhere('scope = \'default\'');
         $query->andWhere('path = \'cataloginventory/item_options/min_sale_qty\' OR path = \'cataloginventory/item_options/max_sale_qty\'');
 
-        $result = $query->execute()->fetchAll(\PDO::FETCH_KEY_PAIR);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return new StockConfigurationStruct($minPurchase, $maxPurchase);
+        }
+
+        $result = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
 
         if (isset($result['cataloginventory/item_options/min_sale_qty'])
             && is_numeric($result['cataloginventory/item_options/min_sale_qty'])

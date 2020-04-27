@@ -9,10 +9,8 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaults;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
@@ -21,7 +19,7 @@ use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFoundException;
 
-class CategoryConverter extends MagentoConverter
+abstract class CategoryConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -86,15 +84,8 @@ class CategoryConverter extends MagentoConverter
         return $data['entity_id'];
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CategoryDataSet::getEntity();
-    }
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
 
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
@@ -107,6 +98,12 @@ class CategoryConverter extends MagentoConverter
             ));
 
             return new ConvertStruct(null, $data);
+        }
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
         }
 
         // Ignore the magento root category
@@ -130,11 +127,12 @@ class CategoryConverter extends MagentoConverter
         $this->runId = $migrationContext->getRunUuid();
         $this->migrationContext = $migrationContext;
         $this->entity_id = $data['entity_id'];
+        $converted = [];
 
         /*
          * Set cms page with default cms page
          */
-        $cmsPageUuid = $this->mappingService->getDefaultCmsPageUuid($migrationContext->getConnection()->getId(), $context);
+        $cmsPageUuid = $this->mappingService->getDefaultCmsPageUuid($this->connectionId, $context);
         if ($cmsPageUuid !== null) {
             $converted['cmsPageId'] = $cmsPageUuid;
         }
@@ -194,6 +192,7 @@ class CategoryConverter extends MagentoConverter
             $this->context,
             $this->checksum
         );
+
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['entity_id']);
 
@@ -265,11 +264,12 @@ class CategoryConverter extends MagentoConverter
             $data['children_count']
         );
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     protected function setCategoryTranslation(array &$data, array &$converted): void
@@ -278,7 +278,16 @@ class CategoryConverter extends MagentoConverter
         $this->convertValue($converted, 'name', $data, 'name');
 
         $language = $this->mappingService->getDefaultLanguage($this->context);
-        if ($language->getLocale()->getCode() === $data['defaultLocale']) {
+        if ($language === null) {
+            return;
+        }
+
+        $locale = $language->getLocale();
+        if ($locale === null) {
+            return;
+        }
+
+        if ($locale->getCode() === $data['defaultLocale']) {
             return;
         }
 
@@ -303,13 +312,14 @@ class CategoryConverter extends MagentoConverter
             throw $exception;
         }
 
-        $localeTranslation['languageId'] = $languageUuid;
-
         if (isset($converted['customFields'])) {
             $localeTranslation['customFields'] = $converted['customFields'];
         }
 
-        $converted['translations'][$languageUuid] = $localeTranslation;
+        if ($languageUuid !== null) {
+            $localeTranslation['languageId'] = $languageUuid;
+            $converted['translations'][$languageUuid] = $localeTranslation;
+        }
     }
 
     protected function getCategoryMedia(string $path): array
@@ -320,6 +330,8 @@ class CategoryConverter extends MagentoConverter
             $path,
             $this->context
         );
+
+        $categoryMedia = [];
         $categoryMedia['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 

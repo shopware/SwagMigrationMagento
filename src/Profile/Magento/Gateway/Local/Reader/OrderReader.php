@@ -8,27 +8,18 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class OrderReader extends AbstractReader
+abstract class OrderReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::ORDER;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
+    /**
+     * @psalm-suppress PossiblyInvalidArgument
+     * @psalm-suppress InvalidReturnStatement
+     * @psalm-suppress InvalidReturnType
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -70,7 +61,7 @@ SQL;
         return new TotalStruct(DefaultEntities::ORDER, $total);
     }
 
-    private function fetchOrders(array $ids): array
+    protected function fetchOrders(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -101,10 +92,15 @@ SQL;
         $query->where('orders.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function fetchDetails(array $ids): array
+    protected function fetchDetails(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -115,10 +111,15 @@ SQL;
         $query->where('items.order_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    private function fetchShipments(array $ids): array
+    protected function fetchShipments(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -129,7 +130,12 @@ SQL;
         $query->where('shipment.order_id IN (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
-        $shipments = $this->mapData($query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC), [], ['shipment']);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $shipments = $this->mapData($query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC), [], ['shipment']);
 
         $shipmentIds = [];
         foreach ($shipments as $shipment) {
@@ -147,7 +153,12 @@ SQL;
         $query->where('item.parent_id in (:ids)');
         $query->setParameter('ids', $shipmentIds, Connection::PARAM_STR_ARRAY);
 
-        $shipmentItems = $this->mapData($query->execute()->fetchAll(\PDO::FETCH_GROUP), [], ['item']);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $shipmentItems = $this->mapData($query->fetchAll(\PDO::FETCH_GROUP), [], ['item']);
 
         foreach ($shipments as &$shipment) {
             foreach ($shipment as &$value) {

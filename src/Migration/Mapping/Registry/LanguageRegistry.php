@@ -9,6 +9,9 @@ namespace Swag\MigrationMagento\Migration\Mapping\Registry;
 
 class LanguageRegistry extends AbstractMappingRegistry
 {
+    /**
+     * @var array
+     */
     protected static $mapping = [
         'cs-CZ' => [
             'name' => 'Czech',

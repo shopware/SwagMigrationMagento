@@ -8,18 +8,10 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class ManufacturerReader extends AbstractReader
+abstract class ManufacturerReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_MANUFACTURER;
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -45,7 +37,7 @@ class ManufacturerReader extends AbstractReader
         return $fetchedManufacturers;
     }
 
-    private function fetchManufacturers(): array
+    protected function fetchManufacturers(): array
     {
         $sql = <<<SQL
 SELECT
@@ -53,14 +45,14 @@ SELECT
     optionValue.value
 FROM {$this->tablePrefix}eav_attribute_option_value optionValue
 INNER JOIN {$this->tablePrefix}eav_attribute_option AS attributeOption ON optionValue.option_id = attributeOption.option_id
-INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute_id = attributeOption.attribute_id AND attribute.attribute_code = "manufacturer";
+INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute_id = attributeOption.attribute_id AND attribute.attribute_code = "manufacturer"
 WHERE optionValue.store_id = 0
 SQL;
 
         return $this->connection->executeQuery($sql)->fetchAll();
     }
 
-    private function fetchTranslations(array $ids): array
+    protected function fetchTranslations(array $ids): array
     {
         $sql = <<<SQL
 SELECT

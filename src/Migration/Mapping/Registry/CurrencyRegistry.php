@@ -9,6 +9,9 @@ namespace Swag\MigrationMagento\Migration\Mapping\Registry;
 
 class CurrencyRegistry extends AbstractMappingRegistry
 {
+    /**
+     * @var array
+     */
     protected static $mapping = [
         'CHF' => [
             'symbol' => 'CHF',

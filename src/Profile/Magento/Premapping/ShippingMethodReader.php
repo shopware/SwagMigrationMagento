@@ -11,8 +11,8 @@ use Shopware\Core\Checkout\Shipping\ShippingMethodEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
+use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -20,7 +20,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
-class ShippingMethodReader extends AbstractPremappingReader
+abstract class ShippingMethodReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'shipping_method';
 
@@ -57,7 +57,7 @@ class ShippingMethodReader extends AbstractPremappingReader
      */
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile;
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface;
     }
 
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
@@ -110,8 +110,13 @@ class ShippingMethodReader extends AbstractPremappingReader
 
         $choices = [];
         foreach ($shippingMethods as $shippingMethod) {
-            $this->preselectionDictionary[$shippingMethod->getName()] = $shippingMethod->getId();
-            $choices[] = new PremappingChoiceStruct($shippingMethod->getId(), $shippingMethod->getName());
+            $shippingMethodName = $shippingMethod->getName();
+            if ($shippingMethodName === null) {
+                continue;
+            }
+
+            $this->preselectionDictionary[$shippingMethodName] = $shippingMethod->getId();
+            $choices[] = new PremappingChoiceStruct($shippingMethod->getId(), $shippingMethodName);
         }
 
         return $choices;

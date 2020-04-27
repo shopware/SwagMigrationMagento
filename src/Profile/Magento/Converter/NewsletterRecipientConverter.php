@@ -9,17 +9,15 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NewsletterRecipientDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
-use Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader;
+use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19NewsletterRecipientStatusReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class NewsletterRecipientConverter extends MagentoConverter
+abstract class NewsletterRecipientConverter extends MagentoConverter
 {
     /**
      * @var string
@@ -41,12 +39,6 @@ class NewsletterRecipientConverter extends MagentoConverter
      */
     protected $runId;
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === NewsletterRecipientDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['subscriber_id'];
@@ -55,12 +47,17 @@ class NewsletterRecipientConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->context = $context;
         $this->runId = $migrationContext->getRunUuid();
         $this->originalData = $data;
-        $converted = [];
 
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
+
+        $converted = [];
         $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,
             MagentoDefaultEntities::STORE_LANGUAGE,
@@ -121,14 +118,17 @@ class NewsletterRecipientConverter extends MagentoConverter
             $data['subscriber_id'],
             $data['store_id'],
             $data['subscriber_status'],
-            $data['subscriber_confirm_code']
+            $data['subscriber_confirm_code'],
+            $data['customer_id'],
+            $data['change_status_at']
         );
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     private function getSalesChannelMapping(array $data): ?array
@@ -156,7 +156,7 @@ class NewsletterRecipientConverter extends MagentoConverter
     {
         $status = $this->mappingService->getValue(
             $this->connectionId,
-            NewsletterRecipientStatusReader::getMappingName(),
+            Magento19NewsletterRecipientStatusReader::getMappingName(),
             $data['subscriber_status'],
             $this->context
         );
@@ -164,7 +164,7 @@ class NewsletterRecipientConverter extends MagentoConverter
         if ($status === null) {
             $status = $this->mappingService->getValue(
                 $this->connectionId,
-                NewsletterRecipientStatusReader::getMappingName(),
+                Magento19NewsletterRecipientStatusReader::getMappingName(),
                 'default_newsletter_recipient_status',
                 $this->context
             );

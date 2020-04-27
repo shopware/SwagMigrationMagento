@@ -5,7 +5,9 @@
                 "group": {
                     "language": "Languages",
                     "shipping_method": "Shipping methods",
-                    "tax": "Taxes"
+                    "tax": "Taxes",
+                    "country": "Countries",
+                    "currency": "Currencies"
                 }
             },
             "selectDataCard": {
@@ -23,6 +25,9 @@
                     }
                 },
                 "credentials": {
+                    "error": {
+                        "SWAG_MIGRATION_MAGENTO__NO_MAGENTO2_DATABASE": "The selected database is not a Magento 2 database."
+                    },
                     "magento": {
                         "local": {
                             "contentInformation": "We still need access data to connect to your Magento 1 database.",

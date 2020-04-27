@@ -9,7 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -20,7 +20,7 @@ class CustomerAndOrderDataSelection implements DataSelectionInterface
 
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile;
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface;
     }
 
     public function getData(): DataSelectionStruct

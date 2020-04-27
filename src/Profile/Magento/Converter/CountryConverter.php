@@ -10,13 +10,11 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\CountryRegistry;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class CountryConverter extends MagentoConverter
+abstract class CountryConverter extends MagentoConverter
 {
     /**
      * @var MagentoMappingServiceInterface
@@ -33,19 +31,18 @@ class CountryConverter extends MagentoConverter
         return $data['isoCode'];
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CountryDataSet::getEntity();
-    }
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $countryValue = CountryRegistry::get($data['isoCode']);
 
         if ($countryValue === null) {
             return new ConvertStruct(null, $data);
+        }
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
         }
 
         $this->generateChecksum($data);
@@ -57,7 +54,7 @@ class CountryConverter extends MagentoConverter
 
         if ($countryUuid === null) {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
-                $migrationContext->getConnection()->getId(),
+                $this->connectionId,
                 DefaultEntities::COUNTRY,
                 $data['isoCode'],
                 $context,
@@ -76,6 +73,7 @@ class CountryConverter extends MagentoConverter
         }
         $countryUuid = $this->mainMapping['entityUuid'];
 
+        $converted = [];
         $converted['id'] = $countryUuid;
         $converted['name'] = $countryValue['name'];
         $converted['iso'] = $data['isoCode'];
@@ -93,6 +91,7 @@ class CountryConverter extends MagentoConverter
                 $languageUuid = $uuid;
             }
 
+            $localeTranslation = [];
             $localeTranslation['languageId'] = $languageUuid;
             $localeTranslation['name'] = $value;
             $converted['translations'][$languageUuid] = $localeTranslation;

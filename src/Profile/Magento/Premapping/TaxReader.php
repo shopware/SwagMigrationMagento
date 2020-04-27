@@ -15,8 +15,8 @@ use Shopware\Core\System\Tax\TaxEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\SeoUrlDataSelection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
+use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -24,7 +24,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
-class TaxReader extends AbstractPremappingReader
+abstract class TaxReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'tax';
 
@@ -58,7 +58,7 @@ class TaxReader extends AbstractPremappingReader
 
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface
             && (in_array(ProductDataSelection::IDENTIFIER, $entityGroupNames, true)
             || in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true)
             || in_array(SeoUrlDataSelection::IDENTIFIER, $entityGroupNames, true));

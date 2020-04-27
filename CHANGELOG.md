@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- PT-11373 - Implement Magento 2.x migration profile
 - PT-11618 - Fix error with too many open database connections
 
 # 1.2.1

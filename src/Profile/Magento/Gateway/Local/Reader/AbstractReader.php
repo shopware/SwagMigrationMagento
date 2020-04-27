@@ -8,8 +8,8 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Schema\Column;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -48,15 +48,27 @@ abstract class AbstractReader implements ReaderInterface
         return null;
     }
 
+    /**
+     * @psalm-suppress RedundantConditionGivenDocblockType
+     */
     protected function setConnection(MigrationContextInterface $migrationContext): void
     {
         if ($this->connection instanceof Connection && $this->connection->isConnected()) {
             return;
         }
 
-        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        $connection = $migrationContext->getConnection();
+        if ($connection === null) {
+            return;
+        }
 
-        $credentials = $migrationContext->getConnection()->getCredentialFields();
+        $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        if ($dbConnection === null) {
+            return;
+        }
+
+        $this->connection = $dbConnection;
+        $credentials = $connection->getCredentialFields();
         if (isset($credentials['tablePrefix'])) {
             $this->tablePrefix = $credentials['tablePrefix'];
         }
@@ -69,10 +81,20 @@ abstract class AbstractReader implements ReaderInterface
         $query->addSelect('locale.value AS locale');
         $query->from($this->tablePrefix . 'core_config_data', 'locale');
         $query->where('locale.scope = \'default\' AND path = \'general/locale/code\'');
+        $query = $query->execute();
 
-        return $query->execute()->fetch(\PDO::FETCH_COLUMN);
+        if (!($query instanceof ResultStatement)) {
+            return '';
+        }
+
+        return $query->fetch(\PDO::FETCH_COLUMN);
     }
 
+    /**
+     * @param array|bool|false|string|string[] $mixed
+     *
+     * @return array|bool|false|string|string[]
+     */
     protected function utf8ize($mixed)
     {
         if (is_array($mixed)) {
@@ -90,7 +112,6 @@ abstract class AbstractReader implements ReaderInterface
     {
         $columns = $this->connection->getSchemaManager()->listTableColumns($table);
 
-        /** @var Column $column */
         foreach ($columns as $column) {
             $selection = str_replace(
                 ['#tableAlias#', '#column#'],
@@ -102,6 +123,9 @@ abstract class AbstractReader implements ReaderInterface
         }
     }
 
+    /**
+     * @psalm-suppress MissingParamType
+     */
     protected function buildArrayFromChunks(array &$array, array $path, string $fieldKey, $value): void
     {
         $key = array_shift($path);
@@ -156,7 +180,12 @@ abstract class AbstractReader implements ReaderInterface
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_COLUMN);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     protected function fetchIdentifiersByRelation(string $table, string $identifier, string $relationKey, array $relationIds): array
@@ -168,7 +197,12 @@ abstract class AbstractReader implements ReaderInterface
             ->addOrderBy($identifier)
             ->setParameter('ids', $relationIds, Connection::PARAM_STR_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_COLUMN);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_COLUMN);
     }
 
     protected function mapData(array $data, array $result = [], array $pathsToRemove = []): array
@@ -194,7 +228,7 @@ abstract class AbstractReader implements ReaderInterface
     protected function fetchAttributes(array $ids, string $entity, array $customAttributes = []): array
     {
         $sql = <<<SQL
-SELECT 
+SELECT
     {$entity}.entity_id,
     attribute.attribute_code,
     CASE attribute.backend_type
@@ -206,27 +240,27 @@ SELECT
        ELSE attribute.backend_type
     END AS value
 FROM {$this->tablePrefix}{$entity}_entity {$entity}
-LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute 
-    ON {$entity}.entity_type_id = attribute.entity_type_id
-LEFT JOIN {$this->tablePrefix}{$entity}_entity_varchar AS {$entity}_varchar 
-    ON {$entity}.entity_id = {$entity}_varchar.entity_id 
-    AND attribute.attribute_id = {$entity}_varchar.attribute_id 
+LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
+    ON attribute.entity_type_id = (SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = '{$entity}')
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_varchar AS {$entity}_varchar
+    ON {$entity}.entity_id = {$entity}_varchar.entity_id
+    AND attribute.attribute_id = {$entity}_varchar.attribute_id
     AND attribute.backend_type = 'varchar'
-LEFT JOIN {$this->tablePrefix}{$entity}_entity_int AS {$entity}_int 
-    ON {$entity}.entity_id = {$entity}_int.entity_id 
-    AND attribute.attribute_id = {$entity}_int.attribute_id 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_int AS {$entity}_int
+    ON {$entity}.entity_id = {$entity}_int.entity_id
+    AND attribute.attribute_id = {$entity}_int.attribute_id
     AND attribute.backend_type = 'int'
-LEFT JOIN {$this->tablePrefix}{$entity}_entity_text AS {$entity}_text 
-    ON {$entity}.entity_id = {$entity}_text.entity_id 
-    AND attribute.attribute_id = {$entity}_text.attribute_id 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_text AS {$entity}_text
+    ON {$entity}.entity_id = {$entity}_text.entity_id
+    AND attribute.attribute_id = {$entity}_text.attribute_id
     AND attribute.backend_type = 'text'
-LEFT JOIN {$this->tablePrefix}{$entity}_entity_decimal AS {$entity}_decimal 
-    ON {$entity}.entity_id = {$entity}_decimal.entity_id 
-    AND attribute.attribute_id = {$entity}_decimal.attribute_id 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_decimal AS {$entity}_decimal
+    ON {$entity}.entity_id = {$entity}_decimal.entity_id
+    AND attribute.attribute_id = {$entity}_decimal.attribute_id
     AND attribute.backend_type = 'decimal'
-LEFT JOIN {$this->tablePrefix}{$entity}_entity_datetime AS {$entity}_datetime 
-    ON {$entity}.entity_id = {$entity}_datetime.entity_id 
-    AND attribute.attribute_id = {$entity}_datetime.attribute_id 
+LEFT JOIN {$this->tablePrefix}{$entity}_entity_datetime AS {$entity}_datetime
+    ON {$entity}.entity_id = {$entity}_datetime.entity_id
+    AND attribute.attribute_id = {$entity}_datetime.attribute_id
     AND attribute.backend_type = 'datetime'
 WHERE {$entity}.entity_id IN (?)
 AND (attribute.is_user_defined = 0 OR attribute.attribute_code IN (?))
@@ -256,7 +290,7 @@ SQL;
         }
     }
 
-    protected function groupByProperty(array $resultSet, string $property)
+    protected function groupByProperty(array $resultSet, string $property): array
     {
         $groupedResult = [];
         foreach ($resultSet as $result) {

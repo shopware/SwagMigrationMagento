@@ -14,9 +14,7 @@ use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
@@ -26,7 +24,7 @@ use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFoundException;
 
-class ProductConverter extends MagentoConverter
+abstract class ProductConverter extends MagentoConverter
 {
     /**
      * @var Context
@@ -73,12 +71,6 @@ class ProductConverter extends MagentoConverter
         $this->mediaFileService = $mediaFileService;
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === ProductDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['entity_id'];
@@ -108,11 +100,16 @@ class ProductConverter extends MagentoConverter
         $this->originalData = $data;
         $this->context = $context;
         $this->migrationContext = $migrationContext;
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->runUuid = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['entity_id'];
         unset($data['entity_id']);
         $converted = [];
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         /*
          * Set manufacturer
@@ -188,7 +185,7 @@ class ProductConverter extends MagentoConverter
          * Set main id
          */
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
-            $migrationContext->getConnection()->getId(),
+            $this->connectionId,
             DefaultEntities::PRODUCT,
             $this->oldIdentifier,
             $context,
@@ -374,11 +371,12 @@ class ProductConverter extends MagentoConverter
             $data['use_config_lifetime']
         );
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
     protected function setCategories(array &$converted, array &$data): void
@@ -525,9 +523,13 @@ class ProductConverter extends MagentoConverter
         return $price;
     }
 
+    /**
+     * @psalm-suppress PossiblyNullArrayAccess
+     */
     protected function getPrices(array $prices, array $converted): array
     {
         foreach ($prices as $key => &$price) {
+            $key = (int) $key;
             $price['toQty'] = null;
             if (isset($prices[$key + 1])
                 && $prices[$key + 1]['all_groups'] === $price['all_groups']
@@ -761,7 +763,7 @@ class ProductConverter extends MagentoConverter
             $newMedia['id'] = $mapping['entityUuid'];
             $this->mappingIds[] = $mapping['id'];
 
-            if (!isset($mediaData['description'])) {
+            if (!isset($mediaData['description']) || empty($mediaData['description'])) {
                 $mediaData['description'] = $newMedia['id'];
 
                 $fileMatches = [];
@@ -775,7 +777,7 @@ class ProductConverter extends MagentoConverter
                 [
                     'runId' => $this->runUuid,
                     'entity' => MediaDataSet::getEntity(),
-                    'uri' => '/media/catalog/product' . $mediaData['image'],
+                    'uri' => MediaConverter::PRODUCT_MEDIA_PATH . $mediaData['image'],
                     'fileName' => $mediaData['description'],
                     'fileSize' => 0,
                     'mediaId' => $newMedia['id'],

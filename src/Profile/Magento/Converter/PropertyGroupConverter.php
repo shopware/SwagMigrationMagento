@@ -8,14 +8,12 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class PropertyGroupConverter extends MagentoConverter
+abstract class PropertyGroupConverter extends MagentoConverter
 {
     /**
      * @var Context
@@ -37,12 +35,6 @@ class PropertyGroupConverter extends MagentoConverter
      */
     protected $oldIdentifier;
 
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === PropertyGroupDataSet::getEntity();
-    }
-
     public function getSourceIdentifier(array $data): string
     {
         return $data['id'];
@@ -55,8 +47,13 @@ class PropertyGroupConverter extends MagentoConverter
         $this->context = $context;
         $this->migrationContext = $migrationContext;
         $this->runId = $migrationContext->getRunUuid();
-        $this->connectionId = $migrationContext->getConnection()->getId();
         $this->oldIdentifier = $data['id'];
+
+        $connection = $migrationContext->getConnection();
+        $this->connectionId = '';
+        if ($connection !== null) {
+            $this->connectionId = $connection->getId();
+        }
 
         if (!isset($data['name'])) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(

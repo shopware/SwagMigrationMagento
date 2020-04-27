@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- PT-11373 - Implementierung des Magento 2.x Migrationsprofil
 - PT-11618 - Behebt ein Problem mit zu vielen offenen Datenbankverbindungen per CLI 
 
 # 1.2.1
@@ -39,4 +40,4 @@
 - NTR - Performanceverbesserung
 
 # 0.9.0
-- Erste Version des Shopware Migration Magento Profils für den Shopwawre Migrations-Assistent
+- Erste Version des Shopware Migration Magento Profils für den Shopware Migrations-Assistent

@@ -8,27 +8,13 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento\Magento19Profile;
+use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-class SalesChannelReader extends AbstractReader
+abstract class SalesChannelReader extends AbstractReader
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SALES_CHANNEL;
-    }
-
-    public function supportsTotal(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME;
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -38,8 +24,8 @@ class SalesChannelReader extends AbstractReader
 
         $stores = $this->mapData($this->fetchStores($ids), [], ['store']);
         $storeIds = [];
-        array_map(function ($website) use (&$storeIds): void {
-            array_map(function ($store) use (&$storeIds): void {
+        array_map(function (array $website) use (&$storeIds): void {
+            array_map(function (array $store) use (&$storeIds): void {
                 $storeId = $store['store_id'];
                 $storeIds[$storeId] = $storeId;
             }, $website);
@@ -118,7 +104,7 @@ SQL;
         return new TotalStruct(DefaultEntities::SALES_CHANNEL, $total);
     }
 
-    private function fetchWebsites(MigrationContextInterface $migrationContext): array
+    protected function fetchWebsites(MigrationContextInterface $migrationContext): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -132,10 +118,15 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
     }
 
-    private function fetchDefaults(): array
+    protected function fetchDefaults(): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -177,7 +168,12 @@ SQL;
         );
         $query->addSelect('defaultLocale.value AS defaultLocale');
 
-        $defaults = $query->execute()->fetch(\PDO::FETCH_ASSOC);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $defaults = $query->fetch(\PDO::FETCH_ASSOC);
 
         if ($defaults['defaultAllowedCurrencies'] === null) {
             $defaults['defaultAllowedCountries'] = '';
@@ -197,7 +193,7 @@ SQL;
         return $defaults;
     }
 
-    private function fetchStores(array $ids): array
+    protected function fetchStores(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -208,10 +204,15 @@ SQL;
         $query->andWhere('website_id in (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP);
     }
 
-    private function fetchStoreGroups(array $ids): array
+    protected function fetchStoreGroups(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -222,10 +223,15 @@ SQL;
         $query->andWhere('website_id in (:ids)');
         $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
 
-        return $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
     }
 
-    private function fetchCarriers(): array
+    protected function fetchCarriers(): array
     {
         $sql = <<<SQL
 SELECT carrier.*
@@ -248,7 +254,7 @@ SQL;
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function fetchPayments(): array
+    protected function fetchPayments(): array
     {
         $sql = <<<SQL
 SELECT payment.*
@@ -271,7 +277,7 @@ SQL;
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
-    private function fetchStoreCurrencies(array $storeIds): array
+    protected function fetchStoreCurrencies(array $storeIds): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -284,7 +290,12 @@ SQL;
         $query->andWhere('path = \'currency/options/allow\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
-        $storeCurrencies = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $storeCurrencies = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         foreach ($storeCurrencies as $key => $storeCurrency) {
             if (isset($storeCurrency['currencies'])) {
@@ -295,7 +306,7 @@ SQL;
         return $storeCurrencies;
     }
 
-    private function fetchStoreCountryConfig(array $storeIds): array
+    protected function fetchStoreCountryConfig(array $storeIds): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -309,7 +320,12 @@ SQL;
         $query->andWhere('path = \'general/country/allow\' OR path = \'general/country/default\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
-        $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $configurations = $query->fetchAll(\PDO::FETCH_GROUP);
 
         $storeCountryConfig = [];
         foreach ($configurations as $key => $storeConfig) {
@@ -327,7 +343,7 @@ SQL;
         return $storeCountryConfig;
     }
 
-    private function fetchLocales(array $storeIds): array
+    protected function fetchLocales(array $storeIds): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -338,7 +354,12 @@ SQL;
         $query->orWhere('scope = \'stores\' AND scope_id IN (:storeId) AND path = \'general/locale/code\'');
         $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
 
-        $configurations = $query->execute()->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $configurations = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
 
         $storeConfigs = [];
         foreach ($configurations as $key => $storeConfig) {

@@ -9,6 +9,9 @@ namespace Swag\MigrationMagento\Migration\Mapping\Registry;
 
 class AbstractMappingRegistry implements MappingRegistryInterface
 {
+    /**
+     * @var array
+     */
     protected static $mapping = [];
 
     public static function get(string $identifier): ?array
