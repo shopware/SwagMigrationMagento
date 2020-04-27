@@ -180,6 +180,25 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         return $promise;
     }
 
+    protected function getInstallationRoot(MigrationContextInterface $migrationContext): string
+    {
+        $connection = $migrationContext->getConnection();
+        if ($connection === null) {
+            return '';
+        }
+
+        $credentials = $connection->getCredentialFields();
+        if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
+            return '';
+        }
+        $installRoot = $credentials['installationRoot'];
+        $installRoot = ltrim($installRoot, '/');
+        $installRoot = rtrim($installRoot, '/');
+        $installRoot = '/' . $installRoot;
+
+        return $installRoot;
+    }
+
     private function getMediaFiles(array $mediaIds, string $runId, Context $context): array
     {
         $criteria = new Criteria();
@@ -291,25 +310,6 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         }
 
         $this->mediaFileRepo->update($updateableMediaEntities, $context);
-    }
-
-    private function getInstallationRoot(MigrationContextInterface $migrationContext): string
-    {
-        $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return '';
-        }
-
-        $credentials = $connection->getCredentialFields();
-        if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
-            return '';
-        }
-        $installRoot = $credentials['installationRoot'];
-        $installRoot = ltrim($installRoot, '/');
-        $installRoot = rtrim($installRoot, '/');
-        $installRoot = '/' . $installRoot;
-
-        return $installRoot;
     }
 
     private function getShopUrl(MigrationContextInterface $migrationContext): string
