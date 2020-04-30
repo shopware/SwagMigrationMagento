@@ -174,7 +174,7 @@ class Magento19CategoryConverterTest extends TestCase
     public function testConvertWithoutLocale(): void
     {
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
-        $categoryData = $categoryData[0];
+        $categoryData = $categoryData[1];
         unset($categoryData['defaultLocale']);
 
         $context = Context::createDefaultContext();
