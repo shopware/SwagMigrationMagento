@@ -88,18 +88,6 @@ abstract class CategoryConverter extends MagentoConverter
     {
         $this->context = $context;
 
-        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-        if (!empty($fields)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $migrationContext->getRunUuid(),
-                DefaultEntities::CATEGORY,
-                $data['entity_id'],
-                implode(',', $fields)
-            ));
-
-            return new ConvertStruct(null, $data);
-        }
-
         $connection = $migrationContext->getConnection();
         $this->connectionId = '';
         if ($connection !== null) {
@@ -119,6 +107,18 @@ abstract class CategoryConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
         $rootCategoryMapping = $this->mappingService->getMapping($this->connectionId, MagentoDefaults::ROOT_CATEGORY, $data['parent_id'], $context);
+
+        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
+        if (!empty($fields)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $migrationContext->getRunUuid(),
+                DefaultEntities::CATEGORY,
+                $data['entity_id'],
+                implode(',', $fields)
+            ));
+
+            return new ConvertStruct(null, $data);
+        }
 
         /*
          * Set main data
