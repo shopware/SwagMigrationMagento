@@ -1,6 +1,8 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 1.3.0
 - PT-11373 - Implement Magento 2.x migration profile
 - PT-11618 - Fix error with too many open database connections
+- PT-11642 - Solves an issue when migration orders
+- PT-11659 - Solves an issue when migration categories with unnamed root category
 
 # 1.2.1
 - PT-11525 - Optimize media migration process

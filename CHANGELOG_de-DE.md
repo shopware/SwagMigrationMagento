@@ -1,6 +1,8 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 1.3.0
 - PT-11373 - Implementierung des Magento 2.x Migrationsprofil
-- PT-11618 - Behebt ein Problem mit zu vielen offenen Datenbankverbindungen per CLI 
+- PT-11618 - Behebt ein Problem mit zu vielen offenen Datenbankverbindungen per CLI
+- PT-11642 - Behebt ein Problem bei der Migration von Bestellungen
+- PT-11659 - Behebt ein Problem bei der Migration einer unbenannten root Kategorie
 
 # 1.2.1
 - PT-11525 - Optimiert den Migrationsprozess für Medien
