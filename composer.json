@@ -17,7 +17,7 @@
         "shopware-plugin-class": "Swag\\MigrationMagento\\SwagMigrationMagento",
         "copyright": "(c) by shopware AG",
         "label": {
-            "de-DE": "Magento 1 & 2 Profile für den Migrationsassistenten",
+            "de-DE": "Magento 1 & 2 Profile für den Migrations-Assistenten",
             "en-GB": "Magento 1 & 2 profiles for the Migration Assistant"
         }
     },
