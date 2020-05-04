@@ -13,6 +13,7 @@ use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInt
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
+use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19PasswordEncoderReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
@@ -503,10 +504,21 @@ abstract class CustomerConverter extends MagentoConverter
 
     protected function setPassword(array &$data, array &$converted): bool
     {
-        $converted['legacyPassword'] = $data['password_hash'];
+        $defaultEncoder = $this->mappingService->getValue(
+            $this->connectionId,
+            Magento19PasswordEncoderReader::getMappingName(),
+            'default_password_encoder',
+            $this->context
+        );
+
         // we assume md5 as default for Magento 1.9.x
         // This has to be overridden if differs
-        $converted['legacyEncoder'] = 'Magento19';
+        $converted['legacyEncoder'] = 'Magento19Md5';
+        if ($defaultEncoder !== null) {
+            $converted['legacyEncoder'] = $defaultEncoder;
+        }
+
+        $converted['legacyPassword'] = $data['password_hash'];
         unset($data['password_hash']);
 
         return true;

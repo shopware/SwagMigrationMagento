@@ -7,7 +7,8 @@
                     "shipping_method": "Liefermethoden",
                     "tax": "Steuern",
                     "country": "Länder",
-                    "currency": "Währungen"
+                    "currency": "Währungen",
+                    "password_encoder": "Passwort-Encoder"
                 }
             },
             "selectDataCard": {

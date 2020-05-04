@@ -16,7 +16,9 @@ use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInt
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
-use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder;
+use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\Magento19Md5Encoder;
+use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\Magento19Sha256Encoder;
+use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19PasswordEncoderReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -72,6 +74,11 @@ class Magento19CustomerConverterTest extends TestCase
      * @var string
      */
     private $customerGroupUuid;
+
+    /**
+     * @var DummyMagentoMappingService
+     */
+    private $mappingService;
 
     protected function setUp(): void
     {
@@ -138,6 +145,7 @@ class Magento19CustomerConverterTest extends TestCase
             null,
             $this->countryMappingUuid
         );
+        $this->mappingService = $mappingService;
     }
 
     public function testSupports(): void
@@ -187,7 +195,31 @@ class Magento19CustomerConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
-        static::assertSame((new MagentoEncoder())->getName(), $converted['legacyEncoder']);
+        static::assertSame((new Magento19Md5Encoder())->getName(), $converted['legacyEncoder']);
+        static::assertSame($customerData[0]['password_hash'], $converted['legacyPassword']);
+    }
+
+    public function testConvertPasswordWithPremapping(): void
+    {
+        $encoderName = (new Magento19Sha256Encoder())->getName();
+        $this->mappingService->pushValueMapping(
+            $this->connection->getId(),
+            Magento19PasswordEncoderReader::getMappingName(),
+            'default_password_encoder',
+            $encoderName
+        );
+        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
+        $customerData[0]['password_hash'] = '119bbb83956d4e609498e1bd70004c015a39a8769b109232358cc5118a495150:SALT';
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertNotNull($convertResult->getMappingUuid());
+        static::assertSame($encoderName, $converted['legacyEncoder']);
         static::assertSame($customerData[0]['password_hash'], $converted['legacyPassword']);
     }
 

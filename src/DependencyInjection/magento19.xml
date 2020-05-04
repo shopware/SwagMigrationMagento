@@ -23,7 +23,19 @@
             <tag name="shopware.migration.gateway"/>
         </service>
 
-        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder">
+        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\Magento19Md5Encoder">
+            <tag name="shopware.legacy_encoder"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\Magento19Sha256Encoder">
+            <tag name="shopware.legacy_encoder"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\Magento19Sha512Encoder">
+            <tag name="shopware.legacy_encoder"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\Magento19BcryptEncoder">
             <tag name="shopware.legacy_encoder"/>
         </service>
 
@@ -276,6 +288,11 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19NewsletterRecipientStatusReader"
                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader">
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19PasswordEncoderReader">
+            <argument type="tagged" tag="shopware.legacy_encoder"/>
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
     </services>

@@ -1,0 +1,31 @@
+<?php declare(strict_types=1);
+/*
+ * (c) shopware AG <info@shopware.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Swag\MigrationMagento\Profile\Magento19\PasswordEncoder;
+
+class Magento19Md5Encoder extends Magento19Encoder
+{
+    public function getName(): string
+    {
+        return 'Magento19Md5';
+    }
+
+    public function getDisplayName(): string
+    {
+        return 'MD5';
+    }
+
+    public function isPasswordValid(string $password, string $hash): bool
+    {
+        if (mb_strpos($hash, ':') === false) {
+            return hash_equals($hash, md5($password));
+        }
+        [$md5, $salt] = explode(':', $hash);
+
+        return hash_equals($md5, md5($salt . $password));
+    }
+}

@@ -7,22 +7,25 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\PasswordEncoder;
 
-use Shopware\Core\Checkout\Customer\Password\LegacyEncoder\LegacyEncoderInterface;
-
-class MagentoEncoder implements LegacyEncoderInterface
+class Magento19Sha512Encoder extends Magento19Encoder
 {
     public function getName(): string
     {
-        return 'Magento19';
+        return 'Magento19Sha512';
+    }
+
+    public function getDisplayName(): string
+    {
+        return 'SHA-512';
     }
 
     public function isPasswordValid(string $password, string $hash): bool
     {
         if (mb_strpos($hash, ':') === false) {
-            return hash_equals($hash, md5($password));
+            return hash_equals($hash, hash('sha512', $password));
         }
-        [$md5, $salt] = explode(':', $hash);
+        [$hashString, $salt] = explode(':', $hash);
 
-        return hash_equals($md5, md5($salt . $password));
+        return hash_equals($hashString, hash('sha512', $salt . $password));
     }
 }
