@@ -1,6 +1,6 @@
 {
     "name": "swag/migration-magento",
-    "description": "Magento 1 Profiles for Shopware Migration Assistant",
+    "description": "Magento 1 & 2 profiles for Shopware Migration Assistant",
     "version": "1.3.0",
     "type": "shopware-platform-plugin",
     "license": "MIT",
@@ -17,8 +17,8 @@
         "shopware-plugin-class": "Swag\\MigrationMagento\\SwagMigrationMagento",
         "copyright": "(c) by shopware AG",
         "label": {
-            "de-DE": "Magento 1 Profil für den Migrationsassistenten",
-            "en-GB": "Magento 1 profile for the Migration Assistant"
+            "de-DE": "Magento 1 & 2 Profile für den Migrations-Assistenten",
+            "en-GB": "Magento 1 & 2 profiles for the Migration Assistant"
         }
     },
     "autoload": {
