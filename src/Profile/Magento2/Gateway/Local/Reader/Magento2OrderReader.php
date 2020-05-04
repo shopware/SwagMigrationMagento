@@ -107,7 +107,11 @@ SQL;
         $query->addSelect('items.order_id as identifier');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_order_item', 'items');
 
+        $query->leftJoin('items', 'sales_order_item', 'parentItem', 'parentItem.item_id = items.parent_item_id');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_order_item', 'parentItem');
+
         $query->where('items.order_id IN (:ids)');
+        $query->andWhere('items.product_type != \'configurable\'');
         $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();

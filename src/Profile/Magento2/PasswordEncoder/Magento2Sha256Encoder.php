@@ -11,7 +11,7 @@ use Shopware\Core\Checkout\Customer\Password\LegacyEncoder\LegacyEncoderInterfac
 
 class Magento2Sha256Encoder implements LegacyEncoderInterface
 {
-    public const NAME = 'Magento2Md5';
+    public const NAME = 'Magento2Sha256';
 
     public function getName(): string
     {

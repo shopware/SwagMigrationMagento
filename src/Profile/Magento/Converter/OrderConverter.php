@@ -277,7 +277,7 @@ abstract class OrderConverter extends MagentoConverter
         $lineItems = [];
 
         foreach ($originalData as $originalLineItem) {
-            $isProduct = (bool) $originalLineItem['is_virtual'] === true;
+            $isProduct = (bool) $originalLineItem['is_virtual'] === true || (isset($originalLineItem['product_id']) && $originalLineItem['product_id'] !== null);
 
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
@@ -294,6 +294,19 @@ abstract class OrderConverter extends MagentoConverter
             $this->convertValue($lineItem, 'identifier', $originalLineItem, 'sku');
 
             if ($isProduct) {
+                $mapping = $this->mappingService->getMapping(
+                    $this->connectionId,
+                    DefaultEntities::PRODUCT,
+                    $originalLineItem['product_id'],
+                    $this->context
+                );
+
+                if ($mapping !== null) {
+                    $lineItem['referencedId'] = $mapping['entityUuid'];
+                    $lineItem['productId'] = $mapping['entityUuid'];
+                    $lineItem['payload']['productNumber'] = $originalLineItem['sku'] ?? '';
+                }
+
                 $lineItem['type'] = LineItem::PRODUCT_LINE_ITEM_TYPE;
             } else {
                 $lineItem['type'] = LineItem::CREDIT_LINE_ITEM_TYPE;
@@ -302,8 +315,13 @@ abstract class OrderConverter extends MagentoConverter
             $this->convertValue($lineItem, 'quantity', $originalLineItem, 'qty_ordered', self::TYPE_INTEGER);
             $this->convertValue($lineItem, 'label', $originalLineItem, 'name');
 
+            $lineItemPrice = $originalLineItem['price'];
+            if (isset($originalLineItem['parentItem']['price'])) {
+                $lineItemPrice = $originalLineItem['parentItem']['price'];
+            }
+
             $calculatedTax = null;
-            $totalPrice = $lineItem['quantity'] * $originalLineItem['price'];
+            $totalPrice = $lineItem['quantity'] * $lineItemPrice;
             if ($taxStatus === CartPrice::TAX_STATE_NET) {
                 $calculatedTax = $this->taxCalculator->calculateNetTaxes($totalPrice, $taxRules);
             }
@@ -314,7 +332,7 @@ abstract class OrderConverter extends MagentoConverter
 
             if ($calculatedTax !== null) {
                 $lineItem['price'] = new CalculatedPrice(
-                    (float) $originalLineItem['price'],
+                    (float) $lineItemPrice,
                     (float) $totalPrice,
                     $calculatedTax,
                     $taxRules,
@@ -322,7 +340,7 @@ abstract class OrderConverter extends MagentoConverter
                 );
 
                 $lineItem['priceDefinition'] = new QuantityPriceDefinition(
-                    (float) $originalLineItem['price'],
+                    (float) $lineItemPrice,
                     $taxRules,
                     $context->getCurrencyPrecision()
                 );
