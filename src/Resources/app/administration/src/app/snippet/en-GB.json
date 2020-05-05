@@ -7,8 +7,7 @@
                     "shipping_method": "Shipping methods",
                     "tax": "Taxes",
                     "country": "Countries",
-                    "currency": "Currencies",
-                    "password_encoder": "Password encoder"
+                    "currency": "Currencies"
                 }
             },
             "selectDataCard": {
