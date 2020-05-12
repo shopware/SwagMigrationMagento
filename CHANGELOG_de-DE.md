@@ -1,3 +1,6 @@
+# 1.3.1
+- PT-11658 - Verbessern des Kunden-Passwort-Encoders für Magento 1
+
 # 1.3.0
 - PT-11373 - Implementierung des Magento 2.x Migrationsprofil
 - PT-11618 - Behebt ein Problem mit zu vielen offenen Datenbankverbindungen per CLI

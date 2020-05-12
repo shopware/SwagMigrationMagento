@@ -1,3 +1,6 @@
+# 1.3.1
+- PT-11658 - Improve customer password encoder for Magento 1
+
 # 1.3.0
 - PT-11373 - Implement Magento 2.x migration profile
 - PT-11618 - Fix error with too many open database connections
