@@ -78,7 +78,6 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 this.validateInput(newInputCredentials.dbPort) &&
                 this.validateInput(newInputCredentials.dbName) &&
                 this.validateInput(newInputCredentials.dbUser) &&
-                this.validateInput(newInputCredentials.dbPassword) &&
                 ((this.shopUrlActive === false && this.validateInput(newInputCredentials.installationRoot)) ||
                 (this.shopUrlActive === true && this.validateShopUrl(newInputCredentials.shopUrl)))
             );
