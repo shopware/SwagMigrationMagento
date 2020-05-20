@@ -50,6 +50,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         'defaultCountry',
         'defaultLocale',
         'store_group',
+        'default_group_id',
     ];
 
     /**
@@ -104,6 +105,29 @@ abstract class SalesChannelConverter extends MagentoConverter
             $this->connectionId = $connection->getId();
         }
 
+        $mapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            DefaultEntities::CUSTOMER_GROUP,
+            $data['default_group_id'],
+            $context
+        );
+        if ($mapping === null) {
+            $this->loggingService->addLogEntry(
+                new AssociationRequiredMissingLog(
+                    $this->runId,
+                    DefaultEntities::CUSTOMER_GROUP,
+                    $data['default_group_id'],
+                    DefaultEntities::SALES_CHANNEL
+                )
+            );
+
+            return new ConvertStruct(null, $this->originalData);
+        }
+
+        $converted = [];
+        $converted['customerGroupId'] = $mapping['entityUuid'];
+        unset($data['default_group_id']);
+
         /*
          * Set main mapping
          */
@@ -115,7 +139,6 @@ abstract class SalesChannelConverter extends MagentoConverter
             $this->checksum
         );
 
-        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['website_id']);
 
@@ -146,18 +169,6 @@ abstract class SalesChannelConverter extends MagentoConverter
             );
         }
         unset($data['stores']);
-
-        $mapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::CUSTOMER_GROUP,
-            $data['default_group_id'],
-            $context
-        );
-        if ($mapping === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-        $converted['customerGroupId'] = $mapping['entityUuid'];
-        unset($data['default_group_id']);
 
         /*
          * Set main language and allowed languages

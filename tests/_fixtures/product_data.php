@@ -18,7 +18,7 @@ return [
         'updated_at' => '2013-03-20 17:58:34',
         'instock' => '0.0000',
         'stockmin' => '0.0000',
-        'minpurchase' => '1.0000',
+        'minpurchase' => '100.0000',
         'maxpurchase' => '0.0000',
         'parentId' => null,
         'allow_message' => null,
