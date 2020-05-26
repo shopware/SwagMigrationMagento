@@ -196,6 +196,7 @@ class Magento19ProductConverterTest extends TestCase
             mb_substr($productData[0]['translations']['1']['meta_keyword']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['keywords']
         );
+        static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
     }
 
     public function testConvertChildFirst(): void
@@ -286,6 +287,19 @@ class Magento19ProductConverterTest extends TestCase
         static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PRODUCT');
         static::assertSame($logs[0]['parameters']['sourceId'], $product['entity_id']);
         static::assertSame($logs[0]['parameters']['emptyField'], 'currency');
+    }
+
+    public function testConvertWithZeroMinPurchase(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+        $productData[0]['minpurchase'] = '0';
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertArrayNotHasKey('minPurchase', $converted);
     }
 
     public function testConvertWithPriceIsGross(): void

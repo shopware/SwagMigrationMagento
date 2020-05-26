@@ -216,7 +216,7 @@ abstract class ProductConverter extends MagentoConverter
             $converted['active'] = true;
         }
 
-        if (isset($data['minpurchase'])) {
+        if (isset($data['minpurchase']) && ((int) $data['minpurchase']) !== 0) {
             $this->convertValue($converted, 'minPurchase', $data, 'minpurchase', self::TYPE_INTEGER);
         }
         if (isset($data['maxpurchase'])) {

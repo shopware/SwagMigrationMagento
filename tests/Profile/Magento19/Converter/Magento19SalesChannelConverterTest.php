@@ -105,11 +105,43 @@ class Magento19SalesChannelConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        $salesChannelMapping = $this->mappingService->getMapping(
+            $this->connection->getId(),
+            DefaultEntities::SALES_CHANNEL,
+            $salesChannelData[0]['website_id'],
+            $context
+        );
+
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertCount(3, $converted['paymentMethods']);
         static::assertCount(5, $converted['shippingMethods']);
         static::assertNotNull($convertResult->getMappingUuid());
+        static::assertNotNull($salesChannelMapping);
+        static::assertSame($salesChannelMapping['entityUuid'], $converted['id']);
+    }
+
+    public function testConvertWithInvalidCustomerGroupId(): void
+    {
+        $salesChannelData = require __DIR__ . '/../../../_fixtures/sales_channel_data.php';
+        $salesChannelData[0]['default_group_id'] = '100';
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
+
+        $logs = $this->loggingService->getLoggingArray();
+        $salesChannelMapping = $this->mappingService->getMapping(
+            $this->connection->getId(),
+            DefaultEntities::SALES_CHANNEL,
+            $salesChannelData[0]['website_id'],
+            $context
+        );
+
+        static::assertNull($salesChannelMapping);
+        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getUnmapped());
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CUSTOMER_GROUP', $logs[0]['code']);
+        static::assertSame('100', $logs[0]['parameters']['sourceId']);
     }
 
     public function testConvertWithoutDefaultLanguage(): void
