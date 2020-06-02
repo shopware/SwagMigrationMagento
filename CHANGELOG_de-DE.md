@@ -1,3 +1,6 @@
+# REPLACE-WITH-NEXT-PATCH-VERSION
+- PT-11736 - Verbessern der Basisproduktdaten-Migration
+
 # 1.3.1
 - PT-11658 - Verbessern des Kunden-Passwort-Encoders für Magento 1
 

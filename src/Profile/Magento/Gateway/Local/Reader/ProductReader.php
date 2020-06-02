@@ -194,9 +194,14 @@ SQL;
             if ($storeId !== '0' || $backendType === 'static') {
                 continue;
             }
+
+            if ($attributeCode === 'visibility') {
+                $defaultAttributes['base_visibility'] = $attribute['value'];
+                continue;
+            }
+
             if ($userDefined === '0' || in_array($attributeCode, ['manufacturer', 'cost'], true)) {
-                $value = $attribute['value'];
-                $defaultAttributes[$attributeCode] = $value;
+                $defaultAttributes[$attributeCode] = $attribute['value'];
             }
         }
         $fetchedProduct = array_merge($fetchedProduct, $defaultAttributes);
