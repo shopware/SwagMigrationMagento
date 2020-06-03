@@ -92,6 +92,9 @@ abstract class TaxReader extends AbstractPremappingReader
 
             $entityData[] = new PremappingEntityStruct($data['class_id'], $data['class_name'], $uuid);
         }
+        usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $entityData;
     }
@@ -112,6 +115,9 @@ abstract class TaxReader extends AbstractPremappingReader
             $this->preselectionDictionary[$taxId] = $taxId;
             $choices[] = new PremappingChoiceStruct($taxId, $tax->getName());
         }
+        usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $choices;
     }

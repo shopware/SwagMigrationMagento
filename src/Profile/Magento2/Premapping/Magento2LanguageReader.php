@@ -61,6 +61,9 @@ abstract class Magento2LanguageReader extends AbstractPremappingReader
 
         $entityData = [];
         $entityData[] = new PremappingEntityStruct('default_language', 'Standard language', $uuid);
+        usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $entityData;
     }
@@ -78,6 +81,9 @@ abstract class Magento2LanguageReader extends AbstractPremappingReader
             $this->preselectionDictionary[$language->getName()] = $language->getId();
             $choices[] = new PremappingChoiceStruct($language->getId(), $language->getName());
         }
+        usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $choices;
     }

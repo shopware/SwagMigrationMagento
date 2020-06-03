@@ -99,6 +99,9 @@ abstract class SalutationReader extends AbstractPremappingReader
         }
 
         $entityData[] = new PremappingEntityStruct('default_salutation', 'Standard salutation', $uuid);
+        usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $entityData;
     }
@@ -117,6 +120,9 @@ abstract class SalutationReader extends AbstractPremappingReader
         foreach ($salutations as $salutation) {
             $choices[] = new PremappingChoiceStruct($salutation->getId(), $salutation->getSalutationKey());
         }
+        usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $choices;
     }
