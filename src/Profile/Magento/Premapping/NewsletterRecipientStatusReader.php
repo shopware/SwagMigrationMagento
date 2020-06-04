@@ -81,6 +81,9 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
         foreach ($choices as $key => $choice) {
             $mapping[] = new PremappingEntityStruct((string) $key, $choice, '');
         }
+        usort($mapping, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $mapping;
     }
@@ -91,10 +94,10 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
     protected function getChoices(): array
     {
         $choices = [];
+        $choices[] = new PremappingChoiceStruct('direct', 'Direct');
         $choices[] = new PremappingChoiceStruct('notSet', 'Not set');
         $choices[] = new PremappingChoiceStruct('optIn', 'OptIn');
         $choices[] = new PremappingChoiceStruct('optOut', 'OptOut');
-        $choices[] = new PremappingChoiceStruct('direct', 'Direct');
 
         return $choices;
     }

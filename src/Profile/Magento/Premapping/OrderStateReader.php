@@ -99,6 +99,9 @@ abstract class OrderStateReader extends AbstractPremappingReader
 
             $entityData[] = new PremappingEntityStruct($data['status'], $data['label'], $uuid);
         }
+        usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $entityData;
     }
@@ -125,6 +128,9 @@ abstract class OrderStateReader extends AbstractPremappingReader
             $this->preselectionDictionary[$state->getTechnicalName()] = $state->getId();
             $choices[] = new PremappingChoiceStruct($state->getId(), $state->getName());
         }
+        usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+            return strcmp($item1->getDescription(), $item2->getDescription());
+        });
 
         return $choices;
     }
