@@ -175,23 +175,12 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
 
         $sql = <<<SQL
-SELECT payment.*
-FROM
-    (
-        SELECT
-            REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
-            config.*
-        FROM {$tablePrefix}core_config_data config
-        WHERE path LIKE 'payment/%/title'
-        AND scope = 'default'
-    ) AS payment,
-    (
-      SELECT
-             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
-      FROM {$tablePrefix}core_config_data config
-      WHERE path LIKE 'payment/%/active' AND scope = 'default' AND (value = true OR REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') IN (SELECT DISTINCT(method) FROM {$tablePrefix}sales_flat_order_payment))
-      ) AS payment_active
-WHERE payment.payment_id = payment_active.payment_id;
+SELECT
+    REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
+    config.*
+FROM {$tablePrefix}core_config_data config
+WHERE path LIKE 'payment/%/title'
+AND scope = 'default' AND (value = true OR REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') IN (SELECT DISTINCT(method) FROM {$tablePrefix}sales_flat_order_payment));
 SQL;
 
         return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);

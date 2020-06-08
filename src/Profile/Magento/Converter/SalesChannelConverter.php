@@ -299,14 +299,25 @@ abstract class SalesChannelConverter extends MagentoConverter
          */
         $converted['paymentMethods'] = $this->getPaymentMethods($data, $context);
         if (empty($converted['paymentMethods'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::SALES_CHANNEL,
-                $this->oldIdentifier,
-                'payment methods'
-            ));
+            $defaultPaymentMethod = $this->mappingService->getMapping(
+                $this->connectionId,
+                PaymentMethodReader::getMappingName(),
+                'default_payment_method',
+                $this->context
+            );
 
-            return new ConvertStruct(null, $this->originalData);
+            if (empty($defaultPaymentMethod)) {
+                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                    $this->runId,
+                    DefaultEntities::SALES_CHANNEL,
+                    $this->oldIdentifier,
+                    'payment methods'
+                ));
+
+                return new ConvertStruct(null, $this->originalData);
+            }
+            $this->mappingIds[] = $defaultPaymentMethod['id'];
+            $converted['paymentMethods'][0]['id'] = $defaultPaymentMethod['entityUuid'];
         }
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
         unset($data['payments']);
