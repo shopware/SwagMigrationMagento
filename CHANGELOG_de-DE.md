@@ -1,4 +1,5 @@
-# REPLACE-WITH-NEXT-PATCH-VERSION
+# 1.3.2
+- PT-11722 - Verbessern der Produkt & Saleschannel Konvertierung
 - PT-11736 - Verbessern der Basisproduktdaten-Migration
 - PT-11764 - Werte im Datencheck werden jetzt sortiert ausgegeben
 

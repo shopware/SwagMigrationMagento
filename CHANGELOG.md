@@ -1,4 +1,5 @@
-# REPLACE-WITH-NEXT-PATCH-VERSION
+# 1.3.2
+- PT-11722 - Improve sales channel and product converter
 - PT-11736 - Improve product base data migration
 - PT-11764 - Add sorting of pre-mapping values
 
