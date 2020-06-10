@@ -1,3 +1,6 @@
+# 1.3.3
+- PT-11787 - Add missing query part for table prefixes
+
 # 1.3.2
 - PT-11722 - Improve sales channel and product converter
 - PT-11736 - Improve product base data migration

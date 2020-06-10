@@ -108,7 +108,7 @@ SQL;
         $query->addSelect('items.order_id as identifier');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_item', 'items');
 
-        $query->leftJoin('items', 'sales_flat_order_item', 'parentItem', 'parentItem.item_id = items.parent_item_id');
+        $query->leftJoin('items', $this->tablePrefix . 'sales_flat_order_item', 'parentItem', 'parentItem.item_id = items.parent_item_id');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_item', 'parentItem');
 
         $query->where('items.order_id IN (:ids)');
