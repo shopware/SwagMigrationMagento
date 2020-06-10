@@ -41,6 +41,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchConfiguratorSettings(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -61,8 +64,8 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('eav.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_int.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -72,6 +75,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchProperties(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -91,8 +97,8 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav.frontend_input = \'select\')');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('eav.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_int.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -102,6 +108,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchMultiSelectProperties(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -115,13 +124,13 @@ SQL;
 
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
 
-        $query->leftJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
+        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_varchar', 'entity_varchar', '(entity_varchar.entity_id = relation.child_id OR entity_varchar.entity_id = product.entity_id) AND entity_varchar.store_id = 0');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_varchar.attribute_id AND eav.is_user_defined = 1 ');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav.frontend_input = \'select\')');
 
-        $query->where('eav.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_varchar.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -131,6 +140,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchOptions(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -150,8 +162,8 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = relation.parent_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('eav.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_int.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {

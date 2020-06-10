@@ -25,9 +25,20 @@ abstract class ProductReader extends AbstractReader
         'downloadable',
     ];
 
+    /**
+     * @var int
+     */
+    protected $productEntityTypeId;
+
+    /**
+     * @var array|null
+     */
+    protected $combinedProductIds;
+
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
+        $this->productEntityTypeId = $this->readProductEntityTypeId();
         $priceIsGross = $this->getPriceConfiguration();
         $stockConfiguration = $this->getStockConfiguration();
 
@@ -141,7 +152,7 @@ SELECT
     END AS store_id
 FROM {$this->tablePrefix}catalog_product_entity product
 LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute
-        ON attribute.entity_type_id = (SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type entityType WHERE entity_type_code = 'catalog_product')
+        ON attribute.entity_type_id = {$this->productEntityTypeId}
 LEFT JOIN {$this->tablePrefix}catalog_product_entity_varchar AS product_varchar
     ON product.entity_id = product_varchar.entity_id
     AND attribute.attribute_id = product_varchar.attribute_id
@@ -249,6 +260,7 @@ SQL;
     protected function appendAssociatedData(array $fetchedProducts, array $ids): array
     {
         $resultSet = [];
+        $this->fetchCombinedProductIdsForPropertyFetching($ids);
 
         $attributes = $this->fetchProductAttributes($ids);
         $categories = $this->fetchProductCategories($ids);
@@ -258,6 +270,7 @@ SQL;
         $multiSelectProperties = $this->fetchMultiSelectProperties($ids);
         $configuratorSettings = $this->fetchConfiguratorSettings($ids);
         $options = $this->fetchOptions($ids);
+        unset($this->combinedProductIds);
         $visibility = $this->fetchVisibility($ids);
         $locales = $this->fetchLocales();
 
@@ -325,6 +338,7 @@ SQL;
             $media,
             $prices,
             $properties,
+            $multiSelectProperties,
             $configuratorSettings,
             $options,
             $visibility
@@ -384,6 +398,9 @@ SQL;
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchProperties(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -403,8 +420,8 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('eav.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_int.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -414,6 +431,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchMultiSelectProperties(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -427,13 +447,13 @@ SQL;
 
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
 
-        $query->leftJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
+        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_varchar', 'entity_varchar', '(entity_varchar.entity_id = relation.child_id OR entity_varchar.entity_id = product.entity_id) AND entity_varchar.store_id = 0');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_varchar.attribute_id AND eav.is_user_defined = 1 ');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_varchar.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -443,6 +463,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchConfiguratorSettings(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -463,8 +486,8 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_int.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -474,6 +497,9 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
+    /**
+     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
+     */
     protected function fetchOptions(array $ids): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -494,8 +520,8 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = relation.parent_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
-        $query->where('product.entity_type_id = (SELECT entity_type_id FROM ' . $this->tablePrefix . 'eav_entity_type WHERE entity_type_code = \'catalog_product\') and product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->where('entity_int.entity_id IN (:ids)');
+        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -593,5 +619,32 @@ SQL;
         }
 
         return new StockConfigurationStruct($minPurchase, $maxPurchase);
+    }
+
+    private function readProductEntityTypeId(): int
+    {
+        $sql = <<<SQL
+SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = 'catalog_product';
+SQL;
+
+        return (int) $this->connection->executeQuery($sql)->fetchColumn();
+    }
+
+    private function fetchCombinedProductIdsForPropertyFetching(array $ids): void
+    {
+        $query = $this->connection->createQueryBuilder();
+        $query->select('relation.child_id');
+        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
+        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
+        $query->where('product.entity_id IN (:ids)');
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query = $query->execute();
+
+        if (!($query instanceof ResultStatement)) {
+            $childIds = [];
+        } else {
+            $childIds = $query->fetchAll(\PDO::FETCH_COLUMN);
+        }
+        $this->combinedProductIds = array_merge($ids, $childIds);
     }
 }

@@ -1,3 +1,6 @@
+# 1.3.4
+- PT-11778 - Optimierte Datenbank-Queries beim Auslesen der Produkte
+
 # 1.3.3
 - PT-11787 - Fügt einen fehlenden SQL Query Part für Tabellen-Prefixe hinzu
 

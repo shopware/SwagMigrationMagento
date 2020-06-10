@@ -1,3 +1,6 @@
+# 1.3.4
+- PT-11778 - Optimize product fetching queries
+
 # 1.3.3
 - PT-11787 - Add missing query part for table prefixes
 
