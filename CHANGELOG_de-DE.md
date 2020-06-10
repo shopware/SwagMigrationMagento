@@ -1,3 +1,6 @@
+# 1.3.3
+- PT-11787 - Fügt einen fehlenden SQL Query Part für Tabellen-Prefixe hinzu
+
 # 1.3.2
 - PT-11722 - Verbessern der Produkt & Saleschannel Konvertierung
 - PT-11736 - Verbessern der Basisproduktdaten-Migration
