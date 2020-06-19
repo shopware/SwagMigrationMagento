@@ -232,6 +232,23 @@ SQL;
         return $result;
     }
 
+    public function readCustomerGroups(MigrationContextInterface $migrationContext): array
+    {
+        $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        if ($connection === null) {
+            return [];
+        }
+
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
+
+        $sql = <<<SQL
+SELECT *
+FROM {$tablePrefix}customer_group;
+SQL;
+
+        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
     /**
      * @psalm-suppress DocblockTypeContradiction
      */

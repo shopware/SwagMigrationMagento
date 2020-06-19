@@ -10,11 +10,11 @@ namespace Swag\MigrationMagento\Profile\Magento20\Premapping;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\SeoUrlDataSelection;
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2TaxReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20TaxReader extends Magento2TaxReader
+class Magento20TaxReader extends TaxReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {

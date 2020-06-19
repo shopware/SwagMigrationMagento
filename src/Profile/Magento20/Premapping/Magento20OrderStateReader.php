@@ -8,11 +8,11 @@
 namespace Swag\MigrationMagento\Profile\Magento20\Premapping;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2OrderStateReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20OrderStateReader extends Magento2OrderStateReader
+class Magento20OrderStateReader extends OrderStateReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {

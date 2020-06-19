@@ -217,6 +217,12 @@
         </service>
 
         <!-- Magento 2.0 premapping readers -->
+        <service id="Swag\MigrationMagento\Profile\Magento20\Premapping\Magento20CustomerGroupReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
         <service id="Swag\MigrationMagento\Profile\Magento20\Premapping\Magento20PaymentMethodReader"
                  parent="Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader">
             <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>

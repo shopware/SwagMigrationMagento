@@ -7,11 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Premapping;
 
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2ShippingMethodReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22ShippingMethodReader extends Magento2ShippingMethodReader
+class Magento22ShippingMethodReader extends ShippingMethodReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {

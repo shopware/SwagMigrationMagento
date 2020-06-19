@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2CurrencyReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CurrencyReader;
 use Swag\MigrationMagento\Profile\Magento20\Gateway\Local\Magento20LocalGateway;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20CurrencyReader extends Magento2CurrencyReader
+class Magento20CurrencyReader extends CurrencyReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

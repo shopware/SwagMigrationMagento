@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2PropertyGroupConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento23PropertyGroupConverter extends Magento2PropertyGroupConverter
+class Magento23PropertyGroupConverter extends PropertyGroupConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

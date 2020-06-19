@@ -12,11 +12,11 @@ use Shopware\Core\Framework\Api\Util\AccessKeyHelper;
 use Shopware\Core\Framework\Context;
 use Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CountryReader;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CurrencyReader;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2LanguageReader;
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2PaymentMethodReader;
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2ShippingMethodReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
@@ -31,20 +31,18 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     protected static $requiredDataFieldKeys = [
         'website_id',
         'name',
-        'store_group',
+        'group_id',
+        'root_category_id',
     ];
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-        if (!isset($data['store_group']['root_category_id'])) {
-            $fields[] = 'root_category_id';
-        }
         if (!empty($fields)) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::SALES_CHANNEL,
-                $data['website_id'],
+                $data['group_id'],
                 implode(',', $fields)
             ));
 
@@ -58,12 +56,33 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         $this->originalData = $data;
         $this->context = $context;
         $this->runId = $migrationContext->getRunUuid();
-        $this->oldIdentifier = $data['website_id'];
+        $this->oldIdentifier = $data['group_id'];
 
         $connection = $migrationContext->getConnection();
+        $converted = [];
         $this->connectionId = '';
         if ($connection !== null) {
             $this->connectionId = $connection->getId();
+        }
+
+        $defaultCustomerGroupId = $this->mappingService->getValue(
+            $this->connectionId,
+            DefaultEntities::CUSTOMER_GROUP,
+            'default_customer_group',
+            $context
+        );
+
+        $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
+        if ($defaultCustomerGroupId !== null) {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CUSTOMER_GROUP,
+                $defaultCustomerGroupId,
+                $context
+            );
+            if ($mapping !== null) {
+                $converted['customerGroupId'] = $mapping['entityUuid'];
+            }
         }
 
         /*
@@ -77,23 +96,10 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $this->checksum
         );
 
-        $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
-        unset($data['website_id']);
+        unset($data['group_id']);
 
         $this->setStores($data, $converted);
-
-        $mapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::CUSTOMER_GROUP,
-            $data['default_group_id'],
-            $context
-        );
-        if ($mapping === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-        $converted['customerGroupId'] = $mapping['entityUuid'];
-        unset($data['default_group_id']);
 
         $languageUuid = $this->setLanguageUuid($data, $converted);
         if ($languageUuid === null) {
@@ -139,14 +145,8 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
         // There is no equivalent field
         unset(
-            $data['code'],
-            $data['sort_order'],
-            $data['default_group_id'],
-            $data['is_default'],
-            $data['is_staging'],
-            $data['master_login'],
-            $data['master_password'],
-            $data['visibility']
+            $data['website_id'],
+            $data['default_store_id']
         );
 
         $resultData = $data;
@@ -159,12 +159,12 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
     protected function setStores(array &$data, array &$converted): void
     {
-        if (isset($data['stores'])) {
-            foreach ($data['stores'] as $store) {
+        if (isset($data['storeViews'])) {
+            foreach ($data['storeViews'] as $storeView) {
                 $mapping = $this->mappingService->getOrCreateMapping(
                     $this->connectionId,
                     MagentoDefaultEntities::STORE,
-                    $store['store_id'],
+                    $storeView['store_id'],
                     $this->context,
                     null,
                     null,
@@ -182,7 +182,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $converted['id']
             );
         }
-        unset($data['stores']);
+        unset($data['storeViews']);
     }
 
     protected function setLanguageUuid(array &$data, array &$converted): ?string
@@ -292,7 +292,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         $categoryMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,
-            $data['store_group']['root_category_id'],
+            $data['root_category_id'],
             $this->context
         );
 
@@ -301,7 +301,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::CATEGORY,
-                    $data['store_group']['root_category_id'],
+                    $data['root_category_id'],
                     DefaultEntities::SALES_CHANNEL
                 )
             );
@@ -311,7 +311,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         $categoryUuid = $categoryMapping['entityUuid'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
-        unset($data['store_group']);
+        unset($data['root_category_id']);
 
         return $categoryUuid;
     }
@@ -364,7 +364,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         if (empty($converted['paymentMethods'])) {
             $paymentMethodMapping = $this->mappingService->getMapping(
                 $this->connectionId,
-                Magento2PaymentMethodReader::getMappingName(),
+                PaymentMethodReader::getMappingName(),
                 'default_payment_method',
                 $this->context
             );
@@ -395,7 +395,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         if (empty($converted['shippingMethods'])) {
             $shippingMethodMapping = $this->mappingService->getMapping(
                 $this->connectionId,
-                Magento2ShippingMethodReader::getMappingName(),
+                ShippingMethodReader::getMappingName(),
                 'default_shipping_method',
                 $this->context
             );

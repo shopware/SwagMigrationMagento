@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento21\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2ManufacturerReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ManufacturerReader;
 use Swag\MigrationMagento\Profile\Magento21\Gateway\Local\Magento21LocalGateway;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento21ManufacturerReader extends Magento2ManufacturerReader
+class Magento21ManufacturerReader extends ManufacturerReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

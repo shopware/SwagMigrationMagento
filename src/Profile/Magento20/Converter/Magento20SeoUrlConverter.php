@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\SeoUrlConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SeoUrlDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2SeoUrlConverter;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20SeoUrlConverter extends Magento2SeoUrlConverter
+class Magento20SeoUrlConverter extends SeoUrlConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

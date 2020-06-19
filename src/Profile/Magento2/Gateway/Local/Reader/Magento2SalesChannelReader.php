@@ -22,7 +22,7 @@ abstract class Magento2SalesChannelReader extends SalesChannelReader
 
         $sql = <<<SQL
 SELECT COUNT(*)
-FROM {$this->tablePrefix}store_website
+FROM {$this->tablePrefix}store_group
 WHERE website_id != 0;
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
@@ -30,15 +30,14 @@ SQL;
         return new TotalStruct(DefaultEntities::SALES_CHANNEL, $total);
     }
 
-    protected function fetchWebsites(MigrationContextInterface $migrationContext): array
+    protected function fetchStoreGroups(MigrationContextInterface $migrationContext): array
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from($this->tablePrefix . 'store_website', 'website');
-        $query->addSelect('website.website_id as identifier');
-        $this->addTableSelection($query, $this->tablePrefix . 'store_website', 'website');
+        $query->from($this->tablePrefix . 'store_group', 'storeGroup');
+        $this->addTableSelection($query, $this->tablePrefix . 'store_group', 'storeGroup');
+        $query->where('storeGroup.website_id != 0');
 
-        $query->andWhere('website_id != 0');
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
@@ -47,19 +46,19 @@ SQL;
             return [];
         }
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
+        return $query->fetchAll();
     }
 
-    protected function fetchStores(array $ids): array
+    protected function fetchStoreViews(array $groupIds): array
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from($this->tablePrefix . 'store', 'store');
-        $query->addSelect('store.website_id as website');
-        $this->addTableSelection($query, $this->tablePrefix . 'store', 'store');
+        $query->from($this->tablePrefix . 'store', 'storeView');
+        $query->addSelect('storeView.group_id as storegroup');
+        $this->addTableSelection($query, $this->tablePrefix . 'store', 'storeView');
 
-        $query->andWhere('website_id in (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+        $query->andWhere('storeView.group_id IN (:ids)');
+        $query->setParameter('ids', $groupIds, Connection::PARAM_INT_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -67,24 +66,5 @@ SQL;
         }
 
         return $query->fetchAll(\PDO::FETCH_GROUP);
-    }
-
-    protected function fetchStoreGroups(array $ids): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->from($this->tablePrefix . 'store_group', 'storeGroup');
-        $query->addSelect('storeGroup.website_id as website');
-        $this->addTableSelection($query, $this->tablePrefix . 'store_group', 'storeGroup');
-
-        $query->andWhere('website_id in (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
-
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
     }
 }

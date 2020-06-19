@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2CountryConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento23CountryConverter extends Magento2CountryConverter
+class Magento23CountryConverter extends CountryConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

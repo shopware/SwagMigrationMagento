@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2ManufacturerConverter;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20ManufacturerConverter extends Magento2ManufacturerConverter
+class Magento20ManufacturerConverter extends ManufacturerConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
