@@ -76,7 +76,7 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity_int AS status
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_int AS visible
     ON category.entity_id = visible.entity_id
     AND visible.attribute_id = (SELECT attribute.attribute_id FROM {$this->tablePrefix}eav_attribute attribute WHERE attribute.`entity_type_id` = category.`entity_type_id` AND attribute.attribute_code = 'include_in_menu')
-    AND status.store_id = 0
+    AND visible.store_id = 0
 
 LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS description
     ON category.entity_id = description.entity_id

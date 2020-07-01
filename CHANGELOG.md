@@ -1,3 +1,6 @@
+# 1.3.5
+- PT-11854 - Optimize category fetching query
+
 # 1.3.4
 - PT-11778 - Optimize product fetching queries
 

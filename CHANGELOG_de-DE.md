@@ -1,3 +1,6 @@
+# 1.3.5
+- PT-11854 - Optimierte Datenbank-Query zum Migrieren der Kategorien
+
 # 1.3.4
 - PT-11778 - Optimierte Datenbank-Queries beim Auslesen der Produkte
 
