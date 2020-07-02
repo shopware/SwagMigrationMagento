@@ -1,3 +1,6 @@
+# REPLACE-WITH-NEXT-PATCH-VERSION
+- PT-11859 - Verbessern der Migration von Produkteigenschaften
+
 # 1.3.5
 - PT-11854 - Optimierte Datenbank-Query zum Migrieren der Kategorien
 

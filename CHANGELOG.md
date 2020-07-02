@@ -1,3 +1,6 @@
+# REPLACE-WITH-NEXT-PATCH-VERSION
+- PT-11859 - Improve migration of product properties
+
 # 1.3.5
 - PT-11854 - Optimize category fetching query
 

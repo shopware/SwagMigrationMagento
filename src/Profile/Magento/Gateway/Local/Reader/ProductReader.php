@@ -414,7 +414,7 @@ SQL;
 
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
 
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
+        $query->leftJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id OR entity_int.entity_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');

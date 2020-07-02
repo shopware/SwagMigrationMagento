@@ -230,15 +230,14 @@ abstract class ProductConverter extends MagentoConverter
         if (isset($data['parentId'])) {
             $this->setParent($converted, $data);
         }
-        unset($data['parentId']);
 
         /*
          * Set properties
          */
-        if (isset($data['properties'])) {
+        if (isset($data['properties']) && !isset($data['parentId'])) {
             $this->setProperties($converted, $data);
         }
-        unset($data['properties']);
+        unset($data['properties'], $data['parentId']);
 
         if (isset($data['type_id']) && $data['type_id'] === 'configurable') {
             /*
@@ -255,7 +254,7 @@ abstract class ProductConverter extends MagentoConverter
             if (isset($data['options'], $converted['parentId'])) {
                 $this->setOptions($converted, $data);
             }
-            unset($data['options']);
+            unset($data['options'], $data['type_id']);
         }
 
         if (isset($data['media'])) {

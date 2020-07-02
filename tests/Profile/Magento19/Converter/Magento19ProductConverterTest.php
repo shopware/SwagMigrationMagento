@@ -199,6 +199,24 @@ class Magento19ProductConverterTest extends TestCase
         static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
     }
 
+    public function testConvertMainAndChild(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+        static::assertArrayHasKey('properties', $converted);
+
+        $convertResult = $this->productConverter->convert($productData[1], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertNotNull($convertResult->getMappingUuid());
+        static::assertArrayNotHasKey('properties', $converted);
+    }
+
     public function testConvertChildFirst(): void
     {
         $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
