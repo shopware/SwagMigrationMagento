@@ -7,36 +7,12 @@
 
 return [
     0 => [
+        'group_id' => '1',
         'website_id' => '1',
-        'code' => 'base',
-        'name' => 'Main Website',
-        'sort_order' => '0',
-        'default_group_id' => '1',
-        'is_default' => '1',
-        'is_staging' => '0',
-        'master_login' => null,
-        'master_password' => null,
-        'visibility' => null,
-        'currencies' => [
-            0 => 'DKK',
-            1 => 'EUR',
-        ],
-        'countries' => [
-            0 => 'DE',
-            1 => 'GB',
-            2 => 'NL',
-            3 => 'FR',
-            4 => 'US',
-        ],
-        'locales' => [
-            0 => 'de-DE',
-            1 => 'en-GB',
-            2 => 'fr-FR',
-        ],
-        'defaultCurrency' => 'EUR',
-        'defaultCountry' => 'US',
-        'defaultLocale' => 'de-DE',
-        'stores' => [
+        'name' => 'Madison Island',
+        'root_category_id' => '2',
+        'default_store_id' => '1',
+        'storeViews' => [
             0 => [
                 'store_id' => '1',
                 'code' => 'default',
@@ -65,13 +41,25 @@ return [
                 'is_active' => '1',
             ],
         ],
-        'store_group' => [
-            'group_id' => '1',
-            'website_id' => '1',
-            'name' => 'Madison Island',
-            'root_category_id' => '2',
-            'default_store_id' => '3',
+        'currencies' => [
+            0 => 'DKK',
+            1 => 'EUR',
         ],
+        'countries' => [
+            0 => 'DE',
+            1 => 'GB',
+            2 => 'NL',
+            3 => 'FR',
+            4 => 'US',
+        ],
+        'locales' => [
+            0 => 'de-DE',
+            1 => 'en-GB',
+            2 => 'fr-FR',
+        ],
+        'defaultCurrency' => 'EUR',
+        'defaultCountry' => 'US',
+        'defaultLocale' => 'de-DE',
         'carriers' => [
             0 => [
                 'carrier_id' => 'dhlint',

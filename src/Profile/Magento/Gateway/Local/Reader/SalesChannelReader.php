@@ -19,19 +19,21 @@ abstract class SalesChannelReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        $fetchedWebsites = $this->mapData($this->fetchWebsites($migrationContext), [], ['website']);
-        $ids = array_keys($fetchedWebsites);
+        $storeGroups = $this->mapData($this->fetchStoreGroups($migrationContext), [], ['storeGroup', 'website']);
+        $groupIds = array_column($storeGroups, 'group_id');
 
-        $stores = $this->mapData($this->fetchStores($ids), [], ['store']);
+        $storeViews = $this->mapData($this->fetchStoreViews($groupIds), [], ['storeView']);
         $storeIds = [];
-        array_map(function (array $website) use (&$storeIds): void {
-            array_map(function (array $store) use (&$storeIds): void {
-                $storeId = $store['store_id'];
-                $storeIds[$storeId] = $storeId;
-            }, $website);
-        }, $stores);
 
-        $storeGroups = $this->mapData($this->fetchStoreGroups($ids), [], ['storeGroup']);
+        foreach ($storeGroups as &$storeGroup) {
+            $storeGroup['storeViews'] = [];
+            if (isset($storeViews[$storeGroup['group_id']])) {
+                $storeGroup['storeViews'] = $storeViews[$storeGroup['group_id']];
+                $storeIds[] = array_column($storeViews[$storeGroup['group_id']], 'store_id');
+            }
+        }
+        $storeIds = array_merge(...$storeIds);
+
         $carriers = $this->fetchCarriers();
         $payments = $this->fetchPayments();
 
@@ -41,53 +43,40 @@ abstract class SalesChannelReader extends AbstractReader
 
         $defaults = $this->fetchDefaults();
 
-        foreach ($fetchedWebsites as &$website) {
-            $websiteId = $website['website_id'];
+        foreach ($storeGroups as &$store) {
+            $store['currencies'] = $defaults['defaultAllowedCurrencies'];
+            $store['countries'] = $defaults['defaultAllowedCountries'];
+            $store['locales'][] = $defaults['defaultLocale'];
 
-            $website['currencies'] = $defaults['defaultAllowedCurrencies'];
-            $website['countries'] = $defaults['defaultAllowedCountries'];
-            $website['locales'][] = $defaults['defaultLocale'];
+            $store['defaultCurrency'] = $defaults['defaultCurrency'];
+            $store['defaultCountry'] = $defaults['defaultCountry'];
+            $store['defaultLocale'] = $defaults['defaultLocale'];
 
-            $website['defaultCurrency'] = $defaults['defaultCurrency'];
-            $website['defaultCountry'] = $defaults['defaultCountry'];
-            $website['defaultLocale'] = $defaults['defaultLocale'];
-            if (isset($stores[$websiteId])) {
-                $website['stores'] = $stores[$websiteId];
-
-                foreach ($website['stores'] as $store) {
-                    $storeId = $store['store_id'];
-
-                    if (isset($storeAllowedCurrencies[$storeId])) {
-                        $website['currencies'] = array_merge($website['currencies'], $storeAllowedCurrencies[$storeId]);
+            foreach ($store['storeViews'] as $storeView) {
+                $storeId = $storeView['store_id'];
+                if (isset($storeAllowedCurrencies[$storeId])) {
+                    $store['currencies'] = array_merge($store['currencies'], $storeAllowedCurrencies[$storeId]);
+                }
+                if (isset($storeCountryConfig[$storeId])) {
+                    $allowedCountries = [];
+                    if (isset($storeCountryConfig[$storeId]['allowedCountries'])) {
+                        $allowedCountries = $storeCountryConfig[$storeId]['allowedCountries'];
                     }
 
-                    if (isset($storeCountryConfig[$storeId])) {
-                        $allowedCountries = [];
-                        if (isset($storeCountryConfig[$storeId]['allowedCountries'])) {
-                            $allowedCountries = $storeCountryConfig[$storeId]['allowedCountries'];
-                        }
-
-                        $website['countries'] = array_merge($website['countries'], $allowedCountries);
-                    }
-
-                    if (isset($locales['stores'][$storeId])) {
-                        $website['locales'][] = $locales['stores'][$storeId];
-                    }
+                    $store['countries'] = array_merge($store['countries'], $allowedCountries);
                 }
 
-                $website['locales'] = array_unique($website['locales']);
-                $website['currencies'] = array_unique($website['currencies']);
+                if (isset($locales['stores'][$storeId])) {
+                    $store['locales'][] = $locales['stores'][$storeId];
+                }
             }
-
-            if (isset($storeGroups[$websiteId])) {
-                $website['store_group'] = $storeGroups[$websiteId];
-            }
-
-            $website['carriers'] = $carriers;
-            $website['payments'] = $payments;
+            $store['locales'] = array_unique($store['locales']);
+            $store['currencies'] = array_unique($store['currencies']);
+            $store['carriers'] = $carriers;
+            $store['payments'] = $payments;
         }
 
-        return $this->cleanupResultSet($fetchedWebsites);
+        return $this->cleanupResultSet($storeGroups);
     }
 
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
@@ -96,34 +85,12 @@ abstract class SalesChannelReader extends AbstractReader
 
         $sql = <<<SQL
 SELECT COUNT(*)
-FROM {$this->tablePrefix}core_website
+FROM {$this->tablePrefix}core_store_group
 WHERE website_id != 0;
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
 
         return new TotalStruct(DefaultEntities::SALES_CHANNEL, $total);
-    }
-
-    protected function fetchWebsites(MigrationContextInterface $migrationContext): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->from($this->tablePrefix . 'core_website', 'website');
-        $query->addSelect('website.website_id as identifier');
-        $this->addTableSelection($query, $this->tablePrefix . 'core_website', 'website');
-
-        $query->andWhere('website_id != 0');
-        $query->addOrderBy('website.website_id');
-
-        $query->setFirstResult($migrationContext->getOffset());
-        $query->setMaxResults($migrationContext->getLimit());
-
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
     }
 
     protected function fetchDefaults(): array
@@ -193,16 +160,35 @@ SQL;
         return $defaults;
     }
 
-    protected function fetchStores(array $ids): array
+    protected function fetchStoreGroups(MigrationContextInterface $migrationContext): array
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from($this->tablePrefix . 'core_store', 'store');
-        $query->addSelect('store.website_id as website');
-        $this->addTableSelection($query, $this->tablePrefix . 'core_store', 'store');
+        $query->from($this->tablePrefix . 'core_store_group', 'storeGroup');
+        $this->addTableSelection($query, $this->tablePrefix . 'core_store_group', 'storeGroup');
+        $query->where('storeGroup.website_id != 0');
 
-        $query->andWhere('website_id in (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+        $query->setFirstResult($migrationContext->getOffset());
+        $query->setMaxResults($migrationContext->getLimit());
+
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        return $query->fetchAll();
+    }
+
+    protected function fetchStoreViews(array $groupIds): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->from($this->tablePrefix . 'core_store', 'storeView');
+        $query->addSelect('storeView.group_id as storegroup');
+        $this->addTableSelection($query, $this->tablePrefix . 'core_store', 'storeView');
+
+        $query->andWhere('storeView.group_id IN (:ids)');
+        $query->setParameter('ids', $groupIds, Connection::PARAM_INT_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -210,25 +196,6 @@ SQL;
         }
 
         return $query->fetchAll(\PDO::FETCH_GROUP);
-    }
-
-    protected function fetchStoreGroups(array $ids): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->from($this->tablePrefix . 'core_store_group', 'storeGroup');
-        $query->addSelect('storeGroup.website_id as website');
-        $this->addTableSelection($query, $this->tablePrefix . 'core_store_group', 'storeGroup');
-
-        $query->andWhere('website_id in (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
-
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
     }
 
     protected function fetchCarriers(): array

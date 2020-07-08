@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\NewsletterRecipientConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NewsletterRecipientDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2NewsletterRecipientConverter;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22NewsletterRecipientConverter extends Magento2NewsletterRecipientConverter
+class Magento22NewsletterRecipientConverter extends NewsletterRecipientConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

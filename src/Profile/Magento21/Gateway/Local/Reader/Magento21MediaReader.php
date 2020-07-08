@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento21\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2MediaReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\MediaReader;
 use Swag\MigrationMagento\Profile\Magento21\Gateway\Local\Magento21LocalGateway;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento21MediaReader extends Magento2MediaReader
+class Magento21MediaReader extends MediaReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

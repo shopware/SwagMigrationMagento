@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\LanguageDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2LanguageConverter;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20LanguageConverter extends Magento2LanguageConverter
+class Magento20LanguageConverter extends LanguageConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

@@ -49,8 +49,8 @@ abstract class SalesChannelConverter extends MagentoConverter
         'defaultCurrency',
         'defaultCountry',
         'defaultLocale',
-        'store_group',
-        'default_group_id',
+        'group_id',
+        'root_category_id',
     ];
 
     /**
@@ -70,20 +70,17 @@ abstract class SalesChannelConverter extends MagentoConverter
 
     public function getSourceIdentifier(array $data): string
     {
-        return $data['website_id'];
+        return $data['group_id'];
     }
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-        if (!isset($data['store_group']['root_category_id'])) {
-            $fields[] = 'root_category_id';
-        }
         if (!empty($fields)) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::SALES_CHANNEL,
-                $data['website_id'],
+                $data['group_id'],
                 implode(',', $fields)
             ));
 
@@ -97,36 +94,32 @@ abstract class SalesChannelConverter extends MagentoConverter
         $this->originalData = $data;
         $this->context = $context;
         $this->runId = $migrationContext->getRunUuid();
-        $this->oldIdentifier = $data['website_id'];
-
+        $this->oldIdentifier = $data['group_id'];
+        $converted = [];
         $connection = $migrationContext->getConnection();
         $this->connectionId = '';
         if ($connection !== null) {
             $this->connectionId = $connection->getId();
         }
 
-        $mapping = $this->mappingService->getMapping(
+        $defaultCustomerGroupId = $this->mappingService->getValue(
             $this->connectionId,
             DefaultEntities::CUSTOMER_GROUP,
-            $data['default_group_id'],
+            'default_customer_group',
             $context
         );
-        if ($mapping === null) {
-            $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $this->runId,
-                    DefaultEntities::CUSTOMER_GROUP,
-                    $data['default_group_id'],
-                    DefaultEntities::SALES_CHANNEL
-                )
+        $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
+        if ($defaultCustomerGroupId !== null) {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CUSTOMER_GROUP,
+                $defaultCustomerGroupId,
+                $context
             );
-
-            return new ConvertStruct(null, $this->originalData);
+            if ($mapping !== null) {
+                $converted['customerGroupId'] = $mapping['entityUuid'];
+            }
         }
-
-        $converted = [];
-        $converted['customerGroupId'] = $mapping['entityUuid'];
-        unset($data['default_group_id']);
 
         /*
          * Set main mapping
@@ -140,17 +133,17 @@ abstract class SalesChannelConverter extends MagentoConverter
         );
 
         $converted['id'] = $this->mainMapping['entityUuid'];
-        unset($data['website_id']);
+        unset($data['group_id']);
 
         /*
          * Create the store mappings
          */
-        if (isset($data['stores'])) {
-            foreach ($data['stores'] as $store) {
+        if (isset($data['storeViews'])) {
+            foreach ($data['storeViews'] as $storeView) {
                 $mapping = $this->mappingService->getOrCreateMapping(
                     $this->connectionId,
                     MagentoDefaultEntities::STORE,
-                    $store['store_id'],
+                    $storeView['store_id'],
                     $context,
                     null,
                     null,
@@ -168,7 +161,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $converted['id']
             );
         }
-        unset($data['stores']);
+        unset($data['storeViews']);
 
         /*
          * Set main language and allowed languages
@@ -241,7 +234,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         /*
          * Set navigation category
          */
-        $mainCategory = $data['store_group']['root_category_id'];
+        $mainCategory = $data['root_category_id'];
         $categoryMapping = null;
         if ($mainCategory !== null) {
             $categoryMapping = $this->mappingService->getMapping(
@@ -267,7 +260,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         $categoryUuid = $categoryMapping['entityUuid'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
-        unset($data['store_group']);
+        unset($data['root_category_id']);
 
         /*
          * Set main country and allowed countries
@@ -351,16 +344,9 @@ abstract class SalesChannelConverter extends MagentoConverter
 
         $this->updateMainMapping($migrationContext, $context);
 
-        // There is no equivalent field
         unset(
-            $data['code'],
-            $data['sort_order'],
-            $data['default_group_id'],
-            $data['is_default'],
-            $data['is_staging'],
-            $data['master_login'],
-            $data['master_password'],
-            $data['visibility']
+            $data['website_id'],
+            $data['default_store_id']
         );
 
         $resultData = $data;

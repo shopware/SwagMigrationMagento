@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2ProductReviewReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReviewReader;
 use Swag\MigrationMagento\Profile\Magento20\Gateway\Local\Magento20LocalGateway;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20ProductReviewReader extends Magento2ProductReviewReader
+class Magento20ProductReviewReader extends ProductReviewReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

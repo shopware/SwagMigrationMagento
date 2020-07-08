@@ -3,6 +3,7 @@
         "index": {
             "premappingCard": {
                 "group": {
+                    "customer_group": "Verkaufskanäle",
                     "language": "Sprachen",
                     "shipping_method": "Liefermethoden",
                     "tax": "Steuern",

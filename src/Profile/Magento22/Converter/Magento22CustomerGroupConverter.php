@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\CustomerGroupConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerGroupDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2CustomerGroupConverter;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22CustomerGroupConverter extends Magento2CustomerGroupConverter
+class Magento22CustomerGroupConverter extends CustomerGroupConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

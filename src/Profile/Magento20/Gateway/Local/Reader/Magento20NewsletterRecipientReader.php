@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2NewsletterRecipientReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NewsletterRecipientReader;
 use Swag\MigrationMagento\Profile\Magento20\Gateway\Local\Magento20LocalGateway;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20NewsletterRecipientReader extends Magento2NewsletterRecipientReader
+class Magento20NewsletterRecipientReader extends NewsletterRecipientReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

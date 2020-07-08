@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2ProductConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento23ProductConverter extends Magento2ProductConverter
+class Magento23ProductConverter extends ProductConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

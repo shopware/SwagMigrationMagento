@@ -7,11 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Premapping;
 
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2PaymentMethodReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento20PaymentMethodReader extends Magento2PaymentMethodReader
+class Magento20PaymentMethodReader extends PaymentMethodReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {

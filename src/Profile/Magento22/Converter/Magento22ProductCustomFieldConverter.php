@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\ProductCustomFieldConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2ProductCustomFieldConverter;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22ProductCustomFieldConverter extends Magento2ProductCustomFieldConverter
+class Magento22ProductCustomFieldConverter extends ProductCustomFieldConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

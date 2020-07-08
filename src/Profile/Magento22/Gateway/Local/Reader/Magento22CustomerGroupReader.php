@@ -7,13 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Gateway\Local\Reader;
 
-use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2CustomerGroupReader;
+use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerGroupReader;
 use Swag\MigrationMagento\Profile\Magento22\Gateway\Local\Magento22LocalGateway;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22CustomerGroupReader extends Magento2CustomerGroupReader
+class Magento22CustomerGroupReader extends CustomerGroupReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

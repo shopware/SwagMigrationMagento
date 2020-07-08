@@ -8,11 +8,11 @@
 namespace Swag\MigrationMagento\Profile\Magento22\Premapping;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\NewsletterRecipientDataSelection;
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2NewsletterRecipientStatusReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22NewsletterRecipientStatusReader extends Magento2NewsletterRecipientStatusReader
+class Magento22NewsletterRecipientStatusReader extends NewsletterRecipientStatusReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {

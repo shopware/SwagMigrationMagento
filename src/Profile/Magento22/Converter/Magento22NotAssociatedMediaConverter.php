@@ -7,12 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NotAssociatedMediaDataSet;
-use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2NotAssociatedMediaConverter;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento22NotAssociatedMediaConverter extends Magento2NotAssociatedMediaConverter
+class Magento22NotAssociatedMediaConverter extends NotAssociatedMediaConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {

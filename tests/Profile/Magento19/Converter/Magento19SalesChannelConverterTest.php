@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SalesChannelDataSet;
@@ -86,7 +87,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'freeshipping', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'ups', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
-        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, '1', $context, null, null, Uuid::randomHex());
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $context, null, null, Uuid::randomHex());
     }
 
     public function testSupports(): void
@@ -108,7 +109,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $salesChannelMapping = $this->mappingService->getMapping(
             $this->connection->getId(),
             DefaultEntities::SALES_CHANNEL,
-            $salesChannelData[0]['website_id'],
+            $salesChannelData[0]['group_id'],
             $context
         );
 
@@ -119,29 +120,6 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
         static::assertNotNull($salesChannelMapping);
         static::assertSame($salesChannelMapping['entityUuid'], $converted['id']);
-    }
-
-    public function testConvertWithInvalidCustomerGroupId(): void
-    {
-        $salesChannelData = require __DIR__ . '/../../../_fixtures/sales_channel_data.php';
-        $salesChannelData[0]['default_group_id'] = '100';
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
-
-        $logs = $this->loggingService->getLoggingArray();
-        $salesChannelMapping = $this->mappingService->getMapping(
-            $this->connection->getId(),
-            DefaultEntities::SALES_CHANNEL,
-            $salesChannelData[0]['website_id'],
-            $context
-        );
-
-        static::assertNull($salesChannelMapping);
-        static::assertNull($convertResult->getConverted());
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CUSTOMER_GROUP', $logs[0]['code']);
-        static::assertSame('100', $logs[0]['parameters']['sourceId']);
     }
 
     public function testConvertWithoutDefaultLanguage(): void
@@ -198,7 +176,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertCount(1, $logs);
 
         static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CATEGORY');
-        static::assertSame($logs[0]['parameters']['sourceId'], $salesChannelData[0]['store_group']['root_category_id']);
+        static::assertSame($logs[0]['parameters']['sourceId'], $salesChannelData[0]['root_category_id']);
     }
 
     public function testConvertMissingPaymentMethod(): void
@@ -313,5 +291,17 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertSame($logs[5]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_SALES_CHANNEL');
         static::assertSame($logs[5]['parameters']['sourceId'], $salesChannelData[0]['website_id']);
         static::assertSame($logs[5]['parameters']['emptyField'], 'shipping methods');
+    }
+
+    public function testConvertWithoutDefaultCustomerGroup(): void
+    {
+        $salesChannelData = require __DIR__ . '/../../../_fixtures/sales_channel_data.php';
+
+        $context = Context::createDefaultContext();
+        $this->mappingService->deleteDummyMapping(DefaultEntities::CUSTOMER_GROUP, 'default_customer_group');
+        $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+
+        static::assertSame(Defaults::FALLBACK_CUSTOMER_GROUP, $converted['customerGroupId']);
     }
 }

@@ -9,11 +9,11 @@ namespace Swag\MigrationMagento\Profile\Magento23\Premapping;
 
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
-use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2SalutationReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-class Magento23SalutationReader extends Magento2SalutationReader
+class Magento23SalutationReader extends SalutationReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {

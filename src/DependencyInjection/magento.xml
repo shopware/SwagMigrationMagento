@@ -104,6 +104,8 @@
         </service>
 
         <!-- Magento premapping readers -->
+        <service id="Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader" abstract="true"/>
+
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader" abstract="true"/>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader" abstract="true"/>
