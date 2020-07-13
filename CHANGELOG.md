@@ -1,4 +1,5 @@
-# REPLACE-WITH-NEXT-PATCH-VERSION
+# 1.4.0
+- PT-11779 - Split store structure based on store groups to sales channels
 - PT-11859 - Improve migration of product properties
 
 # 1.3.5
