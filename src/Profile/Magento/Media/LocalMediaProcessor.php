@@ -7,16 +7,16 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Media;
 
+use Doctrine\DBAL\Connection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use Shopware\Core\Content\Media\Exception\DuplicatedMediaFileNameException;
+use Shopware\Core\Content\Media\Exception\EmptyMediaFilenameException;
+use Shopware\Core\Content\Media\Exception\IllegalFileNameException;
 use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Content\Media\File\MediaFile;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
@@ -28,11 +28,11 @@ use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileProcessorInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
-use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileEntity;
 use SwagMigrationAssistant\Migration\MessageQueue\Handler\ProcessMediaHandler;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Profile\Shopware\Media\BaseMediaService;
 
-class LocalMediaProcessor implements MediaFileProcessorInterface
+class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
 {
     /**
      * @var EntityRepositoryInterface
@@ -63,12 +63,14 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         EntityRepositoryInterface $migrationMediaFileRepo,
         EntityRepositoryInterface $mediaRepo,
         FileSaver $fileSaver,
-        LoggingServiceInterface $loggingService
+        LoggingServiceInterface $loggingService,
+        Connection $dbalConnection
     ) {
         $this->mediaFileRepo = $migrationMediaFileRepo;
         $this->mediaRepo = $mediaRepo;
         $this->fileSaver = $fileSaver;
         $this->loggingService = $loggingService;
+        parent::__construct($dbalConnection);
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool
@@ -103,8 +105,7 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
             return $workload;
         }
 
-        /** @var SwagMigrationMediaFileEntity[] $media */
-        $media = $this->getMediaFiles(array_keys($mappedWorkload), $migrationContext->getRunUuid(), $context);
+        $media = $this->getMediaFiles(array_keys($mappedWorkload), $migrationContext->getRunUuid());
         $mappedWorkload = $this->getMediaPathMapping($media, $mappedWorkload);
 
         $installationRoot = $this->getInstallationRoot($migrationContext);
@@ -124,7 +125,14 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
                 return $workload;
             }
 
-            return $this->downloadMediaFiles($media, $shopUrl, $mappedWorkload, $workload, $migrationContext, $context);
+            return $this->downloadMediaFiles(
+                $media,
+                $shopUrl,
+                $mappedWorkload,
+                $workload,
+                $migrationContext,
+                $context
+            );
         }
 
         return $this->copyMediaFiles($media, $mappedWorkload, $migrationContext, $context);
@@ -133,19 +141,18 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
     /**
      * Start all the download requests for the media in parallel (async) and return the promise array.
      *
-     * @param SwagMigrationMediaFileEntity[] $media
-     * @param MediaProcessWorkloadStruct[]   $mappedWorkload
+     * @param MediaProcessWorkloadStruct[] $mappedWorkload
      */
     protected function doMediaDownloadRequests(array $media, array &$mappedWorkload, Client $client, string $shopUrl): array
     {
         $promises = [];
         foreach ($media as $mediaFile) {
-            $uuid = mb_strtolower($mediaFile->getMediaId());
+            $uuid = mb_strtolower($mediaFile['media_id']);
             $additionalData = [];
-            $additionalData['uri'] = $shopUrl . $mediaFile->getUri();
+            $additionalData['uri'] = $shopUrl . $mediaFile['uri'];
 
-            $additionalData['file_size'] = $mediaFile->getFileSize();
-            $additionalData['file_name'] = $mediaFile->getFileName();
+            $additionalData['file_size'] = $mediaFile['file_size'];
+            $additionalData['file_name'] = $mediaFile['file_name'];
             $mappedWorkload[$uuid]->setAdditionalData($additionalData);
 
             $promise = $this->doNormalDownloadRequest($mappedWorkload[$uuid], $client);
@@ -170,7 +177,7 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
                 ]
             );
 
-            $workload->setCurrentOffset($additionalData['file_size']);
+            $workload->setCurrentOffset((int) $additionalData['file_size']);
             $workload->setState(MediaProcessWorkloadStruct::FINISH_STATE);
         } catch (\Exception $exception) {
             $promise = null;
@@ -199,16 +206,6 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         return $installRoot;
     }
 
-    private function getMediaFiles(array $mediaIds, string $runId, Context $context): array
-    {
-        $criteria = new Criteria();
-        $criteria->addFilter(new EqualsAnyFilter('mediaId', $mediaIds));
-        $criteria->addFilter(new EqualsFilter('runId', $runId));
-        $mediaSearchResult = $this->mediaFileRepo->search($criteria, $context);
-
-        return $mediaSearchResult->getElements();
-    }
-
     /**
      * @param MediaProcessWorkloadStruct[] $mappedWorkload
      *
@@ -216,9 +213,8 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
      */
     private function getMediaPathMapping(array $media, array $mappedWorkload): array
     {
-        /** @var SwagMigrationMediaFileEntity $mediaFile */
         foreach ($media as $mediaFile) {
-            $mappedWorkload[$mediaFile->getMediaId()]->setAdditionalData(['path' => $mediaFile->getUri()]);
+            $mappedWorkload[$mediaFile['media_id']]->setAdditionalData(['path' => $mediaFile['uri']]);
         }
 
         return $mappedWorkload;
@@ -238,30 +234,31 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         $processedMedia = [];
         $failureUuids = [];
 
-        /** @var SwagMigrationMediaFileEntity $mediaFile */
         foreach ($media as $mediaFile) {
-            $sourcePath = $this->getInstallationRoot($migrationContext) . $mappedWorkload[$mediaFile->getMediaId()]->getAdditionalData()['path'];
+            $rowId = $mediaFile['id'];
+            $mediaId = $mediaFile['media_id'];
+            $sourcePath = $this->getInstallationRoot($migrationContext) . $mappedWorkload[$mediaId]->getAdditionalData()['path'];
 
             $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-            $filePath = sprintf('_temp/%s.%s', $mediaFile->getId(), $fileExtension);
+            $filePath = sprintf('_temp/%s.%s', $rowId, $fileExtension);
 
             if (copy($sourcePath, $filePath)) {
                 $fileSize = filesize($filePath);
-                $mappedWorkload[$mediaFile->getMediaId()]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
+                $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
 
-                $this->persistFileToMedia($filePath, $mediaFile->getMediaId(), $mediaFile->getFileName(), $fileSize, $fileExtension, $context);
+                $this->persistFileToMedia($filePath, $mediaId, $mediaFile['file_name'], $fileSize, $fileExtension, $context);
                 unlink($filePath);
             } else {
-                $mappedWorkload[$mediaFile->getMediaId()]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
                 $this->loggingService->addLogEntry(new CannotGetFileRunLog(
-                    $mappedWorkload[$mediaFile->getMediaId()]->getRunId(),
+                    $mappedWorkload[$mediaId]->getRunId(),
                     DefaultEntities::MEDIA,
-                    $mediaFile->getMediaId(),
+                    $mediaId,
                     $sourcePath
                 ));
-                $failureUuids[$mediaFile->getId()] = $mediaFile->getMediaId();
+                $failureUuids[$rowId] = $mediaId;
             }
-            $processedMedia[] = $mediaFile->getMediaId();
+            $processedMedia[] = $mediaId;
         }
         $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $processedMedia, $failureUuids);
         $this->loggingService->saveLogging($context);
@@ -277,29 +274,33 @@ class LocalMediaProcessor implements MediaFileProcessorInterface
         string $fileExtension,
         Context $context
     ): void {
-        $mimeType = mime_content_type($filePath);
-        $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
+        $context->disableCache(function (Context $context) use ($mediaId, $filePath, $fileName, $fileSize, $fileExtension): void {
+            $mimeType = mime_content_type($filePath);
+            $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
 
-        try {
-            $this->fileSaver->persistFileToMedia($mediaFile, $fileName, $mediaId, $context);
-        } catch (DuplicatedMediaFileNameException $e) {
-            $this->fileSaver->persistFileToMedia($mediaFile, $fileName . mb_substr(Uuid::randomHex(), 0, 5), $mediaId, $context);
-        }
+            try {
+                $this->fileSaver->persistFileToMedia($mediaFile, $fileName, $mediaId, $context);
+            } catch (DuplicatedMediaFileNameException $e) {
+                $this->fileSaver->persistFileToMedia(
+                    $mediaFile,
+                    $fileName . mb_substr(Uuid::randomHex(), 0, 5),
+                    $mediaId,
+                    $context
+                );
+            } catch (IllegalFileNameException | EmptyMediaFilenameException $e) {
+                $this->fileSaver->persistFileToMedia($mediaFile, Uuid::randomHex(), $mediaId, $context);
+            }
+        });
     }
 
     private function setProcessedFlag(string $runId, Context $context, array $finishedUuids, array $failureUuids): void
     {
-        $criteria = new Criteria();
-        $criteria->addFilter(new EqualsAnyFilter('mediaId', $finishedUuids));
-        $criteria->addFilter(new EqualsFilter('runId', $runId));
-        $mediaFiles = $this->mediaFileRepo->search($criteria, $context);
-
+        $mediaFiles = $this->getMediaFiles($finishedUuids, $runId);
         $updateableMediaEntities = [];
-        foreach ($mediaFiles->getElements() as $mediaFile) {
-            /* @var SwagMigrationMediaFileEntity $mediaFile */
-            if (!in_array($mediaFile->getMediaId(), $failureUuids, true)) {
+        foreach ($mediaFiles as $mediaFile) {
+            if (!in_array($mediaFile['media_id'], $failureUuids, true)) {
                 $updateableMediaEntities[] = [
-                    'id' => $mediaFile->getId(),
+                    'id' => $mediaFile['id'],
                     'processed' => true,
                 ];
             }

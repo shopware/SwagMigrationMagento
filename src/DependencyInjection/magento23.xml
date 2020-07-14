@@ -281,6 +281,7 @@
             <argument type="service" id="media.repository"/>
             <argument type="service" id="Shopware\Core\Content\Media\File\FileSaver"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
             <tag name="shopware.migration.media_file_processor"/>
         </service>
     </services>
