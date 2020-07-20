@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - PT-11864 - Verarbeitung der Medien verbessert
+- PT-11923 - Kompatibilität für Shopware 6.3
 - PT-11955 - Behebt ein Problem beim Speichern der Medien
 
 # 1.4.0
