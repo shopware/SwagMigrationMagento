@@ -246,7 +246,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 $fileSize = filesize($filePath);
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
 
-                $this->persistFileToMedia($filePath, $mediaId, $mediaFile['file_name'], $fileSize, $fileExtension, $context);
+                $this->persistFileToMedia($filePath, $mediaId, urlencode($mediaFile['file_name']), $fileSize, $fileExtension, $context);
                 unlink($filePath);
             } else {
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
