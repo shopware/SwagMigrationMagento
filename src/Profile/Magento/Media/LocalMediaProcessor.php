@@ -279,11 +279,11 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
 
             try {
-                $this->fileSaver->persistFileToMedia($mediaFile, $fileName, $mediaId, $context);
+                $this->fileSaver->persistFileToMedia($mediaFile, urlencode($fileName), $mediaId, $context);
             } catch (DuplicatedMediaFileNameException $e) {
                 $this->fileSaver->persistFileToMedia(
                     $mediaFile,
-                    $fileName . mb_substr(Uuid::randomHex(), 0, 5),
+                    urlencode($fileName) . mb_substr(Uuid::randomHex(), 0, 5),
                     $mediaId,
                     $context
                 );
