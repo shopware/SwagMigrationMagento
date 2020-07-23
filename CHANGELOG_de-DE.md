@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - PT-11864 - Verarbeitung der Medien verbessert
+- PT-11955 - Behebt ein Problem beim Speichern der Medien
 
 # 1.4.0
 - PT-11779 - Aufteilung der Store-Struktur zu Verkaufskanälen basierend auf den Store-Groups

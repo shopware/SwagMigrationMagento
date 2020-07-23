@@ -277,6 +277,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         $context->disableCache(function (Context $context) use ($mediaId, $filePath, $fileName, $fileSize, $fileExtension): void {
             $mimeType = mime_content_type($filePath);
             $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
+            $fileName = preg_replace('/[^a-zA-Z0-9_-]+/', '-', mb_strtolower($fileName));
 
             try {
                 $this->fileSaver->persistFileToMedia($mediaFile, $fileName, $mediaId, $context);

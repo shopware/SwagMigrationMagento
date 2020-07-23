@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - PT-11864 - Improve media file processing
+- PT-11955 - Fixes a problem with saving media
 
 # 1.4.0
 - PT-11779 - Split store structure based on store groups to sales channels
