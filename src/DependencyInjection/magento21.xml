@@ -123,6 +123,12 @@
             <tag name="shopware.migration.reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento21\Gateway\Local\Reader\Magento21CrossSellingReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CrossSellingReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
         <!-- Magento 2.1 converters -->
         <service id="Swag\MigrationMagento\Profile\Magento21\Converter\Magento21LanguageConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter">
@@ -213,6 +219,11 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento21\Converter\Magento21SeoUrlConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\SeoUrlConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento21\Converter\Magento21CrossSellingConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CrossSellingConverter">
             <tag name="shopware.migration.converter"/>
         </service>
 

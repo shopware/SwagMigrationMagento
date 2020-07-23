@@ -216,6 +216,11 @@
             <tag name="shopware.migration.converter"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento22\Converter\Magento22CrossSellingConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CrossSellingConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
         <!-- Magento 2.2 premapping readers -->
         <service id="Swag\MigrationMagento\Profile\Magento22\Premapping\Magento22CustomerGroupReader"
                  parent="Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader">

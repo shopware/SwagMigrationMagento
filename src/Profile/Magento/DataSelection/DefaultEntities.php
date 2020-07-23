@@ -9,6 +9,8 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 final class DefaultEntities
 {
+    public const CROSS_SELLING_TYPE = 'cross_sell';
+
     public const GUEST_CUSTOMER = 'guest_customer';
 
     public const NOT_ASSOCIATED_MEDIA = 'not_associated_media';
@@ -22,4 +24,8 @@ final class DefaultEntities
     public const STORE_DEFAULT = 'default_store';
 
     public const STORE_LANGUAGE = 'store_language';
+
+    public const UP_SELLING_TYPE = 'up_sell';
+
+    public const RELATION_SELLING_TYPE = 'relation';
 }

@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-12 - Cross- und Upselling werden jetzt migriert
+
 # 1.5.0
 - PT-11864 - Verarbeitung der Medien verbessert
 - PT-11923 - Kompatibilität für Shopware 6.3

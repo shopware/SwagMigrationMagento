@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-12 - Migrate cross- and up-selling
+
 # 1.5.0
 - PT-11864 - Improve media file processing
 - PT-11923 - Shopware 6.3 compatibility

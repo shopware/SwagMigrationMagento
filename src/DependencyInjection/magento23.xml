@@ -122,6 +122,12 @@
             <tag name="shopware.migration.reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader\Magento23CrossSellingReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CrossSellingReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
         <!-- Magento 2.3 converters -->
         <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23LanguageConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter">
@@ -211,6 +217,11 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23SeoUrlConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\SeoUrlConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CrossSellingConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CrossSellingConverter">
             <tag name="shopware.migration.converter"/>
         </service>
 
