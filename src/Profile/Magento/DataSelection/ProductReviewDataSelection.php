@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CrossSellingDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet;
@@ -47,6 +48,7 @@ class ProductReviewDataSelection implements DataSelectionInterface
             PropertyGroupDataSet::getEntity(),
             ProductCustomFieldDataSet::getEntity(),
             ProductDataSet::getEntity(),
+            CrossSellingDataSet::getEntity(),
             ProductReviewDataSet::getEntity(),
         ];
     }
