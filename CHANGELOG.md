@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-13 - Migrate product reviews without customer
 - MIG-70 - Optimized bounding of custom field sets to products
 
 # 2.0.2

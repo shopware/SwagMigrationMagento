@@ -12,7 +12,6 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class ProductReviewConverter extends MagentoConverter
@@ -78,41 +77,20 @@ abstract class ProductReviewConverter extends MagentoConverter
         $this->mappingIds[] = $mapping['id'];
         unset($data['productId']);
 
-        if (!isset($data['customer_id'])) {
-            $this->loggingService->addLogEntry(
-                new EmptyNecessaryFieldRunLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::PRODUCT_REVIEW,
-                    $this->oldIdentifier,
-                    'customer_id'
-                )
+        if (isset($data['customer_id'])) {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CUSTOMER,
+                $data['customer_id'],
+                $context
             );
 
-            return new ConvertStruct(null, $data);
+            if ($mapping !== null) {
+                $converted['customerId'] = $mapping['entityUuid'];
+                $this->mappingIds[] = $mapping['id'];
+            }
+            unset($data['customer_id']);
         }
-
-        $mapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::CUSTOMER,
-            $data['customer_id'],
-            $context
-        );
-
-        if ($mapping === null) {
-            $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::CUSTOMER,
-                    $data['customer_id'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
-        }
-        $converted['customerId'] = $mapping['entityUuid'];
-        $this->mappingIds[] = $mapping['id'];
-        unset($data['customer_id']);
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -159,7 +137,12 @@ abstract class ProductReviewConverter extends MagentoConverter
         $this->mappingIds[] = $languageMapping['id'];
         unset($data['store_id']);
 
+        if (isset($data['created_at'])) {
+            $this->convertValue($converted, 'createdAt', $data, 'created_at');
+        }
+
         $this->convertValue($converted, 'title', $data, 'title');
+        $this->convertValue($converted, 'externalUser', $data, 'nickname');
         if (empty($converted['title'])) {
             $converted['title'] = \mb_substr($data['detail'], 0, 30) . '...';
         }
@@ -179,8 +162,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         // There is no equivalent field
         unset(
-            $data['detail_id'],
-            $data['nickname']
+            $data['detail_id']
         );
 
         $resultData = $data;
