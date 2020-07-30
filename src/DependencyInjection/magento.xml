@@ -122,6 +122,8 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader" abstract="true"/>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader" abstract="true"/>
+
         <!-- Magento Reader Base classes -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
 
