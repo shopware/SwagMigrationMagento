@@ -27,7 +27,7 @@ abstract class CategoryReader extends AbstractReader
             $category['defaultLocale'] = str_replace('_', '-', $category['defaultLocale']);
         }
 
-        return $this->cleanupResultSet($fetchedCategories);
+        return $this->utf8ize($this->cleanupResultSet($fetchedCategories));
     }
 
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct

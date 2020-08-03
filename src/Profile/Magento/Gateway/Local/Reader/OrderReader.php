@@ -15,11 +15,6 @@ use SwagMigrationAssistant\Migration\TotalStruct;
 
 abstract class OrderReader extends AbstractReader
 {
-    /**
-     * @psalm-suppress PossiblyInvalidArgument
-     * @psalm-suppress InvalidReturnStatement
-     * @psalm-suppress InvalidReturnType
-     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);

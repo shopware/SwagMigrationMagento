@@ -90,22 +90,13 @@ abstract class AbstractReader implements ReaderInterface
         return $query->fetch(\PDO::FETCH_COLUMN);
     }
 
-    /**
-     * @param array|bool|false|string|string[] $mixed
-     *
-     * @return array|bool|false|string|string[]
-     */
-    protected function utf8ize($mixed)
+    protected function utf8ize(array $array): array
     {
-        if (is_array($mixed)) {
-            foreach ($mixed as $key => $value) {
-                $mixed[$key] = $this->utf8ize($value);
-            }
-        } elseif (is_string($mixed)) {
-            return mb_convert_encoding($mixed, 'UTF-8', 'UTF-8');
+        foreach ($array as $key => $value) {
+            $array[$key] = $this->childrenUtf8ize($value);
         }
 
-        return $mixed;
+        return $array;
     }
 
     protected function addTableSelection(QueryBuilder $query, string $table, string $tableAlias): void
@@ -298,5 +289,23 @@ SQL;
         }
 
         return $groupedResult;
+    }
+
+    /**
+     * @param array|bool|string|string[] $mixed
+     *
+     * @return array|bool|string|string[]
+     */
+    private function childrenUtf8ize($mixed)
+    {
+        if (is_array($mixed)) {
+            foreach ($mixed as $key => $value) {
+                $mixed[$key] = $this->childrenUtf8ize($value);
+            }
+        } elseif (is_string($mixed)) {
+            return mb_convert_encoding($mixed, 'UTF-8', 'UTF-8');
+        }
+
+        return $mixed;
     }
 }

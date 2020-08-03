@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-1 - Improve migration of category, product, manufacturer and property group translation
 - MIG-7 - Fix migration of order deliveries
 - MIG-12 - Migrate cross- and up-selling
 

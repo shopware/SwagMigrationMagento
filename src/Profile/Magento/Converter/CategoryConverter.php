@@ -196,31 +196,9 @@ abstract class CategoryConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['entity_id']);
 
-        $this->convertValue($converted, 'description', $data, 'description');
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
         $this->convertValue($converted, 'active', $data, 'status', self::TYPE_BOOLEAN);
         $this->convertValue($converted, 'visible', $data, 'visible', self::TYPE_BOOLEAN);
-        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
-        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
-        $this->convertValue($converted, 'keywords', $data, 'meta_keywords');
-
-        if (isset($converted['metaDescription'])) {
-            $converted['metaDescription'] = $this->trimValue($converted['metaDescription']);
-        }
-        if (isset($converted['keywords'])) {
-            $converted['keywords'] = $this->trimValue($converted['keywords']);
-        }
-
-        /*
-         * Set translations
-         */
-        $converted['translations'] = [];
-        $this->setCategoryTranslation($data, $converted);
-        unset($data['defaultLocale']);
-
-        if ($converted['translations'] === []) {
-            unset($converted['translations']);
-        }
 
         /*
          * Set category image
@@ -230,13 +208,14 @@ abstract class CategoryConverter extends MagentoConverter
         }
         unset($data['image']);
 
+        $converted['translations'] = [];
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations(
                 $data['translations'],
                 [
                     'name' => 'name',
                     'description' => 'description',
-                    'meta_title' => 'metaTitle',
+                    'meta_title' => ['key' => 'metaTitle', 'maxChars' => 255],
                     'meta_keywords' => ['key' => 'keywords', 'maxChars' => 255],
                     'meta_description' => ['key' => 'metaDescription', 'maxChars' => 255],
                 ],
@@ -249,6 +228,23 @@ abstract class CategoryConverter extends MagentoConverter
             unset($translation);
         }
         unset($data['translations']);
+
+        $this->setCategoryTranslation($data, $converted);
+        unset($data['defaultLocale']);
+
+        if (isset($converted['metaDescription'])) {
+            $converted['metaDescription'] = $this->trimValue($converted['metaDescription']);
+        }
+        if (isset($converted['keywords'])) {
+            $converted['keywords'] = $this->trimValue($converted['keywords']);
+        }
+        if (isset($converted['metaTitle'])) {
+            $converted['metaTitle'] = $this->trimValue($converted['metaTitle']);
+        }
+
+        if ($converted['translations'] === []) {
+            unset($converted['translations']);
+        }
 
         $this->updateMainMapping($migrationContext, $context);
 
@@ -274,8 +270,19 @@ abstract class CategoryConverter extends MagentoConverter
 
     protected function setCategoryTranslation(array &$data, array &$converted): void
     {
+        $defaultLanguage = $this->mappingService->getDefaultLanguage($this->context);
+
+        $defaultLanguageId = '';
+        if ($defaultLanguage !== null) {
+            $defaultLanguageId = $defaultLanguage->getId();
+        }
+
         $originalData = $data;
-        $this->convertValue($converted, 'name', $data, 'name');
+        $this->convertTranslationValue($defaultLanguageId, $converted, 'name', $data, 'name');
+        $this->convertTranslationValue($defaultLanguageId, $converted, 'description', $data, 'description');
+        $this->convertTranslationValue($defaultLanguageId, $converted, 'metaTitle', $data, 'meta_title');
+        $this->convertTranslationValue($defaultLanguageId, $converted, 'metaDescription', $data, 'meta_description');
+        $this->convertTranslationValue($defaultLanguageId, $converted, 'keywords', $data, 'meta_keywords');
 
         $language = $this->mappingService->getDefaultLanguage($this->context);
         if ($language === null) {
@@ -287,14 +294,33 @@ abstract class CategoryConverter extends MagentoConverter
             return;
         }
 
+        if (isset($converted['translations'][$language->getId()]['name'])) {
+            unset($converted['name']);
+        }
+
         if ($locale->getCode() === $data['defaultLocale']) {
+            return;
+        }
+
+        try {
+            $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
+        } catch (\Exception $exception) {
+            $this->mappingService->deleteMapping($converted['id'], $this->connectionId, $this->context);
+            throw $exception;
+        }
+
+        if ($languageUuid === null) {
             return;
         }
 
         $localeTranslation = [];
         $localeTranslation['categoryId'] = $converted['id'];
 
-        $this->convertValue($localeTranslation, 'name', $originalData, 'name');
+        $this->convertTranslationValue($languageUuid, $localeTranslation, 'name', $originalData, 'name');
+        $this->convertTranslationValue($languageUuid, $localeTranslation, 'description', $originalData, 'description');
+        $this->convertTranslationValue($languageUuid, $localeTranslation, 'metaTitle', $originalData, 'meta_title');
+        $this->convertTranslationValue($languageUuid, $localeTranslation, 'metaDescription', $originalData, 'meta_description');
+        $this->convertTranslationValue($languageUuid, $localeTranslation, 'keywords', $originalData, 'meta_keywords');
 
         $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
@@ -305,20 +331,31 @@ abstract class CategoryConverter extends MagentoConverter
         $localeTranslation['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
-        try {
-            $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
-        } catch (\Exception $exception) {
-            $this->mappingService->deleteMapping($converted['id'], $this->connectionId, $this->context);
-            throw $exception;
-        }
-
         if (isset($converted['customFields'])) {
             $localeTranslation['customFields'] = $converted['customFields'];
         }
 
-        if ($languageUuid !== null) {
+        if (!isset($converted['translations'][$languageUuid]['name'])) {
             $localeTranslation['languageId'] = $languageUuid;
             $converted['translations'][$languageUuid] = $localeTranslation;
+        }
+    }
+
+    protected function convertTranslationValue(
+        string $defaultLanguage,
+        array &$newData,
+        string $newKey,
+        array &$sourceData,
+        string $sourceKey,
+        string $castType = self::TYPE_STRING,
+        bool $unset = true
+    ): void {
+        if (!isset($newData['translations'][$defaultLanguage][$newKey]) || $defaultLanguage === '') {
+            $this->convertValue($newData, $newKey, $sourceData, $sourceKey, $castType, $unset);
+        }
+
+        if ($unset) {
+            unset($sourceData[$sourceKey]);
         }
     }
 

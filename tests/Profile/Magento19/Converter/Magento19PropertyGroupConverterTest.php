@@ -63,7 +63,7 @@ class Magento19PropertyGroupConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->languageUuid = Uuid::randomHex();
+        $this->languageUuid = DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID;
         $mappingService->createMapping(
             $this->connection->getId(),
             DefaultEntities::STORE_LANGUAGE,
@@ -115,6 +115,27 @@ class Magento19PropertyGroupConverterTest extends TestCase
             $propertyGroupData[0]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
         );
+
+        static::assertArrayNotHasKey('name', $converted);
+    }
+
+    public function testConvertWithoutTranslations(): void
+    {
+        $propertyGroupData = require __DIR__ . '/../../../_fixtures/property_group_data.php';
+        unset($propertyGroupData[0]['translations'], $propertyGroupData[0]['options'][0]['translations']);
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->propertyGroupConverter->convert($propertyGroupData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertNotNull($convertResult->getMappingUuid());
+        static::assertSame($propertyGroupData[0]['options'][0]['name'], $converted['options'][0]['name']);
+        static::assertSame($propertyGroupData[0]['name'], $converted['name']);
+        static::assertArrayNotHasKey('translations', $converted);
+        static::assertArrayNotHasKey('translations', $converted['options'][0]);
     }
 
     public function testConvertWithoutName(): void

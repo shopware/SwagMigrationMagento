@@ -68,7 +68,7 @@ class Magento19CategoryConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->languageUuid = Uuid::randomHex();
+        $this->languageUuid = DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID;
         $mappingService->createMapping(
             $this->connection->getId(),
             MagentoDefaultEntities::STORE_LANGUAGE,
@@ -106,8 +106,6 @@ class Magento19CategoryConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
-        $attributeSetId = $categoryData[1]['attribute_set_id'];
-
         $converted = $convertResult->getConverted();
 
         static::assertNull($convertResult->getUnmapped());
@@ -116,21 +114,12 @@ class Magento19CategoryConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
 
         static::assertSame(
-            $categoryData[1]['meta_title'],
-            $converted['metaTitle']
-        );
-        static::assertSame(
-            mb_substr($categoryData[1]['meta_description'], 0, 255),
-            $converted['metaDescription']
-        );
-        static::assertSame(
-            mb_substr($categoryData[1]['meta_keywords'], 0, 255),
-            $converted['keywords']
-        );
-
-        static::assertSame(
             $categoryData[1]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
+        );
+        static::assertSame(
+            mb_substr($categoryData[1]['translations']['1']['meta_title']['value'], 0, 255),
+            $converted['translations'][$this->languageUuid]['metaTitle']
         );
         static::assertSame(
             mb_substr($categoryData[1]['translations']['1']['meta_description']['value'], 0, 255),
@@ -140,6 +129,31 @@ class Magento19CategoryConverterTest extends TestCase
             mb_substr($categoryData[1]['translations']['1']['meta_keywords']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['keywords']
         );
+
+        static::assertArrayNotHasKey('name', $converted);
+        static::assertArrayNotHasKey('metaDescription', $converted);
+        static::assertArrayNotHasKey('metaTitle', $converted);
+        static::assertArrayNotHasKey('keywords', $converted);
+    }
+
+    public function testConvertWithoutStandardTranslation(): void
+    {
+        $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
+        unset($categoryData[1]['translations']);
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertArrayHasKey($this->languageUuid, $converted['translations']);
+        static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame($categoryData[1]['name'], $converted['name']);
+        static::assertSame($categoryData[1]['meta_title'], $converted['metaTitle']);
+        static::assertSame(mb_substr($categoryData[1]['meta_description'], 0, 255), $converted['metaDescription']);
+        static::assertSame(mb_substr($categoryData[1]['meta_keywords'], 0, 255), $converted['keywords']);
     }
 
     public function testConvertWithParent(): void

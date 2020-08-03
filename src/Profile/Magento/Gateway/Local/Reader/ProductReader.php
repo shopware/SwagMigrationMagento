@@ -238,8 +238,13 @@ SQL;
             $attributeId = $attribute['attribute_id'];
             $frontendInput = $attribute['frontend_input'];
             $attributeCode = $attribute['attribute_code'];
+            $userDefined = $attribute['is_user_defined'];
             $value = $attribute['value'];
             if ($storeId === '0') {
+                if ($userDefined === '0') {
+                    continue;
+                }
+
                 foreach (array_keys($locales) as $localeStoreId) {
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['value'] = $value;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['attribute_id'] = $attributeId;
@@ -253,10 +258,6 @@ SQL;
         }
     }
 
-    /**
-     * @psalm-suppress InvalidReturnStatement
-     * @psalm-suppress InvalidReturnType
-     */
     protected function appendAssociatedData(array $fetchedProducts, array $ids): array
     {
         $resultSet = [];
