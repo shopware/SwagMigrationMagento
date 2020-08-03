@@ -21,6 +21,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as MagentoOrderDeliveryStateReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
@@ -202,17 +203,19 @@ abstract class OrderConverter extends MagentoConverter
             $this->convertOrderItems($converted, $data);
         }
 
+        if (!$this->convertBillingAddress($converted, $data)) {
+            return new ConvertStruct(null, $this->originalData);
+        }
+
         /*
          * Set deliveries
          */
         if (isset($data['shipments'])) {
             $converted['deliveries'] = $this->getDeliveries($data, $converted);
+        } else {
+            $this->getDefaultDelivery($data, $converted);
         }
-        unset($data['shippingAddress']);
-
-        if (!$this->convertBillingAddress($converted, $data)) {
-            return new ConvertStruct(null, $this->originalData);
-        }
+        unset($data['shippingAddress'], $data['items'], $data['billingAddress'], $data['shipments']);
 
         $converted['deepLinkCode'] = md5($converted['id']);
         unset($data['orders'], $data['identifier']);
@@ -291,7 +294,7 @@ abstract class OrderConverter extends MagentoConverter
                 'id' => $mapping['entityUuid'],
             ];
 
-            $this->convertValue($lineItem, 'identifier', $originalLineItem, 'sku');
+            $this->convertValue($lineItem, 'identifier', $originalLineItem, 'sku', self::TYPE_STRING, false);
 
             if ($isProduct) {
                 $mapping = $this->mappingService->getMapping(
@@ -304,9 +307,11 @@ abstract class OrderConverter extends MagentoConverter
                 if ($mapping !== null) {
                     $lineItem['referencedId'] = $mapping['entityUuid'];
                     $lineItem['productId'] = $mapping['entityUuid'];
+                    $lineItem['identifier'] = $mapping['entityUuid'];
                     $lineItem['payload']['productNumber'] = $originalLineItem['sku'] ?? '';
                 }
 
+                $lineItem['payload']['options'] = [];
                 $lineItem['type'] = LineItem::PRODUCT_LINE_ITEM_TYPE;
             } else {
                 $lineItem['type'] = LineItem::CREDIT_LINE_ITEM_TYPE;
@@ -350,7 +355,7 @@ abstract class OrderConverter extends MagentoConverter
                 $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER_LINE_ITEM,
-                    $originalLineItem['id'],
+                    $originalLineItem['item_id'],
                     'identifier'
                 ));
 
@@ -365,7 +370,9 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getDeliveries(array $data, array $converted): array
     {
+        $taxRules = $this->getTaxRules($data);
         $shippingCosts = $this->getShippingCosts((float) $data['orders']['shipping_amount']);
+
         $deliveries = [];
         foreach ($data['shipments'] as $shipment) {
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -382,7 +389,7 @@ abstract class OrderConverter extends MagentoConverter
             $deliveryStateMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 OrderDeliveryStateReader::getMappingName(),
-                (string) $shipment['shipment_status'],
+                MagentoOrderDeliveryStateReader::DEFAULT_SHIPPED_STATUS,
                 $this->context
             );
 
@@ -396,8 +403,8 @@ abstract class OrderConverter extends MagentoConverter
             $delivery['shippingDateEarliest'] = $converted['orderDateTime'];
             $delivery['shippingDateLatest'] = $converted['orderDateTime'];
 
-            if (isset($data['shipping_method'])) {
-                $delivery['shippingMethodId'] = $this->getShippingMethod($data['shipping_method']);
+            if (isset($data['orders']['shipping_method'])) {
+                $delivery['shippingMethodId'] = $this->getShippingMethod($data['orders']['shipping_method']);
             }
 
             if (!isset($delivery['shippingMethodId'])) {
@@ -430,16 +437,34 @@ abstract class OrderConverter extends MagentoConverter
                         $this->context
                     );
 
+                    if (isset($item['child_item_id']) && $lineItemMapping === null) {
+                        $lineItemMapping = $this->mappingService->getMapping(
+                            $this->connectionId,
+                            DefaultEntities::ORDER_LINE_ITEM,
+                            $item['child_item_id'],
+                            $this->context
+                        );
+                    }
+
                     if ($lineItemMapping === null) {
                         continue;
                     }
 
                     $this->mappingIds[] = $lineItemMapping['id'];
 
+                    $totalPrice = $item['qty'] * $item['price'];
+                    $calculatedTax = $this->taxCalculator->calculateGrossTaxes($totalPrice, $taxRules);
+
                     $positions[] = [
                         'id' => $mapping['entityUuid'],
                         'orderLineItemId' => $lineItemMapping['entityUuid'],
-                        'price' => $item['price'],
+                        'price' => new CalculatedPrice(
+                            (float) $item['price'],
+                            (float) $totalPrice,
+                            $calculatedTax,
+                            $taxRules,
+                            (int) $item['qty']
+                        ),
                     ];
                 }
 
@@ -455,6 +480,14 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getShippingMethod(string $shippingMethodId): ?string
     {
+        if (str_contains($shippingMethodId, '_')) {
+            preg_match('/(.*)_/', $shippingMethodId, $matches);
+
+            if (isset($matches[1])) {
+                $shippingMethodId = $matches[1];
+            }
+        }
+
         $shippingMethodMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::SHIPPING_METHOD,
@@ -864,7 +897,7 @@ abstract class OrderConverter extends MagentoConverter
         $converted['shippingCosts'] = $shippingCosts;
 
         $this->getTransactions($data, $converted);
-        unset($data['items'], $data['orders']['payment']);
+        unset($data['orders']['payment']);
     }
 
     protected function convertBillingAddress(array &$converted, array &$data): bool
@@ -882,7 +915,6 @@ abstract class OrderConverter extends MagentoConverter
         }
         $converted['billingAddressId'] = $billingAddress['id'];
         $converted['addresses'][] = $billingAddress;
-        unset($data['billingAddress']);
 
         return true;
     }
@@ -895,5 +927,56 @@ abstract class OrderConverter extends MagentoConverter
             new CalculatedTaxCollection(),
             new TaxRuleCollection()
         );
+    }
+
+    private function getDefaultDelivery(array &$data, array &$converted): void
+    {
+        $deliveryMapping = $this->mappingService->getOrCreateMapping(
+            $this->connectionId,
+            DefaultEntities::ORDER_DELIVERY,
+            'order_' . $this->oldIdentifier,
+            $this->context
+        );
+        $this->mappingIds[] = $deliveryMapping['id'];
+
+        $shippingOrderAddress = null;
+        if (isset($data['shippingAddress'])) {
+            $shippingOrderAddress = $this->getAddress($data['shippingAddress']);
+        }
+
+        if ($shippingOrderAddress === null) {
+            $shippingOrderAddress = $this->getAddress($data['billingAddress']);
+        }
+
+        $deliveryStateMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            OrderDeliveryStateReader::getMappingName(),
+            MagentoOrderDeliveryStateReader::DEFAULT_OPEN_STATUS,
+            $this->context
+        );
+
+        $shippingMethodId = $this->getShippingMethod($data['orders']['shipping_method']);
+
+        if ($deliveryStateMapping === null || $shippingMethodId === null) {
+            return;
+        }
+
+        $shippingAmount = (float) ($data['orders']['shipping_amount'] ?? 0.0);
+        $converted['deliveries'] = [
+            [
+                'id' => $deliveryMapping['entityUuid'],
+                'shippingMethodId' => $shippingMethodId,
+                'shippingOrderAddress' => $shippingOrderAddress,
+                'shippingCosts' => new CalculatedPrice(
+                    $shippingAmount,
+                    $shippingAmount,
+                    new CalculatedTaxCollection(),
+                    new TaxRuleCollection()
+                ),
+                'stateId' => $deliveryStateMapping['entityUuid'],
+                'shippingDateEarliest' => $converted['orderDateTime'],
+                'shippingDateLatest' => $converted['orderDateTime'],
+            ],
+        ];
     }
 }

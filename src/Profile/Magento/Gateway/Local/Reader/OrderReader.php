@@ -154,6 +154,9 @@ SQL;
         $query->addSelect('item.parent_id as identifier');
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_shipment_item', 'item');
 
+        $query->leftJoin('item', $this->tablePrefix . 'sales_flat_order_item', 'childOrderItem', 'childOrderItem.parent_item_id = item.order_item_id');
+        $query->addSelect('childOrderItem.item_id as `item.child_item_id`');
+
         $query->where('item.parent_id in (:ids)');
         $query->setParameter('ids', $shipmentIds, Connection::PARAM_STR_ARRAY);
 

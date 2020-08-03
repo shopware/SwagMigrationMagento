@@ -295,5 +295,12 @@
                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader">
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderDeliveryStateReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader">
+            <argument type="service" id="state_machine.repository"/>
+            <argument type="service" id="state_machine_state.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
     </services>
 </container>

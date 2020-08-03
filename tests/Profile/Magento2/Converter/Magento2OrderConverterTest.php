@@ -17,6 +17,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as MagentoOrderDeliveryStateReader;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23OrderConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23OrderStateReader;
@@ -26,6 +27,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
+use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class Magento2OrderConverterTest extends TestCase
@@ -73,6 +75,16 @@ class Magento2OrderConverterTest extends TestCase
      * @var string
      */
     private $customerGroup;
+
+    /**
+     * @var string
+     */
+    private $shippingMethod;
+
+    /**
+     * @var array
+     */
+    private $shippedDeliveryState;
 
     protected function setUp(): void
     {
@@ -154,8 +166,38 @@ class Magento2OrderConverterTest extends TestCase
 
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
+            Magento23OrderStateReader::getMappingName(),
+            'processing',
+            $context,
+            null,
+            null,
+            Uuid::randomHex()
+        );
+
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
             DefaultEntities::PAYMENT_METHOD,
             'checkmo',
+            $context,
+            null,
+            null,
+            Uuid::randomHex()
+        );
+
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::PRODUCT,
+            '387',
+            $context,
+            null,
+            null,
+            Uuid::randomHex()
+        );
+
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::PRODUCT,
+            '388',
             $context,
             null,
             null,
@@ -193,6 +235,24 @@ class Magento2OrderConverterTest extends TestCase
             null,
             $this->language
         );
+
+        $this->shippingMethod = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::SHIPPING_METHOD,
+            'ups',
+            $context,
+            null,
+            null,
+            $this->shippingMethod
+        );
+
+        $this->shippedDeliveryState = $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            OrderDeliveryStateReader::getMappingName(),
+            MagentoOrderDeliveryStateReader::DEFAULT_SHIPPED_STATUS,
+            $context
+        );
     }
 
     public function testSupports(): void
@@ -204,12 +264,19 @@ class Magento2OrderConverterTest extends TestCase
 
     public function testConvert(): void
     {
+        $context = Context::createDefaultContext();
+        $deliveryStateMapping = $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            OrderDeliveryStateReader::getMappingName(),
+            MagentoOrderDeliveryStateReader::DEFAULT_OPEN_STATUS,
+            $context
+        );
+
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $orderData[0]['orders']['shipping_amount'] = 0;
         $orderData[0]['items'][0]['tax_percent'] = 19;
         $orderData[0]['orders']['subtotal_incl_tax'] = round($orderData[0]['orders']['grand_total'] * 1.19, 2);
 
-        $context = Context::createDefaultContext();
         $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
@@ -219,6 +286,67 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
         static::assertSame(round($orderData[0]['orders']['subtotal_incl_tax'], 2), $converted['price']->getNetPrice());
         static::assertSame(round($orderData[0]['orders']['grand_total'], 2), $converted['price']->getTotalPrice());
+        static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);
+        static::assertSame($this->shippingMethod, $converted['deliveries'][0]['shippingMethodId']);
+    }
+
+    public function testConvertWithInvalidShippingMethod(): void
+    {
+        $context = Context::createDefaultContext();
+
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $orderData[0]['orders']['shipping_method'] = 'invalid';
+
+        $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
+
+        $logs = $this->loggingService->getLoggingArray();
+
+        static::assertNotNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayNotHasKey('deliveries', $convertResult->getConverted());
+
+        static::assertCount(1, $logs);
+        static::assertSame('SWAG_MIGRATION_SHIPPING_METHOD_ENTITY_UNKNOWN', $logs[0]['code']);
+        static::assertSame($orderData[0]['orders']['shipping_method'], $logs[0]['parameters']['sourceId']);
+        static::assertSame($orderData[0]['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
+    }
+
+    public function testConvertWithoutOpenDeliveryStatusMapping(): void
+    {
+        $context = Context::createDefaultContext();
+
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
+
+        static::assertNotNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayNotHasKey('deliveries', $convertResult->getConverted());
+    }
+
+    public function testConvertWithDelivery(): void
+    {
+        $context = Context::createDefaultContext();
+
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $convertResult = $this->orderConverter->convert($orderData[1], $context, $this->migrationContext);
+
+        static::assertNotNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertSame($this->shippedDeliveryState['entityUuid'], $convertResult->getConverted()['deliveries'][0]['stateId']);
+        static::assertSame($this->shippingMethod, $convertResult->getConverted()['deliveries'][0]['shippingMethodId']);
+    }
+
+    public function testConvertWithoutShippedStatusMapping(): void
+    {
+        $context = Context::createDefaultContext();
+
+        $this->mappingService->deleteMapping($this->shippedDeliveryState['entityUuid'], $this->connection->getId(), $context);
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $convertResult = $this->orderConverter->convert($orderData[1], $context, $this->migrationContext);
+
+        static::assertNotNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertEmpty($convertResult->getConverted()['deliveries']);
     }
 
     public function testConvertWithoutCustomer(): void
@@ -334,11 +462,15 @@ class Magento2OrderConverterTest extends TestCase
         $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
+        static::assertCount(2, $logs);
 
         static::assertSame('SWAG_MIGRATION_COUNTRY_ENTITY_UNKNOWN', $logs[0]['code']);
         static::assertSame($order['shippingAddress']['country_id'], $logs[0]['parameters']['sourceId']);
         static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
+
+        static::assertSame('SWAG_MIGRATION_COUNTRY_ENTITY_UNKNOWN', $logs[1]['code']);
+        static::assertSame($order['shippingAddress']['country_id'], $logs[1]['parameters']['sourceId']);
+        static::assertSame($order['orders']['entity_id'], $logs[1]['parameters']['requiredForSourceId']);
 
         static::assertNull($convertResult->getUnmapped());
         static::assertNotNull($convertResult->getConverted());
