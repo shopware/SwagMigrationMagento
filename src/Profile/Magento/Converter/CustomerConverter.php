@@ -96,7 +96,7 @@ abstract class CustomerConverter extends MagentoConverter
                 $migrationContext->getRunUuid(),
                 DefaultEntities::CUSTOMER,
                 $data['entity_id'],
-                implode(',', $fields)
+                \implode(',', $fields)
             ));
 
             return new ConvertStruct(null, $data);
@@ -314,7 +314,7 @@ abstract class CustomerConverter extends MagentoConverter
                     $this->runId,
                     DefaultEntities::CUSTOMER_ADDRESS,
                     $address['entity_id'],
-                    implode(',', $fields)
+                    \implode(',', $fields)
                 ));
 
                 continue;

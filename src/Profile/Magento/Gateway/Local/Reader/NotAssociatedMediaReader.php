@@ -22,7 +22,7 @@ abstract class NotAssociatedMediaReader extends AbstractReader
         $installationRoot = $this->getInstallationRoot($migrationContext);
         $this->sourcePath = $installationRoot . '/media/wysiwyg/';
 
-        if ($installationRoot === '' || is_dir($this->sourcePath) === false) {
+        if ($installationRoot === '' || \is_dir($this->sourcePath) === false) {
             throw new MediaPathNotReachableException($this->sourcePath);
         }
 
@@ -34,13 +34,13 @@ abstract class NotAssociatedMediaReader extends AbstractReader
 
     protected function dirToArray(string $dir, array &$result): void
     {
-        $cdir = scandir($dir, 1);
+        $cdir = \scandir($dir, 1);
         foreach ($cdir as $value) {
-            if (!in_array($value, ['.', '..'], true)) {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
+            if (!\in_array($value, ['.', '..'], true)) {
+                if (\is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
                     $this->dirToArray($dir . $value . DIRECTORY_SEPARATOR, $result);
                 } else {
-                    $result[]['path'] = str_replace($this->sourcePath, '', $dir) . $value;
+                    $result[]['path'] = \str_replace($this->sourcePath, '', $dir) . $value;
                 }
             }
         }
@@ -58,8 +58,8 @@ abstract class NotAssociatedMediaReader extends AbstractReader
             return '';
         }
         $installRoot = $credentials['installationRoot'];
-        $installRoot = ltrim($installRoot, '/');
-        $installRoot = rtrim($installRoot, '/');
+        $installRoot = \ltrim($installRoot, '/');
+        $installRoot = \rtrim($installRoot, '/');
         $installRoot = '/' . $installRoot;
 
         return $installRoot;

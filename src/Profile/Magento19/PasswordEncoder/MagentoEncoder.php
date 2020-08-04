@@ -18,14 +18,14 @@ class MagentoEncoder implements LegacyEncoderInterface
 
     public function isPasswordValid(string $password, string $hash): bool
     {
-        if (mb_strpos($hash, ':') !== false) {
-            [$hash, $salt] = explode(':', $hash);
+        if (\mb_strpos($hash, ':') !== false) {
+            [$hash, $salt] = \explode(':', $hash);
             $password = $salt . $password;
         }
 
-        return hash_equals($hash, md5($password))
-            || hash_equals($hash, hash('sha256', $password))
-            || hash_equals($hash, hash('sha512', $password))
-            || password_verify($password, $hash);
+        return \hash_equals($hash, \md5($password))
+            || \hash_equals($hash, \hash('sha256', $password))
+            || \hash_equals($hash, \hash('sha512', $password))
+            || \password_verify($password, $hash);
     }
 }

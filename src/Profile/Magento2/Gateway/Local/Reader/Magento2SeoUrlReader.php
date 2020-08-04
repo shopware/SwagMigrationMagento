@@ -22,11 +22,11 @@ abstract class Magento2SeoUrlReader extends SeoUrlReader
         $this->setConnection($migrationContext);
 
         $fetchedSeoUrls = $this->mapData($this->fetchSeoUrls($migrationContext), [], ['seo']);
-        $defaultLocale = str_replace('_', '-', $this->fetchDefaultLocale());
+        $defaultLocale = \str_replace('_', '-', $this->fetchDefaultLocale());
 
         foreach ($fetchedSeoUrls as &$seoUrl) {
             if (isset($seoUrl['locale'])) {
-                $seoUrl['locale'] = str_replace('_', '-', $seoUrl['locale']);
+                $seoUrl['locale'] = \str_replace('_', '-', $seoUrl['locale']);
             } else {
                 $seoUrl['locale'] = $defaultLocale;
             }
@@ -100,7 +100,7 @@ SQL;
         }
 
         try {
-            $json = json_decode($seoUrl['metadata'], true);
+            $json = \json_decode($seoUrl['metadata'], true);
         } catch (\Error $error) {
             return;
         }

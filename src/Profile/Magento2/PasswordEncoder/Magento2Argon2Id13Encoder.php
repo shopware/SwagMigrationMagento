@@ -20,17 +20,17 @@ class Magento2Argon2Id13Encoder implements LegacyEncoderInterface
 
     public function isPasswordValid(string $password, string $hash): bool
     {
-        if (mb_strpos($hash, ':') === false) {
+        if (\mb_strpos($hash, ':') === false) {
             return false;
         }
-        [$hash, $salt, $version] = explode(':', $hash);
+        [$hash, $salt, $version] = \explode(':', $hash);
 
-        if ($version !== '2' || !defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !extension_loaded('sodium')) {
+        if ($version !== '2' || !\defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !\extension_loaded('sodium')) {
             return false;
         }
 
-        $challengeHash = bin2hex(
-            sodium_crypto_pwhash(
+        $challengeHash = \bin2hex(
+            \sodium_crypto_pwhash(
                 SODIUM_CRYPTO_SIGN_SEEDBYTES,
                 $password,
                 $salt,
@@ -40,6 +40,6 @@ class Magento2Argon2Id13Encoder implements LegacyEncoderInterface
             )
         );
 
-        return hash_equals($hash, $challengeHash);
+        return \hash_equals($hash, $challengeHash);
     }
 }

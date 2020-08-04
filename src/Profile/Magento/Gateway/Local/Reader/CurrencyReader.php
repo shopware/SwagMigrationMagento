@@ -48,11 +48,11 @@ abstract class CurrencyReader extends AbstractReader
         $currencyConfig = [];
         foreach ($configurations as $config) {
             if (isset($config['value'])) {
-                $currencyConfig = array_merge($currencyConfig, explode(',', $config['value']));
+                $currencyConfig = \array_merge($currencyConfig, \explode(',', $config['value']));
             }
         }
 
-        return array_values(array_unique($currencyConfig));
+        return \array_values(\array_unique($currencyConfig));
     }
 
     protected function fetchBaseCurrency(): string

@@ -20,7 +20,7 @@ abstract class PropertyGroupReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $fetchedPropertyGroups = $this->fetchPropertyGroups($migrationContext);
-        $propertyIds = array_column($fetchedPropertyGroups, 'id');
+        $propertyIds = \array_column($fetchedPropertyGroups, 'id');
         $groupTranslations = $this->fetchGroupTranslations($propertyIds);
         $fetchedOptions = $this->fetchOptions($propertyIds);
 

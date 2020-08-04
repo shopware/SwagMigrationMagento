@@ -107,7 +107,7 @@ abstract class MagentoConverter extends Converter
         $result = [];
 
         foreach ($attributes as $attribute) {
-            if (in_array($attribute['attribute_code'], $blacklist, true)) {
+            if (\in_array($attribute['attribute_code'], $blacklist, true)) {
                 continue;
             }
 
@@ -119,7 +119,7 @@ abstract class MagentoConverter extends Converter
                 $value = 'option_' . $value;
             }
             if (isset($attribute['frontend_input']) && $attribute['frontend_input'] === 'multiselect') {
-                $explodedValue = explode(',', $value);
+                $explodedValue = \explode(',', $value);
 
                 $options = [];
                 foreach ($explodedValue as $currentOption) {
@@ -167,7 +167,7 @@ abstract class MagentoConverter extends Converter
                 if (isset($defaultEntities[$attributeCode])) {
                     $newKey = $defaultEntities[$attributeCode];
 
-                    if (is_array($newKey)) {
+                    if (\is_array($newKey)) {
                         $localeTranslation[$languageId][$newKey['key']] = $this->trimValue($attributeData['value'], $newKey['maxChars']);
                     } else {
                         $localeTranslation[$languageId][$newKey] = $attributeData['value'];
@@ -200,6 +200,6 @@ abstract class MagentoConverter extends Converter
 
     protected function trimValue(string $value, int $limit = 255): string
     {
-        return mb_substr($value, 0, $limit);
+        return \mb_substr($value, 0, $limit);
     }
 }

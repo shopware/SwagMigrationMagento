@@ -29,13 +29,13 @@ class AbstractReaderTest extends TestCase
             'int' => 1,
             'float' => 1.0,
             'string' => 'Normal string',
-            'utf16-string' => mb_convert_encoding('SFÖSÖFJOÜÜRER', 'UTF-16', 'UTF-8'),
+            'utf16-string' => \mb_convert_encoding('SFÖSÖFJOÜÜRER', 'UTF-16', 'UTF-8'),
             [
                 'bool' => true,
                 'int' => 1,
                 'float' => 1.0,
                 'string' => 'Normal string',
-                'utf16-string' => mb_convert_encoding('SFÖSÖFJOÜÜRER', 'UTF-16', 'UTF-8'),
+                'utf16-string' => \mb_convert_encoding('SFÖSÖFJOÜÜRER', 'UTF-16', 'UTF-8'),
             ],
         ];
 

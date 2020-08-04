@@ -20,7 +20,7 @@ abstract class Magento2CustomerConverter extends CustomerConverter
 
     protected function setPassword(array &$data, array &$converted): bool
     {
-        [, , $version] = explode(':', $data['password_hash'], self::PASSWORD_HASH_SPLIT_LIMIT);
+        [, , $version] = \explode(':', $data['password_hash'], self::PASSWORD_HASH_SPLIT_LIMIT);
         $converted['legacyPassword'] = $data['password_hash'];
 
         $converted['legacyEncoder'] = Magento2Sha256Encoder::NAME;
@@ -31,7 +31,7 @@ abstract class Magento2CustomerConverter extends CustomerConverter
         if ($version === '2') {
             $converted['legacyEncoder'] = Magento2Argon2Id13Encoder::NAME;
 
-            if (!defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !extension_loaded('sodium')) {
+            if (!\defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !\extension_loaded('sodium')) {
                 $this->loggingService->addLogEntry(
                     new ExceptionRunLog(
                         $this->runId,

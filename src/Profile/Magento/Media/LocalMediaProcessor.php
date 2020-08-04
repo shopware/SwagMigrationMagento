@@ -93,7 +93,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $mappedWorkload[$work->getMediaId()] = $work;
         }
 
-        if (!is_dir('_temp') && !mkdir('_temp') && !is_dir('_temp')) {
+        if (!\is_dir('_temp') && !\mkdir('_temp') && !\is_dir('_temp')) {
             $exception = new NoFileSystemPermissionsException();
             $this->loggingService->addLogEntry(new ExceptionRunLog(
                 $runId,
@@ -105,12 +105,12 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             return $workload;
         }
 
-        $media = $this->getMediaFiles(array_keys($mappedWorkload), $migrationContext->getRunUuid());
+        $media = $this->getMediaFiles(\array_keys($mappedWorkload), $migrationContext->getRunUuid());
         $mappedWorkload = $this->getMediaPathMapping($media, $mappedWorkload);
 
         $installationRoot = $this->getInstallationRoot($migrationContext);
 
-        if ($installationRoot === '' || is_dir($installationRoot) === false) {
+        if ($installationRoot === '' || \is_dir($installationRoot) === false) {
             $shopUrl = $this->getShopUrl($migrationContext);
 
             if ($shopUrl === '') {
@@ -147,7 +147,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     {
         $promises = [];
         foreach ($media as $mediaFile) {
-            $uuid = mb_strtolower($mediaFile['media_id']);
+            $uuid = \mb_strtolower($mediaFile['media_id']);
             $additionalData = [];
             $additionalData['uri'] = $shopUrl . $mediaFile['uri'];
 
@@ -199,8 +199,8 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             return '';
         }
         $installRoot = $credentials['installationRoot'];
-        $installRoot = ltrim($installRoot, '/');
-        $installRoot = rtrim($installRoot, '/');
+        $installRoot = \ltrim($installRoot, '/');
+        $installRoot = \rtrim($installRoot, '/');
         $installRoot = '/' . $installRoot;
 
         return $installRoot;
@@ -239,15 +239,15 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $mediaId = $mediaFile['media_id'];
             $sourcePath = $this->getInstallationRoot($migrationContext) . $mappedWorkload[$mediaId]->getAdditionalData()['path'];
 
-            $fileExtension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-            $filePath = sprintf('_temp/%s.%s', $rowId, $fileExtension);
+            $fileExtension = \pathinfo($sourcePath, PATHINFO_EXTENSION);
+            $filePath = \sprintf('_temp/%s.%s', $rowId, $fileExtension);
 
-            if (copy($sourcePath, $filePath)) {
-                $fileSize = filesize($filePath);
+            if (\copy($sourcePath, $filePath)) {
+                $fileSize = \filesize($filePath);
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
 
                 $this->persistFileToMedia($filePath, $mediaId, $mediaFile['file_name'], $fileSize, $fileExtension, $context);
-                unlink($filePath);
+                \unlink($filePath);
             } else {
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
                 $this->loggingService->addLogEntry(new CannotGetFileRunLog(
@@ -263,7 +263,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $processedMedia, $failureUuids);
         $this->loggingService->saveLogging($context);
 
-        return array_values($mappedWorkload);
+        return \array_values($mappedWorkload);
     }
 
     private function persistFileToMedia(
@@ -275,16 +275,16 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         Context $context
     ): void {
         $context->disableCache(function (Context $context) use ($mediaId, $filePath, $fileName, $fileSize, $fileExtension): void {
-            $mimeType = mime_content_type($filePath);
+            $mimeType = \mime_content_type($filePath);
             $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
-            $fileName = preg_replace('/[^a-zA-Z0-9_-]+/', '-', mb_strtolower($fileName));
+            $fileName = \preg_replace('/[^a-zA-Z0-9_-]+/', '-', \mb_strtolower($fileName));
 
             try {
                 $this->fileSaver->persistFileToMedia($mediaFile, $fileName, $mediaId, $context);
             } catch (DuplicatedMediaFileNameException $e) {
                 $this->fileSaver->persistFileToMedia(
                     $mediaFile,
-                    $fileName . mb_substr(Uuid::randomHex(), 0, 5),
+                    $fileName . \mb_substr(Uuid::randomHex(), 0, 5),
                     $mediaId,
                     $context
                 );
@@ -299,7 +299,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         $mediaFiles = $this->getMediaFiles($finishedUuids, $runId);
         $updateableMediaEntities = [];
         foreach ($mediaFiles as $mediaFile) {
-            if (!in_array($mediaFile['media_id'], $failureUuids, true)) {
+            if (!\in_array($mediaFile['media_id'], $failureUuids, true)) {
                 $updateableMediaEntities[] = [
                     'id' => $mediaFile['id'],
                     'processed' => true,
@@ -326,7 +326,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             return '';
         }
 
-        return rtrim($credentials['shopUrl'], '/');
+        return \rtrim($credentials['shopUrl'], '/');
     }
 
     private function downloadMediaFiles(
@@ -354,7 +354,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $state = $result['state'];
             $additionalData = $mappedWorkload[$uuid]->getAdditionalData();
 
-            $oldWorkloadSearchResult = array_filter(
+            $oldWorkloadSearchResult = \array_filter(
                 $workload,
                 function (MediaProcessWorkloadStruct $work) use ($uuid) {
                     return $work->getMediaId() === $uuid;
@@ -362,7 +362,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             );
 
             /** @var MediaProcessWorkloadStruct $oldWorkload */
-            $oldWorkload = array_pop($oldWorkloadSearchResult);
+            $oldWorkload = \array_pop($oldWorkloadSearchResult);
 
             if ($state !== 'fulfilled') {
                 $mappedWorkload[$uuid] = $oldWorkload;
@@ -384,13 +384,13 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             }
 
             $response = $result['value'];
-            $fileExtension = pathinfo($additionalData['uri'], PATHINFO_EXTENSION);
-            $filePath = sprintf('_temp/%s.%s', $uuid, $fileExtension);
+            $fileExtension = \pathinfo($additionalData['uri'], PATHINFO_EXTENSION);
+            $filePath = \sprintf('_temp/%s.%s', $uuid, $fileExtension);
 
-            $fileHandle = fopen($filePath, 'ab');
-            fwrite($fileHandle, $response->getBody()->getContents());
-            $fileSize = (int) filesize($filePath);
-            fclose($fileHandle);
+            $fileHandle = \fopen($filePath, 'ab');
+            \fwrite($fileHandle, $response->getBody()->getContents());
+            $fileSize = (int) \filesize($filePath);
+            \fclose($fileHandle);
 
             if ($mappedWorkload[$uuid]->getState() === MediaProcessWorkloadStruct::FINISH_STATE) {
                 $this->persistFileToMedia(
@@ -401,7 +401,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                     $fileExtension,
                     $context
                 );
-                unlink($filePath);
+                \unlink($filePath);
                 $finishedUuids[] = $uuid;
             }
 
@@ -413,6 +413,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $finishedUuids, $failureUuids);
         $this->loggingService->saveLogging($context);
 
-        return array_values($mappedWorkload);
+        return \array_values($mappedWorkload);
     }
 }

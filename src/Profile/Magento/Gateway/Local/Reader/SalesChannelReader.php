@@ -20,7 +20,7 @@ abstract class SalesChannelReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $storeGroups = $this->mapData($this->fetchStoreGroups($migrationContext), [], ['storeGroup', 'website']);
-        $groupIds = array_column($storeGroups, 'group_id');
+        $groupIds = \array_column($storeGroups, 'group_id');
 
         $storeViews = $this->mapData($this->fetchStoreViews($groupIds), [], ['storeView']);
         $storeIds = [];
@@ -29,10 +29,10 @@ abstract class SalesChannelReader extends AbstractReader
             $storeGroup['storeViews'] = [];
             if (isset($storeViews[$storeGroup['group_id']])) {
                 $storeGroup['storeViews'] = $storeViews[$storeGroup['group_id']];
-                $storeIds[] = array_column($storeViews[$storeGroup['group_id']], 'store_id');
+                $storeIds[] = \array_column($storeViews[$storeGroup['group_id']], 'store_id');
             }
         }
-        $storeIds = array_merge(...$storeIds);
+        $storeIds = \array_merge(...$storeIds);
 
         $carriers = $this->fetchCarriers();
         $payments = $this->fetchPayments();
@@ -55,7 +55,7 @@ abstract class SalesChannelReader extends AbstractReader
             foreach ($store['storeViews'] as $storeView) {
                 $storeId = $storeView['store_id'];
                 if (isset($storeAllowedCurrencies[$storeId])) {
-                    $store['currencies'] = array_merge($store['currencies'], $storeAllowedCurrencies[$storeId]);
+                    $store['currencies'] = \array_merge($store['currencies'], $storeAllowedCurrencies[$storeId]);
                 }
                 if (isset($storeCountryConfig[$storeId])) {
                     $allowedCountries = [];
@@ -63,15 +63,15 @@ abstract class SalesChannelReader extends AbstractReader
                         $allowedCountries = $storeCountryConfig[$storeId]['allowedCountries'];
                     }
 
-                    $store['countries'] = array_merge($store['countries'], $allowedCountries);
+                    $store['countries'] = \array_merge($store['countries'], $allowedCountries);
                 }
 
                 if (isset($locales['stores'][$storeId])) {
                     $store['locales'][] = $locales['stores'][$storeId];
                 }
             }
-            $store['locales'] = array_unique($store['locales']);
-            $store['currencies'] = array_unique($store['currencies']);
+            $store['locales'] = \array_unique($store['locales']);
+            $store['currencies'] = \array_unique($store['currencies']);
             $store['carriers'] = $carriers;
             $store['payments'] = $payments;
         }
@@ -145,17 +145,17 @@ SQL;
         if ($defaults['defaultAllowedCurrencies'] === null) {
             $defaults['defaultAllowedCountries'] = '';
         }
-        $defaults['defaultAllowedCurrencies'] = explode(',', $defaults['defaultAllowedCurrencies']);
+        $defaults['defaultAllowedCurrencies'] = \explode(',', $defaults['defaultAllowedCurrencies']);
 
         if ($defaults['defaultAllowedCountries'] === null) {
             $defaults['defaultAllowedCountries'] = '';
         }
-        $defaults['defaultAllowedCountries'] = explode(',', $defaults['defaultAllowedCountries']);
+        $defaults['defaultAllowedCountries'] = \explode(',', $defaults['defaultAllowedCountries']);
 
         if ($defaults['defaultLocale'] === null) {
             $defaults['defaultLocale'] = '';
         }
-        $defaults['defaultLocale'] = str_replace('_', '-', $defaults['defaultLocale']);
+        $defaults['defaultLocale'] = \str_replace('_', '-', $defaults['defaultLocale']);
 
         return $defaults;
     }
@@ -266,7 +266,7 @@ SQL;
 
         foreach ($storeCurrencies as $key => $storeCurrency) {
             if (isset($storeCurrency['currencies'])) {
-                $storeCurrencies[$key] = explode(',', $storeCurrency['currencies']);
+                $storeCurrencies[$key] = \explode(',', $storeCurrency['currencies']);
             }
         }
 
@@ -299,7 +299,7 @@ SQL;
             foreach ($storeConfig as $config) {
                 if ($config['path'] === 'general/country/allow') {
                     if (isset($storeCountryConfig[$key]['allowedCountries'])) {
-                        $storeCountryConfig[$key]['allowedCountries'] = explode(',', $config['value']);
+                        $storeCountryConfig[$key]['allowedCountries'] = \explode(',', $config['value']);
                     }
                 } else {
                     $storeCountryConfig[$key]['defaultCountry'] = $config['value'];
@@ -330,7 +330,7 @@ SQL;
 
         $storeConfigs = [];
         foreach ($configurations as $key => $storeConfig) {
-            $storeConfigs[$key] = str_replace('_', '-', $storeConfig['locale']);
+            $storeConfigs[$key] = \str_replace('_', '-', $storeConfig['locale']);
         }
         $configurations['stores'] = $storeConfigs;
 

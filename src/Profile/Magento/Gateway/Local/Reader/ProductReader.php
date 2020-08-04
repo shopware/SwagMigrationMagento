@@ -53,7 +53,7 @@ abstract class ProductReader extends AbstractReader
                 $fetchedProduct['maxpurchase'] = $stockConfiguration->getMaxPurchase();
             }
         }
-        $ids = array_column($fetchedProducts, 'entity_id');
+        $ids = \array_column($fetchedProducts, 'entity_id');
 
         return $this->appendAssociatedData($fetchedProducts, $ids);
     }
@@ -211,11 +211,11 @@ SQL;
                 continue;
             }
 
-            if ($userDefined === '0' || in_array($attributeCode, ['manufacturer', 'cost'], true)) {
+            if ($userDefined === '0' || \in_array($attributeCode, ['manufacturer', 'cost'], true)) {
                 $defaultAttributes[$attributeCode] = $attribute['value'];
             }
         }
-        $fetchedProduct = array_merge($fetchedProduct, $defaultAttributes);
+        $fetchedProduct = \array_merge($fetchedProduct, $defaultAttributes);
         unset($defaultAttributes);
     }
 
@@ -245,7 +245,7 @@ SQL;
                     continue;
                 }
 
-                foreach (array_keys($locales) as $localeStoreId) {
+                foreach (\array_keys($locales) as $localeStoreId) {
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['value'] = $value;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['attribute_id'] = $attributeId;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['frontend_input'] = $frontendInput;
@@ -281,7 +281,7 @@ SQL;
                     continue;
                 }
 
-                $multiProperties = explode(',', $property['optionValue']);
+                $multiProperties = \explode(',', $property['optionValue']);
 
                 foreach ($multiProperties as $propertyId) {
                     $property['optionId'] = $propertyId;
@@ -325,7 +325,7 @@ SQL;
             // we remove relation and migrate as single product
             // example: part of bundle, which is not supported yet
             if (isset($product['parentType'])
-                && !in_array($product['parentType'], self::$ALLOWED_PRODUCT_TYPES, true)
+                && !\in_array($product['parentType'], self::$ALLOWED_PRODUCT_TYPES, true)
             ) {
                 $product['parentId'] = null;
             }
@@ -570,7 +570,7 @@ SQL;
 
         $locales = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
         foreach ($locales as $storeId => &$locale) {
-            $locale = str_replace('_', '-', $locale);
+            $locale = \str_replace('_', '-', $locale);
         }
 
         return $locales;
@@ -610,7 +610,7 @@ SQL;
         $result = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
 
         if (isset($result['cataloginventory/item_options/min_sale_qty'])
-            && is_numeric($result['cataloginventory/item_options/min_sale_qty'])
+            && \is_numeric($result['cataloginventory/item_options/min_sale_qty'])
         ) {
             $minPurchase = (int) $result['cataloginventory/item_options/min_sale_qty'];
         }
@@ -646,6 +646,6 @@ SQL;
         } else {
             $childIds = $query->fetchAll(\PDO::FETCH_COLUMN);
         }
-        $this->combinedProductIds = array_merge($ids, $childIds);
+        $this->combinedProductIds = \array_merge($ids, $childIds);
     }
 }

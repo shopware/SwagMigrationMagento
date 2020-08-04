@@ -61,8 +61,8 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
 
         $entityData = [];
         $entityData[] = new PremappingEntityStruct('default_country', 'Standard country', $uuid);
-        usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
-            return strcmp($item1->getDescription(), $item2->getDescription());
+        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
         return $entityData;
@@ -86,8 +86,8 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
             $this->preselectionDictionary[$countryName] = $country->getId();
             $choices[] = new PremappingChoiceStruct($country->getId(), $countryName);
         }
-        usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
-            return strcmp($item1->getDescription(), $item2->getDescription());
+        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+            return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
         return $choices;

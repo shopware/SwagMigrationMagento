@@ -161,7 +161,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         $this->convertValue($converted, 'title', $data, 'title');
         if (empty($converted['title'])) {
-            $converted['title'] = mb_substr($data['detail'], 0, 30) . '...';
+            $converted['title'] = \mb_substr($data['detail'], 0, 30) . '...';
         }
         $this->convertValue($converted, 'content', $data, 'detail');
 
@@ -193,7 +193,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
     protected function setPoints(array &$converted, array &$data): void
     {
-        $counting = count($data['ratings']);
+        $counting = \count($data['ratings']);
         if ($counting === 0) {
             $converted['points'] = 0;
 
@@ -205,6 +205,6 @@ abstract class ProductReviewConverter extends MagentoConverter
             $sumRating += $rating['value'];
         }
 
-        $converted['points'] = round($sumRating / $counting);
+        $converted['points'] = \round($sumRating / $counting);
     }
 }

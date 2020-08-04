@@ -20,7 +20,7 @@ abstract class ProductCustomFieldReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $customFields = $this->fetchCustomFields($migrationContext);
-        $ids = array_column($customFields, 'attribute_id');
+        $ids = \array_column($customFields, 'attribute_id');
         $options = $this->fetchSelectOptions($ids);
         $optionIds = [];
 
@@ -214,7 +214,7 @@ SQL;
 
         $locales = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
         foreach ($locales as $storeId => &$locale) {
-            $locale = str_replace('_', '-', $locale);
+            $locale = \str_replace('_', '-', $locale);
         }
 
         return $locales;

@@ -17,6 +17,6 @@ class Magento22NewsletterRecipientStatusReader extends NewsletterRecipientStatus
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
-            && in_array(NewsletterRecipientDataSelection::IDENTIFIER, $entityGroupNames, true);
+            && \in_array(NewsletterRecipientDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 }

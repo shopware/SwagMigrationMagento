@@ -21,9 +21,9 @@ abstract class NewsletterRecipientReader extends AbstractReader
         $ids = $this->fetchIdentifiers($this->tablePrefix . 'newsletter_subscriber', 'subscriber_id', $migrationContext->getOffset(), $migrationContext->getLimit());
         $fetchedRecipients = $this->mapData($this->fetchNewsletterRecipients($ids, $migrationContext), [], ['recipient']);
 
-        $customerIds = array_values(
-            array_filter(
-                array_column($fetchedRecipients, 'customer_id'),
+        $customerIds = \array_values(
+            \array_filter(
+                \array_column($fetchedRecipients, 'customer_id'),
                 function ($value) {
                     return $value !== '0';
                 }

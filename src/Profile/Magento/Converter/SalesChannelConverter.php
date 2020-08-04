@@ -81,7 +81,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $migrationContext->getRunUuid(),
                 DefaultEntities::SALES_CHANNEL,
                 $data['group_id'],
-                implode(',', $fields)
+                \implode(',', $fields)
             ));
 
             return new ConvertStruct(null, $data);
@@ -382,7 +382,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             }
         }
 
-        return array_values($languages);
+        return \array_values($languages);
     }
 
     protected function getSalesChannelCurrencies(string $currencyUuid, array $data, Context $context): array
@@ -410,7 +410,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             }
         }
 
-        return array_values($currencies);
+        return \array_values($currencies);
     }
 
     protected function getSalesChannelCountries(string $countryUuid, array $data, Context $context): array
@@ -438,7 +438,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             }
         }
 
-        return array_values($countries);
+        return \array_values($countries);
     }
 
     protected function getPaymentMethods(array $data, Context $context): array
@@ -471,7 +471,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             }
         }
 
-        return array_values($payments);
+        return \array_values($payments);
     }
 
     protected function getShippingMethods(array $data, Context $context): array
@@ -504,7 +504,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             }
         }
 
-        return array_values($carriers);
+        return \array_values($carriers);
     }
 
     protected function getSalesChannelTranslation(array &$salesChannel, array $data): void

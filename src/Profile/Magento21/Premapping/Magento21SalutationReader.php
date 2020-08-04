@@ -18,7 +18,7 @@ class Magento21SalutationReader extends SalutationReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
-            && (in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true)
-            || in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true));
+            && (\in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || \in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true));
     }
 }

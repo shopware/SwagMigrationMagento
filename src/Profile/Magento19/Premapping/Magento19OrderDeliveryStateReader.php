@@ -17,6 +17,6 @@ class Magento19OrderDeliveryStateReader extends OrderDeliveryStateReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
-            && in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true);
+            && \in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 }

@@ -59,8 +59,8 @@ abstract class SalutationReader extends AbstractPremappingReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof MagentoProfileInterface
-            && (in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true)
-            || in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true));
+            && (\in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || \in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true));
     }
 
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
@@ -99,8 +99,8 @@ abstract class SalutationReader extends AbstractPremappingReader
         }
 
         $entityData[] = new PremappingEntityStruct('default_salutation', 'Standard salutation', $uuid);
-        usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
-            return strcmp($item1->getDescription(), $item2->getDescription());
+        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
         return $entityData;
@@ -120,8 +120,8 @@ abstract class SalutationReader extends AbstractPremappingReader
         foreach ($salutations as $salutation) {
             $choices[] = new PremappingChoiceStruct($salutation->getId(), $salutation->getSalutationKey());
         }
-        usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
-            return strcmp($item1->getDescription(), $item2->getDescription());
+        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+            return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
         return $choices;
