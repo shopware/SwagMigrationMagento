@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\System\Language\LanguageEntity;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
@@ -48,6 +49,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $this->migrationContext = $migrationContext;
         $this->runId = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['id'];
+        $defaultLanguage = $this->mappingService->getDefaultLanguage($this->context);
 
         $connection = $migrationContext->getConnection();
         $this->connectionId = '';
@@ -77,9 +79,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
 
         $converted = [
             'id' => $this->mainMapping['entityUuid'],
-            'name' => $data['name'],
         ];
-        unset($data['name']);
 
         if (!isset($data['options'])) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
@@ -92,7 +92,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
             return new ConvertStruct(null, $this->originalData);
         }
 
-        $this->getProperties($data, $converted);
+        $this->getProperties($data, $converted, $defaultLanguage);
         unset($data['options']);
 
         if (isset($data['translations'])) {
@@ -104,16 +104,22 @@ abstract class PropertyGroupConverter extends MagentoConverter
         }
         unset($data['translations']);
 
+        if ($defaultLanguage === null || !isset($converted['translations'][$defaultLanguage->getId()]['name'])) {
+            $this->convertValue($converted, 'name', $data, 'name');
+        }
+        unset($data['name']);
+
         $this->updateMainMapping($migrationContext, $context);
 
-        if (empty($data)) {
-            $data = null;
+        $resultData = $data;
+        if (empty($resultData)) {
+            $resultData = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 
-    protected function getProperties(array $data, array &$converted): void
+    protected function getProperties(array $data, array &$converted, ?LanguageEntity $language): void
     {
         foreach ($data['options'] as $option) {
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -124,16 +130,22 @@ abstract class PropertyGroupConverter extends MagentoConverter
             );
             $this->mappingIds[] = $mapping['id'];
 
-            $translations = [];
+            $convertedOption = [
+                'id' => $mapping['entityUuid'],
+            ];
             if (isset($option['translations'])) {
                 $translations = $this->getTranslations($option['translations'], ['name' => 'name'], $this->context);
+
+                if ($translations !== []) {
+                    $convertedOption['translations'] = $translations;
+                }
             }
 
-            $converted['options'][] = [
-                'id' => $mapping['entityUuid'],
-                'name' => $option['name'],
-                'translations' => $translations,
-            ];
+            if ($language === null || !isset($convertedOption['translations'][$language->getId()]['name'])) {
+                $convertedOption['name'] = $option['name'];
+            }
+
+            $converted['options'][] = $convertedOption;
         }
     }
 }

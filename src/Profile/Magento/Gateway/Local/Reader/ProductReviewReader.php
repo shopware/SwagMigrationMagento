@@ -15,10 +15,6 @@ use SwagMigrationAssistant\Migration\TotalStruct;
 
 abstract class ProductReviewReader extends AbstractReader
 {
-    /**
-     * @psalm-suppress InvalidReturnStatement
-     * @psalm-suppress InvalidReturnType
-     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);

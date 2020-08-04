@@ -12,6 +12,7 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Rule\Container\AndRule;
 use Shopware\Core\Framework\Rule\Container\OrRule;
+use Shopware\Core\System\Language\LanguageEntity;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -201,11 +202,6 @@ abstract class ProductConverter extends MagentoConverter
         $this->convertValue($converted, 'stock', $data, 'instock', self::TYPE_INTEGER);
         $this->convertValue($converted, 'weight', $data, 'weight', self::TYPE_FLOAT);
         $this->convertValue($converted, 'productNumber', $data, 'sku');
-        $this->convertValue($converted, 'name', $data, 'name');
-        $this->convertValue($converted, 'description', $data, 'description');
-        $this->convertValue($converted, 'metaTitle', $data, 'meta_title');
-        $this->convertValue($converted, 'metaDescription', $data, 'meta_description');
-        $this->convertValue($converted, 'keywords', $data, 'meta_keyword');
 
         if (isset($converted['keywords'])) {
             $converted['keywords'] = $this->trimValue($converted['keywords']);
@@ -292,9 +288,9 @@ abstract class ProductConverter extends MagentoConverter
                 [
                     'name' => 'name',
                     'description' => 'description',
-                    'meta_title' => 'metaTitle',
-                    'meta_description' => 'metaDescription',
-                    'meta_keyword' => ['key' => 'keywords', 'maxChars' => 255],
+                    'meta_title' => ['key' => 'metaTitle', 'maxChars' => 255],
+                    'meta_description' => ['key' => 'metaDescription', 'maxChars' => 255],
+                    'meta_keyword' => 'keywords',
                 ],
                 $context,
                 (int) $data['attribute_set_id']
@@ -308,6 +304,20 @@ abstract class ProductConverter extends MagentoConverter
             }
         }
         unset($data['translations']);
+
+        $language = $this->mappingService->getDefaultLanguage($this->context);
+        $this->convertTranslationValue($language, $converted, 'name', $data, 'name');
+        $this->convertTranslationValue($language, $converted, 'description', $data, 'description');
+        $this->convertTranslationValue($language, $converted, 'metaTitle', $data, 'meta_title');
+        $this->convertTranslationValue($language, $converted, 'metaDescription', $data, 'meta_description');
+        $this->convertTranslationValue($language, $converted, 'keywords', $data, 'meta_keyword');
+
+        if (isset($converted['metaTitle'])) {
+            $converted['metaTitle'] = $this->trimValue($converted['metaTitle']);
+        }
+        if (isset($converted['metaDescription'])) {
+            $converted['metaDescription'] = $this->trimValue($converted['metaDescription']);
+        }
 
         $this->updateMainMapping($migrationContext, $context);
 
@@ -376,6 +386,24 @@ abstract class ProductConverter extends MagentoConverter
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+    }
+
+    protected function convertTranslationValue(
+        ?LanguageEntity $defaultLanguage,
+        array &$newData,
+        string $newKey,
+        array &$sourceData,
+        string $sourceKey,
+        string $castType = self::TYPE_STRING,
+        bool $unset = true
+    ): void {
+        if ($defaultLanguage === null || !isset($newData['translations'][$defaultLanguage->getId()][$newKey])) {
+            $this->convertValue($newData, $newKey, $sourceData, $sourceKey, $castType, $unset);
+        }
+
+        if ($unset) {
+            unset($sourceData[$sourceKey]);
+        }
     }
 
     protected function setCategories(array &$converted, array &$data): void

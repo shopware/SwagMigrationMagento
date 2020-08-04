@@ -72,7 +72,7 @@ class Magento19ManufacturerConverterTest extends TestCase
             250
         );
 
-        $this->languageUuid = Uuid::randomHex();
+        $this->languageUuid = DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID;
         $mappingService->createMapping(
             $this->connection->getId(),
             MagentoDefaultEntities::STORE_LANGUAGE,
@@ -109,5 +109,23 @@ class Magento19ManufacturerConverterTest extends TestCase
             $manufacturerData[0]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
         );
+        static::assertArrayNotHasKey('name', $converted);
+    }
+
+    public function testConvertWithoutTranslation(): void
+    {
+        $manufacturerData = require __DIR__ . '/../../../_fixtures/manufacturer_data.php';
+        unset($manufacturerData[0]['translations']);
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->manufacturerConverter->convert($manufacturerData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertNotNull($convertResult->getMappingUuid());
+        static::assertSame($manufacturerData[0]['value'], $converted['name']);
+        static::assertArrayNotHasKey('translations', $converted);
     }
 }

@@ -1,6 +1,4 @@
 parameters:
-    autoload_directories:
-        - %currentWorkingDirectory%/../SwagMigrationAssistant
     level: 5
     reportUnmatchedIgnoredErrors: false
     excludes_analyse:

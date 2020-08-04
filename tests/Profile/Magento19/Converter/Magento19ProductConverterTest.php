@@ -143,7 +143,7 @@ class Magento19ProductConverterTest extends TestCase
             Uuid::randomHex()
         );
 
-        $this->languageUuid = Uuid::randomHex();
+        $this->languageUuid = DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID;
         $this->mappingService->createMapping(
             $this->connection->getId(),
             MagentoDefaultEntities::STORE_LANGUAGE,
@@ -189,14 +189,53 @@ class Magento19ProductConverterTest extends TestCase
             $converted['weight']
         );
         static::assertSame(
-            mb_substr($productData[0]['meta_keyword'], 0, 255),
+            $productData[0]['translations']['1']['meta_keyword']['value'],
+            $converted['translations'][$this->languageUuid]['keywords']
+        );
+        static::assertSame(
+            mb_substr($productData[0]['translations']['1']['meta_title']['value'], 0, 255),
+            $converted['translations'][$this->languageUuid]['metaTitle']
+        );
+        static::assertSame(
+            mb_substr($productData[0]['translations']['1']['meta_description']['value'], 0, 255),
+            $converted['translations'][$this->languageUuid]['metaDescription']
+        );
+        static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
+        static::assertArrayNotHasKey('keywords', $converted);
+        static::assertArrayNotHasKey('name', $converted);
+    }
+
+    public function testConvertWithoutStandardTranslation(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+        unset($productData[0]['translations']);
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame(
+            $productData[0]['name'],
+            $converted['name']
+        );
+        static::assertSame(
+            $productData['0']['meta_keyword'],
             $converted['keywords']
         );
         static::assertSame(
-            mb_substr($productData[0]['translations']['1']['meta_keyword']['value'], 0, 255),
-            $converted['translations'][$this->languageUuid]['keywords']
+            mb_substr($productData['0']['meta_title'], 0, 255),
+            $converted['metaTitle']
         );
-        static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
+        static::assertSame(
+            mb_substr($productData['0']['meta_description'], 0, 255),
+            $converted['metaDescription']
+        );
+        static::assertArrayNotHasKey('translations', $converted);
     }
 
     public function testConvertMainAndChild(): void

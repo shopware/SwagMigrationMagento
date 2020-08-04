@@ -65,8 +65,6 @@ abstract class ManufacturerConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
         unset($data['option_id']);
 
-        $this->convertValue($converted, 'name', $data, 'value');
-
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations(
                 $data['translations'],
@@ -84,6 +82,12 @@ abstract class ManufacturerConverter extends MagentoConverter
             }
         }
         unset($data['translations']);
+
+        $language = $this->mappingService->getDefaultLanguage($this->context);
+        if ($language === null || !isset($converted['translations'][$language->getId()]['name'])) {
+            $this->convertValue($converted, 'name', $data, 'value');
+        }
+        unset($data['value']);
 
         $resultData = $data;
         if (empty($resultData)) {
