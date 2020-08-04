@@ -19,12 +19,12 @@ abstract class CategoryReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $fetchedCategories = $this->fetchCategories($migrationContext);
-        $ids = array_column($fetchedCategories, 'entity_id');
+        $ids = \array_column($fetchedCategories, 'entity_id');
 
         $this->appendTranslations($ids, $fetchedCategories);
 
         foreach ($fetchedCategories as &$category) {
-            $category['defaultLocale'] = str_replace('_', '-', $category['defaultLocale']);
+            $category['defaultLocale'] = \str_replace('_', '-', $category['defaultLocale']);
         }
 
         return $this->utf8ize($this->cleanupResultSet($fetchedCategories));

@@ -72,17 +72,17 @@ class DummyMagentoMappingService extends MagentoMappingService
     {
         $entity = $mapping['entity'];
         $oldIdentifier = $mapping['oldIdentifier'];
-        $this->mappings[md5($entity . $oldIdentifier)] = $mapping;
+        $this->mappings[\md5($entity . $oldIdentifier)] = $mapping;
     }
 
     public function getMapping(string $connectionId, string $entityName, string $oldIdentifier, Context $context): ?array
     {
-        return $this->mappings[md5($entityName . $oldIdentifier)] ?? null;
+        return $this->mappings[\md5($entityName . $oldIdentifier)] ?? null;
     }
 
     public function deleteDummyMapping(string $entityName, string $oldIdentifier): void
     {
-        unset($this->mappings[md5($entityName . $oldIdentifier)]);
+        unset($this->mappings[\md5($entityName . $oldIdentifier)]);
     }
 
     public function getMappings(string $connectionId, string $entityName, array $ids, Context $context): EntitySearchResult
@@ -107,8 +107,8 @@ class DummyMagentoMappingService extends MagentoMappingService
 
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array
     {
-        return isset($this->mappings[md5($entityName . $identifier)])
-            ? array_column($this->mappings[md5($entityName . $identifier)], 'entityUuid')
+        return isset($this->mappings[\md5($entityName . $identifier)])
+            ? \array_column($this->mappings[\md5($entityName . $identifier)], 'entityUuid')
             : [];
     }
 
@@ -132,7 +132,7 @@ class DummyMagentoMappingService extends MagentoMappingService
             );
         }
 
-        $mapping = array_merge($mapping, $updateData);
+        $mapping = \array_merge($mapping, $updateData);
         $this->saveMapping($mapping);
 
         // required for tests

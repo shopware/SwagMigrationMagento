@@ -17,6 +17,6 @@ class Magento20OrderStateReader extends OrderStateReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
-            && in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true);
+            && \in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 }

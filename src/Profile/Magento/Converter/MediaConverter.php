@@ -75,7 +75,7 @@ abstract class MediaConverter extends MagentoConverter
         $converted['id'] = $this->mainMapping['entityUuid'];
 
         $fileMatches = [];
-        preg_match('/^\/(.+\/)*(.+)\..+$/', $data['path'], $fileMatches);
+        \preg_match('/^\/(.+\/)*(.+)\..+$/', $data['path'], $fileMatches);
         $fileName = $converted['id'];
         if (isset($fileMatches[2])) {
             $fileName = $fileMatches[2];

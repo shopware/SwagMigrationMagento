@@ -19,7 +19,7 @@ abstract class Magento2LocalMediaProcessor extends LocalMediaProcessor
     {
         $promises = [];
         foreach ($media as $mediaFile) {
-            $uuid = mb_strtolower($mediaFile['media_id']);
+            $uuid = \mb_strtolower($mediaFile['media_id']);
             $additionalData = [];
             $additionalData['uri'] = $shopUrl . self::PUBLIC_PATH . $mediaFile['uri'];
 

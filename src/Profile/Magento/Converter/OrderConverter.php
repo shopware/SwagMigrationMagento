@@ -123,7 +123,7 @@ abstract class OrderConverter extends MagentoConverter
                 $migrationContext->getRunUuid(),
                 DefaultEntities::ORDER,
                 $data['identifier'],
-                implode(',', $fields)
+                \implode(',', $fields)
             ));
 
             return new ConvertStruct(null, $data);
@@ -217,7 +217,7 @@ abstract class OrderConverter extends MagentoConverter
         }
         unset($data['shippingAddress'], $data['items'], $data['billingAddress'], $data['shipments']);
 
-        $converted['deepLinkCode'] = md5($converted['id']);
+        $converted['deepLinkCode'] = \md5($converted['id']);
         unset($data['orders'], $data['identifier']);
 
         $resultData = $data;
@@ -265,7 +265,7 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getTaxRules(array $originalData): TaxRuleCollection
     {
-        $taxRates = array_unique(array_column($originalData['items'], 'tax_percent'));
+        $taxRates = \array_unique(\array_column($originalData['items'], 'tax_percent'));
 
         $taxRules = [];
         foreach ($taxRates as $taxRate) {
@@ -481,7 +481,7 @@ abstract class OrderConverter extends MagentoConverter
     protected function getShippingMethod(string $shippingMethodId): ?string
     {
         if (str_contains($shippingMethodId, '_')) {
-            preg_match('/(.*)_/', $shippingMethodId, $matches);
+            \preg_match('/(.*)_/', $shippingMethodId, $matches);
 
             if (isset($matches[1])) {
                 $shippingMethodId = $matches[1];

@@ -28,7 +28,7 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof MagentoProfileInterface
-            && in_array(NewsletterRecipientDataSelection::IDENTIFIER, $entityGroupNames, true);
+            && \in_array(NewsletterRecipientDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
@@ -81,8 +81,8 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
         foreach ($choices as $key => $choice) {
             $mapping[] = new PremappingEntityStruct((string) $key, $choice, '');
         }
-        usort($mapping, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
-            return strcmp($item1->getDescription(), $item2->getDescription());
+        \usort($mapping, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+            return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
         return $mapping;

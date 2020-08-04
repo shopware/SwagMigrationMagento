@@ -19,8 +19,8 @@ class Magento22TaxReader extends TaxReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
-            && (in_array(ProductDataSelection::IDENTIFIER, $entityGroupNames, true)
-            || in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true)
-            || in_array(SeoUrlDataSelection::IDENTIFIER, $entityGroupNames, true));
+            && (\in_array(ProductDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || \in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || \in_array(SeoUrlDataSelection::IDENTIFIER, $entityGroupNames, true));
     }
 }

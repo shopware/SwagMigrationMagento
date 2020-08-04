@@ -193,11 +193,11 @@ class Magento19ProductConverterTest extends TestCase
             $converted['translations'][$this->languageUuid]['keywords']
         );
         static::assertSame(
-            mb_substr($productData[0]['translations']['1']['meta_title']['value'], 0, 255),
+            \mb_substr($productData[0]['translations']['1']['meta_title']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['metaTitle']
         );
         static::assertSame(
-            mb_substr($productData[0]['translations']['1']['meta_description']['value'], 0, 255),
+            \mb_substr($productData[0]['translations']['1']['meta_description']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['metaDescription']
         );
         static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
@@ -228,11 +228,11 @@ class Magento19ProductConverterTest extends TestCase
             $converted['keywords']
         );
         static::assertSame(
-            mb_substr($productData['0']['meta_title'], 0, 255),
+            \mb_substr($productData['0']['meta_title'], 0, 255),
             $converted['metaTitle']
         );
         static::assertSame(
-            mb_substr($productData['0']['meta_description'], 0, 255),
+            \mb_substr($productData['0']['meta_description'], 0, 255),
             $converted['metaDescription']
         );
         static::assertArrayNotHasKey('translations', $converted);

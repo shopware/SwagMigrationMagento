@@ -20,9 +20,9 @@ abstract class ProductReviewReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $fetchedProductReviews = $this->mapData($this->fetchProductReviews($migrationContext), [], ['detail']);
-        $ids = array_column($fetchedProductReviews, 'review_id');
+        $ids = \array_column($fetchedProductReviews, 'review_id');
         $fetchedRatings = $this->mapData($this->fetchRatings($ids), [], ['opt']);
-        $defaultLocale = str_replace('_', '-', $this->fetchDefaultLocale());
+        $defaultLocale = \str_replace('_', '-', $this->fetchDefaultLocale());
 
         foreach ($fetchedProductReviews as &$productReview) {
             $review_id = $productReview['review_id'];
@@ -32,7 +32,7 @@ abstract class ProductReviewReader extends AbstractReader
             }
 
             if (isset($productReview['locale'])) {
-                $productReview['locale'] = str_replace('_', '-', $productReview['locale']);
+                $productReview['locale'] = \str_replace('_', '-', $productReview['locale']);
             } else {
                 $productReview['locale'] = $defaultLocale;
             }

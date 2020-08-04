@@ -20,15 +20,15 @@ class Magento2Md5Encoder implements LegacyEncoderInterface
 
     public function isPasswordValid(string $password, string $hash): bool
     {
-        if (mb_strpos($hash, ':') === false) {
+        if (\mb_strpos($hash, ':') === false) {
             return false;
         }
-        [$md5, $salt, $version] = explode(':', $hash);
+        [$md5, $salt, $version] = \explode(':', $hash);
 
         if ($version !== '0') {
             return false;
         }
 
-        return hash_equals($md5, md5($salt . $password));
+        return \hash_equals($md5, \md5($salt . $password));
     }
 }

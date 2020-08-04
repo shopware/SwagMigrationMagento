@@ -15,6 +15,12 @@ EOF;
 return Config::create()
     ->setUsingCache(false)
     ->setRules([
-        'header_comment' => ['header' => $licenseInformation, 'separate' => 'bottom', 'location' => 'after_declare_strict', 'comment_type' => 'comment']
+        'header_comment' => [
+            'header' => $licenseInformation,
+            'separate' => 'bottom',
+            'location' => 'after_declare_strict',
+            'comment_type' => 'comment'
+        ],
+        'native_function_invocation' => true,
     ])
     ->setFinder($finder);

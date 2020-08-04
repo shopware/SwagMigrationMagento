@@ -16,7 +16,7 @@ abstract class ManufacturerReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
         $fetchedManufacturers = $this->fetchManufacturers();
-        $ids = array_column($fetchedManufacturers, 'option_id');
+        $ids = \array_column($fetchedManufacturers, 'option_id');
         $fetchedTranslations = $this->fetchTranslations($ids);
 
         foreach ($fetchedManufacturers as &$manufacturer) {

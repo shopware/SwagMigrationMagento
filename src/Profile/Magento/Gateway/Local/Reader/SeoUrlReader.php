@@ -20,11 +20,11 @@ abstract class SeoUrlReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $fetchedSeoUrls = $this->mapData($this->fetchSeoUrls($migrationContext), [], ['seo']);
-        $defaultLocale = str_replace('_', '-', $this->fetchDefaultLocale());
+        $defaultLocale = \str_replace('_', '-', $this->fetchDefaultLocale());
 
         foreach ($fetchedSeoUrls as &$seoUrl) {
             if (isset($seoUrl['locale'])) {
-                $seoUrl['locale'] = str_replace('_', '-', $seoUrl['locale']);
+                $seoUrl['locale'] = \str_replace('_', '-', $seoUrl['locale']);
             } else {
                 $seoUrl['locale'] = $defaultLocale;
             }

@@ -43,7 +43,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $migrationContext->getRunUuid(),
                 DefaultEntities::SALES_CHANNEL,
                 $data['group_id'],
-                implode(',', $fields)
+                \implode(',', $fields)
             ));
 
             return new ConvertStruct(null, $data);

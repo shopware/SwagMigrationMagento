@@ -104,7 +104,7 @@ abstract class AbstractReader implements ReaderInterface
         $columns = $this->connection->getSchemaManager()->listTableColumns($table);
 
         foreach ($columns as $column) {
-            $selection = str_replace(
+            $selection = \str_replace(
                 ['#tableAlias#', '#column#'],
                 [$tableAlias, $column->getName()],
                 '`#tableAlias#`.`#column#` AS `#tableAlias#.#column#`'
@@ -119,14 +119,14 @@ abstract class AbstractReader implements ReaderInterface
      */
     protected function buildArrayFromChunks(array &$array, array $path, string $fieldKey, $value): void
     {
-        $key = array_shift($path);
+        $key = \array_shift($path);
 
         if (empty($key)) {
             $array[$fieldKey] = $value;
         } elseif (empty($path)) {
             $array[$key][$fieldKey] = $value;
         } else {
-            if (!isset($array[$key]) || !is_array($array[$key])) {
+            if (!isset($array[$key]) || !\is_array($array[$key])) {
                 $array[$key] = [];
             }
             $this->buildArrayFromChunks($array[$key], $path, $fieldKey, $value);
@@ -136,8 +136,8 @@ abstract class AbstractReader implements ReaderInterface
     protected function cleanupResultSet(array &$data): array
     {
         foreach ($data as $key => &$value) {
-            if (is_array($value)) {
-                if (empty(array_filter($value))) {
+            if (\is_array($value)) {
+                if (empty(\array_filter($value))) {
                     unset($data[$key]);
 
                     continue;
@@ -145,7 +145,7 @@ abstract class AbstractReader implements ReaderInterface
 
                 $this->cleanupResultSet($value);
 
-                if (empty(array_filter($value))) {
+                if (empty(\array_filter($value))) {
                     unset($data[$key]);
 
                     continue;
@@ -199,15 +199,15 @@ abstract class AbstractReader implements ReaderInterface
     protected function mapData(array $data, array $result = [], array $pathsToRemove = []): array
     {
         foreach ($data as $key => $value) {
-            if (is_numeric($key)) {
+            if (\is_numeric($key)) {
                 $result[$key] = $this->mapData($value, [], $pathsToRemove);
             } else {
-                $paths = explode('.', $key);
-                $fieldKey = $paths[count($paths) - 1];
-                $chunks = explode('_', $paths[0]);
+                $paths = \explode('.', $key);
+                $fieldKey = $paths[\count($paths) - 1];
+                $chunks = \explode('_', $paths[0]);
 
                 if (!empty($pathsToRemove)) {
-                    $chunks = array_diff($chunks, $pathsToRemove);
+                    $chunks = \array_diff($chunks, $pathsToRemove);
                 }
                 $this->buildArrayFromChunks($result, $chunks, $fieldKey, $value);
             }
@@ -272,11 +272,11 @@ SQL;
         foreach ($fetchedEntities as &$fetchedEntity) {
             if (isset($fetchDefaultAttributes[$fetchedEntity['entity_id']])) {
                 $attributes = $fetchDefaultAttributes[$fetchedEntity['entity_id']];
-                $preparedAttributes = array_combine(
-                    array_column($attributes, 'attribute_code'),
-                    array_column($attributes, 'value')
+                $preparedAttributes = \array_combine(
+                    \array_column($attributes, 'attribute_code'),
+                    \array_column($attributes, 'value')
                 );
-                $fetchedEntity = array_merge($fetchedEntity, $preparedAttributes);
+                $fetchedEntity = \array_merge($fetchedEntity, $preparedAttributes);
             }
         }
     }
@@ -298,12 +298,12 @@ SQL;
      */
     private function childrenUtf8ize($mixed)
     {
-        if (is_array($mixed)) {
+        if (\is_array($mixed)) {
             foreach ($mixed as $key => $value) {
                 $mixed[$key] = $this->childrenUtf8ize($value);
             }
-        } elseif (is_string($mixed)) {
-            return mb_convert_encoding($mixed, 'UTF-8', 'UTF-8');
+        } elseif (\is_string($mixed)) {
+            return \mb_convert_encoding($mixed, 'UTF-8', 'UTF-8');
         }
 
         return $mixed;

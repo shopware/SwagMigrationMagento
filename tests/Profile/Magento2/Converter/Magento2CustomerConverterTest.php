@@ -166,7 +166,7 @@ class Magento2CustomerConverterTest extends TestCase
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
 
-        $customerData[1]['password_hash'] = str_replace(':0', ':2', $customerData[1]['password_hash']);
+        $customerData[1]['password_hash'] = \str_replace(':0', ':2', $customerData[1]['password_hash']);
         $context = Context::createDefaultContext();
         $convertResult = $this->customerConverter->convert($customerData[1], $context, $this->migrationContext);
         $logs = $this->loggingService->getLoggingArray();
@@ -214,7 +214,7 @@ class Magento2CustomerConverterTest extends TestCase
     public function testConvertDefaultPasswordEncoder(): void
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
-        $customerData[0]['password_hash'] = str_replace(':1', ':69', $customerData[0]['password_hash']);
+        $customerData[0]['password_hash'] = \str_replace(':1', ':69', $customerData[0]['password_hash']);
 
         $context = Context::createDefaultContext();
         $convertResult = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);

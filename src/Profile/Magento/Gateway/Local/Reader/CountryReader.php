@@ -44,10 +44,10 @@ abstract class CountryReader extends AbstractReader
         $countryConfig = [];
         foreach ($configurations as $config) {
             if (isset($config['value'])) {
-                $countryConfig = array_merge($countryConfig, explode(',', $config['value']));
+                $countryConfig = \array_merge($countryConfig, \explode(',', $config['value']));
             }
         }
 
-        return array_values(array_unique($countryConfig));
+        return \array_values(\array_unique($countryConfig));
     }
 }

@@ -118,15 +118,15 @@ class Magento19CategoryConverterTest extends TestCase
             $converted['translations'][$this->languageUuid]['name']
         );
         static::assertSame(
-            mb_substr($categoryData[1]['translations']['1']['meta_title']['value'], 0, 255),
+            \mb_substr($categoryData[1]['translations']['1']['meta_title']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['metaTitle']
         );
         static::assertSame(
-            mb_substr($categoryData[1]['translations']['1']['meta_description']['value'], 0, 255),
+            \mb_substr($categoryData[1]['translations']['1']['meta_description']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['metaDescription']
         );
         static::assertSame(
-            mb_substr($categoryData[1]['translations']['1']['meta_keywords']['value'], 0, 255),
+            \mb_substr($categoryData[1]['translations']['1']['meta_keywords']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['keywords']
         );
 
@@ -152,8 +152,8 @@ class Magento19CategoryConverterTest extends TestCase
 
         static::assertSame($categoryData[1]['name'], $converted['name']);
         static::assertSame($categoryData[1]['meta_title'], $converted['metaTitle']);
-        static::assertSame(mb_substr($categoryData[1]['meta_description'], 0, 255), $converted['metaDescription']);
-        static::assertSame(mb_substr($categoryData[1]['meta_keywords'], 0, 255), $converted['keywords']);
+        static::assertSame(\mb_substr($categoryData[1]['meta_description'], 0, 255), $converted['metaDescription']);
+        static::assertSame(\mb_substr($categoryData[1]['meta_keywords'], 0, 255), $converted['keywords']);
     }
 
     public function testConvertWithParent(): void

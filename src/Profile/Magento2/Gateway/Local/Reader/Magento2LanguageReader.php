@@ -59,11 +59,11 @@ abstract class Magento2LanguageReader extends LanguageReader
                 continue;
             }
             $storeConfigs[$storeConfig['locale']] = [
-                'locale' => str_replace('_', '-', $storeConfig['locale']),
+                'locale' => \str_replace('_', '-', $storeConfig['locale']),
                 'stores' => [$storeConfig['store_id']],
             ];
         }
 
-        return array_values($storeConfigs);
+        return \array_values($storeConfigs);
     }
 }

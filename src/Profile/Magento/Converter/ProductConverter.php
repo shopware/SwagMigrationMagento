@@ -525,11 +525,11 @@ abstract class ProductConverter extends MagentoConverter
         $this->mappingIds[] = $currencyMapping['id'];
 
         if ($this->priceIsGross === true) {
-            $netPrice = round((float) $priceData['price'] / (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+            $netPrice = \round((float) $priceData['price'] / (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
             $grossPrice = (float) $priceData['price'];
         } else {
             $netPrice = (float) $priceData['price'];
-            $grossPrice = round((float) $priceData['price'] * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+            $grossPrice = \round((float) $priceData['price'] * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
         }
         $price = [];
         if ($currencyUuid !== Defaults::CURRENCY) {
@@ -794,7 +794,7 @@ abstract class ProductConverter extends MagentoConverter
                 $mediaData['description'] = $newMedia['id'];
 
                 $fileMatches = [];
-                preg_match('/^\/(.+\/)*(.+)\..+$/', $mediaData['image'], $fileMatches);
+                \preg_match('/^\/(.+\/)*(.+)\..+$/', $mediaData['image'], $fileMatches);
                 if (isset($fileMatches[2])) {
                     $mediaData['description'] = $fileMatches[2];
                 }
@@ -851,7 +851,7 @@ abstract class ProductConverter extends MagentoConverter
             $this->setStoreVisibilities($storeId, $status, $productId, $visibilities);
         }
 
-        $converted['visibilities'] = array_values($visibilities);
+        $converted['visibilities'] = \array_values($visibilities);
     }
 
     private function setDefaultStoreVisibility(int $status, string $productId, array &$visibilities): void

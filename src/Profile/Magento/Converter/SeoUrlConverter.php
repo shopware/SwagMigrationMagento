@@ -166,7 +166,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         }
 
         $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
-        $hash = hash('sha256', $converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical);
+        $hash = \hash('sha256', $converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical);
         $uniqueUrlMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::SEO_URL,

@@ -228,7 +228,7 @@ class Magento19SeoUrlConverterTest extends TestCase
     public function testConvertProductSeoUrlWithDuplicateHash(): void
     {
         $seoUrlData = require __DIR__ . '/../../../_fixtures/seo_url_data.php';
-        $hash = hash('sha256', $this->languageId . '_' . $this->salesChannelId . '_' . $this->productId . '_frontend.detail.page_not_canonical');
+        $hash = \hash('sha256', $this->languageId . '_' . $this->salesChannelId . '_' . $this->productId . '_frontend.detail.page_not_canonical');
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::SEO_URL,

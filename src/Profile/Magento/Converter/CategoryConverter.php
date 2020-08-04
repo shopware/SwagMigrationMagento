@@ -114,7 +114,7 @@ abstract class CategoryConverter extends MagentoConverter
                 $migrationContext->getRunUuid(),
                 DefaultEntities::CATEGORY,
                 $data['entity_id'],
-                implode(',', $fields)
+                \implode(',', $fields)
             ));
 
             return new ConvertStruct(null, $data);
