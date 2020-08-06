@@ -404,6 +404,16 @@ SQL;
      */
     protected function fetchProperties(array $ids): array
     {
+        $return = [];
+        foreach (array_chunk($this->combinedProductIds, 100) as $slice) {
+            $return += $this->doFetchProperties($slice);
+        }
+
+        return $return;
+    }
+
+    protected function doFetchProperties(array $ids): array
+    {
         $query = $this->connection->createQueryBuilder();
 
         $query->select('DISTINCT product.entity_id AS identifier');
@@ -413,7 +423,7 @@ SQL;
         $query->addSelect('option_value.option_id AS optionId');
         $query->addSelect('option_value.value AS optionValue');
 
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
+        $query->from("(SELECT * FROM ".$this->tablePrefix."catalog_product_entity WHERE entity_id IN (:ids))", "product");
 
         $query->leftJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id OR entity_int.entity_id = product.entity_id');
@@ -422,7 +432,7 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('entity_int.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -437,6 +447,16 @@ SQL;
      */
     protected function fetchMultiSelectProperties(array $ids): array
     {
+        $return = [];
+        foreach (array_chunk($this->combinedProductIds, 100) as $slice) {
+            $return += $this->doFetchMultiSelectProperties($slice);
+        }
+
+        return $return;
+    }
+
+    protected function doFetchMultiSelectProperties(array $ids): array
+    {
         $query = $this->connection->createQueryBuilder();
 
         $query->select('DISTINCT product.entity_id AS identifier');
@@ -446,7 +466,7 @@ SQL;
         $query->addSelect('CONCAT(product.entity_id, \'_\', eav.attribute_id) AS optionId');
         $query->addSelect('entity_varchar.value AS optionValue');
 
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
+        $query->from("(SELECT * FROM ".$this->tablePrefix."catalog_product_entity WHERE entity_id IN (:ids))", "product");
 
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_varchar', 'entity_varchar', '(entity_varchar.entity_id = relation.child_id OR entity_varchar.entity_id = product.entity_id) AND entity_varchar.store_id = 0');
@@ -454,7 +474,7 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
 
         $query->where('entity_varchar.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
 
         $query = $query->execute();
         if (!($query instanceof ResultStatement)) {
@@ -478,7 +498,7 @@ SQL;
         $query->addSelect('option_value.option_id AS optionId');
         $query->addSelect('option_value.value AS optionValue');
 
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
+        $query->from("(SELECT * FROM ".$this->tablePrefix."catalog_product_entity WHERE entity_id IN (:ids))", "product");
 
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id');
@@ -512,7 +532,7 @@ SQL;
         $query->addSelect('option_value.option_id AS optionId');
         $query->addSelect('option_value.value AS optionValue');
 
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
+        $query->from("(SELECT * FROM ".$this->tablePrefix."catalog_product_entity WHERE entity_id IN (:ids))", "product");
 
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.child_id = product.entity_id');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = product.entity_id');
