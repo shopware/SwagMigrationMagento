@@ -90,6 +90,10 @@ abstract class SalutationReader extends AbstractPremappingReader
                 $uuid = $this->connectionPremappingDictionary[$salutation['option_id']]['destinationUuid'];
             }
 
+            if (!isset($salutation['value'])) {
+                continue;
+            }
+
             $entityData[] = new PremappingEntityStruct($salutation['option_id'], $salutation['value'], $uuid);
         }
 

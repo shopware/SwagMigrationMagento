@@ -87,7 +87,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
                 $uuid = $this->connectionPremappingDictionary[$data['carrier_id']]['destinationUuid'];
             }
 
-            $entityData[] = new PremappingEntityStruct($data['carrier_id'], $data['value'] ?? 'unknown', $uuid);
+            $entityData[] = new PremappingEntityStruct($data['carrier_id'], $data['value'] ?? $data['carrier_id'], $uuid);
         }
 
         $uuid = '';
