@@ -2,6 +2,7 @@
 - MIG-1 - Verbessern der Migration von Kategorie-, Produkt, Hersteller- und Eigenschaftsübersetzungen
 - MIG-7 - Behebt ein Problem bei der Migration der Lieferungen
 - MIG-12 - Cross- und Upselling werden jetzt migriert
+- MIG-24 - Behebt ein Problem bei der Migration von Adressen für Gastbestellungen
 
 # 1.5.0
 - PT-11864 - Verarbeitung der Medien verbessert

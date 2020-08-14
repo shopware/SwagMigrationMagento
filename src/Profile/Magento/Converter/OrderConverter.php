@@ -513,11 +513,16 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getAddress(array $originalData, string $entityName = DefaultEntities::ORDER_ADDRESS): array
     {
+        $identifier = $originalData['entity_id'];
+        if ($entityName === DefaultEntities::CUSTOMER_ADDRESS) {
+            $identifier .= '_guest'; // If the address is for a guest order
+        }
+
         $address = [];
         $mapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             $entityName,
-            $originalData['entity_id'],
+            $identifier,
             $this->context
         );
         $this->mappingIds[] = $mapping['id'];
@@ -803,7 +808,10 @@ abstract class OrderConverter extends MagentoConverter
             $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             if (empty($shippingAddress)) {
                 $shippingAddress = $billingAddress;
+            } else {
+                $converted['orderCustomer']['customer']['addresses'][] = $shippingAddress;
             }
+
             $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
         }
         unset($data['customerSalutation']);

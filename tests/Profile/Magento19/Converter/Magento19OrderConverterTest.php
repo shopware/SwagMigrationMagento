@@ -63,6 +63,16 @@ class Magento19OrderConverterTest extends TestCase
      */
     private $defaultSalutation;
 
+    /**
+     * @var array
+     */
+    private $billingAddressId;
+
+    /**
+     * @var string
+     */
+    private $shippingAddressId;
+
     protected function setUp(): void
     {
         $this->mappingService = new DummyMagentoMappingService();
@@ -176,6 +186,28 @@ class Magento19OrderConverterTest extends TestCase
             MagentoDefaultEntities::STORE_LANGUAGE,
             '1',
             $context
+        );
+
+        $this->billingAddressId = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::CUSTOMER_ADDRESS,
+            '83_guest',
+            $context,
+            null,
+            null,
+            $this->billingAddressId
+        );
+
+        $this->shippingAddressId = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::CUSTOMER_ADDRESS,
+            '84_guest',
+            $context,
+            null,
+            null,
+            $this->shippingAddressId
         );
     }
 
@@ -341,11 +373,17 @@ class Magento19OrderConverterTest extends TestCase
         $converted = $convertResult->getConverted();
 
         static::assertArrayHasKey('customerId', $converted['orderCustomer']);
+        static::assertCount(2, $converted['orderCustomer']['customer']['addresses']);
+        static::assertSame($this->billingAddressId, $converted['orderCustomer']['customer']['defaultBillingAddressId']);
+        static::assertSame($this->shippingAddressId, $converted['orderCustomer']['customer']['defaultShippingAddressId']);
 
         $secondConvertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
         $convertedSecond = $secondConvertResult->getConverted();
 
         static::assertArrayHasKey('customerId', $convertedSecond['orderCustomer']);
         static::assertSame($converted['orderCustomer']['customerId'], $convertedSecond['orderCustomer']['customerId']);
+        static::assertCount(2, $converted['orderCustomer']['customer']['addresses']);
+        static::assertSame($this->billingAddressId, $convertedSecond['orderCustomer']['customer']['defaultBillingAddressId']);
+        static::assertSame($this->shippingAddressId, $convertedSecond['orderCustomer']['customer']['defaultShippingAddressId']);
     }
 }
