@@ -87,8 +87,7 @@ SELECT
     stock.use_config_min_sale_qty   AS useMinPurchaseConfig,
     stock.max_sale_qty              AS maxpurchase,
     stock.use_config_max_sale_qty   AS useMaxPurchaseConfig,
-    relation.parent_id              AS parentId,
-    parent.type_id                  AS parentType
+    relation.parent_id              AS parentId
 FROM {$this->tablePrefix}catalog_product_entity product
 
 -- join stocks
@@ -98,9 +97,7 @@ AND stock.stock_id = 1
 
 LEFT JOIN {$this->tablePrefix}catalog_product_relation AS relation
 ON relation.child_id = product.entity_id
-
-LEFT JOIN {$this->tablePrefix}catalog_product_entity AS parent
-ON relation.parent_id = parent.entity_id
+       AND (SELECT type_id FROM {$this->tablePrefix}catalog_product_entity parentEntity WHERE parentEntity.entity_id = relation.parent_id) = 'configurable'
 
 WHERE product.type_id IN (?)
 
@@ -320,14 +317,6 @@ SQL;
             }
             if (isset($visibility[$productId])) {
                 $product['visibility'] = $visibility[$productId];
-            }
-            // if parent is unsupported type which will not be migrated
-            // we remove relation and migrate as single product
-            // example: part of bundle, which is not supported yet
-            if (isset($product['parentType'])
-                && !\in_array($product['parentType'], self::$ALLOWED_PRODUCT_TYPES, true)
-            ) {
-                $product['parentId'] = null;
             }
 
             $resultSet[] = $product;
