@@ -84,7 +84,7 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
                 $uuid = $this->connectionPremappingDictionary[$data['payment_id']]['destinationUuid'];
             }
 
-            $entityData[] = new PremappingEntityStruct($data['payment_id'], $data['value'], $uuid);
+            $entityData[] = new PremappingEntityStruct($data['payment_id'], $data['value'] ?? $data['payment_id'], $uuid);
         }
 
         $uuid = '';

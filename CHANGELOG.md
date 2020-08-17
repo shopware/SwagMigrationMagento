@@ -2,6 +2,7 @@
 - MIG-1 - Improve migration of category, product, manufacturer and property group translation
 - MIG-7 - Fix migration of order deliveries
 - MIG-12 - Migrate cross- and up-selling
+- MIG-19 - Improve premapping of shipping methods
 - MIG-24 - Fix migration of addresses for guest orders
 
 # 1.5.0
