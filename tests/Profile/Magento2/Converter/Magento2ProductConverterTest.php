@@ -271,10 +271,11 @@ class Magento2ProductConverterTest extends TestCase
         static::assertSame($logs[0]['parameters']['sourceId'], $product['tax_class_id']);
     }
 
-    public function testConvertWithoutPrice(): void
+    public function testConvertSimpleProductWithoutPrice(): void
     {
         $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
         $product = $productData[0];
+        $product['type_id'] = 'simple';
         unset($product['price']);
 
         $context = Context::createDefaultContext();
@@ -289,6 +290,20 @@ class Magento2ProductConverterTest extends TestCase
         static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PRODUCT');
         static::assertSame($logs[0]['parameters']['sourceId'], $product['entity_id']);
         static::assertSame($logs[0]['parameters']['emptyField'], 'price');
+    }
+
+    public function testConvertConfigurableProductWithoutPrice(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+        unset($productData[0]['price']);
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+
+        static::assertSame(0.0, $converted['price'][0]['net']);
+        static::assertSame(0.0, $converted['price'][0]['gross']);
     }
 
     public function testConvertWithoutDefaultCurrency(): void

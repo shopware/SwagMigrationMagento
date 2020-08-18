@@ -14,6 +14,7 @@ EOF;
 
 return Config::create()
     ->setUsingCache(false)
+    ->setRiskyAllowed(true)
     ->setRules([
         'header_comment' => [
             'header' => $licenseInformation,

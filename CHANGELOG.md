@@ -4,6 +4,7 @@
 - MIG-12 - Migrate cross- and up-selling
 - MIG-19 - Improve premapping of shipping methods
 - MIG-24 - Fix migration of addresses for guest orders
+- MIG-25 - Improve migration of configurable products from Magento 2
 
 # 1.5.0
 - PT-11864 - Improve media file processing
