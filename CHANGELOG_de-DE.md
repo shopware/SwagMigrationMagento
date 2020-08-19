@@ -4,7 +4,8 @@
 - MIG-12 - Cross- und Upselling werden jetzt migriert
 - MIG-19 - Verbesserung des Premappings von Versandmethoden
 - MIG-24 - Behebt ein Problem bei der Migration von Adressen für Gastbestellungen
-- MIG-25 - Verbesserung der Migration von konfigurierbaren Produkten aus Magento 2
+- MIG-25 - Verbesserung der Migration von Variantenprodukten
+- MIG-26 - Verbesserung der Migration von konfigurierbaren Produkten aus Magento 2
 
 # 1.5.0
 - PT-11864 - Verarbeitung der Medien verbessert
