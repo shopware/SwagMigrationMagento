@@ -32,31 +32,31 @@ class ProductReviewDataSelection implements DataSelectionInterface
     {
         return new DataSelectionStruct(
             self::IDENTIFIER,
-            $this->getEntityNames(),
-            $this->getEntityNamesRequiredForCount(),
+            $this->getDataSets(),
+            $this->getDataSetsRequiredForCount(),
             'swag-migration.index.selectDataCard.dataSelection.productReviews',
             250,
             true
         );
     }
 
-    public function getEntityNames(): array
+    public function getDataSets(): array
     {
         return [
-            CustomerDataSet::getEntity(),
-            ManufacturerDataSet::getEntity(),
-            PropertyGroupDataSet::getEntity(),
-            ProductCustomFieldDataSet::getEntity(),
-            ProductDataSet::getEntity(),
-            CrossSellingDataSet::getEntity(),
-            ProductReviewDataSet::getEntity(),
+            new CustomerDataSet(),
+            new ManufacturerDataSet(),
+            new PropertyGroupDataSet(),
+            new ProductCustomFieldDataSet(),
+            new ProductDataSet(),
+            new CrossSellingDataSet(),
+            new ProductReviewDataSet(),
         ];
     }
 
-    public function getEntityNamesRequiredForCount(): array
+    public function getDataSetsRequiredForCount(): array
     {
         return [
-            ProductReviewDataSet::getEntity(),
+            new ProductReviewDataSet(),
         ];
     }
 }

@@ -30,29 +30,29 @@ class SeoUrlDataSelection implements DataSelectionInterface
     {
         return new DataSelectionStruct(
             self::IDENTIFIER,
-            $this->getEntityNames(),
-            $this->getEntityNamesRequiredForCount(),
+            $this->getDataSets(),
+            $this->getDataSetsRequiredForCount(),
             'swag-migration.index.selectDataCard.dataSelection.seoUrls',
             220,
             true
         );
     }
 
-    public function getEntityNames(): array
+    public function getDataSets(): array
     {
         return [
-            ManufacturerDataSet::getEntity(),
-            PropertyGroupDataSet::getEntity(),
-            ProductCustomFieldDataSet::getEntity(),
-            ProductDataSet::getEntity(),
-            SeoUrlDataSet::getEntity(),
+            new ManufacturerDataSet(),
+            new PropertyGroupDataSet(),
+            new ProductCustomFieldDataSet(),
+            new ProductDataSet(),
+            new SeoUrlDataSet(),
         ];
     }
 
-    public function getEntityNamesRequiredForCount(): array
+    public function getDataSetsRequiredForCount(): array
     {
         return [
-            SeoUrlDataSet::getEntity(),
+            new SeoUrlDataSet(),
         ];
     }
 }
