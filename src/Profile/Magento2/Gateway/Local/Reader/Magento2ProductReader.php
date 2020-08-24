@@ -41,10 +41,7 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
-     */
-    protected function fetchConfiguratorSettings(array $ids): array
+    protected function fetchConfiguratorSettings(): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -75,10 +72,7 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
-     */
-    protected function fetchProperties(array $ids): array
+    protected function fetchProperties(): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -108,10 +102,7 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
-     */
-    protected function fetchMultiSelectProperties(array $ids): array
+    protected function fetchMultiSelectProperties(): array
     {
         $query = $this->connection->createQueryBuilder();
 
@@ -140,10 +131,7 @@ SQL;
         return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    /**
-     * @param array $ids @deprecated tag:v2.0.0 array $ids use $this->combinedProductIds instead
-     */
-    protected function fetchOptions(array $ids): array
+    protected function fetchOptions(): array
     {
         $query = $this->connection->createQueryBuilder();
 
