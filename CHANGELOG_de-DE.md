@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.0.0
 - MIG-1 - Verbessern der Migration von Kategorie-, Produkt, Hersteller- und Eigenschaftsübersetzungen
 - MIG-5 - Verbessertes Laden von Snippets der DataSets
 - MIG-7 - Behebt ein Problem bei der Migration der Lieferungen

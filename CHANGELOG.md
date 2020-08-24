@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.0.0
 - MIG-1 - Improve migration of category, product, manufacturer and property group translation
 - MIG-5 - Improve snippet loading of DataSets
 - MIG-7 - Fix migration of order deliveries
