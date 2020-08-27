@@ -1,3 +1,6 @@
+# 2.0.1
+- MIG-67 - Fix composer requirements
+
 # 2.0.0
 - MIG-1 - Improve migration of category, product, manufacturer and property group translation
 - MIG-5 - Improve snippet loading of DataSets
