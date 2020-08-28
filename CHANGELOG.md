@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-28 - Solves an issue in pre-mapping when using table prefixes
+
 # 2.0.1
 - MIG-67 - Fix composer requirements
 
