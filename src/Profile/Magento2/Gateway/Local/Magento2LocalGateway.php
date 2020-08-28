@@ -300,7 +300,7 @@ SQL;
 
         $query->select('attrOption.option_id');
         $query->addSelect('attrOptionValue.value');
-        $query->from('eav_attribute', 'attr');
+        $query->from($tablePrefix . 'eav_attribute', 'attr');
 
         $query->innerJoin('attr', $tablePrefix . 'eav_attribute_option', 'attrOption', 'attrOption.attribute_id = attr.attribute_id');
         $query->innerJoin('attrOption', $tablePrefix . 'eav_attribute_option_value', 'attrOptionValue', 'attrOption.option_id = attrOptionValue.option_id');
