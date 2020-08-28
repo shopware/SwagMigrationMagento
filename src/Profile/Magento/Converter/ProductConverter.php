@@ -279,6 +279,18 @@ abstract class ProductConverter extends MagentoConverter
 
         if (isset($data['attributes'])) {
             $converted['customFields'] = $this->getAttributes($data['attributes'], (int) $data['attribute_set_id']);
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::CUSTOM_FIELD_SET,
+                $data['attribute_set_id'],
+                $context
+            );
+            if ($mapping !== null) {
+                $converted['customFieldSetSelectionActive'] = true;
+                $converted['customFieldSets'] = [
+                    ['id' => $mapping['entityUuid']]
+                ];
+            }
         }
         unset($data['attributes']);
 
