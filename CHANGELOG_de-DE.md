@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-28 - Behebt ein Problem im Pre-Mapping beim Nutzen von Tabellen-Prefixen
+- MIG-68 - Optmierte Neugenerierung des Containers bei Aktivierung und Deaktivierung
 
 # 2.0.1
 - MIG-67 - Behebt ein Problem mit den Composer requirements

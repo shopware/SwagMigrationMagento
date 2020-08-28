@@ -29,4 +29,9 @@ class SwagMigrationMagento extends Plugin
         $loader->load('magento22.xml');
         $loader->load('magento23.xml');
     }
+
+    public function rebuildContainer(): bool
+    {
+        return false;
+    }
 }
