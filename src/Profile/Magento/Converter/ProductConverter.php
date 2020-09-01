@@ -547,6 +547,22 @@ abstract class ProductConverter extends MagentoConverter
             'linked' => true,
         ];
 
+        if (isset($priceData['special_price']) && ((float) $priceData['special_price']) > 0) {
+            $specialPrice = (float) $priceData['special_price'];
+            if ($this->priceIsGross === true) {
+                $specialPriceNet = \round($specialPrice / (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+                $specialPriceGross = (float) $specialPrice;
+            } else {
+                $specialPriceNet = $specialPrice;
+                $specialPriceGross = \round($specialPrice * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+            }
+            foreach ($price as &$productPrice) {
+                $productPrice['listPrice'] = $productPrice;
+                $productPrice['gross'] = $specialPriceGross;
+                $productPrice['net'] = $specialPriceNet;
+            }
+        }
+
         return $price;
     }
 

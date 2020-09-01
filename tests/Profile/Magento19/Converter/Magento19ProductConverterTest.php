@@ -205,6 +205,26 @@ class Magento19ProductConverterTest extends TestCase
         static::assertArrayNotHasKey('name', $converted);
     }
 
+    public function testConvertWithSpecialPrice(): void
+    {
+        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
+
+        $context = Context::createDefaultContext();
+        $productData[0]['special_price'] = '180.0000';
+
+        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+
+        static::assertNull($convertResult->getUnmapped());
+        static::assertArrayHasKey('id', $converted);
+        static::assertNotNull($convertResult->getMappingUuid());
+
+        static::assertSame(180.0, $converted['price'][0]['net']);
+        static::assertSame(214.2, $converted['price'][0]['gross']);
+        static::assertSame(190.0, $converted['price'][0]['listPrice']['net']);
+        static::assertSame(226.1, $converted['price'][0]['listPrice']['gross']);
+    }
+
     public function testConvertWithoutStandardTranslation(): void
     {
         $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
