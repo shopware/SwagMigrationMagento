@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-28 - Solves an issue in pre-mapping when using table prefixes
+- MIG-44 - Recognize special prices
 - MIG-68 - Optimized rebuilding of container for deactivation and activation of the plugin
 
 # 2.0.1
