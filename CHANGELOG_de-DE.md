@@ -1,5 +1,5 @@
 # 2.0.2
-- MIG-28 - Behebt ein Problem im Pre-Mapping beim Nutzen von Tabellen-Prefixen
+- MIG-29 - Behebt ein Problem im Pre-Mapping beim Nutzen von Tabellen-Prefixen
 - MIG-44 - Berücksichtigt Spezialpreise
 - MIG-68 - Optmierte Neugenerierung des Containers bei Aktivierung und Deaktivierung
 
