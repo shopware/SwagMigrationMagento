@@ -34,7 +34,7 @@ PHP analyze:
         - php bin/console plugin:install --activate SwagMigrationMagento
         - php dev-ops/analyze/vendor/bin/php-cs-fixer fix --config=vendor/shopware/platform/.php_cs.dist --dry-run -vvv --allow-risky=yes --format=junit custom/plugins/SwagMigrationMagento | tee php-cs-fixer.xml
         - php dev-ops/analyze/vendor/bin/php-cs-fixer fix --config=custom/plugins/SwagMigrationMagento/.php_cs.dist --dry-run -vvv --allow-risky=yes --format=junit custom/plugins/SwagMigrationMagento | tee php-cs-fixer.xml
-        - cd $CI_PROJECT_DIR/development/custom/plugins/SwagMigrationMagento
+        - cd custom/plugins/SwagMigrationMagento
         - bin/static-analyze.sh
     artifacts:
         reports:
