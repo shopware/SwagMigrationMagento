@@ -2,6 +2,8 @@ variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: "tcp://docker:2375"
     MYSQL_ROOT_PASSWORD: app
+    DEVELOPMENT_BRANCH: "master"
+    PLATFORM_BRANCH: "master"
     WEB_DOCUMENT_ROOT: $CI_PROJECT_DIR/development/public
 
 stages:
@@ -12,9 +14,9 @@ default:
     image: shopware/development:latest
     before_script:
         - zip -rq plugin.zip .
-        - git clone --branch master http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/development.git
+        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/development.git --branch $DEVELOPMENT_BRANCH
         - rm -rf development/platform
-        - git clone --branch 6.3.0.0 http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/platform.git development/platform
+        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/platform.git development/platform --branch $PLATFORM_BRANCH
         - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/services/migration-assistant.git development/custom/plugins/SwagMigrationAssistant
         - unzip -q plugin.zip -d development/custom/plugins/SwagMigrationMagento
         - cd development

@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-70 - Optimiertes koppeln der Custom Field Sets an die Produkte
+
 # 2.0.2
 - MIG-29 - Behebt ein Problem im Pre-Mapping beim Nutzen von Tabellen-Prefixen
 - MIG-44 - Berücksichtigt Spezialpreise

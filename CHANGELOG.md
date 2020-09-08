@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-70 - Optimized bounding of custom field sets to products
+
 # 2.0.2
 - MIG-29 - Solves an issue in pre-mapping when using table prefixes
 - MIG-44 - Recognize special prices
