@@ -164,15 +164,11 @@ class Magento2ProductReviewConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $convertResult = $this->productReviewConverter->convert($productReviewData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CUSTOMER');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['customer_id']);
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($converted);
+        static::assertSame($productReviewData[0]['nickname'], $converted['externalUser']);
     }
 
     public function testConvertWithoutSalesChannelMapping(): void

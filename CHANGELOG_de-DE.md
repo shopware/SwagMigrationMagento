@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-13 - Migration von Produktbewertungen ohne Kunden ermöglichen
 - MIG-70 - Optimiertes koppeln der Custom Field Sets an die Produkte
 
 # 2.0.2
