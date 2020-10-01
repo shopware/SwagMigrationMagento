@@ -176,7 +176,7 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertCount(1, $logs);
         static::assertSame('SWAG_MIGRATION_RUN_EXCEPTION', $logs[0]['code']);
         static::assertSame($customerData[1]['entity_id'], $logs[0]['parameters']['sourceId']);
-        static::assertContains('sodium', $logs[0]['parameters']['exceptionMessage']);
+        static::assertStringContainsString('sodium', $logs[0]['parameters']['exceptionMessage']);
     }
 
     public function testConvertMd5Password(): void
