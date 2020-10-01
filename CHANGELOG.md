@@ -1,3 +1,7 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-86 - Removing the password validation when creating a connection
+- MIG-88 - Optimization when checking the media file name
+
 # 2.1.0
 - MIG-13 - Migrate product reviews without customer
 - MIG-70 - Optimized bounding of custom field sets to products

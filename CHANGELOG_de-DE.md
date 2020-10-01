@@ -1,3 +1,7 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-86 - Entfernen der Passortvalidierung beim Erstellen einer Verbindung
+- MIG-88 - Optimierung beim Überprüfen des Mediendateinamens
+
 # 2.1.0
 - MIG-13 - Migration von Produktbewertungen ohne Kunden ermöglichen
 - MIG-70 - Optimiertes koppeln der Custom Field Sets an die Produkte
