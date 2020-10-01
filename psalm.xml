@@ -11,6 +11,7 @@
         <directory name="tests"/>
         <ignoreFiles>
             <directory name="../../../platform"/> <!-- prevents to check shopware -->
+            <directory name="../../../vendor"/> <!-- prevents to check vendor -->
             <directory name="tests/"/> <!-- excluded for now, should be reintegrated in the future -->
             <directory name="vendor/"/>
         </ignoreFiles>
