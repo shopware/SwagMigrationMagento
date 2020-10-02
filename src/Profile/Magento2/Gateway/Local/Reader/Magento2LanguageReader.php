@@ -31,6 +31,12 @@ abstract class Magento2LanguageReader extends LanguageReader
             'localeconfig',
             'localeconfig.scope = \'stores\' AND localeconfig.path = \'general/locale/code\' AND store.store_id = localeconfig.scope_id'
         );
+        $query->leftJoin(
+            'store',
+            $this->tablePrefix . 'core_config_data',
+            'websitelocale',
+            'websitelocale.scope = \'websites\' AND websitelocale.path = \'general/locale/code\' AND store.website_id = websitelocale.scope_id'
+        );
         $query->innerJoin(
             'store',
             $this->tablePrefix . 'core_config_data',
@@ -39,6 +45,7 @@ abstract class Magento2LanguageReader extends LanguageReader
         );
         $query->addSelect('store.store_id');
         $query->addSelect('localeconfig.value as locale');
+        $query->addSelect('websitelocale.value as websiteLocale');
         $query->addSelect('defaultlocale.value as defaultLocale');
 
         $query = $query->execute();
@@ -52,6 +59,9 @@ abstract class Magento2LanguageReader extends LanguageReader
         foreach ($configurations as $storeConfig) {
             if ($storeConfig['locale'] === null) {
                 $storeConfig['locale'] = $storeConfig['defaultLocale'];
+                if ($storeConfig['websiteLocale'] !== null) {
+                    $storeConfig['locale'] = $storeConfig['websiteLocale'];
+                }
             }
             if (isset($storeConfigs[$storeConfig['locale']])) {
                 $storeConfigs[$storeConfig['locale']]['stores'][] = $storeConfig['store_id'];

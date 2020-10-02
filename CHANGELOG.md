@@ -1,6 +1,7 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-86 - Removing the password validation when creating a connection
 - MIG-88 - Optimization when checking the media file name
+- MIG-89 - Improve migration of languages
 
 # 2.1.0
 - MIG-13 - Migrate product reviews without customer
