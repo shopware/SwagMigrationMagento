@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.1.1
 - MIG-86 - Entfernen der Passortvalidierung beim Erstellen einer Verbindung
 - MIG-88 - Optimierung beim Überprüfen des Mediendateinamens
 - MIG-89 - Verbessern der Migration von Sprachen
