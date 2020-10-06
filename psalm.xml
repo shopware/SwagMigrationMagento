@@ -30,5 +30,11 @@
                 <directory name="src/Profile"/>
             </errorLevel>
         </UndefinedClass>
+
+        <DeprecatedFunction>
+            <errorLevel type="info">
+                <referencedFunction name="guzzlehttp\promise\settle"/>
+            </errorLevel>
+        </DeprecatedFunction>
     </issueHandlers>
 </psalm>
