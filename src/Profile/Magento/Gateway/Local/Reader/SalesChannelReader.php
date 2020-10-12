@@ -21,6 +21,7 @@ abstract class SalesChannelReader extends AbstractReader
 
         $storeGroups = $this->mapData($this->fetchStoreGroups($migrationContext), [], ['storeGroup', 'website']);
         $groupIds = \array_column($storeGroups, 'group_id');
+        $websiteIds = \array_column($storeGroups, 'website_id');
 
         $storeViews = $this->mapData($this->fetchStoreViews($groupIds), [], ['storeView']);
         $storeIds = [];
@@ -42,15 +43,10 @@ abstract class SalesChannelReader extends AbstractReader
         $locales = $this->fetchLocales($storeIds);
 
         $defaults = $this->fetchDefaults();
+        $websiteConfigs = $this->fetchWebsiteConfig($websiteIds);
 
         foreach ($storeGroups as &$store) {
-            $store['currencies'] = $defaults['defaultAllowedCurrencies'];
-            $store['countries'] = $defaults['defaultAllowedCountries'];
-            $store['locales'][] = $defaults['defaultLocale'];
-
-            $store['defaultCurrency'] = $defaults['defaultCurrency'];
-            $store['defaultCountry'] = $defaults['defaultCountry'];
-            $store['defaultLocale'] = $defaults['defaultLocale'];
+            $this->setDefaultConfig($store, $defaults, $websiteConfigs);
 
             foreach ($store['storeViews'] as $storeView) {
                 $storeId = $storeView['store_id'];
@@ -244,6 +240,68 @@ SQL;
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    protected function fetchWebsiteConfig(array $websiteIds): array
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->from($this->tablePrefix . 'core_config_data', 'config');
+        $query->addSelect('scope_id AS website_id');
+        $query->addSelect('path');
+        $query->addSelect('value');
+
+        $query->andWhere('scope = \'websites\'');
+        $query->andWhere('scope_id IN (:websiteId)');
+        $query->andWhere('(path = \'currency/options/allow\' OR path = \'general/locale/code\' OR path = \'currency/options/default\' OR path = \'general/country/allow\' OR path = \'general/country/default\')');
+        $query->setParameter('websiteId', $websiteIds, Connection::PARAM_STR_ARRAY);
+
+        $query = $query->execute();
+        if (!($query instanceof ResultStatement)) {
+            return [];
+        }
+
+        $configs = $query->fetchAll(\PDO::FETCH_GROUP);
+
+        $returnConfig = [];
+        foreach ($configs as $key => $config) {
+            foreach ($config as $entry) {
+                if (!isset($entry['path'])) {
+                    continue;
+                }
+
+                $valueKey = null;
+                $value = $entry['value'];
+                switch ($entry['path']) {
+                    case 'general/locale/code':
+                        $valueKey = 'defaultLocale';
+                        $value = \str_replace('_', '-', $value);
+                        break;
+                    case 'currency/options/default':
+                        $valueKey = 'defaultCurrency';
+                        break;
+                    case 'currency/options/allow':
+                        $valueKey = 'allowedCurrencies';
+                        $value = \explode(',', $value);
+                        break;
+                    case 'general/country/allow':
+                        $valueKey = 'allowedCountries';
+                        $value = \explode(',', $value);
+                        break;
+                    case 'general/country/default':
+                        $valueKey = 'defaultCountry';
+                        break;
+                }
+
+                if ($valueKey === null) {
+                    continue;
+                }
+
+                $returnConfig[$key][$valueKey] = $value;
+            }
+        }
+
+        return $returnConfig;
+    }
+
     protected function fetchStoreCurrencies(array $storeIds): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -335,5 +393,38 @@ SQL;
         $configurations['stores'] = $storeConfigs;
 
         return $configurations;
+    }
+
+    protected function setDefaultConfig(array &$store, array $defaults, array $websiteConfigs): void
+    {
+        $websiteId = $store['website_id'];
+
+        $store['currencies'] = $defaults['defaultAllowedCurrencies'];
+        if (isset($websiteConfigs[$websiteId]['allowedCurrencies'])) {
+            $store['currencies'] = $websiteConfigs[$websiteId]['allowedCurrencies'];
+        }
+
+        $store['defaultCurrency'] = $defaults['defaultCurrency'];
+        if (isset($websiteConfigs[$websiteId]['defaultCurrency'])) {
+            $store['defaultCurrency'] = $websiteConfigs[$websiteId]['defaultCurrency'];
+        }
+
+        if (isset($websiteConfigs[$websiteId]['defaultLocale'])) {
+            $store['locales'][] = $websiteConfigs[$websiteId]['defaultLocale'];
+            $store['defaultLocale'] = $websiteConfigs[$websiteId]['defaultLocale'];
+        } else {
+            $store['locales'][] = $defaults['defaultLocale'];
+            $store['defaultLocale'] = $defaults['defaultLocale'];
+        }
+
+        $store['countries'] = $defaults['defaultAllowedCountries'];
+        if (isset($websiteConfigs[$websiteId]['allowedCountries'])) {
+            $store['countries'] = $websiteConfigs[$websiteId]['allowedCountries'];
+        }
+
+        $store['defaultCountry'] = $defaults['defaultCountry'];
+        if (isset($websiteConfigs[$websiteId]['defaultCountry'])) {
+            $store['defaultCountry'] = $websiteConfigs[$websiteId]['defaultCountry'];
+        }
     }
 }
