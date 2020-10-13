@@ -68,8 +68,8 @@ abstract class SalesChannelReader extends AbstractReader
             }
             $store['locales'] = \array_unique($store['locales']);
             $store['currencies'] = \array_unique($store['currencies']);
-            $store['carriers'] = $carriers;
-            $store['payments'] = $payments;
+            $this->setCarriers($store, $carriers);
+            $this->setPayments($store, $payments);
         }
 
         return $this->cleanupResultSet($storeGroups);
@@ -197,47 +197,95 @@ SQL;
     protected function fetchCarriers(): array
     {
         $sql = <<<SQL
-SELECT carrier.*
+SELECT carrier_active.*
 FROM (
           SELECT
-            REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
-            config.*
+            REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id
           FROM {$this->tablePrefix}core_config_data config
           WHERE path LIKE 'carriers/%/title' AND scope = 'default'
       ) AS carrier,
       (
           SELECT
-            REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
+            REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id,
+            config.*
           FROM {$this->tablePrefix}core_config_data config
-          WHERE path LIKE 'carriers/%/active' AND scope = 'default' AND value = true
+          WHERE path LIKE 'carriers/%/active'
       ) AS carrier_active
-WHERE carrier.carrier_id = carrier_active.carrier_id;
+WHERE carrier.carrier_id = carrier_active.carrier_id
+    AND ((carrier_active.scope = 'default' AND carrier_active.value = 1) OR carrier_active.scope != 'default')
+ORDER BY carrier_active.scope
 SQL;
 
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    protected function setCarriers(array &$store, array $carriers): void
+    {
+        $website = $store['website_id'];
+
+        $resultCarriers = [];
+        foreach ($carriers as $carrier) {
+            $carrierId = $carrier['carrier_id'];
+
+            if ($carrier['scope'] === 'websites' && $carrier['scope_id'] !== $website) {
+                continue;
+            }
+
+            if ((int) $carrier['value'] === 1) {
+                $resultCarriers[$carrierId] = $carrier;
+            } else {
+                unset($resultCarriers[$carrierId]);
+            }
+        }
+
+        $store['carriers'] = \array_values($resultCarriers);
+    }
+
     protected function fetchPayments(): array
     {
         $sql = <<<SQL
-SELECT payment.*
+SELECT payment_active.*
 FROM (
-      SELECT
-             REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id,
+         SELECT
+             REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') AS payment_id
+         FROM {$this->tablePrefix}core_config_data config
+         WHERE path LIKE 'payment/%/title' AND scope = 'default'
+     ) AS payment,
+     (
+         SELECT
+             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id,
              config.*
-      FROM {$this->tablePrefix}core_config_data config
-      WHERE path LIKE 'payment/%/title' AND scope = 'default'
-      ) AS payment,
-      (
-      SELECT
-             REPLACE(REPLACE(config.path, '/active', ''), 'payment/', '') AS payment_id
-      FROM {$this->tablePrefix}core_config_data config
-      WHERE path LIKE 'payment/%/active' AND scope = 'default' AND value = true
-      ) AS payment_active
-WHERE payment.payment_id = payment_active.payment_id;
+         FROM {$this->tablePrefix}core_config_data config
+         WHERE path LIKE 'payment/%/active'
+     ) AS payment_active
+WHERE payment.payment_id = payment_active.payment_id
+  AND ((payment_active.scope = 'default' AND payment_active.value = 1) OR payment_active.scope != 'default')
+ORDER BY payment_active.scope;
 SQL;
 
         return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    protected function setPayments(array &$store, array $payments): void
+    {
+        $website = $store['website_id'];
+
+        $resultPayments = [];
+        foreach ($payments as $payment) {
+            $paymentId = $payment['payment_id'];
+
+            if ($payment['scope'] === 'websites' && $payment['scope_id'] !== $website) {
+                continue;
+            }
+
+            if ((int) $payment['value'] === 1) {
+                $resultPayments[$paymentId] = $payment;
+            } else {
+                unset($resultPayments[$paymentId]);
+            }
+        }
+
+        $store['payments'] = \array_values($resultPayments);
     }
 
     protected function fetchWebsiteConfig(array $websiteIds): array
