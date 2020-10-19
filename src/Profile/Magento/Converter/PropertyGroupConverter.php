@@ -132,6 +132,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
 
             $convertedOption = [
                 'id' => $mapping['entityUuid'],
+                'translations' => [],
             ];
             if (isset($option['translations'])) {
                 $translations = $this->getTranslations($option['translations'], ['name' => 'name'], $this->context);
@@ -143,6 +144,10 @@ abstract class PropertyGroupConverter extends MagentoConverter
 
             if ($language === null || !isset($convertedOption['translations'][$language->getId()]['name'])) {
                 $convertedOption['name'] = $option['name'];
+            }
+
+            if ($convertedOption['translations'] === []) {
+                unset($convertedOption['translations']);
             }
 
             $converted['options'][] = $convertedOption;
