@@ -480,7 +480,7 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getShippingMethod(string $shippingMethodId): ?string
     {
-        if (str_contains($shippingMethodId, '_')) {
+        if (\mb_strpos($shippingMethodId, '_') !== false) {
             \preg_match('/(.*)_/', $shippingMethodId, $matches);
 
             if (isset($matches[1])) {

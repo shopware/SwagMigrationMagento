@@ -91,11 +91,6 @@ parameters:
 			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
 
 		-
-			message: "#^Offset 'translations' does not exist on array\\('id' \\=\\> mixed, \\?'translations' \\=\\> array\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
-
-		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/SalesChannelConverter.php
