@@ -130,15 +130,19 @@ class Magento19SalesChannelConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($converted);
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_LANGUAGE');
-        static::assertSame($logs[0]['parameters']['sourceId'], $salesChannelData[0]['defaultLocale']);
+        static::assertSame('SWAG_MIGRATION_SALES_CHANNEL_ENTITY_FIELD_REASSIGNED', $logs[0]['code']);
+        static::assertSame($salesChannelData[0]['group_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame('defaultLocale', $logs[0]['parameters']['emptyField']);
+        static::assertSame('system default language', $logs[0]['parameters']['replacementField']);
+        static::assertSame($this->mappingService::DEFAULT_LANGUAGE_UUID, $converted['languageId']);
     }
 
     public function testConvertWithoutDefaultCurrency(): void
@@ -149,15 +153,19 @@ class Magento19SalesChannelConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($converted);
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CURRENCY');
-        static::assertSame($logs[0]['parameters']['sourceId'], $salesChannelData[0]['defaultCurrency']);
+        static::assertSame('SWAG_MIGRATION_SALES_CHANNEL_ENTITY_FIELD_REASSIGNED', $logs[0]['code']);
+        static::assertSame($salesChannelData[0]['group_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame('defaultCurrency', $logs[0]['parameters']['emptyField']);
+        static::assertSame('system default currency', $logs[0]['parameters']['replacementField']);
+        static::assertSame(Defaults::CURRENCY, $converted['currencyId']);
     }
 
     public function testConvertWithoutDefaultCategory(): void

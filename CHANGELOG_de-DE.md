@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-101 - Verbessern der Migration der Verkaufskanäle
+
 # 2.1.1
 - MIG-86 - Entfernen der Passortvalidierung beim Erstellen einer Verbindung
 - MIG-88 - Optimierung beim Überprüfen des Mediendateinamens

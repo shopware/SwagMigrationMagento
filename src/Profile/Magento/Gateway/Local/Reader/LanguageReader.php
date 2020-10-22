@@ -54,6 +54,7 @@ abstract class LanguageReader extends AbstractReader
 
         $configurations = $query->fetchAll(\PDO::FETCH_ASSOC);
         $storeConfigs = [];
+        $defaultAndWebsiteLocales = [];
         foreach ($configurations as $storeConfig) {
             if ($storeConfig['locale'] === null) {
                 $storeConfig['locale'] = $storeConfig['defaultLocale'];
@@ -70,6 +71,23 @@ abstract class LanguageReader extends AbstractReader
                 'locale' => \str_replace('_', '-', $storeConfig['locale']),
                 'stores' => [$storeConfig['store_id']],
             ];
+
+            if ($storeConfig['websiteLocale'] !== null) {
+                $defaultAndWebsiteLocales[$storeConfig['websiteLocale']] = $storeConfig['websiteLocale'];
+            }
+
+            if ($storeConfig['defaultLocale'] !== null) {
+                $defaultAndWebsiteLocales[$storeConfig['defaultLocale']] = $storeConfig['defaultLocale'];
+            }
+        }
+
+        foreach ($defaultAndWebsiteLocales as $locale) {
+            if (!isset($storeConfigs[$locale])) {
+                $storeConfigs[$locale] = [
+                    'locale' => \str_replace('_', '-', $locale),
+                    'stores' => [],
+                ];
+            }
         }
 
         return \array_values($storeConfigs);

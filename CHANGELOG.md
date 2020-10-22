@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-101 - Improve migration of sales channels
+
 # 2.1.1
 - MIG-86 - Removing the password validation when creating a connection
 - MIG-88 - Optimization when checking the media file name

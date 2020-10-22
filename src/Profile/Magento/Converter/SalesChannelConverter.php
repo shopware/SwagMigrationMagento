@@ -18,6 +18,7 @@ use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
+use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -173,16 +174,32 @@ abstract class SalesChannelConverter extends MagentoConverter
         );
 
         if ($languageUuid === null) {
+            $defaultLanguage = $this->mappingService->getDefaultLanguage($context);
+
+            if ($defaultLanguage === null) {
+                $this->loggingService->addLogEntry(
+                    new AssociationRequiredMissingLog(
+                        $this->runId,
+                        DefaultEntities::LANGUAGE,
+                        $data['defaultLocale'],
+                        DefaultEntities::SALES_CHANNEL
+                    )
+                );
+
+                return new ConvertStruct(null, $this->originalData);
+            }
+
             $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
+                new FieldReassignedRunLog(
                     $this->runId,
-                    DefaultEntities::LANGUAGE,
-                    $data['defaultLocale'],
-                    DefaultEntities::SALES_CHANNEL
+                    DefaultEntities::SALES_CHANNEL,
+                    $this->oldIdentifier,
+                    'defaultLocale',
+                    'system default language'
                 )
             );
 
-            return new ConvertStruct(null, $this->originalData);
+            $languageUuid = $defaultLanguage->getId();
         }
 
         $this->mappingService->pushValueMapping(
@@ -217,15 +234,16 @@ abstract class SalesChannelConverter extends MagentoConverter
 
         if ($currencyUuid === null) {
             $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
+                new FieldReassignedRunLog(
                     $this->runId,
-                    DefaultEntities::CURRENCY,
-                    $data['defaultCurrency'],
-                    DefaultEntities::SALES_CHANNEL
+                    DefaultEntities::SALES_CHANNEL,
+                    $this->oldIdentifier,
+                    'defaultCurrency',
+                    'system default currency'
                 )
             );
 
-            return new ConvertStruct(null, $this->originalData);
+            $currencyUuid = Defaults::CURRENCY;
         }
         $converted['currencyId'] = $currencyUuid;
         $converted['currencies'] = $this->getSalesChannelCurrencies($currencyUuid, $data, $context);
