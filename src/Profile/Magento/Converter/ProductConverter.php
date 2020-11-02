@@ -570,7 +570,10 @@ abstract class ProductConverter extends MagentoConverter
                 $specialPriceGross = \round($specialPrice * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
             }
             foreach ($price as &$productPrice) {
-                $productPrice['listPrice'] = $productPrice;
+                $productPrice['listPrice']['gross'] = $productPrice['gross'];
+                $productPrice['listPrice']['net'] = $productPrice['net'];
+                $productPrice['listPrice']['linked'] = $productPrice['linked'];
+
                 $productPrice['gross'] = $specialPriceGross;
                 $productPrice['net'] = $specialPriceNet;
             }

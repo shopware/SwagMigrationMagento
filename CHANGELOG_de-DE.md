@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-101 - Verbessern der Migration der Verkaufskanäle
+- MIG-108 - Verbessern der Migration der Produktpreise
 
 # 2.1.1
 - MIG-86 - Entfernen der Passortvalidierung beim Erstellen einer Verbindung
