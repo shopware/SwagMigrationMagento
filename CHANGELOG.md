@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-101 - Improve migration of sales channels
+- MIG-108 - Improve migration of product prices
 
 # 2.1.1
 - MIG-86 - Removing the password validation when creating a connection
