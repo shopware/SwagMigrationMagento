@@ -19,7 +19,7 @@ class Magento22OrderReader extends Magento2OrderReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::ORDER;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::ORDER;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

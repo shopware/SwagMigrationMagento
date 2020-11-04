@@ -19,6 +19,6 @@ class Magento21CurrencyReader extends CurrencyReader
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
             && $migrationContext->getGateway()->getName() === Magento21LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CURRENCY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CURRENCY;
     }
 }

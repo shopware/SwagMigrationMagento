@@ -206,6 +206,16 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         return $installRoot;
     }
 
+    protected function getDataSetEntity(MigrationContextInterface $migrationContext): ?string
+    {
+        $dataSet = $migrationContext->getDataSet();
+        if ($dataSet === null) {
+            return null;
+        }
+
+        return $dataSet::getEntity();
+    }
+
     /**
      * @param MediaProcessWorkloadStruct[] $mappedWorkload
      *

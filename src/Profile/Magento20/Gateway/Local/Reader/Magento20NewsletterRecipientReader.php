@@ -19,7 +19,7 @@ class Magento20NewsletterRecipientReader extends NewsletterRecipientReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::NEWSLETTER_RECIPIENT;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::NEWSLETTER_RECIPIENT;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

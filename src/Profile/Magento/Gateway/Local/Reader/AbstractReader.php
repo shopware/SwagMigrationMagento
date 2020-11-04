@@ -291,6 +291,16 @@ SQL;
         return $groupedResult;
     }
 
+    protected function getDataSetEntity(MigrationContextInterface $migrationContext): ?string
+    {
+        $dataSet = $migrationContext->getDataSet();
+        if ($dataSet === null) {
+            return null;
+        }
+
+        return $dataSet::getEntity();
+    }
+
     /**
      * @param array|bool|string|string[] $mixed
      *

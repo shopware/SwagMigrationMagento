@@ -226,14 +226,7 @@ abstract class ProductConverter extends MagentoConverter
         if (isset($data['parentId'])) {
             $this->setParent($converted, $data);
         }
-
-        /*
-         * Set properties
-         */
-        if (isset($data['properties']) && !isset($data['parentId'])) {
-            $this->setProperties($converted, $data);
-        }
-        unset($data['properties'], $data['parentId']);
+        unset($data['parentId']);
 
         if (isset($data['type_id']) && $data['type_id'] === 'configurable') {
             /*
@@ -243,14 +236,6 @@ abstract class ProductConverter extends MagentoConverter
                 $this->setConfiguratorSettings($converted, $data);
             }
             unset($data['configuratorSettings'], $data['type_id']);
-        } else {
-            /*
-             * Set options
-             */
-            if (isset($data['options'], $converted['parentId'])) {
-                $this->setOptions($converted, $data);
-            }
-            unset($data['options'], $data['type_id']);
         }
 
         if (isset($data['media'])) {
@@ -715,27 +700,6 @@ abstract class ProductConverter extends MagentoConverter
         return $newData;
     }
 
-    protected function setProperties(array &$converted, array &$data): void
-    {
-        $properties = [];
-        foreach ($data['properties'] as $property) {
-            $propertyMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                DefaultEntities::PROPERTY_GROUP_OPTION,
-                $property['optionId'],
-                $this->context
-            );
-
-            if ($propertyMapping === null) {
-                continue;
-            }
-
-            $properties[]['id'] = $propertyMapping['entityUuid'];
-        }
-
-        $converted['properties'] = $properties;
-    }
-
     protected function setConfiguratorSettings(array &$converted, array &$data): void
     {
         $options = [];
@@ -771,28 +735,6 @@ abstract class ProductConverter extends MagentoConverter
         }
 
         $converted['configuratorSettings'] = $options;
-    }
-
-    protected function setOptions(array &$converted, array &$data): void
-    {
-        $options = [];
-        foreach ($data['options'] as $option) {
-            $optionMapping = $this->mappingService->getOrCreateMapping(
-                $this->connectionId,
-                DefaultEntities::PROPERTY_GROUP_OPTION,
-                $option['optionId'],
-                $this->context
-            );
-            $this->mappingIds[] = $optionMapping['id'];
-
-            $optionElement = [
-                'id' => $optionMapping['entityUuid'],
-            ];
-
-            $options[] = $optionElement;
-        }
-
-        $converted['options'] = $options;
     }
 
     protected function getMedia(array $media, array $converted): array

@@ -19,7 +19,7 @@ class Magento22ProductCustomFieldReader extends ProductCustomFieldReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_CUSTOM_FIELD;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT_CUSTOM_FIELD;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

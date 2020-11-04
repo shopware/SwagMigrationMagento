@@ -19,7 +19,7 @@ class Magento19SalesChannelReader extends SalesChannelReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SALES_CHANNEL;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::SALES_CHANNEL;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

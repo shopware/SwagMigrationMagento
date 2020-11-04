@@ -53,7 +53,7 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
-        $query->from('catalog_product_link', 'link');
+        $query->from($this->tablePrefix . 'catalog_product_link', 'link');
         $this->addTableSelection($query, $this->tablePrefix . 'catalog_product_link', 'link');
 
         $query->innerJoin('link', $this->tablePrefix . 'catalog_product_link_type', 'type', 'type.link_type_id = link.link_type_id');

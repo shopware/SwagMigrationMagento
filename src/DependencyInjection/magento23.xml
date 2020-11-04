@@ -128,6 +128,36 @@
             <tag name="shopware.migration.reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader\Magento23ProductPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader\Magento23ProductChildPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader\Magento23ProductMultiSelectPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductMultiSelectPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader\Magento23ProductChildMultiSelectPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductMultiSelectPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader\Magento23ProductOptionRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductOptionRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
         <!-- Magento 2.3 converters -->
         <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23LanguageConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter">
@@ -222,6 +252,31 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CrossSellingConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\CrossSellingConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductMultiSelectPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductOptionRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductOptionRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductChildPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductChildMultiSelectPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter">
             <tag name="shopware.migration.converter"/>
         </service>
 

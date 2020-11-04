@@ -19,7 +19,7 @@ class Magento20SalesChannelReader extends Magento2SalesChannelReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SALES_CHANNEL;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::SALES_CHANNEL;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

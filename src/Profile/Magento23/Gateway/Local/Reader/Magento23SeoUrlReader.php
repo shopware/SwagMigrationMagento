@@ -19,7 +19,7 @@ class Magento23SeoUrlReader extends Magento2SeoUrlReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento23LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SEO_URL;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::SEO_URL;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

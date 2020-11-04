@@ -42,7 +42,7 @@ class Magento19ProductConverterTest extends TestCase
     private $runId;
 
     /**
-     * @var string
+     * @var SwagMigrationConnectionEntity
      */
     private $connection;
 
@@ -172,17 +172,21 @@ class Magento19ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
 
+        $translationData = $converted['translations'][$this->languageUuid];
+
+        static::assertNotNull($translationData);
         static::assertSame(
             $productData[0]['translations']['1']['name']['value'],
-            $converted['translations'][$this->languageUuid]['name']
+            $translationData['name']
         );
         static::assertSame(
             $productData[0]['translations']['1']['oneAttribute']['value'],
-            $converted['translations'][$this->languageUuid]['customFields']['migration_attribute_13_oneAttribute_200']
+            $translationData['customFields']['migration_attribute_13_oneAttribute_200']
         );
         static::assertSame(
             1.5,
@@ -190,15 +194,15 @@ class Magento19ProductConverterTest extends TestCase
         );
         static::assertSame(
             $productData[0]['translations']['1']['meta_keyword']['value'],
-            $converted['translations'][$this->languageUuid]['keywords']
+            $translationData['keywords']
         );
         static::assertSame(
             \mb_substr($productData[0]['translations']['1']['meta_title']['value'], 0, 255),
-            $converted['translations'][$this->languageUuid]['metaTitle']
+            $translationData['metaTitle']
         );
         static::assertSame(
             \mb_substr($productData[0]['translations']['1']['meta_description']['value'], 0, 255),
-            $converted['translations'][$this->languageUuid]['metaDescription']
+            $translationData['metaDescription']
         );
         static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
         static::assertArrayNotHasKey('keywords', $converted);
@@ -215,6 +219,7 @@ class Magento19ProductConverterTest extends TestCase
         $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -235,6 +240,7 @@ class Magento19ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -256,24 +262,6 @@ class Magento19ProductConverterTest extends TestCase
             $converted['metaDescription']
         );
         static::assertArrayNotHasKey('translations', $converted);
-    }
-
-    public function testConvertMainAndChild(): void
-    {
-        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->productConverter->convert($productData[0], $context, $this->migrationContext);
-        $converted = $convertResult->getConverted();
-        static::assertArrayHasKey('properties', $converted);
-
-        $convertResult = $this->productConverter->convert($productData[1], $context, $this->migrationContext);
-        $converted = $convertResult->getConverted();
-
-        static::assertNull($convertResult->getUnmapped());
-        static::assertArrayHasKey('id', $converted);
-        static::assertNotNull($convertResult->getMappingUuid());
-        static::assertArrayNotHasKey('properties', $converted);
     }
 
     public function testConvertChildFirst(): void
@@ -376,6 +364,7 @@ class Magento19ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertArrayNotHasKey('minPurchase', $converted);
     }
 
@@ -388,6 +377,7 @@ class Magento19ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertSame(190.0, $converted['price'][0]['net']);
     }
 
@@ -401,6 +391,7 @@ class Magento19ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertSame(159.66, $converted['price'][0]['net']);
     }
 }

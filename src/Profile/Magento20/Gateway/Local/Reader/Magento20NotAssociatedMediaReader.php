@@ -19,6 +19,6 @@ class Magento20NotAssociatedMediaReader extends Magento2NotAssociatedMediaReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::NOT_ASSOCIATED_MEDIA;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::NOT_ASSOCIATED_MEDIA;
     }
 }

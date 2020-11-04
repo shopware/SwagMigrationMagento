@@ -19,7 +19,7 @@ class Magento22ProductReader extends Magento2ProductReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

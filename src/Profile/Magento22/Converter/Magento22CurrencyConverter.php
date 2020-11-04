@@ -16,7 +16,7 @@ class Magento22CurrencyConverter extends CurrencyConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento22Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CurrencyDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento22Profile
+            && $this->getDataSetEntity($migrationContext) === CurrencyDataSet::getEntity();
     }
 }

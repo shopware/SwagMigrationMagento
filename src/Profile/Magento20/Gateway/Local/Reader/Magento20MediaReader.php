@@ -19,7 +19,7 @@ class Magento20MediaReader extends MediaReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::MEDIA;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::MEDIA;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

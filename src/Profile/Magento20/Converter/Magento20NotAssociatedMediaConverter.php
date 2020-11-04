@@ -16,7 +16,7 @@ class Magento20NotAssociatedMediaConverter extends NotAssociatedMediaConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento20Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === NotAssociatedMediaDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento20Profile
+            && $this->getDataSetEntity($migrationContext) === NotAssociatedMediaDataSet::getEntity();
     }
 }

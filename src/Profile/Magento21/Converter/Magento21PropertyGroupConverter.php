@@ -16,7 +16,7 @@ class Magento21PropertyGroupConverter extends PropertyGroupConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento21Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === PropertyGroupDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento21Profile
+             && $this->getDataSetEntity($migrationContext) === PropertyGroupDataSet::getEntity();
     }
 }

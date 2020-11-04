@@ -16,7 +16,7 @@ class Magento23CustomerConverter extends Magento2CustomerConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento23Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CustomerDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento23Profile
+            && $this->getDataSetEntity($migrationContext) === CustomerDataSet::getEntity();
     }
 }

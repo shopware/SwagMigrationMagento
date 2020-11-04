@@ -19,7 +19,7 @@ class Magento23SalesChannelReader extends Magento2SalesChannelReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento23LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SALES_CHANNEL;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::SALES_CHANNEL;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

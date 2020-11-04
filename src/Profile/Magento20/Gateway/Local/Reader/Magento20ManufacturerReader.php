@@ -19,6 +19,6 @@ class Magento20ManufacturerReader extends ManufacturerReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_MANUFACTURER;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT_MANUFACTURER;
     }
 }

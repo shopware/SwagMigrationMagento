@@ -19,7 +19,7 @@ class Magento21PropertyGroupReader extends Magento2PropertyGroupReader
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
             && $migrationContext->getGateway()->getName() === Magento21LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PROPERTY_GROUP;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PROPERTY_GROUP;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

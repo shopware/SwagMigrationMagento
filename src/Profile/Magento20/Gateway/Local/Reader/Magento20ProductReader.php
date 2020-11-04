@@ -19,7 +19,7 @@ class Magento20ProductReader extends Magento2ProductReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

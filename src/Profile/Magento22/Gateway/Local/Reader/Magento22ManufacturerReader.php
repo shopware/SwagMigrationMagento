@@ -19,6 +19,6 @@ class Magento22ManufacturerReader extends ManufacturerReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_MANUFACTURER;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT_MANUFACTURER;
     }
 }

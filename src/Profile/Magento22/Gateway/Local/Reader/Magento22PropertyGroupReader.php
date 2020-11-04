@@ -19,7 +19,7 @@ class Magento22PropertyGroupReader extends Magento2PropertyGroupReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PROPERTY_GROUP;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PROPERTY_GROUP;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

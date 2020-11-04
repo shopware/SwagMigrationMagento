@@ -19,7 +19,7 @@ class Magento22MediaReader extends MediaReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::MEDIA;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::MEDIA;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

@@ -16,7 +16,7 @@ class Magento21ProductConverter extends Magento2ProductConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento21Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === ProductDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento21Profile
+             && $this->getDataSetEntity($migrationContext) === ProductDataSet::getEntity();
     }
 }

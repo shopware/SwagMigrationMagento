@@ -19,6 +19,6 @@ class Magento22CurrencyReader extends CurrencyReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CURRENCY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CURRENCY;
     }
 }

@@ -16,7 +16,7 @@ class Magento20NewsletterRecipientConverter extends NewsletterRecipientConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento20Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === NewsletterRecipientDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento20Profile
+             && $this->getDataSetEntity($migrationContext) === NewsletterRecipientDataSet::getEntity();
     }
 }

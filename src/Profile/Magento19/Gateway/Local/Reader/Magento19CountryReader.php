@@ -19,6 +19,6 @@ class Magento19CountryReader extends CountryReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::COUNTRY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::COUNTRY;
     }
 }

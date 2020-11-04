@@ -54,7 +54,14 @@ SELECT
     description.value AS description,
     status.value AS status,
     visible.value AS visible,
-    sibling.entity_id AS previousSiblingId,
+    (
+        SELECT sibling.entity_id
+        FROM {$this->tablePrefix}catalog_category_entity AS sibling
+        WHERE sibling.level = category.level
+        AND sibling.parent_id = category.parent_id
+        AND sibling.position < category.position
+        ORDER BY sibling.position DESC LIMIT 1
+    ) as previousSiblingId,
     defaultLocale.value AS defaultLocale,
     image.value AS image,
     meta_description.value AS meta_description,
@@ -105,33 +112,6 @@ LEFT JOIN {$this->tablePrefix}catalog_category_entity_text AS meta_keywords
 
 LEFT JOIN {$this->tablePrefix}core_config_data AS defaultLocale
     ON defaultLocale.scope = 'default' AND defaultLocale.path = 'general/locale/code'
-
-LEFT JOIN {$this->tablePrefix}catalog_category_entity AS sibling
-    ON sibling.entity_id = (SELECT previous.entity_id
-        FROM (SELECT sub_category.entity_id,
-                 sub_category.parent_id,
-                 IFNULL(sub_category.position,
-                        IFNULL(
-                          (SELECT new_position.position + sub_category.entity_id
-                           FROM {$this->tablePrefix}catalog_category_entity new_position
-                           WHERE sub_category.parent_id = new_position.parent_id
-                           ORDER BY new_position.position DESC
-                           LIMIT 1),
-                          sub_category.entity_id)) position
-            FROM {$this->tablePrefix}catalog_category_entity sub_category) previous
-            WHERE previous.position <
-                    IFNULL(category.position,
-                        IFNULL(
-                          (SELECT previous.position + category.entity_id
-                           FROM {$this->tablePrefix}catalog_category_entity previous
-                           WHERE category.parent_id = previous.parent_id
-                           ORDER BY previous.position DESC
-                           LIMIT 1),
-                        category.entity_id)
-                    )
-                    AND category.parent_id = previous.parent_id
-                    ORDER BY previous.position DESC
-                    LIMIT 1)
 
 ORDER BY calcLevel, parent_id, position
 LIMIT ? OFFSET ?;

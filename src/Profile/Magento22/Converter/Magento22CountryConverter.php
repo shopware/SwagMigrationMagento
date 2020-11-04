@@ -16,7 +16,7 @@ class Magento22CountryConverter extends CountryConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento22Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CountryDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento22Profile
+            && $this->getDataSetEntity($migrationContext) === CountryDataSet::getEntity();
     }
 }

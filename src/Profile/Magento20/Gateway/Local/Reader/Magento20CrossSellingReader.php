@@ -19,7 +19,7 @@ class Magento20CrossSellingReader extends CrossSellingReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CROSS_SELLING;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CROSS_SELLING;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

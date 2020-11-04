@@ -19,6 +19,6 @@ class Magento22CountryReader extends Magento2CountryReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::COUNTRY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::COUNTRY;
     }
 }

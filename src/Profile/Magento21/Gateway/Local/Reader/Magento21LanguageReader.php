@@ -19,6 +19,6 @@ class Magento21LanguageReader extends Magento2LanguageReader
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
             && $migrationContext->getGateway()->getName() === Magento21LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::LANGUAGE;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::LANGUAGE;
     }
 }

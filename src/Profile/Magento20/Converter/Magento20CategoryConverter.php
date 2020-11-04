@@ -16,7 +16,7 @@ class Magento20CategoryConverter extends CategoryConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento20Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CategoryDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento20Profile
+            && $this->getDataSetEntity($migrationContext) === CategoryDataSet::getEntity();
     }
 }

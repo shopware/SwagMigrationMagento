@@ -19,7 +19,7 @@ class Magento19ProductCustomFieldReader extends ProductCustomFieldReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_CUSTOM_FIELD;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT_CUSTOM_FIELD;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

@@ -19,6 +19,6 @@ class Magento20LanguageReader extends Magento2LanguageReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::LANGUAGE;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::LANGUAGE;
     }
 }

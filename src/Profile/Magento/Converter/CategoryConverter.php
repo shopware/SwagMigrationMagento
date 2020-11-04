@@ -232,6 +232,9 @@ abstract class CategoryConverter extends MagentoConverter
         $this->setCategoryTranslation($data, $converted);
         unset($data['defaultLocale']);
 
+        if (isset($converted['name'])) {
+            $converted['name'] = $this->trimValue($converted['name']);
+        }
         if (isset($converted['metaDescription'])) {
             $converted['metaDescription'] = $this->trimValue($converted['metaDescription']);
         }
@@ -316,6 +319,18 @@ abstract class CategoryConverter extends MagentoConverter
         $localeTranslation = [];
         $localeTranslation['categoryId'] = $converted['id'];
 
+        if (isset($originalData['name'])) {
+            $originalData['name'] = $this->trimValue($originalData['name']);
+        }
+        if (isset($originalData['meta_title'])) {
+            $originalData['meta_title'] = $this->trimValue($originalData['meta_title']);
+        }
+        if (isset($originalData['meta_description'])) {
+            $originalData['meta_description'] = $this->trimValue($originalData['meta_description']);
+        }
+        if (isset($originalData['meta_keywords'])) {
+            $originalData['meta_keywords'] = $this->trimValue($originalData['meta_keywords']);
+        }
         $this->convertTranslationValue($languageUuid, $localeTranslation, 'name', $originalData, 'name');
         $this->convertTranslationValue($languageUuid, $localeTranslation, 'description', $originalData, 'description');
         $this->convertTranslationValue($languageUuid, $localeTranslation, 'metaTitle', $originalData, 'meta_title');

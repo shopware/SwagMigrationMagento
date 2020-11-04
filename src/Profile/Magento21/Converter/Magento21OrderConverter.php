@@ -16,7 +16,7 @@ class Magento21OrderConverter extends Magento2OrderConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento21Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === OrderDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento21Profile
+             && $this->getDataSetEntity($migrationContext) === OrderDataSet::getEntity();
     }
 }

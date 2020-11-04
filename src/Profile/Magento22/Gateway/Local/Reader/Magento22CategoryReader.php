@@ -19,7 +19,7 @@ class Magento22CategoryReader extends Magento2CategoryReader
     {
         return $migrationContext->getProfile() instanceof Magento22Profile
             && $migrationContext->getGateway()->getName() === Magento22LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CATEGORY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CATEGORY;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

@@ -16,7 +16,7 @@ class Magento23CrossSellingConverter extends CrossSellingConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento23Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CrossSellingDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento23Profile
+            && $this->getDataSetEntity($migrationContext) === CrossSellingDataSet::getEntity();
     }
 }

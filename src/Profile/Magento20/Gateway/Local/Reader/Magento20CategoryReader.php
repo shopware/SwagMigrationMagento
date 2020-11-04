@@ -19,7 +19,7 @@ class Magento20CategoryReader extends Magento2CategoryReader
     {
         return $migrationContext->getProfile() instanceof Magento20Profile
             && $migrationContext->getGateway()->getName() === Magento20LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CATEGORY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CATEGORY;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

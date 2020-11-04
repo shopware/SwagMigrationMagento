@@ -19,7 +19,7 @@ class Magento21ProductReviewReader extends ProductReviewReader
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
             && $migrationContext->getGateway()->getName() === Magento21LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_REVIEW;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT_REVIEW;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

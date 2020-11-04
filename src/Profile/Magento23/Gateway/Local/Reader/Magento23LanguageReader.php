@@ -19,6 +19,6 @@ class Magento23LanguageReader extends Magento2LanguageReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento23LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::LANGUAGE;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::LANGUAGE;
     }
 }

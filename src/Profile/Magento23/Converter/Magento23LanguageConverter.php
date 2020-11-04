@@ -16,7 +16,7 @@ class Magento23LanguageConverter extends LanguageConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento23Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === LanguageDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento23Profile
+            && $this->getDataSetEntity($migrationContext) === LanguageDataSet::getEntity();
     }
 }

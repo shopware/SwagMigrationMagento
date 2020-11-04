@@ -19,7 +19,7 @@ class Magento19CategoryReader extends CategoryReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CATEGORY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CATEGORY;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

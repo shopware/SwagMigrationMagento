@@ -107,6 +107,26 @@
             <tag name="shopware.migration.data_set"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductPropertyRelationDataSet">
+            <tag name="shopware.migration.data_set"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildPropertyRelationDataSet">
+            <tag name="shopware.migration.data_set"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectPropertyRelationDataSet">
+            <tag name="shopware.migration.data_set"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildMultiSelectPropertyRelationDataSet">
+            <tag name="shopware.migration.data_set"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductOptionRelationDataSet">
+            <tag name="shopware.migration.data_set"/>
+        </service>
+
         <!-- Magento premapping readers -->
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader" abstract="true"/>
 
@@ -181,6 +201,21 @@
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CrossSellingReader"
                  parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductChildPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductMultiSelectPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductChildMultiSelectPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductOptionRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader" abstract="true"/>
+
         <!-- Magento converters -->
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter"
                  parent="SwagMigrationAssistant\Migration\Converter\Converter" abstract="true">
@@ -247,6 +282,15 @@
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CrossSellingConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\ProductPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+
+        <service id="Swag\MigrationMagento\Profile\Magento\Converter\ProductOptionRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+
         <!-- Magento writers -->
         <service id="Swag\MigrationMagento\Migration\Writer\CountryWriter">
             <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
@@ -275,6 +319,30 @@
         <service id="Swag\MigrationMagento\Migration\Writer\PropertyGroupWriter">
             <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
             <argument type="service" id="Shopware\Core\Content\Property\PropertyGroupDefinition"/>
+            <tag name="shopware.migration.writer"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Migration\Writer\ProductChildPropertyRelationWriter">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
+            <argument type="service" id="Shopware\Core\Content\Product\ProductDefinition"/>
+            <tag name="shopware.migration.writer"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Migration\Writer\ProductMultiSelectPropertyRelationWriter">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
+            <argument type="service" id="Shopware\Core\Content\Product\ProductDefinition"/>
+            <tag name="shopware.migration.writer"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Migration\Writer\ProductChildMultiSelectPropertyRelationWriter">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
+            <argument type="service" id="Shopware\Core\Content\Product\ProductDefinition"/>
+            <tag name="shopware.migration.writer"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Migration\Writer\ProductOptionRelationWriter">
+            <argument type="service" id="Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriter"/>
+            <argument type="service" id="Shopware\Core\Content\Product\ProductDefinition"/>
             <tag name="shopware.migration.writer"/>
         </service>
 
