@@ -15,6 +15,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildProp
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectPropertyRelationDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductOptionRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductReviewDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
@@ -56,6 +57,7 @@ class ProductReviewDataSelection implements DataSelectionInterface
             new ProductChildPropertyRelationDataSet(),
             new ProductMultiSelectPropertyRelationDataSet(),
             new ProductChildMultiSelectPropertyRelationDataSet(),
+            new ProductOptionRelationDataSet(),
             new CrossSellingDataSet(),
             new ProductReviewDataSet(),
         ];
