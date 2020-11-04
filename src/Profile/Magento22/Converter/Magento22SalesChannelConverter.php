@@ -16,7 +16,7 @@ class Magento22SalesChannelConverter extends Magento2SalesChannelConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento22Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === SalesChannelDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento22Profile
+            && $this->getDataSetEntity($migrationContext) === SalesChannelDataSet::getEntity();
     }
 }

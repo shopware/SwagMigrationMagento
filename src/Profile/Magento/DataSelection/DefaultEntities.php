@@ -17,6 +17,12 @@ final class DefaultEntities
 
     public const PRODUCT_CONFIGURATOR_SETTING = 'product_configurator_setting';
 
+    public const PRODUCT_CHILD_PROPERTY_RELATION = 'product_child_property_relation';
+
+    public const PRODUCT_MULTI_SELECT_PROPERTY = 'product_multi_select_property';
+
+    public const PRODUCT_CHILD_MULTI_SELECT_PROPERTY = 'product_child_multi_select_property';
+
     public const ROOT_CATEGORY = 'root_category';
 
     public const STORE = 'store';

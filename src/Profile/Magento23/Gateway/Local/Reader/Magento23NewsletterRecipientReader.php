@@ -19,7 +19,7 @@ class Magento23NewsletterRecipientReader extends NewsletterRecipientReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento23LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::NEWSLETTER_RECIPIENT;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::NEWSLETTER_RECIPIENT;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

@@ -19,7 +19,7 @@ class Magento23CustomerReader extends Magento2CustomerReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento23LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CUSTOMER;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CUSTOMER;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

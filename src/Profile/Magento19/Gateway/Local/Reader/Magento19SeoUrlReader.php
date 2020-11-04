@@ -19,7 +19,7 @@ class Magento19SeoUrlReader extends SeoUrlReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::SEO_URL;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::SEO_URL;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

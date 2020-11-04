@@ -16,7 +16,7 @@ class Magento22SeoUrlConverter extends SeoUrlConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento22Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === SeoUrlDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento22Profile
+             && $this->getDataSetEntity($migrationContext) === SeoUrlDataSet::getEntity();
     }
 }

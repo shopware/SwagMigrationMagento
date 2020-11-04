@@ -16,7 +16,7 @@ class Magento22CategoryConverter extends CategoryConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento22Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === CategoryDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento22Profile
+            && $this->getDataSetEntity($migrationContext) === CategoryDataSet::getEntity();
     }
 }

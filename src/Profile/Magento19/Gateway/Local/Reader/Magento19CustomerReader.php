@@ -19,7 +19,7 @@ class Magento19CustomerReader extends CustomerReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CUSTOMER;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CUSTOMER;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

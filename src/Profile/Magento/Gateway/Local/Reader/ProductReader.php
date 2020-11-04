@@ -264,29 +264,10 @@ SQL;
         $categories = $this->fetchProductCategories($ids);
         $media = $this->fetchProductMedia($ids);
         $prices = $this->fetchProductPrices($ids);
-        $properties = $this->fetchProperties();
-        $multiSelectProperties = $this->fetchMultiSelectProperties();
         $configuratorSettings = $this->fetchConfiguratorSettings();
-        $options = $this->fetchOptions();
         unset($this->combinedProductIds);
         $visibility = $this->fetchVisibility($ids);
         $locales = $this->fetchLocales();
-
-        foreach ($multiSelectProperties as $productId => $productProperties) {
-            foreach ($productProperties as $property) {
-                if (!isset($property['optionValue'])) {
-                    continue;
-                }
-
-                $multiProperties = \explode(',', $property['optionValue']);
-
-                foreach ($multiProperties as $propertyId) {
-                    $property['optionId'] = $propertyId;
-                    $property['optionValue'] = $propertyId;
-                    $properties[$productId][] = $property;
-                }
-            }
-        }
 
         foreach ($fetchedProducts as &$product) {
             $productId = $product['entity_id'];
@@ -306,14 +287,8 @@ SQL;
             if (isset($prices[$productId])) {
                 $product['prices'] = $prices[$productId];
             }
-            if (isset($properties[$productId])) {
-                $product['properties'] = $properties[$productId];
-            }
             if (isset($configuratorSettings[$productId])) {
                 $product['configuratorSettings'] = $configuratorSettings[$productId];
-            }
-            if (isset($options[$productId])) {
-                $product['options'] = $options[$productId];
             }
             if (isset($visibility[$productId])) {
                 $product['visibility'] = $visibility[$productId];
@@ -327,10 +302,7 @@ SQL;
             $categories,
             $media,
             $prices,
-            $properties,
-            $multiSelectProperties,
             $configuratorSettings,
-            $options,
             $visibility
         );
 
@@ -366,6 +338,7 @@ FROM
     {$this->tablePrefix}catalog_product_entity_media_gallery_value mediaGalleryValue
 WHERE mediaGallery.entity_id IN (?)
 AND mediaGalleryValue.value_id = mediaGallery.value_id
+AND mediaGalleryValue.store_id = 0
 ORDER BY productId, position;
 SQL;
 
@@ -388,65 +361,6 @@ SQL;
         return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
     }
 
-    protected function fetchProperties(): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->select('DISTINCT product.entity_id AS identifier');
-        $query->addSelect('product.entity_id AS parentId');
-        $query->addSelect('eav.attribute_id AS groupId');
-        $query->addSelect('eav.attribute_code AS groupName');
-        $query->addSelect('option_value.option_id AS optionId');
-        $query->addSelect('option_value.value AS optionValue');
-
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
-
-        $query->leftJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = relation.child_id OR entity_int.entity_id = product.entity_id');
-        $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
-        $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
-
-        $query->where('entity_int.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
-
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
-    }
-
-    protected function fetchMultiSelectProperties(): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->select('DISTINCT product.entity_id AS identifier');
-        $query->addSelect('product.entity_id AS parentId');
-        $query->addSelect('eav.attribute_id AS groupId');
-        $query->addSelect('eav.attribute_code AS groupName');
-        $query->addSelect('CONCAT(product.entity_id, \'_\', eav.attribute_id) AS optionId');
-        $query->addSelect('entity_varchar.value AS optionValue');
-
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
-
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_varchar', 'entity_varchar', '(entity_varchar.entity_id = relation.child_id OR entity_varchar.entity_id = product.entity_id) AND entity_varchar.store_id = 0');
-        $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_varchar.attribute_id AND eav.is_user_defined = 1 ');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
-
-        $query->where('entity_varchar.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
-
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
-    }
-
     protected function fetchConfiguratorSettings(): array
     {
         $query = $this->connection->createQueryBuilder();
@@ -465,37 +379,6 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 1');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = product.entity_id');
-        $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
-
-        $query->where('entity_int.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
-
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
-    }
-
-    protected function fetchOptions(): array
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->select('DISTINCT product.entity_id AS identifier');
-        $query->addSelect('product.entity_id AS productId');
-        $query->addSelect('eav.attribute_id AS groupId');
-        $query->addSelect('eav.attribute_code AS groupName');
-        $query->addSelect('option_value.option_id AS optionId');
-        $query->addSelect('option_value.value AS optionValue');
-
-        $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
-
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.child_id = product.entity_id');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_entity_int', 'entity_int', 'entity_int.entity_id = product.entity_id');
-        $query->innerJoin('product', $this->tablePrefix . 'eav_attribute', 'eav', 'eav.attribute_id = entity_int.attribute_id AND eav.is_user_defined = 1');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_eav_attribute', 'eav_settings', 'eav_settings.attribute_id = eav.attribute_id AND eav_settings.is_configurable = 1');
-        $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = relation.parent_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('entity_int.entity_id IN (:ids)');

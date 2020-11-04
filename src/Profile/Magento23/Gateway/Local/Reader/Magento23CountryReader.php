@@ -19,6 +19,6 @@ class Magento23CountryReader extends Magento2CountryReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::COUNTRY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::COUNTRY;
     }
 }

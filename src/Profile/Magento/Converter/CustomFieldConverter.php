@@ -269,4 +269,14 @@ abstract class CustomFieldConverter extends Converter
 
         return null;
     }
+
+    protected function getDataSetEntity(MigrationContextInterface $migrationContext): ?string
+    {
+        $dataSet = $migrationContext->getDataSet();
+        if ($dataSet === null) {
+            return null;
+        }
+
+        return $dataSet::getEntity();
+    }
 }

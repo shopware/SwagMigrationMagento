@@ -14,6 +14,9 @@
             "selectDataCard": {
                 "entities": {
                     "product_custom_field": "Product attributes:",
+                    "product_child_property_relation": "Variant properties:",
+                    "product_multi_select_property": "Ext. product properties:",
+                    "product_child_multi_select_property": "Ext. variant properties:",
                     "property_group": "Properties:"
                 }
             }

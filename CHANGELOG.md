@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-66 - Improve migration of property product relations
 - MIG-101 - Improve migration of sales channels
 - MIG-108 - Improve migration of product prices
 

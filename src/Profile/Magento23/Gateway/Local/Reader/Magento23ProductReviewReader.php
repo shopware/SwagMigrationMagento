@@ -19,7 +19,7 @@ class Magento23ProductReviewReader extends ProductReviewReader
     {
         return $migrationContext->getProfile() instanceof Magento23Profile
             && $migrationContext->getGateway()->getName() === Magento23LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PRODUCT_REVIEW;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PRODUCT_REVIEW;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

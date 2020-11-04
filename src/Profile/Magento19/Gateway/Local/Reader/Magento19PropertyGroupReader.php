@@ -19,7 +19,7 @@ class Magento19PropertyGroupReader extends PropertyGroupReader
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
             && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::PROPERTY_GROUP;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::PROPERTY_GROUP;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

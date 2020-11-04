@@ -88,7 +88,9 @@ abstract class PropertyGroupReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}eav_attribute AS eav
 INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS eav_settings ON eav_settings.attribute_id = eav.attribute_id
-WHERE eav.is_user_defined = 1 AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1) AND eav.attribute_code NOT IN ('manufacturer', 'cost');
+WHERE eav.is_user_defined = 1
+AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)
+AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
 
@@ -108,6 +110,7 @@ SQL;
 
         $query->where('eav.is_user_defined = 1 AND (eav_settings.is_filterable = 1 OR eav_settings.is_configurable = 1)');
         $query->andWhere('eav.attribute_code NOT IN (\'manufacturer\', \'cost\')');
+        $query->andWhere('eav.frontend_input != \'boolean\'');
         $query->orderBy('eav.attribute_id');
 
         $query->setFirstResult($migrationContext->getOffset());

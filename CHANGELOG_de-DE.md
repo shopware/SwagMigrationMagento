@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-66 - Verbessern der Migration der Produkt-Eigenschaft-Relationen
 - MIG-101 - Verbessern der Migration der Verkaufskanäle
 - MIG-108 - Verbessern der Migration der Produktpreise
 

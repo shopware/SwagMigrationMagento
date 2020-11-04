@@ -17,8 +17,8 @@ class Magento23ProductCustomFieldConverter extends ProductCustomFieldConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento23Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === ProductCustomFieldDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento23Profile
+            && $this->getDataSetEntity($migrationContext) === ProductCustomFieldDataSet::getEntity();
     }
 
     protected function getCustomFieldEntityName(): string

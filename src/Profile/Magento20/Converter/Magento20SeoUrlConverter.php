@@ -16,7 +16,7 @@ class Magento20SeoUrlConverter extends SeoUrlConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento20Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === SeoUrlDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento20Profile
+             && $this->getDataSetEntity($migrationContext) === SeoUrlDataSet::getEntity();
     }
 }

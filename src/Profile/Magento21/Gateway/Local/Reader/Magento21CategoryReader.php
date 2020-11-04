@@ -19,7 +19,7 @@ class Magento21CategoryReader extends Magento2CategoryReader
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
             && $migrationContext->getGateway()->getName() === Magento21LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CATEGORY;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CATEGORY;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

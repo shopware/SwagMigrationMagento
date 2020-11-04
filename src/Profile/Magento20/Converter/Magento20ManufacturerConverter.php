@@ -16,7 +16,7 @@ class Magento20ManufacturerConverter extends ManufacturerConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento20Profile::PROFILE_NAME
-            && $migrationContext->getDataSet()::getEntity() === ManufacturerDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento20Profile
+            && $this->getDataSetEntity($migrationContext) === ManufacturerDataSet::getEntity();
     }
 }

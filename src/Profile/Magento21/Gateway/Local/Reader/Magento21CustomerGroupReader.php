@@ -19,7 +19,7 @@ class Magento21CustomerGroupReader extends CustomerGroupReader
     {
         return $migrationContext->getProfile() instanceof Magento21Profile
             && $migrationContext->getGateway()->getName() === Magento21LocalGateway::GATEWAY_NAME
-            && $migrationContext->getDataSet()::getEntity() === DefaultEntities::CUSTOMER_GROUP;
+            && $this->getDataSetEntity($migrationContext) === DefaultEntities::CUSTOMER_GROUP;
     }
 
     public function supportsTotal(MigrationContextInterface $migrationContext): bool

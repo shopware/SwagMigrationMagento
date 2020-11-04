@@ -202,4 +202,14 @@ abstract class MagentoConverter extends Converter
     {
         return \mb_substr($value, 0, $limit);
     }
+
+    protected function getDataSetEntity(MigrationContextInterface $migrationContext): ?string
+    {
+        $dataSet = $migrationContext->getDataSet();
+        if ($dataSet === null) {
+            return null;
+        }
+
+        return $dataSet::getEntity();
+    }
 }

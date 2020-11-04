@@ -16,7 +16,7 @@ class Magento19CountryConverter extends CountryConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
     {
-        return $migrationContext->getProfile()->getName() === Magento19Profile::PROFILE_NAME
-             && $migrationContext->getDataSet()::getEntity() === CountryDataSet::getEntity();
+        return $migrationContext->getProfile() instanceof Magento19Profile
+             && $this->getDataSetEntity($migrationContext) === CountryDataSet::getEntity();
     }
 }
