@@ -1,7 +1,8 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.2.0
 - MIG-66 - Verbessern der Migration der Produkt-Eigenschaft-Relationen
 - MIG-101 - Verbessern der Migration der Verkaufskanäle
 - MIG-108 - Verbessern der Migration der Produktpreise
+- MIG-113 - Verbessern der Performance der Migration von Kategorien
 
 # 2.1.1
 - MIG-86 - Entfernen der Passortvalidierung beim Erstellen einer Verbindung

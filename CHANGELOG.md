@@ -1,7 +1,8 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.2.0
 - MIG-66 - Improve migration of property product relations
 - MIG-101 - Improve migration of sales channels
 - MIG-108 - Improve migration of product prices
+- MIG-113 - Improve performance of category migration
 
 # 2.1.1
 - MIG-86 - Removing the password validation when creating a connection
