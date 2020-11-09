@@ -15,6 +15,7 @@ use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
+use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Argon2Id13Encoder;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Md5Encoder;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Sha256Encoder;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CustomerConverter;
@@ -164,7 +165,7 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
-    public function testConvertArgonPasswordWithoutExtension(): void
+    public function testConvertArgonPassword(): void
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
 
@@ -172,13 +173,13 @@ class Magento2CustomerConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $convertResult = $this->customerConverter->convert($customerData[1], $context, $this->migrationContext);
         $logs = $this->loggingService->getLoggingArray();
+        $converted = $convertResult->getConverted();
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-        static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION_RUN_EXCEPTION', $logs[0]['code']);
-        static::assertSame($customerData[1]['entity_id'], $logs[0]['parameters']['sourceId']);
-        static::assertStringContainsString('sodium', $logs[0]['parameters']['exceptionMessage']);
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($converted);
+        static::assertCount(0, $logs);
+        static::assertSame(Magento2Argon2Id13Encoder::NAME, $converted['legacyEncoder']);
+        static::assertSame($customerData[1]['password_hash'], $converted['legacyPassword']);
     }
 
     public function testConvertMd5Password(): void
