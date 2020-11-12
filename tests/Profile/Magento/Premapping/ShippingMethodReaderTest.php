@@ -45,6 +45,16 @@ class ShippingMethodReaderTest extends TestCase
      */
     private $context;
 
+    /**
+     * @var ShippingMethodEntity
+     */
+    private $dhlMock;
+
+    /**
+     * @var ShippingMethodEntity
+     */
+    private $upsMock;
+
     public function setUp(): void
     {
         $this->context = Context::createDefaultContext();
@@ -54,24 +64,47 @@ class ShippingMethodReaderTest extends TestCase
         $connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $connection->setGatewayName(ShopwareLocalGateway::GATEWAY_NAME);
         $connection->setCredentialFields([]);
-        $connection->setPremapping([]);
 
-        $debitMock = new ShippingMethodEntity();
-        $debitMock->setId(Uuid::randomHex());
-        $debitMock->setName('Debit');
+        $this->dhlMock = new ShippingMethodEntity();
+        $this->dhlMock->setId(Uuid::randomHex());
+        $this->dhlMock->setName('DHL');
 
-        $cashMock = new ShippingMethodEntity();
-        $cashMock->setId(Uuid::randomHex());
-        $cashMock->setName('Cash');
+        $this->upsMock = new ShippingMethodEntity();
+        $this->upsMock->setId(Uuid::randomHex());
+        $this->upsMock->setName('UPS');
+
+        $premapping = [[
+            'entity' => 'shipping_method',
+            'mapping' => [
+                0 => [
+                    'sourceId' => 'dhl',
+                    'description' => 'dhl',
+                    'destinationUuid' => $this->dhlMock->getId(),
+                ],
+                1 => [
+                    'sourceId' => 'ups',
+                    'description' => 'ups',
+                    'destinationUuid' => $this->upsMock->getId(),
+                ],
+
+                2 => [
+                    'sourceId' => 'shipment-invalid',
+                    'description' => 'shipment-invalid',
+                    'destinationUuid' => Uuid::randomHex(),
+                ],
+            ],
+        ]];
+        $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
-        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$debitMock, $cashMock]), null, new Criteria(), $this->context));
+        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$this->dhlMock, $this->upsMock]), null, new Criteria(), $this->context));
 
         $gatewayMock = $this->createMock(Magento19LocalGateway::class);
         $gatewayMock->method('readCarriers')->willReturn([
             ['carrier_id' => 'ups', 'value' => 'UPS-Shipment'],
             ['carrier_id' => 'dhl', 'value' => 'DHL-Shipment'],
             ['carrier_id' => 'withoutDescription'],
+            ['carrier_id' => 'shipment-invalid', 'value' => 'shipment-invalid'],
         ]);
 
         $gatewayRegistryMock = $this->createMock(GatewayRegistry::class);
@@ -91,17 +124,23 @@ class ShippingMethodReaderTest extends TestCase
 
         static::assertInstanceOf(PremappingStruct::class, $result);
 
-        static::assertCount(4, $result->getMapping());
+        static::assertCount(5, $result->getMapping());
         static::assertCount(2, $result->getChoices());
 
         $choices = $result->getChoices();
-        static::assertSame('Cash', $choices[0]->getDescription());
-        static::assertSame('Debit', $choices[1]->getDescription());
+        static::assertSame('DHL', $choices[0]->getDescription());
+        static::assertSame('UPS', $choices[1]->getDescription());
 
         $mapping = $result->getMapping();
         static::assertSame('DHL-Shipment', $mapping[0]->getDescription());
         static::assertSame('Standard shipping method', $mapping[1]->getDescription());
         static::assertSame('UPS-Shipment', $mapping[2]->getDescription());
-        static::assertSame('withoutDescription', $mapping[3]->getDescription());
+        static::assertSame('shipment-invalid', $mapping[3]->getDescription());
+        static::assertSame('withoutDescription', $mapping[4]->getDescription());
+        static::assertSame($this->dhlMock->getId(), $result->getMapping()[0]->getDestinationUuid());
+        static::assertEmpty($result->getMapping()[1]->getDestinationUuid());
+        static::assertSame($this->upsMock->getId(), $result->getMapping()[2]->getDestinationUuid());
+        static::assertEmpty($result->getMapping()[3]->getDestinationUuid());
+        static::assertEmpty($result->getMapping()[4]->getDestinationUuid());
     }
 }

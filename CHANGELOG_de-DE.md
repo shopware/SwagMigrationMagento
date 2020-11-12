@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-120 - Behebt ein Problem beim Laden des Premappings
+
 # 2.2.0
 - MIG-66 - Verbessern der Migration der Produkt-Eigenschaft-Relationen
 - MIG-101 - Verbessern der Migration der Verkaufskanäle
