@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-120 - Solves an issue when loading the pre-mapping
+
 # 2.2.0
 - MIG-66 - Improve migration of property product relations
 - MIG-101 - Improve migration of sales channels

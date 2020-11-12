@@ -45,6 +45,16 @@ class SalutationMethodReaderTest extends TestCase
      */
     private $context;
 
+    /**
+     * @var SalutationEntity
+     */
+    private $msMock;
+
+    /**
+     * @var SalutationEntity
+     */
+    private $mrMock;
+
     public function setUp(): void
     {
         $this->context = Context::createDefaultContext();
@@ -54,28 +64,51 @@ class SalutationMethodReaderTest extends TestCase
         $connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $connection->setGatewayName(ShopwareLocalGateway::GATEWAY_NAME);
         $connection->setCredentialFields([]);
-        $connection->setPremapping([]);
 
-        $mrMock = new SalutationEntity();
-        $mrMock->setId(Uuid::randomHex());
-        $mrMock->setDisplayName('Mr');
-        $mrMock->setLetterName('Mr');
-        $mrMock->setSalutationKey('Mr');
+        $this->mrMock = new SalutationEntity();
+        $this->mrMock->setId(Uuid::randomHex());
+        $this->mrMock->setDisplayName('Mr');
+        $this->mrMock->setLetterName('Mr');
+        $this->mrMock->setSalutationKey('Mr');
 
-        $msMock = new SalutationEntity();
-        $msMock->setId(Uuid::randomHex());
-        $msMock->setDisplayName('Ms');
-        $msMock->setLetterName('Ms');
-        $msMock->setSalutationKey('Ms');
+        $this->msMock = new SalutationEntity();
+        $this->msMock->setId(Uuid::randomHex());
+        $this->msMock->setDisplayName('Ms');
+        $this->msMock->setLetterName('Ms');
+        $this->msMock->setSalutationKey('Ms');
+
+        $premapping = [[
+            'entity' => 'salutation',
+            'mapping' => [
+                0 => [
+                    'sourceId' => '1',
+                    'description' => 'mr',
+                    'destinationUuid' => $this->mrMock->getId(),
+                ],
+                1 => [
+                    'sourceId' => '2',
+                    'description' => 'ms',
+                    'destinationUuid' => $this->msMock->getId(),
+                ],
+
+                2 => [
+                    'sourceId' => 'salutation-invalid',
+                    'description' => 'salutation-invalid',
+                    'destinationUuid' => Uuid::randomHex(),
+                ],
+            ],
+        ]];
+        $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
-        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$mrMock, $msMock]), null, new Criteria(), $this->context));
+        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$this->mrMock, $this->msMock]), null, new Criteria(), $this->context));
 
         $gatewayMock = $this->createMock(Magento19LocalGateway::class);
         $gatewayMock->method('readGenders')->willReturn([
             ['option_id' => '1', 'value' => 'Mr'],
             ['option_id' => '2', 'value' => 'Ms'],
             ['option_id' => 'withoutDescription'],
+            ['option_id' => 'salutation-invalid', 'value' => 'salutation-invalid'],
         ]);
 
         $gatewayRegistryMock = $this->createMock(GatewayRegistry::class);
@@ -95,7 +128,7 @@ class SalutationMethodReaderTest extends TestCase
 
         static::assertInstanceOf(PremappingStruct::class, $result);
 
-        static::assertCount(3, $result->getMapping());
+        static::assertCount(4, $result->getMapping());
         static::assertCount(2, $result->getChoices());
 
         $choices = $result->getChoices();
@@ -106,5 +139,11 @@ class SalutationMethodReaderTest extends TestCase
         static::assertSame('Mr', $mapping[0]->getDescription());
         static::assertSame('Ms', $mapping[1]->getDescription());
         static::assertSame('Standard salutation', $mapping[2]->getDescription());
+        static::assertSame('salutation-invalid', $mapping[3]->getDescription());
+        static::assertSame($this->mrMock->getId(), $result->getMapping()[0]->getDestinationUuid());
+        static::assertSame($this->msMock->getId(), $result->getMapping()[1]->getDestinationUuid());
+        // Because the default of getPreselectionValue
+        static::assertSame($this->mrMock->getId(), $result->getMapping()[2]->getDestinationUuid());
+        static::assertSame($this->mrMock->getId(), $result->getMapping()[3]->getDestinationUuid());
     }
 }

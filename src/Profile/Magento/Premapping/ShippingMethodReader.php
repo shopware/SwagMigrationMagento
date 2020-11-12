@@ -39,6 +39,11 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
      */
     private $preselectionDictionary;
 
+    /**
+     * @var string[]
+     */
+    private $choiceUuids;
+
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
         EntityRepositoryInterface $paymentMethodRepo
@@ -63,8 +68,8 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
     {
         $this->fillConnectionPremappingDictionary($migrationContext);
-        $mapping = $this->getMapping($migrationContext);
         $choices = $this->getChoices($context);
+        $mapping = $this->getMapping($migrationContext);
         $this->setPreselection($mapping);
 
         return new PremappingStruct(self::getMappingName(), $mapping, $choices);
@@ -85,6 +90,10 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$data['carrier_id']])) {
                 $uuid = $this->connectionPremappingDictionary[$data['carrier_id']]['destinationUuid'];
+
+                if (!isset($this->choiceUuids[$uuid])) {
+                    $uuid = '';
+                }
             }
 
             $entityData[] = new PremappingEntityStruct($data['carrier_id'], $data['value'] ?? $data['carrier_id'], $uuid);
@@ -93,6 +102,10 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_shipping_method'])) {
             $uuid = $this->connectionPremappingDictionary['default_shipping_method']['destinationUuid'];
+
+            if (!isset($this->choiceUuids[$uuid])) {
+                $uuid = '';
+            }
         }
 
         $entityData[] = new PremappingEntityStruct('default_shipping_method', 'Standard shipping method', $uuid);
@@ -118,8 +131,10 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
                 continue;
             }
 
-            $this->preselectionDictionary[$shippingMethodName] = $shippingMethod->getId();
-            $choices[] = new PremappingChoiceStruct($shippingMethod->getId(), $shippingMethodName);
+            $id = $shippingMethod->getId();
+            $this->preselectionDictionary[$shippingMethodName] = $id;
+            $choices[] = new PremappingChoiceStruct($id, $shippingMethodName);
+            $this->choiceUuids[$id] = $id;
         }
         \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());

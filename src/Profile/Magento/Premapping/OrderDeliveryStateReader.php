@@ -49,6 +49,11 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
      */
     private $connectionPremappingValue = '';
 
+    /**
+     * @var string[]
+     */
+    private $choiceUuids;
+
     public function __construct(
         EntityRepositoryInterface $stateMachineRepo,
         EntityRepositoryInterface $stateMachineStateRepo
@@ -71,8 +76,8 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
     {
         $this->fillConnectionPremappingDictionary($migrationContext);
-        $mapping = $this->getMapping();
         $choices = $this->getChoices($context);
+        $mapping = $this->getMapping();
         $this->setPreselection($mapping);
 
         return new PremappingStruct(self::getMappingName(), $mapping, $choices);
@@ -109,8 +114,10 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
         $choices = [];
         /** @var StateMachineStateEntity $state */
         foreach ($states as $state) {
-            $this->preselectionDictionary[$state->getTechnicalName()] = $state->getId();
-            $choices[] = new PremappingChoiceStruct($state->getId(), $state->getName());
+            $id = $state->getId();
+            $this->preselectionDictionary[$state->getTechnicalName()] = $id;
+            $choices[] = new PremappingChoiceStruct($id, $state->getName());
+            $this->choiceUuids[$id] = $id;
         }
 
         return $choices;
@@ -129,6 +136,10 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
             $preselectionValue = $this->preselectionDictionary[OrderDeliveryStates::STATE_OPEN] ?? null;
             if ($item->getSourceId() === OrderDeliveryStateReader::DEFAULT_SHIPPED_STATUS) {
                 $preselectionValue = $this->preselectionDictionary[OrderDeliveryStates::STATE_SHIPPED] ?? null;
+
+                if (!isset($this->choiceUuids[$preselectionValue])) {
+                    $preselectionValue = null;
+                }
             }
 
             if ($preselectionValue !== null) {

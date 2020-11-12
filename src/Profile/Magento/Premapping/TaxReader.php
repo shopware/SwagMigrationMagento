@@ -43,6 +43,11 @@ abstract class TaxReader extends AbstractPremappingReader
      */
     private $preselectionDictionary;
 
+    /**
+     * @var string[]
+     */
+    private $choiceUuids;
+
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
         EntityRepositoryInterface $taxRepo
@@ -67,8 +72,8 @@ abstract class TaxReader extends AbstractPremappingReader
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
     {
         $this->fillConnectionPremappingDictionary($migrationContext);
-        $mapping = $this->getMapping($migrationContext);
         $choices = $this->getChoices($context);
+        $mapping = $this->getMapping($migrationContext);
         $this->setPreselection($mapping);
 
         return new PremappingStruct(self::getMappingName(), $mapping, $choices);
@@ -88,6 +93,10 @@ abstract class TaxReader extends AbstractPremappingReader
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$data['class_id']])) {
                 $uuid = $this->connectionPremappingDictionary[$data['class_id']]['destinationUuid'];
+
+                if (!isset($this->choiceUuids[$uuid])) {
+                    $uuid = '';
+                }
             }
 
             $entityData[] = new PremappingEntityStruct($data['class_id'], $data['class_name'], $uuid);
@@ -114,6 +123,7 @@ abstract class TaxReader extends AbstractPremappingReader
             $taxId = $tax->getId();
             $this->preselectionDictionary[$taxId] = $taxId;
             $choices[] = new PremappingChoiceStruct($taxId, $tax->getName());
+            $this->choiceUuids[$taxId] = $taxId;
         }
         \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());

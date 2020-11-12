@@ -47,6 +47,16 @@ class PaymentMethodReaderTest extends TestCase
      */
     private $context;
 
+    /**
+     * @var PaymentMethodEntity
+     */
+    private $debitMock;
+
+    /**
+     * @var PaymentMethodEntity
+     */
+    private $cashMock;
+
     public function setUp(): void
     {
         $this->context = Context::createDefaultContext();
@@ -56,26 +66,49 @@ class PaymentMethodReaderTest extends TestCase
         $connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $connection->setGatewayName(ShopwareLocalGateway::GATEWAY_NAME);
         $connection->setCredentialFields([]);
-        $connection->setPremapping([]);
 
-        $debitMock = new PaymentMethodEntity();
-        $debitMock->setId(Uuid::randomHex());
-        $debitMock->setName('Debit');
-        $debitMock->setHandlerIdentifier(DebitPayment::class);
+        $this->debitMock = new PaymentMethodEntity();
+        $this->debitMock->setId(Uuid::randomHex());
+        $this->debitMock->setName('Debit');
+        $this->debitMock->setHandlerIdentifier(DebitPayment::class);
 
-        $cashMock = new PaymentMethodEntity();
-        $cashMock->setId(Uuid::randomHex());
-        $cashMock->setName('Cash');
-        $cashMock->setHandlerIdentifier(CashPayment::class);
+        $this->cashMock = new PaymentMethodEntity();
+        $this->cashMock->setId(Uuid::randomHex());
+        $this->cashMock->setName('Cash');
+        $this->cashMock->setHandlerIdentifier(CashPayment::class);
+
+        $premapping = [[
+            'entity' => 'payment_method',
+            'mapping' => [
+                0 => [
+                    'sourceId' => 'direct',
+                    'description' => 'direct',
+                    'destinationUuid' => $this->debitMock->getId(),
+                ],
+                1 => [
+                    'sourceId' => 'cash',
+                    'description' => 'cash',
+                    'destinationUuid' => $this->cashMock->getId(),
+                ],
+
+                2 => [
+                    'sourceId' => 'payment-invalid',
+                    'description' => 'payment-invalid',
+                    'destinationUuid' => Uuid::randomHex(),
+                ],
+            ],
+        ]];
+        $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
-        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$debitMock, $cashMock]), null, new Criteria(), $this->context));
+        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$this->debitMock, $this->cashMock]), null, new Criteria(), $this->context));
 
         $gatewayMock = $this->createMock(Magento19LocalGateway::class);
         $gatewayMock->method('readPayments')->willReturn([
             ['payment_id' => 'direct', 'value' => 'Direct Debit'],
             ['payment_id' => 'cash', 'value' => 'Cash'],
             ['payment_id' => 'withoutDescription'],
+            ['payment_id' => 'payment-invalid', 'value' => 'payment-invalid'],
         ]);
 
         $gatewayRegistryMock = $this->createMock(GatewayRegistry::class);
@@ -95,7 +128,7 @@ class PaymentMethodReaderTest extends TestCase
 
         static::assertInstanceOf(PremappingStruct::class, $result);
 
-        static::assertCount(4, $result->getMapping());
+        static::assertCount(5, $result->getMapping());
         static::assertCount(2, $result->getChoices());
 
         $choices = $result->getChoices();
@@ -106,6 +139,12 @@ class PaymentMethodReaderTest extends TestCase
         static::assertSame('Cash', $mapping[0]->getDescription());
         static::assertSame('Direct Debit', $mapping[1]->getDescription());
         static::assertSame('Standard payment method', $mapping[2]->getDescription());
-        static::assertSame('withoutDescription', $mapping[3]->getDescription());
+        static::assertSame('payment-invalid', $mapping[3]->getDescription());
+        static::assertSame('withoutDescription', $mapping[4]->getDescription());
+        static::assertSame($this->cashMock->getId(), $result->getMapping()[0]->getDestinationUuid());
+        static::assertSame($this->debitMock->getId(), $result->getMapping()[1]->getDestinationUuid());
+        static::assertEmpty($result->getMapping()[2]->getDestinationUuid());
+        static::assertEmpty($result->getMapping()[3]->getDestinationUuid());
+        static::assertEmpty($result->getMapping()[4]->getDestinationUuid());
     }
 }

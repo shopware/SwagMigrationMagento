@@ -39,6 +39,11 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
      */
     private $preselectionDictionary;
 
+    /**
+     * @var string[]
+     */
+    private $choiceUuids;
+
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
         EntityRepositoryInterface $paymentMethodRepo
@@ -60,8 +65,8 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
     {
         $this->fillConnectionPremappingDictionary($migrationContext);
-        $mapping = $this->getMapping($migrationContext);
         $choices = $this->getChoices($context);
+        $mapping = $this->getMapping($migrationContext);
         $this->setPreselection($mapping);
 
         return new PremappingStruct(self::getMappingName(), $mapping, $choices);
@@ -82,6 +87,10 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$data['payment_id']])) {
                 $uuid = $this->connectionPremappingDictionary[$data['payment_id']]['destinationUuid'];
+
+                if (!isset($this->choiceUuids[$uuid])) {
+                    $uuid = '';
+                }
             }
 
             $entityData[] = new PremappingEntityStruct($data['payment_id'], $data['value'] ?? $data['payment_id'], $uuid);
@@ -90,6 +99,10 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_payment_method'])) {
             $uuid = $this->connectionPremappingDictionary['default_payment_method']['destinationUuid'];
+
+            if (!isset($this->choiceUuids[$uuid])) {
+                $uuid = '';
+            }
         }
 
         $entityData[] = new PremappingEntityStruct('default_payment_method', 'Standard payment method', $uuid);
@@ -115,8 +128,10 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
                 continue;
             }
 
-            $this->preselectionDictionary[$paymentMethodName] = $paymentMethod->getId();
-            $choices[] = new PremappingChoiceStruct($paymentMethod->getId(), $paymentMethodName);
+            $id = $paymentMethod->getId();
+            $this->preselectionDictionary[$paymentMethodName] = $id;
+            $choices[] = new PremappingChoiceStruct($id, $paymentMethodName);
+            $this->choiceUuids[$id] = $id;
         }
         \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());

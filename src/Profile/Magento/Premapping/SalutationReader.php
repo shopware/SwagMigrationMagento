@@ -43,6 +43,11 @@ abstract class SalutationReader extends AbstractPremappingReader
      */
     private $gatewayRegistry;
 
+    /**
+     * @var string[]
+     */
+    private $choiceUuids;
+
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
         EntityRepositoryInterface $salutationRepo
@@ -66,8 +71,8 @@ abstract class SalutationReader extends AbstractPremappingReader
     public function getPremapping(Context $context, MigrationContextInterface $migrationContext): PremappingStruct
     {
         $this->fillConnectionPremappingDictionary($migrationContext);
-        $mapping = $this->getMapping($migrationContext);
         $choices = $this->getChoices($context);
+        $mapping = $this->getMapping($migrationContext);
         $this->setPreselection($mapping, $context);
 
         return new PremappingStruct(self::getMappingName(), $mapping, $choices);
@@ -88,6 +93,10 @@ abstract class SalutationReader extends AbstractPremappingReader
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$salutation['option_id']])) {
                 $uuid = $this->connectionPremappingDictionary[$salutation['option_id']]['destinationUuid'];
+
+                if (!isset($this->choiceUuids[$uuid])) {
+                    $uuid = '';
+                }
             }
 
             if (!isset($salutation['value'])) {
@@ -100,6 +109,10 @@ abstract class SalutationReader extends AbstractPremappingReader
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_salutation'])) {
             $uuid = $this->connectionPremappingDictionary['default_salutation']['destinationUuid'];
+
+            if (!isset($this->choiceUuids[$uuid])) {
+                $uuid = '';
+            }
         }
 
         $entityData[] = new PremappingEntityStruct('default_salutation', 'Standard salutation', $uuid);
@@ -122,7 +135,9 @@ abstract class SalutationReader extends AbstractPremappingReader
         $choices = [];
         /** @var SalutationEntity $salutation */
         foreach ($salutations as $salutation) {
-            $choices[] = new PremappingChoiceStruct($salutation->getId(), $salutation->getSalutationKey());
+            $id = $salutation->getId();
+            $choices[] = new PremappingChoiceStruct($id, $salutation->getSalutationKey());
+            $this->choiceUuids[$id] = $id;
         }
         \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
@@ -151,27 +166,34 @@ abstract class SalutationReader extends AbstractPremappingReader
 
     private function getPreselectionValue(string $sourceId, Context $context): ?string
     {
+        $preselectionValue = null;
         switch ($sourceId) {
             case '1':
                 $criteria = new Criteria();
                 $criteria->addFilter(new EqualsFilter('salutationKey', 'mr'));
-                /** @var SalutationEntity $salutation */
+                /** @var SalutationEntity|null $salutation */
                 $salutation = $this->salutationRepo->search($criteria, $context)->first();
-                $preselectionValue = $salutation->getId();
 
+                if ($salutation !== null) {
+                    $preselectionValue = $salutation->getId();
+                }
                 break;
             case '2':
                 $criteria = new Criteria();
                 $criteria->addFilter(new EqualsFilter('salutationKey', 'mrs'));
                 $salutation = $this->salutationRepo->search($criteria, $context)->first();
-                $preselectionValue = $salutation->getId();
+                if ($salutation !== null) {
+                    $preselectionValue = $salutation->getId();
+                }
                 break;
             default:
                 $criteria = new Criteria();
                 $criteria->addFilter(new EqualsFilter('salutationKey', 'not_specified'));
-                /** @var SalutationEntity $salutation */
+                /** @var SalutationEntity|null $salutation */
                 $salutation = $this->salutationRepo->search($criteria, $context)->first();
-                $preselectionValue = $salutation->getId();
+                if ($salutation !== null) {
+                    $preselectionValue = $salutation->getId();
+                }
                 break;
         }
 
