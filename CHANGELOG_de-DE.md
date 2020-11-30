@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.2.1
 - MIG-120 - Behebt ein Problem beim Laden des Premappings
 - MIG-168 - Optimiertes Request Handling
 
