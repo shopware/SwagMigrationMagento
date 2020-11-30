@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-120 - Solves an issue when loading the pre-mapping
+- MIG-168 - Optimized request options
 
 # 2.2.0
 - MIG-66 - Improve migration of property product relations
