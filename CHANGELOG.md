@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 2.2.1
 - MIG-120 - Solves an issue when loading the pre-mapping
 - MIG-168 - Optimized request options
 
