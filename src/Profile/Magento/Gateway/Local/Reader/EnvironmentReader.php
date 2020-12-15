@@ -90,7 +90,13 @@ class EnvironmentReader implements EnvironmentReaderInterface
             return '';
         }
 
-        return $query->fetch(\PDO::FETCH_COLUMN);
+        $value = $query->fetch(\PDO::FETCH_COLUMN);
+
+        if ($value === false) {
+            return '';
+        }
+
+        return $value;
     }
 
     protected function getDefaultCurrency(): string
@@ -107,7 +113,13 @@ class EnvironmentReader implements EnvironmentReaderInterface
             return '';
         }
 
-        return $query->fetch(\PDO::FETCH_COLUMN);
+        $value = $query->fetch(\PDO::FETCH_COLUMN);
+
+        if ($value === false) {
+            return '';
+        }
+
+        return $value;
     }
 
     protected function isMagento2(): bool

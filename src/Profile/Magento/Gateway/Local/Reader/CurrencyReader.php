@@ -68,6 +68,12 @@ abstract class CurrencyReader extends AbstractReader
             return '';
         }
 
-        return $query->fetch(\PDO::FETCH_COLUMN);
+        $value = $query->fetch(\PDO::FETCH_COLUMN);
+
+        if ($value === false) {
+            return '';
+        }
+
+        return $value;
     }
 }

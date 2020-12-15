@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-169 - Fix migration of creation date of product reviews
+
 # 2.2.1
 - MIG-120 - Solves an issue when loading the pre-mapping
 - MIG-168 - Optimized request options
