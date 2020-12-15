@@ -37,8 +37,8 @@ abstract class NotAssociatedMediaReader extends AbstractReader
         $cdir = \scandir($dir, 1);
         foreach ($cdir as $value) {
             if (!\in_array($value, ['.', '..'], true)) {
-                if (\is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
-                    $this->dirToArray($dir . $value . DIRECTORY_SEPARATOR, $result);
+                if (\is_dir($dir . \DIRECTORY_SEPARATOR . $value)) {
+                    $this->dirToArray($dir . $value . \DIRECTORY_SEPARATOR, $result);
                 } else {
                     $result[]['path'] = \str_replace($this->sourcePath, '', $dir) . $value;
                 }

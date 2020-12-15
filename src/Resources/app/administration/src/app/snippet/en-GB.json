@@ -34,7 +34,7 @@
                     },
                     "magento": {
                         "local": {
-                            "contentInformation": "We still need access data to connect to your Magento 1 database.",
+                            "contentInformation": "We still need access data to connect to your Magento database.",
                             "dbHostLabel": "Host",
                             "dbHostPlaceholder": "Enter host",
                             "dbPortLabel": "Port",

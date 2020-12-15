@@ -51,18 +51,22 @@ abstract class MagentoConverter extends Converter
             switch ($castType) {
                 case self::TYPE_BOOLEAN:
                     $sourceValue = (bool) $sourceData[$sourceKey];
+
                     break;
                 case self::TYPE_INTEGER:
                     $sourceValue = (int) $sourceData[$sourceKey];
+
                     break;
                 case self::TYPE_FLOAT:
                     $sourceValue = (float) $sourceData[$sourceKey];
+
                     break;
                 case self::TYPE_DATETIME:
                     $sourceValue = $sourceData[$sourceKey];
                     if (!$this->validDate($sourceValue)) {
                         return;
                     }
+
                     break;
                 default:
                     $sourceValue = (string) $sourceData[$sourceKey];

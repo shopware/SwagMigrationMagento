@@ -171,57 +171,75 @@ abstract class OrderStateReader extends AbstractPremappingReader
         switch ($sourceId) {
             case 'canceled':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'cancel_ogone':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'closed':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'complete':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_COMPLETED];
+
                 break;
             case 'decline_ogone':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'fraud':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'holded':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'payment_review':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'paypal_canceled_reversal':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'paypal_reversed':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_CANCELLED];
+
                 break;
             case 'pending':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_OPEN];
+
                 break;
             case 'pending_ogone':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_OPEN];
+
                 break;
             case 'pending_payment':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'pending_paypal':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'processed_ogone':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'processing':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'processing_ogone':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
             case 'waiting_authorozation':
                 $preselectionValue = $this->preselectionDictionary[OrderStates::STATE_IN_PROGRESS];
+
                 break;
         }
 

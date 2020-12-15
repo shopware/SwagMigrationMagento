@@ -138,7 +138,7 @@ abstract class ProductReviewConverter extends MagentoConverter
         unset($data['store_id']);
 
         if (isset($data['created_at'])) {
-            $this->convertValue($converted, 'createdAt', $data, 'created_at');
+            $this->convertValue($converted, 'createdAt', $data, 'created_at', self::TYPE_DATETIME);
         }
 
         $this->convertValue($converted, 'title', $data, 'title');

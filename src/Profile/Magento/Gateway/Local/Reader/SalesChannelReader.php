@@ -322,20 +322,25 @@ SQL;
                     case 'general/locale/code':
                         $valueKey = 'defaultLocale';
                         $value = \str_replace('_', '-', $value);
+
                         break;
                     case 'currency/options/default':
                         $valueKey = 'defaultCurrency';
+
                         break;
                     case 'currency/options/allow':
                         $valueKey = 'allowedCurrencies';
                         $value = \explode(',', $value);
+
                         break;
                     case 'general/country/allow':
                         $valueKey = 'allowedCountries';
                         $value = \explode(',', $value);
+
                         break;
                     case 'general/country/default':
                         $valueKey = 'defaultCountry';
+
                         break;
                 }
 

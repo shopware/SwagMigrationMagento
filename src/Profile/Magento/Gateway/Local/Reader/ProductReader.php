@@ -205,6 +205,7 @@ SQL;
 
             if ($attributeCode === 'visibility') {
                 $defaultAttributes['base_visibility'] = $attribute['value'];
+
                 continue;
             }
 
@@ -247,6 +248,7 @@ SQL;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['attribute_id'] = $attributeId;
                     $fetchedProduct['translations'][$localeStoreId][$attributeCode]['frontend_input'] = $frontendInput;
                 }
+
                 continue;
             }
             $fetchedProduct['translations'][$storeId][$attributeCode]['value'] = $value;

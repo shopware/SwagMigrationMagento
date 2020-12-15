@@ -461,6 +461,7 @@ class Magento2CategoryConverterTest extends TestCase
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
         $context = Context::createDefaultContext();
+
         try {
             $this->categoryConverter20->convert($categoryData[2], $context, $this->migrationContext20);
         } catch (\Exception $e) {
@@ -475,6 +476,7 @@ class Magento2CategoryConverterTest extends TestCase
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
         $context = Context::createDefaultContext();
+
         try {
             $this->categoryConverter21->convert($categoryData[2], $context, $this->migrationContext21);
         } catch (\Exception $e) {
@@ -489,6 +491,7 @@ class Magento2CategoryConverterTest extends TestCase
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
         $context = Context::createDefaultContext();
+
         try {
             $this->categoryConverter22->convert($categoryData[2], $context, $this->migrationContext22);
         } catch (\Exception $e) {
@@ -503,6 +506,7 @@ class Magento2CategoryConverterTest extends TestCase
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
         $context = Context::createDefaultContext();
+
         try {
             $this->categoryConverter23->convert($categoryData[2], $context, $this->migrationContext23);
         } catch (\Exception $e) {

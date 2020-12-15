@@ -21,7 +21,7 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
-class CrossSellingConverterTest extends TestCase
+class Magento19CrossSellingConverterTest extends TestCase
 {
     /**
      * @var Magento19CrossSellingConverter

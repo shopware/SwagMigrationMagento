@@ -61,6 +61,7 @@ SQL;
     {
         $query = $this->connection->createQueryBuilder();
 
+        $query->select('review.created_at AS `detail.created_at`');
         $query->from($this->tablePrefix . 'review', 'review');
 
         $query->innerJoin('review', $this->tablePrefix . 'review_entity', 'entity', 'review.entity_id = entity.entity_id AND entity.entity_code = \'product\'');
