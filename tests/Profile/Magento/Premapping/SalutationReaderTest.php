@@ -26,7 +26,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\Local\ShopwareLocalGateway;
 
-class SalutationMethodReaderTest extends TestCase
+class SalutationReaderTest extends TestCase
 {
     use KernelTestBehaviour;
 

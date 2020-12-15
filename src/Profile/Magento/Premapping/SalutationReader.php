@@ -177,6 +177,7 @@ abstract class SalutationReader extends AbstractPremappingReader
                 if ($salutation !== null) {
                     $preselectionValue = $salutation->getId();
                 }
+
                 break;
             case '2':
                 $criteria = new Criteria();
@@ -185,6 +186,7 @@ abstract class SalutationReader extends AbstractPremappingReader
                 if ($salutation !== null) {
                     $preselectionValue = $salutation->getId();
                 }
+
                 break;
             default:
                 $criteria = new Criteria();
@@ -194,6 +196,7 @@ abstract class SalutationReader extends AbstractPremappingReader
                 if ($salutation !== null) {
                     $preselectionValue = $salutation->getId();
                 }
+
                 break;
         }
 

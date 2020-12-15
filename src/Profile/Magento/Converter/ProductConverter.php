@@ -819,6 +819,7 @@ abstract class ProductConverter extends MagentoConverter
 
             if ($storeId === 0) {
                 $this->setDefaultStoreVisibility($status, $productId, $visibilities);
+
                 continue;
             }
 

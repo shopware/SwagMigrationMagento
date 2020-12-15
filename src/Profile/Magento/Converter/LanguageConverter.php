@@ -85,6 +85,7 @@ abstract class LanguageConverter extends MagentoConverter
         }
 
         $localeUuid = null;
+
         try {
             $localeUuid = $this->mappingService->getLocaleUuid(
                 $this->connectionId,

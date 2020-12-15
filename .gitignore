@@ -4,3 +4,4 @@ coverage/
 vendor/
 *.hot-update.js
 phpstan.neon
+/var/

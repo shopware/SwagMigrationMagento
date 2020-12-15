@@ -148,6 +148,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         foreach ($this->writeArray as $writeMapping) {
             if ($writeMapping['connectionId'] === $connectionId && $writeMapping['entityUuid'] === $entityUuid) {
                 unset($writeMapping);
+
                 break;
             }
         }

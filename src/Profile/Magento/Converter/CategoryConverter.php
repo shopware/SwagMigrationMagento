@@ -309,6 +309,7 @@ abstract class CategoryConverter extends MagentoConverter
             $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
         } catch (\Exception $exception) {
             $this->mappingService->deleteMapping($converted['id'], $this->connectionId, $this->context);
+
             throw $exception;
         }
 
