@@ -221,21 +221,6 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
 
 		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\CrossSellingConverterTest\\:\\:\\$type has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\CrossSellingConverterTest\\:\\:\\$compareProduct has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\CrossSellingConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 3
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
@@ -248,11 +233,6 @@ parameters:
 		-
 			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
 			count: 7
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
 
 		-
@@ -631,21 +611,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
 
 		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\CrossSellingConverterTest\\:\\:\\$type has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\CrossSellingConverterTest\\:\\:\\$compareProduct has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\CrossSellingConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 3
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
@@ -658,11 +623,6 @@ parameters:
 		-
 			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
 			count: 7
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-

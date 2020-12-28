@@ -39,7 +39,7 @@ class Magento2CrossSellingConverterTest extends TestCase
     private $runId;
 
     /**
-     * @var string
+     * @var SwagMigrationConnectionEntity
      */
     private $connection;
 
@@ -58,14 +58,19 @@ class Magento2CrossSellingConverterTest extends TestCase
      */
     private $products;
 
+    /**
+     * @var string[]
+     */
     private $type = [
         'Cross-sells',
         'Up-sells',
         'Related products',
     ];
 
-    private $compareProduct
-    = [
+    /**
+     * @var array
+     */
+    private $compareProduct = [
         'id' => null,
         'name' => 'Cross-sells',
         'type' => 'productList',
