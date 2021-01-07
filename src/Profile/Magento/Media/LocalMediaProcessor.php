@@ -253,10 +253,21 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $filePath = \sprintf('_temp/%s.%s', $rowId, $fileExtension);
 
             if (\copy($sourcePath, $filePath)) {
-                $fileSize = \filesize($filePath);
-                $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
+                try {
+                    $fileSize = \filesize($filePath);
+                    $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
+                    $this->persistFileToMedia($filePath, $mediaId, $mediaFile['file_name'], $fileSize, $fileExtension, $context);
+                } catch (\Exception $e) {
+                    $failureUuids[] = $mediaId;
+                    $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                    $this->loggingService->addLogEntry(new ExceptionRunLog(
+                        $mappedWorkload[$mediaId]->getRunId(),
+                        DefaultEntities::MEDIA,
+                        $e,
+                        $mediaId
+                    ));
+                }
 
-                $this->persistFileToMedia($filePath, $mediaId, $mediaFile['file_name'], $fileSize, $fileExtension, $context);
                 \unlink($filePath);
             } else {
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
@@ -408,16 +419,27 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             \fclose($fileHandle);
 
             if ($mappedWorkload[$uuid]->getState() === MediaProcessWorkloadStruct::FINISH_STATE) {
-                $this->persistFileToMedia(
-                    $filePath,
-                    $uuid,
-                    $additionalData['file_name'],
-                    $fileSize,
-                    $fileExtension,
-                    $context
-                );
-                \unlink($filePath);
-                $finishedUuids[] = $uuid;
+                try {
+                    $this->persistFileToMedia(
+                        $filePath,
+                        $uuid,
+                        $additionalData['file_name'],
+                        $fileSize,
+                        $fileExtension,
+                        $context
+                    );
+                    \unlink($filePath);
+                    $finishedUuids[] = $uuid;
+                } catch (\Exception $e) {
+                    $failureUuids[] = $uuid;
+                    $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                    $this->loggingService->addLogEntry(new ExceptionRunLog(
+                        $mappedWorkload[$uuid]->getRunId(),
+                        DefaultEntities::MEDIA,
+                        $e,
+                        $uuid
+                    ));
+                }
             }
 
             if ($oldWorkload->getErrorCount() === $mappedWorkload[$uuid]->getErrorCount()) {
