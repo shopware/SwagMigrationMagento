@@ -1,5 +1,6 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-169 - Behebt ein Problem bei der Migration des Erstelldatums von Produktbewertungen
+- MIG-188 - Verbessert die Stabilität des Mediendownloads
 
 # 2.2.1
 - MIG-120 - Behebt ein Problem beim Laden des Premappings
