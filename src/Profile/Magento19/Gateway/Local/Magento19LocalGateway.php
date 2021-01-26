@@ -213,24 +213,20 @@ SQL;
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
         $sql = <<<SQL
 SELECT
-    carrier.*
+    DISTINCT carrier.*
 FROM
       (
           SELECT
             REPLACE(REPLACE(config.path, '/title', ''), 'carriers/', '') AS carrier_id,
             config.*
           FROM {$tablePrefix}core_config_data config
-          WHERE path LIKE 'carriers/%/title'
-                AND scope = 'default'
+          WHERE path LIKE 'carriers/%/title' AND scope = 'default'
       ) AS carrier,
-
       (
           SELECT
             REPLACE(REPLACE(config.path, '/active', ''), 'carriers/', '') AS carrier_id
           FROM {$tablePrefix}core_config_data config
-          WHERE path LIKE 'carriers/%/active'
-                AND scope = 'default'
-                AND value = true
+          WHERE path LIKE 'carriers/%/active' AND value = 1
       ) AS carrier_active
 WHERE carrier.carrier_id = carrier_active.carrier_id;
 SQL;

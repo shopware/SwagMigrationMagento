@@ -474,14 +474,29 @@ abstract class SalesChannelConverter extends MagentoConverter
                 if ($mapping === null) {
                     $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
                         $this->runId,
-                        DefaultEntities::PAYMENT_METHOD,
+                        PaymentMethodReader::getMappingName(),
                         $payment['payment_id'],
                         DefaultEntities::SALES_CHANNEL
                     ));
 
                     continue;
                 }
+                $uuid = $mapping['entityUuid'];
+                $payments[$uuid] = [
+                    'id' => $uuid,
+                ];
+            }
+        }
 
+        if ($payments === []) {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                PaymentMethodReader::getMappingName(),
+                'default_payment_method',
+                $context
+            );
+
+            if (isset($mapping['entityUuid'])) {
                 $uuid = $mapping['entityUuid'];
                 $payments[$uuid] = [
                     'id' => $uuid,
@@ -507,14 +522,29 @@ abstract class SalesChannelConverter extends MagentoConverter
                 if ($mapping === null) {
                     $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
                         $this->runId,
-                        DefaultEntities::SHIPPING_METHOD,
+                        ShippingMethodReader::getMappingName(),
                         $payment['carrier_id'],
                         DefaultEntities::SALES_CHANNEL
                     ));
 
                     continue;
                 }
+                $uuid = $mapping['entityUuid'];
+                $carriers[$uuid] = [
+                    'id' => $uuid,
+                ];
+            }
+        }
 
+        if ($carriers === []) {
+            $mapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                ShippingMethodReader::getMappingName(),
+                'default_shipping_method',
+                $context
+            );
+
+            if (isset($mapping['entityUuid'])) {
                 $uuid = $mapping['entityUuid'];
                 $carriers[$uuid] = [
                     'id' => $uuid,

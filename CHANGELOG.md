@@ -1,6 +1,7 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
 - MIG-169 - Fix migration of creation date of product reviews
 - MIG-188 - Improves media download stability
+- MIG-194 - Optimizes sales channel migration
 
 # 2.2.1
 - MIG-120 - Solves an issue when loading the pre-mapping
