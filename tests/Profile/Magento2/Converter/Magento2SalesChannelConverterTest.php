@@ -52,6 +52,16 @@ class Magento2SalesChannelConverterTest extends TestCase
      */
     private $mappingService;
 
+    /**
+     * @var string
+     */
+    private $defaultShippingMethodId;
+
+    /**
+     * @var string
+     */
+    private $defaultPaymentMethodId;
+
     protected function setUp(): void
     {
         $this->mappingService = new DummyMagentoMappingService();
@@ -73,6 +83,9 @@ class Magento2SalesChannelConverterTest extends TestCase
             250
         );
 
+        $this->defaultPaymentMethodId = Uuid::randomHex();
+        $this->defaultShippingMethodId = Uuid::randomHex();
+
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CURRENCY, 'EUR', $context, null, null, Uuid::randomHex());
@@ -81,11 +94,13 @@ class Magento2SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::PAYMENT_METHOD, 'cashondelivery', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::PAYMENT_METHOD, 'free', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::PAYMENT_METHOD, 'paypal_standard', $context, null, null, Uuid::randomHex());
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::PAYMENT_METHOD, 'default_payment_method', $context, null, null, $this->defaultPaymentMethodId);
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'dhlint', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'fedex', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'freeshipping', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'ups', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'default_shipping_method', $context, null, null, $this->defaultShippingMethodId);
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $context, null, null, Uuid::randomHex());
     }
 
@@ -226,23 +241,11 @@ class Magento2SalesChannelConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
 
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
+        $converted = $convertResult->getConverted();
 
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(4, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PAYMENT_METHOD');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'cashondelivery');
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PAYMENT_METHOD');
-        static::assertSame($logs[1]['parameters']['sourceId'], 'free');
-
-        static::assertSame($logs[2]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PAYMENT_METHOD');
-        static::assertSame($logs[2]['parameters']['sourceId'], 'paypal_standard');
-
-        static::assertSame($logs[3]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_SALES_CHANNEL');
-        static::assertSame($logs[3]['parameters']['sourceId'], $salesChannelData[0]['website_id']);
-        static::assertSame($logs[3]['parameters']['emptyField'], 'payment methods');
+        static::assertArrayHasKey('paymentMethodId', $converted);
+        static::assertSame($this->defaultPaymentMethodId, $converted['paymentMethodId']);
     }
 
     public function testConvertMissingWithoutShippingMethods(): void
@@ -258,28 +261,10 @@ class Magento2SalesChannelConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
 
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
+        $converted = $convertResult->getConverted();
 
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(6, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'dhlint');
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[1]['parameters']['sourceId'], 'fedex');
-
-        static::assertSame($logs[2]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[2]['parameters']['sourceId'], 'freeshipping');
-
-        static::assertSame($logs[3]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[3]['parameters']['sourceId'], 'ups');
-
-        static::assertSame($logs[4]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[4]['parameters']['sourceId'], 'usps');
-
-        static::assertSame($logs[5]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_SALES_CHANNEL');
-        static::assertSame($logs[5]['parameters']['sourceId'], $salesChannelData[0]['website_id']);
-        static::assertSame($logs[5]['parameters']['emptyField'], 'shipping methods');
+        static::assertArrayHasKey('shippingMethodId', $converted);
+        static::assertSame($this->defaultShippingMethodId, $converted['shippingMethodId']);
     }
 }
