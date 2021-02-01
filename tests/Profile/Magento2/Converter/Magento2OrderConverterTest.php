@@ -277,7 +277,6 @@ class Magento2OrderConverterTest extends TestCase
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $orderData[0]['orders']['shipping_amount'] = 0;
         $orderData[0]['items'][0]['tax_percent'] = 19;
-        $orderData[0]['orders']['subtotal_incl_tax'] = \round($orderData[0]['orders']['grand_total'] * 1.19, 2);
 
         $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
 
@@ -286,7 +285,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
-        static::assertSame(\round($orderData[0]['orders']['subtotal_incl_tax'], 2), $converted['price']->getNetPrice());
+        static::assertSame(\round((float) $orderData[0]['orders']['subtotal'] + (float) $orderData[0]['orders']['shipping_amount'], 2), $converted['price']->getNetPrice());
         static::assertSame(\round($orderData[0]['orders']['grand_total'], 2), $converted['price']->getTotalPrice());
         static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);
         static::assertSame($this->shippingMethod, $converted['deliveries'][0]['shippingMethodId']);

@@ -11,6 +11,7 @@ use Shopware\Core\Checkout\Cart\LineItem\LineItem;
 use Shopware\Core\Checkout\Cart\Price\Struct\CalculatedPrice;
 use Shopware\Core\Checkout\Cart\Price\Struct\CartPrice;
 use Shopware\Core\Checkout\Cart\Price\Struct\QuantityPriceDefinition;
+use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTax;
 use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTaxCollection;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRule;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
@@ -265,7 +266,17 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getTaxRules(array $originalData): TaxRuleCollection
     {
-        $taxRates = \array_unique(\array_column($originalData['items'], 'tax_percent'));
+        $taxRates = [];
+        foreach ($originalData['items'] as $item) {
+            if (!isset($item['parentItem']['tax_percent'])) {
+                $taxRates[] = $item['tax_percent'];
+
+                continue;
+            }
+
+            $taxRates[] = $item['parentItem']['tax_percent'];
+        }
+        $taxRates = \array_unique($taxRates);
 
         $taxRules = [];
         foreach ($taxRates as $taxRate) {
@@ -275,11 +286,20 @@ abstract class OrderConverter extends MagentoConverter
         return new TaxRuleCollection($taxRules);
     }
 
-    protected function getLineItems(array $originalData, TaxRuleCollection $taxRules, string $taxStatus, Context $context): array
+    protected function getLineItems(array $originalData, Context $context, CalculatedTaxCollection $taxCollection): array
     {
         $lineItems = [];
 
         foreach ($originalData as $originalLineItem) {
+            $taxPercent = (float) $originalLineItem['tax_percent'];
+            if (isset($originalLineItem['parentItem']['tax_percent'])) {
+                $taxPercent = (float) $originalLineItem['parentItem']['tax_percent'];
+            }
+
+            $taxRules = new TaxRuleCollection([
+                new TaxRule($taxPercent),
+            ]);
+
             $isProduct = (bool) $originalLineItem['is_virtual'] === true || (isset($originalLineItem['product_id']) && $originalLineItem['product_id'] !== null);
 
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -325,30 +345,37 @@ abstract class OrderConverter extends MagentoConverter
                 $lineItemPrice = $originalLineItem['parentItem']['price'];
             }
 
-            $calculatedTax = null;
+            $taxAmount = $originalLineItem['tax_amount'];
+            if (isset($originalLineItem['parentItem']['tax_amount'])) {
+                $taxAmount = $originalLineItem['parentItem']['tax_amount'];
+            }
+
             $totalPrice = $lineItem['quantity'] * $lineItemPrice;
-            if ($taxStatus === CartPrice::TAX_STATE_NET) {
-                $calculatedTax = $this->taxCalculator->calculateNetTaxes($totalPrice, $taxRules);
-            }
+            $calculatedTax = new CalculatedTaxCollection([new CalculatedTax((float) $taxAmount, $taxPercent, $totalPrice)]);
 
-            if ($taxStatus === CartPrice::TAX_STATE_GROSS) {
-                $calculatedTax = $this->taxCalculator->calculateGrossTaxes($totalPrice, $taxRules);
-            }
+            $lineItem['price'] = new CalculatedPrice(
+                (float) $lineItemPrice,
+                (float) $totalPrice,
+                $calculatedTax,
+                $taxRules,
+                (int) $lineItem['quantity']
+            );
 
-            if ($calculatedTax !== null) {
-                $lineItem['price'] = new CalculatedPrice(
-                    (float) $lineItemPrice,
-                    (float) $totalPrice,
-                    $calculatedTax,
-                    $taxRules,
-                    (int) $lineItem['quantity']
-                );
+            $lineItem['priceDefinition'] = new QuantityPriceDefinition(
+                (float) $lineItemPrice,
+                $taxRules,
+                $context->getCurrencyPrecision()
+            );
 
-                $lineItem['priceDefinition'] = new QuantityPriceDefinition(
-                    (float) $lineItemPrice,
-                    $taxRules,
-                    $context->getCurrencyPrecision()
-                );
+            foreach ($calculatedTax->getElements() as $tax) {
+                $currentValue = $taxCollection->get((string) $tax->getTaxRate());
+
+                if ($currentValue !== null) {
+                    $currentValue->setPrice($tax->getPrice() + $currentValue->getPrice());
+                    $currentValue->setTax($tax->getTax() + $currentValue->getTax());
+                } else {
+                    $taxCollection->add($tax);
+                }
             }
 
             if (!isset($lineItem['identifier'])) {
@@ -481,7 +508,7 @@ abstract class OrderConverter extends MagentoConverter
     protected function getShippingMethod(string $shippingMethodId): ?string
     {
         if (\mb_strpos($shippingMethodId, '_') !== false) {
-            \preg_match('/(.*)_/', $shippingMethodId, $matches);
+            \preg_match('/^([^_]*)_/', $shippingMethodId, $matches);
 
             if (isset($matches[1])) {
                 $shippingMethodId = $matches[1];
@@ -889,17 +916,53 @@ abstract class OrderConverter extends MagentoConverter
     {
         $shippingCosts = $this->getShippingCosts((float) $data['orders']['shipping_amount']);
         $taxRules = $this->getTaxRules($data);
-        $taxStatus = CartPrice::TAX_STATE_GROSS;
+        $taxCollection = new CalculatedTaxCollection([]);
 
-        $converted['lineItems'] = $this->getLineItems($data['items'], $taxRules, $taxStatus, $this->context);
+        $converted['lineItems'] = $this->getLineItems($data['items'], $this->context, $taxCollection);
+
+        $discount = 0.0;
+        if (isset($data['orders']['discount_amount']) && (float) $data['orders']['discount_amount'] < 0) {
+            $mapping = $this->mappingService->getOrCreateMapping(
+                $this->connectionId,
+                DefaultEntities::ORDER_LINE_ITEM . '_credit',
+                $this->oldIdentifier,
+                $this->context
+            );
+            $this->mappingIds[] = $mapping['id'];
+
+            $discount = (float) $data['orders']['discount_amount'];
+            $label = $data['orders']['discount_description'] ?? 'Discount';
+            $calculatedTax = new CalculatedTaxCollection([new CalculatedTax(0.0, 0.0, $discount)]);
+            $taxRule = new TaxRuleCollection([new TaxRule(0.0)]);
+
+            $converted['lineItems'][] = [
+                'id' => $mapping['entityUuid'],
+                'type' => LineItem::CREDIT_LINE_ITEM_TYPE,
+                'quantity' => 1,
+                'label' => $label,
+                'identifier' => $mapping['entityUuid'],
+                'price' => new CalculatedPrice(
+                    $discount,
+                    $discount,
+                    $calculatedTax,
+                    $taxRule,
+                    1
+                ),
+                'priceDefinition' => new QuantityPriceDefinition(
+                    $discount,
+                    $taxRule,
+                    $this->context->getCurrencyPrecision()
+                ),
+            ];
+        }
 
         $converted['price'] = new CartPrice(
-            (float) $data['orders']['subtotal_incl_tax'],
+            (float) $data['orders']['subtotal'] + (float) $data['orders']['shipping_amount'] + $discount,
             (float) $data['orders']['grand_total'],
-            (float) $data['orders']['subtotal_incl_tax'] - (float) $data['orders']['shipping_amount'],
-            new CalculatedTaxCollection([]),
+            (float) $data['orders']['subtotal'] + $discount,
+            $taxCollection,
             $taxRules,
-            $taxStatus
+            CartPrice::TAX_STATE_NET
         );
 
         $converted['shippingCosts'] = $shippingCosts;
