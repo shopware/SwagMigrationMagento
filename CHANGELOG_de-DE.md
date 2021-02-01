@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 3.0.0
 - MIG-169 - Behebt ein Problem bei der Migration des Erstelldatums von Produktbewertungen
 - MIG-188 - Verbessert die Stabilität des Mediendownloads
 - MIG-191 - Verbessert die Migration der Bestellungen
