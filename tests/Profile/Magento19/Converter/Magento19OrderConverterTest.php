@@ -9,7 +9,6 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
-use Shopware\Core\Checkout\Cart\Tax\TaxRuleCalculator;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
@@ -80,9 +79,7 @@ class Magento19OrderConverterTest extends TestCase
         $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
 
-        $taxRuleCalculator = new TaxRuleCalculator();
-        $taxCalculator = new TaxCalculator($taxRuleCalculator);
-
+        $taxCalculator = new TaxCalculator();
         $this->orderConverter = new Magento19OrderConverter($this->mappingService, $this->loggingService, $taxCalculator, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
 
         $this->runId = Uuid::randomHex();

@@ -33,7 +33,7 @@ abstract class ProductCustomFieldReader extends AbstractReader
         $optionTranslations = $this->fetchAttributeOptionTranslations($optionIds);
         $locales = $this->fetchLocales();
 
-        foreach ($options as $attributeId => &$optionList) {
+        foreach ($options as &$optionList) {
             foreach ($optionList as &$option) {
                 $optionId = $option['option_id'];
 
@@ -59,7 +59,7 @@ abstract class ProductCustomFieldReader extends AbstractReader
             }
         }
 
-        foreach ($customFields as $key => &$customField) {
+        foreach ($customFields as &$customField) {
             $attributeId = $customField['attribute_id'];
             if (isset($options[$attributeId])) {
                 $customField['options'] = $options[$attributeId];

@@ -46,11 +46,6 @@ parameters:
 			path: src/Profile/Magento/Converter/LanguageConverter.php
 
 		-
-			message: "#^Offset 'translations' does not exist on array\\('id' \\=\\> mixed, \\?'translations' \\=\\> array\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ManufacturerConverter.php
-
-		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/ManufacturerConverter.php
@@ -402,11 +397,6 @@ parameters:
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19OrderConverterTest\\:\\:\\$mappingService has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Class Shopware\\\\Core\\\\Checkout\\\\Cart\\\\Tax\\\\TaxCalculator does not have a constructor and must be instantiated without any parameters\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
 
@@ -772,16 +762,6 @@ parameters:
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:\\$mappingService has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Class Shopware\\\\Core\\\\Checkout\\\\Cart\\\\Tax\\\\TaxRuleCalculator does not have a constructor and must be instantiated without any parameters\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Class Shopware\\\\Core\\\\Checkout\\\\Cart\\\\Tax\\\\TaxCalculator does not have a constructor and must be instantiated without any parameters\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
 

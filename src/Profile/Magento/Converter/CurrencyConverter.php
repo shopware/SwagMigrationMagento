@@ -97,7 +97,14 @@ abstract class CurrencyConverter extends MagentoConverter
         $converted['symbol'] = $currencyValue['symbol'];
         $converted['isoCode'] = $this->oldIdentifier;
         $converted['shortName'] = $this->oldIdentifier;
-        $converted['decimalPrecision'] = $context->getCurrencyPrecision();
+
+        $converted['itemRounding'] = [
+            'decimals' => $context->getRounding()->getDecimals(),
+            'interval' => 0.01,
+            'roundForNet' => true,
+        ];
+
+        $converted['totalRounding'] = $converted['itemRounding'];
 
         /*
          * Todo: Migrate currency factor

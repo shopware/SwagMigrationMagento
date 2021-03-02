@@ -37,7 +37,9 @@ class Magento2SeoUrlConverterTest extends TestCase
      */
     private $seoUrlConverter;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $runId;
 
     /**

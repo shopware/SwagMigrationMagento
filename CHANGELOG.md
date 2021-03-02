@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-203 - Shopware 6.4 compatibility
+
 # 3.0.0
 - MIG-169 - Fix migration of creation date of product reviews
 - MIG-188 - Improves media download stability

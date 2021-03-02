@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.6.1@e93e532e4eaad6d68c4d7b606853800eaceccc72">
+  <file src="src/Profile/Magento/Converter/CountryConverter.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$mappingService</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Profile/Magento/Converter/CurrencyConverter.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$mappingService</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Profile/Magento/Converter/OrderConverter.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$mappingService</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Profile/Magento/Converter/ProductConverter.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$mappingService</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Profile/Magento/Converter/SalesChannelConverter.php">
+    <NonInvariantDocblockPropertyType occurrences="1">
+      <code>$mappingService</code>
+    </NonInvariantDocblockPropertyType>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php">
+    <DeprecatedMethod occurrences="4">
+      <code>fetch</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/CategoryReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/CountryReader.php">
+    <DeprecatedMethod occurrences="1">
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetch</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/CustomerReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/EnvironmentReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetch</code>
+      <code>fetch</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/LanguageReader.php">
+    <DeprecatedMethod occurrences="1">
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/LocalTableReader.php">
+    <DeprecatedMethod occurrences="1">
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ManufacturerReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/MediaReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/OrderReader.php">
+    <DeprecatedMethod occurrences="5">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php">
+    <DeprecatedMethod occurrences="6">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+    <UnusedVariable occurrences="1">
+      <code>$storeId</code>
+    </UnusedVariable>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductOptionRelationReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductReader.php">
+    <DeprecatedMethod occurrences="13">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+      <code>fetchColumn</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+    <UnusedVariable occurrences="1">
+      <code>$storeId</code>
+    </UnusedVariable>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php">
+    <DeprecatedMethod occurrences="5">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php">
+    <DeprecatedMethod occurrences="10">
+      <code>fetch</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento19/Gateway/Local/Magento19LocalGateway.php">
+    <DeprecatedMethod occurrences="4">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento19/Gateway/Local/Reader/Magento19CustomerGroupReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Magento2LocalGateway.php">
+    <DeprecatedMethod occurrences="5">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2CategoryReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2CountryReader.php">
+    <DeprecatedMethod occurrences="1">
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2CustomerReader.php">
+    <DeprecatedMethod occurrences="1">
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2LanguageReader.php">
+    <DeprecatedMethod occurrences="1">
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php">
+    <DeprecatedMethod occurrences="5">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildMultiSelectPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductMultiSelectPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductOptionRelationReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductPropertyRelationReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php">
+    <DeprecatedMethod occurrences="3">
+      <code>fetchAll</code>
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+  <file src="src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php">
+    <DeprecatedMethod occurrences="2">
+      <code>fetchAll</code>
+      <code>fetchColumn</code>
+    </DeprecatedMethod>
+  </file>
+</files>
