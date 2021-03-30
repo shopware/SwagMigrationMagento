@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento\Premapping;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Checkout\Shipping\ShippingMethodDefinition;
 use Shopware\Core\Checkout\Shipping\ShippingMethodEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
@@ -97,7 +98,7 @@ class ShippingMethodReaderTest extends TestCase
         $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
-        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$this->dhlMock, $this->upsMock]), null, new Criteria(), $this->context));
+        $mock->method('search')->willReturn(new EntitySearchResult(ShippingMethodDefinition::ENTITY_NAME, 2, new EntityCollection([$this->dhlMock, $this->upsMock]), null, new Criteria(), $this->context));
 
         $gatewayMock = $this->createMock(Magento19LocalGateway::class);
         $gatewayMock->method('readCarriers')->willReturn([

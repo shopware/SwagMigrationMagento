@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Premapping;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Checkout\Payment\Cart\PaymentHandler\CashPayment;
 use Shopware\Core\Checkout\Payment\Cart\PaymentHandler\DebitPayment;
+use Shopware\Core\Checkout\Payment\PaymentMethodDefinition;
 use Shopware\Core\Checkout\Payment\PaymentMethodEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
@@ -101,7 +102,7 @@ class PaymentMethodReaderTest extends TestCase
         $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
-        $mock->method('search')->willReturn(new EntitySearchResult(2, new EntityCollection([$this->debitMock, $this->cashMock]), null, new Criteria(), $this->context));
+        $mock->method('search')->willReturn(new EntitySearchResult(PaymentMethodDefinition::ENTITY_NAME, 2, new EntityCollection([$this->debitMock, $this->cashMock]), null, new Criteria(), $this->context));
 
         $gatewayMock = $this->createMock(Magento19LocalGateway::class);
         $gatewayMock->method('readPayments')->willReturn([
