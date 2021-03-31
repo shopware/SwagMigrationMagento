@@ -8,9 +8,7 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Checkout\Cart\Price\PriceRounding;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
-use Shopware\Core\Checkout\Cart\Tax\TaxRuleCalculator;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
@@ -92,10 +90,7 @@ class Magento2OrderConverterTest extends TestCase
     {
         $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-
-        $rounding = new PriceRounding();
-        $taxRuleCalculator = new TaxRuleCalculator($rounding);
-        $taxCalculator = new TaxCalculator($taxRuleCalculator);
+        $taxCalculator = new TaxCalculator();
 
         $this->orderConverter = new Magento23OrderConverter($this->mappingService, $this->loggingService, $taxCalculator, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
 
@@ -286,7 +281,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
         static::assertSame(\round((float) $orderData[0]['orders']['subtotal'] + (float) $orderData[0]['orders']['shipping_amount'], 2), $converted['price']->getNetPrice());
-        static::assertSame(\round($orderData[0]['orders']['grand_total'], 2), $converted['price']->getTotalPrice());
+        static::assertSame(\round((float) $orderData[0]['orders']['grand_total'], 2), $converted['price']->getTotalPrice());
         static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);
         static::assertSame($this->shippingMethod, $converted['deliveries'][0]['shippingMethodId']);
     }

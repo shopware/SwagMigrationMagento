@@ -2,22 +2,24 @@ variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: "tcp://docker:2375"
     MYSQL_ROOT_PASSWORD: app
-    DEVELOPMENT_BRANCH: "master"
-    PLATFORM_BRANCH: "master"
+    DEVELOPMENT_BRANCH: "v6.4.0.0-RC1"
+    PLATFORM_BRANCH: "v6.4.0.0-RC1"
+    ASSISTANT_BRANCH: "master"
     WEB_DOCUMENT_ROOT: $CI_PROJECT_DIR/development/public
+    DEV_IMAGE: shopware/development:7.4-composer-2
 
 stages:
     - Static analyzes
     - PHPUnit
 
 default:
-    image: shopware/development:latest
+    image: $DEV_IMAGE
     before_script:
         - zip -rq plugin.zip .
         - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/development.git --branch $DEVELOPMENT_BRANCH
         - rm -rf development/platform
         - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/platform.git development/platform --branch $PLATFORM_BRANCH
-        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/services/migration-assistant.git development/custom/plugins/SwagMigrationAssistant
+        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/services/migration-assistant.git development/custom/plugins/SwagMigrationAssistant --branch $ASSISTANT_BRANCH
         - unzip -q plugin.zip -d development/custom/plugins/SwagMigrationMagento
         - cd development
         - cp -v dev-ops/gitlab/.psh.yaml.override .
@@ -49,6 +51,8 @@ PHPUnit (MariaDB):
        - php bin/console plugin:install --activate SwagMigrationMagento
        - composer dump-autoload -d custom/plugins/SwagMigrationMagento
        - composer dump-autoload -d custom/plugins/SwagMigrationAssistant
+       - touch custom/plugins/SwagMigrationAssistant/vendor/composer/InstalledVersions.php
+       - touch custom/plugins/SwagMigrationMagento/vendor/composer/InstalledVersions.php
        - ./psh.phar init-test-databases
        - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
            vendor/bin/phpunit
@@ -64,3 +68,7 @@ PHPUnit (MariaDB):
            - development/build/artifacts/phpunit.clover.xml
        reports:
            junit: development/build/artifacts/phpunit.junit.xml
+   parallel:
+       matrix:
+           -   DEV_IMAGE: shopware/development:8.0-composer-2
+           -   DEV_IMAGE: shopware/development:7.4-composer-2

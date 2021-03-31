@@ -523,11 +523,11 @@ abstract class ProductConverter extends MagentoConverter
         $this->mappingIds[] = $currencyMapping['id'];
 
         if ($this->priceIsGross === true) {
-            $netPrice = \round((float) $priceData['price'] / (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+            $netPrice = \round((float) $priceData['price'] / (1 + $taxRate / 100), $this->context->getRounding()->getDecimals());
             $grossPrice = (float) $priceData['price'];
         } else {
             $netPrice = (float) $priceData['price'];
-            $grossPrice = \round((float) $priceData['price'] * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+            $grossPrice = \round((float) $priceData['price'] * (1 + $taxRate / 100), $this->context->getRounding()->getDecimals());
         }
         $price = [];
         if ($currencyUuid !== Defaults::CURRENCY) {
@@ -548,11 +548,11 @@ abstract class ProductConverter extends MagentoConverter
         if (isset($priceData['special_price']) && ((float) $priceData['special_price']) > 0) {
             $specialPrice = (float) $priceData['special_price'];
             if ($this->priceIsGross === true) {
-                $specialPriceNet = \round($specialPrice / (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
-                $specialPriceGross = (float) $specialPrice;
+                $specialPriceNet = \round($specialPrice / (1 + $taxRate / 100), $this->context->getRounding()->getDecimals());
+                $specialPriceGross = $specialPrice;
             } else {
                 $specialPriceNet = $specialPrice;
-                $specialPriceGross = \round($specialPrice * (1 + $taxRate / 100), $this->context->getCurrencyPrecision());
+                $specialPriceGross = \round($specialPrice * (1 + $taxRate / 100), $this->context->getRounding()->getDecimals());
             }
             foreach ($price as &$productPrice) {
                 $productPrice['listPrice']['gross'] = $productPrice['gross'];

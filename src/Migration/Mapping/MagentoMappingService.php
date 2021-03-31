@@ -12,7 +12,6 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriterInterface;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -86,14 +85,11 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
             return $countryUuid['entityUuid'];
         }
 
-        /** @var EntitySearchResult $result */
-        $result = $context->disableCache(function (Context $context) use ($iso) {
-            $criteria = new Criteria();
-            $criteria->addFilter(new EqualsFilter('iso', $iso));
-            $criteria->setLimit(1);
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('iso', $iso));
+        $criteria->setLimit(1);
 
-            return $this->countryRepository->search($criteria, $context);
-        });
+        $result = $this->countryRepository->search($criteria, $context);
 
         if ($result->getTotal() > 0) {
             /** @var CountryEntity $element */

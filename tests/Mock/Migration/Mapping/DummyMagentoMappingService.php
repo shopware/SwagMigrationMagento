@@ -17,6 +17,7 @@ use Shopware\Core\System\Locale\LocaleEntity;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingService;
 use SwagMigrationAssistant\Exception\LocaleNotFoundException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingDefinition;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class DummyMagentoMappingService extends MagentoMappingService
@@ -87,7 +88,7 @@ class DummyMagentoMappingService extends MagentoMappingService
 
     public function getMappings(string $connectionId, string $entityName, array $ids, Context $context): EntitySearchResult
     {
-        return new EntitySearchResult(0, new EntityCollection(), null, new Criteria(), $context);
+        return new EntitySearchResult(SwagMigrationMappingDefinition::ENTITY_NAME, 0, new EntityCollection(), null, new Criteria(), $context);
     }
 
     public function getUuidsByEntity(string $connectionId, string $entityName, Context $context): array

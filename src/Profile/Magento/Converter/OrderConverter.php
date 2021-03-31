@@ -355,7 +355,7 @@ abstract class OrderConverter extends MagentoConverter
 
             $lineItem['price'] = new CalculatedPrice(
                 (float) $lineItemPrice,
-                (float) $totalPrice,
+                $totalPrice,
                 $calculatedTax,
                 $taxRules,
                 (int) $lineItem['quantity']
@@ -363,8 +363,7 @@ abstract class OrderConverter extends MagentoConverter
 
             $lineItem['priceDefinition'] = new QuantityPriceDefinition(
                 (float) $lineItemPrice,
-                $taxRules,
-                $context->getCurrencyPrecision()
+                $taxRules
             );
 
             foreach ($calculatedTax->getElements() as $tax) {
@@ -487,7 +486,7 @@ abstract class OrderConverter extends MagentoConverter
                         'orderLineItemId' => $lineItemMapping['entityUuid'],
                         'price' => new CalculatedPrice(
                             (float) $item['price'],
-                            (float) $totalPrice,
+                            $totalPrice,
                             $calculatedTax,
                             $taxRules,
                             (int) $item['qty']
@@ -950,8 +949,7 @@ abstract class OrderConverter extends MagentoConverter
                 ),
                 'priceDefinition' => new QuantityPriceDefinition(
                     $discount,
-                    $taxRule,
-                    $this->context->getCurrencyPrecision()
+                    $taxRule
                 ),
             ];
         }

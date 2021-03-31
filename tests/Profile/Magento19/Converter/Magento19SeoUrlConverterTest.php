@@ -37,7 +37,9 @@ class Magento19SeoUrlConverterTest extends TestCase
      */
     private $seoUrlConverter;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $runId;
 
     /**
