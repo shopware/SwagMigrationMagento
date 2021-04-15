@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 4.0.0
 - MIG-203 - Shopware 6.4 compatibility
 
 # 3.0.0
