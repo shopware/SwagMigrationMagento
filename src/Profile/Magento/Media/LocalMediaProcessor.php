@@ -249,7 +249,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $mediaId = $mediaFile['media_id'];
             $sourcePath = $this->getInstallationRoot($migrationContext) . $mappedWorkload[$mediaId]->getAdditionalData()['path'];
 
-            $fileExtension = \pathinfo($sourcePath, PATHINFO_EXTENSION);
+            $fileExtension = \pathinfo($sourcePath, \PATHINFO_EXTENSION);
             $filePath = \sprintf('_temp/%s.%s', $rowId, $fileExtension);
 
             if (\copy($sourcePath, $filePath)) {
@@ -403,7 +403,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             }
 
             $response = $result['value'];
-            $fileExtension = \pathinfo($additionalData['uri'], PATHINFO_EXTENSION);
+            $fileExtension = \pathinfo($additionalData['uri'], \PATHINFO_EXTENSION);
             $filePath = \sprintf('_temp/%s.%s', $uuid, $fileExtension);
             $streamContext = \stream_context_create([
                 'http' => [
