@@ -36,7 +36,7 @@ PHP analyze:
         - php bin/console plugin:install --activate SwagMigrationMagento
         - cd $CI_PROJECT_DIR/development/custom/plugins/SwagMigrationMagento
         - php ../../../dev-ops/analyze/vendor/bin/ecs check --config=../../../vendor/shopware/platform/easy-coding-standard.php src tests
-        - php ../../../dev-ops/analyze/vendor/bin/php-cs-fixer fix --dry-run --config=.php_cs.dist .
+        - php ../../../dev-ops/analyze/vendor/bin/ecs check --fix --config=easy-coding-standard.php
         - bin/static-analyze.sh
 
 PHPUnit (MariaDB):

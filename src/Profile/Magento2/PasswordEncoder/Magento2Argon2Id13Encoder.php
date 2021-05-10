@@ -31,11 +31,11 @@ class Magento2Argon2Id13Encoder implements LegacyEncoderInterface
 
         $challengeHash = \bin2hex(
             \sodium_crypto_pwhash(
-                SODIUM_CRYPTO_SIGN_SEEDBYTES,
+                \SODIUM_CRYPTO_SIGN_SEEDBYTES,
                 $password,
                 $salt,
-                SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
-                SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE,
+                \SODIUM_CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE,
+                \SODIUM_CRYPTO_PWHASH_MEMLIMIT_INTERACTIVE,
                 (int) $version
             )
         );

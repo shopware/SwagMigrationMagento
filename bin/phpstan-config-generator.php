@@ -28,6 +28,8 @@ $swagMigrationMagento = [
     'managedByComposer' => false,
     'active' => true,
     'path' => $magentoPluginRootPath,
+    'name' => 'SwagMigrationMagento',
+    'version' => $magentoComposerJson['version'],
 ];
 $swagMigrationAssistant = [
     'autoload' => $assistantComposerJson['autoload'],
@@ -35,6 +37,8 @@ $swagMigrationAssistant = [
     'managedByComposer' => false,
     'active' => true,
     'path' => $assistantPluginRootPath,
+    'name' => 'SwagMigrationAssistant',
+    'version' => $assistantComposerJson['version'],
 ];
 $pluginLoader = new StaticKernelPluginLoader($classLoader, null, [$swagMigrationAssistant, $swagMigrationMagento]);
 
