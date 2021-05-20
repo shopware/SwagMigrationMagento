@@ -37,5 +37,12 @@
                 <referencedFunction name="guzzlehttp\promise\settle"/>
             </errorLevel>
         </DeprecatedFunction>
+
+        <DeprecatedMethod>
+            <errorLevel type="info">
+                <referencedMethod name="Doctrine\DBAL\Driver\ResultStatement::fetchAll"/>
+                <referencedMethod name="Doctrine\DBAL\Driver\ResultStatement::fetchColumn"/>
+            </errorLevel>
+        </DeprecatedMethod>
     </issueHandlers>
 </psalm>

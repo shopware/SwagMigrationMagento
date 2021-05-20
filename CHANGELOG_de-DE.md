@@ -1,3 +1,6 @@
+# REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-230 - Optimiert die Migration von Produkt-Eigenschaften-Relationen
+
 # 4.0.0
 - MIG-203 - Shopware 6.4 compatibility
 
