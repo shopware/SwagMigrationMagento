@@ -16,7 +16,9 @@
                     "product_custom_field": "Product attributes:",
                     "product_child_property_relation": "Variant properties:",
                     "product_multi_select_property": "Ext. product properties:",
+                    "product_multi_select_text_property": "Ext. product properties II:",
                     "product_child_multi_select_property": "Ext. variant properties:",
+                    "product_child_multi_select_text_property": "Ext. variant properties II:",
                     "property_group": "Properties:"
                 }
             }

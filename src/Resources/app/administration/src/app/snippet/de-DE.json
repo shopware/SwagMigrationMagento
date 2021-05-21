@@ -14,9 +14,11 @@
             "selectDataCard": {
                 "entities": {
                     "product_custom_field": "Produktattribute:",
-                    "product_child_property_relation": "Varianteneigenschaften:",
-                    "product_multi_select_property": "Erw. Produkteigenschaften:",
-                    "product_child_multi_select_property": "Erw. Varianteneigenschaften:",
+                    "product_child_property_relation": "Varianteneig.:",
+                    "product_multi_select_property": "Erw. Produkteig.:",
+                    "product_multi_select_text_property": "Erw. Produkteig. II:",
+                    "product_child_multi_select_property": "Erw. Varianteneig.:",
+                    "product_child_multi_select_text_property": "Erw. Varianteneig. II:",
                     "property_group": "Eigenschaften:"
                 }
             }

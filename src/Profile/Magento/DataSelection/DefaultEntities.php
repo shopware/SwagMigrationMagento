@@ -21,7 +21,11 @@ final class DefaultEntities
 
     public const PRODUCT_MULTI_SELECT_PROPERTY = 'product_multi_select_property';
 
+    public const PRODUCT_MULTI_SELECT_TEXT_PROPERTY = 'product_multi_select_text_property';
+
     public const PRODUCT_CHILD_MULTI_SELECT_PROPERTY = 'product_child_multi_select_property';
+
+    public const PRODUCT_CHILD_MULTI_SELECT_TEXT_PROPERTY = 'product_child_multi_select_text_property';
 
     public const ROOT_CATEGORY = 'root_category';
 

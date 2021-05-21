@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento19\Converter;
 
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectPropertyRelationDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectTextPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -17,6 +18,9 @@ class Magento19ProductMultiSelectPropertyRelationConverter extends ProductMultiS
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
-            && $this->getDataSetEntity($migrationContext) === ProductMultiSelectPropertyRelationDataSet::getEntity();
+            && (
+                $this->getDataSetEntity($migrationContext) === ProductMultiSelectPropertyRelationDataSet::getEntity()
+                || $this->getDataSetEntity($migrationContext) === ProductMultiSelectTextPropertyRelationDataSet::getEntity()
+            );
     }
 }

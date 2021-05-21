@@ -10,10 +10,12 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CrossSellingDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildMultiSelectPropertyRelationDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildMultiSelectTextPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectPropertyRelationDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectTextPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductOptionRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
@@ -53,7 +55,9 @@ class ProductDataSelection implements DataSelectionInterface
             new ProductPropertyRelationDataSet(),
             new ProductChildPropertyRelationDataSet(),
             new ProductMultiSelectPropertyRelationDataSet(),
+            new ProductMultiSelectTextPropertyRelationDataSet(),
             new ProductChildMultiSelectPropertyRelationDataSet(),
+            new ProductChildMultiSelectTextPropertyRelationDataSet(),
             new ProductOptionRelationDataSet(),
             new CrossSellingDataSet(),
         ];
