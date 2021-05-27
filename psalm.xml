@@ -45,4 +45,11 @@
             </errorLevel>
         </DeprecatedMethod>
     </issueHandlers>
+
+    <forbiddenFunctions>
+        <function name="dd"/>
+        <function name="dump"/>
+        <function name="var_dump"/>
+        <function name="error_log"/>
+    </forbiddenFunctions>
 </psalm>

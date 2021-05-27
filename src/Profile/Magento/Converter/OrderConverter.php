@@ -721,7 +721,7 @@ abstract class OrderConverter extends MagentoConverter
             $guestCustomerMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
                 MagentoDefaultEntities::GUEST_CUSTOMER,
-                $this->oldIdentifier . $data['orders']['customer_email'],
+                $data['orders']['customer_email'],
                 $this->context
             );
             $converted['orderCustomer'] = [
