@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 4.0.1
 - MIG-230 - Optimiert die Migration von Produkt-Eigenschaften-Relationen
 - MIG-236 - Optimiert die Migration von Gast-Bestellern
 

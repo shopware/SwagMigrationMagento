@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 4.0.1
 - MIG-230 - Optimize product property relation migration
 - MIG-236 - Optimize guest order customer migration
 
