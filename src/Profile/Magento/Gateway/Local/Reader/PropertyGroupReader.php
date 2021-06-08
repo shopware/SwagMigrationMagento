@@ -45,7 +45,7 @@ abstract class PropertyGroupReader extends AbstractReader
             foreach ($fetchedOptions[$groupId] as $option) {
                 $optionId = $option['optionId'];
 
-                if (!isset($optionIds[$optionId])) {
+                if (!in_array($optionId, $optionIds)) {
                     $optionIds[] = $optionId;
                 }
 
