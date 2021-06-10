@@ -92,6 +92,15 @@ abstract class OrderConverter extends MagentoConverter
         'items',
     ];
 
+    /**
+     * @var string[]
+     */
+    protected static $requiredCustomerDataFieldKeys = [
+        'customer_email',
+        'customer_firstname',
+        'customer_lastname',
+    ];
+
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
@@ -697,6 +706,19 @@ abstract class OrderConverter extends MagentoConverter
     protected function convertOrderCustomer(array &$converted, array &$data): bool
     {
         $guestOrder = false;
+        $fields = $this->checkForEmptyRequiredDataFields($data['orders'], self::$requiredCustomerDataFieldKeys);
+
+        if (!empty($fields)) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::ORDER,
+                $data['identifier'],
+                \implode(',', $fields)
+            ));
+
+            return false;
+        }
+
         if (isset($data['orders']['customer_id']) && $data['orders']['customer_is_guest'] === '0') {
             $customerMapping = $this->mappingService->getMapping(
                 $this->connectionId,
