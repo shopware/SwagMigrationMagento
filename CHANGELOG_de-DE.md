@@ -1,4 +1,5 @@
 # REPLACE-GLOBAL-WITH-NEXT-VERSION
+- MIG-241 - Optimiert die Migration von Eigenschaftsoptionen
 - MIG-242 - Optimiert die Migration von Kunden
 
 # 4.0.1
