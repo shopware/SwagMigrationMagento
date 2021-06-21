@@ -1,4 +1,4 @@
-# REPLACE-GLOBAL-WITH-NEXT-VERSION
+# 4.0.2
 - MIG-241 - Optimize migration of property group options
 - MIG-242 - Optimize customer migration
 
