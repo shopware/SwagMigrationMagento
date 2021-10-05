@@ -29,14 +29,17 @@ class ConnectionFactory implements ConnectionFactoryInterface
         }
 
         $connectionParams = [
-            'dbname' => $credentials['dbName'] ?? '',
-            'user' => $credentials['dbUser'] ?? '',
-            'password' => $credentials['dbPassword'] ?? '',
-            'host' => $credentials['dbHost'] ?? '',
-            'port' => $credentials['dbPort'] ?? '',
+            'dbname' => (string) ($credentials['dbName'] ?? ''),
+            'user' => (string) ($credentials['dbUser'] ?? ''),
+            'password' => (string) ($credentials['dbPassword'] ?? ''),
+            'host' => (string) ($credentials['dbHost'] ?? ''),
             'driver' => 'pdo_mysql',
             'charset' => 'utf8mb4',
         ];
+
+        if (isset($credentials['dbPort'])) {
+            $connectionParams['port'] = (int) $credentials['dbPort'];
+        }
 
         $connection = DriverManager::getConnection($connectionParams);
 

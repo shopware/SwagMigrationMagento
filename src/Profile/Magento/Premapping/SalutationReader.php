@@ -136,7 +136,7 @@ abstract class SalutationReader extends AbstractPremappingReader
         /** @var SalutationEntity $salutation */
         foreach ($salutations as $salutation) {
             $id = $salutation->getId();
-            $choices[] = new PremappingChoiceStruct($id, $salutation->getSalutationKey());
+            $choices[] = new PremappingChoiceStruct($id, (string) $salutation->getSalutationKey());
             $this->choiceUuids[$id] = $id;
         }
         \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {

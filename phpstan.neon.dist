@@ -13,3 +13,5 @@ parameters:
         unusedClassElements: true
     excludes_analyse:
         - vendor
+    bootstrapFiles:
+        -   bin/static-analyze-autoloader.php

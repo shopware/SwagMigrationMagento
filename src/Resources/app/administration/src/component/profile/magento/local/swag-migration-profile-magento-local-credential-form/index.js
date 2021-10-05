@@ -10,8 +10,8 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
             type: Object,
             default() {
                 return {};
-            }
-        }
+            },
+        },
     },
 
     data() {
@@ -24,9 +24,9 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 dbName: '',
                 installationRoot: '',
                 shopUrl: '',
-                tablePrefix: ''
+                tablePrefix: '',
             },
-            shopUrlActive: false
+            shopUrlActive: false,
         };
     },
 
@@ -49,16 +49,16 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 }
 
                 this.emitOnChildRouteReadyChanged(
-                    this.areCredentialsValid(this.inputCredentials)
+                    this.areCredentialsValid(this.inputCredentials),
                 );
-            }
+            },
         },
 
         inputCredentials: {
             deep: true,
             handler(newInputCredentials) {
                 this.emitCredentials(newInputCredentials);
-            }
+            },
         },
 
         shopUrlActive(newValue) {
@@ -68,7 +68,7 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
                 this.inputCredentials.shopUrl = '';
             }
             this.emitCredentials(this.inputCredentials);
-        }
+        },
     },
 
     methods: {
@@ -98,12 +98,12 @@ Component.register('swag-migration-profile-magento-local-credential-form', {
         emitCredentials(newInputCredentials) {
             this.$emit('onCredentialsChanged', newInputCredentials);
             this.emitOnChildRouteReadyChanged(
-                this.areCredentialsValid(newInputCredentials)
+                this.areCredentialsValid(newInputCredentials),
             );
         },
 
         onKeyPressEnter() {
             this.$emit('onTriggerPrimaryClick');
-        }
-    }
+        },
+    },
 });

@@ -761,36 +761,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
 
 		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:\\$mappingService has no typehint specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 5
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Offset 'price' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Offset 'deliveries' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
@@ -939,4 +909,3 @@ parameters:
 			message: "#^Offset 'routeName' does not exist on array\\|null\\.$#"
 			count: 3
 			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-

@@ -202,6 +202,13 @@ abstract class OrderConverter extends MagentoConverter
             return new ConvertStruct(null, $this->originalData);
         }
 
+        $converted['itemRounding'] = [
+            'decimals' => $context->getRounding()->getDecimals(),
+            'interval' => 0.01,
+            'roundForNet' => true,
+        ];
+        $converted['totalRounding'] = $converted['itemRounding'];
+
         if (!$this->convertOrderStatus($converted, $data)) {
             return new ConvertStruct(null, $this->originalData);
         }

@@ -49,17 +49,14 @@ class Magento2OrderConverterTest extends TestCase
      */
     private $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
     /**
      * @var MigrationContextInterface
      */
     private $migrationContext;
 
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
     /**
      * @var string
@@ -277,6 +274,7 @@ class Magento2OrderConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -284,6 +282,8 @@ class Magento2OrderConverterTest extends TestCase
         static::assertSame(\round((float) $orderData[0]['orders']['grand_total'], 2), $converted['price']->getTotalPrice());
         static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);
         static::assertSame($this->shippingMethod, $converted['deliveries'][0]['shippingMethodId']);
+        static::assertNotNull($converted['itemRounding']);
+        static::assertNotNull($converted['totalRounding']);
     }
 
     public function testConvertWithInvalidShippingMethod(): void
@@ -590,6 +590,7 @@ class Magento2OrderConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
