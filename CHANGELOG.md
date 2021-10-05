@@ -1,3 +1,6 @@
+# 4.0.3
+- MIG-269 - Fix missing order data for systems where MySQL trigger do not work
+
 # 4.0.2
 - MIG-241 - Optimize migration of property group options
 - MIG-242 - Optimize customer migration

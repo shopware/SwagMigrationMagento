@@ -1,3 +1,6 @@
+# 4.0.3
+- MIG-269 - Fehlende Daten in der Bestellung korrigiert, für Systeme auf denen MySQL-Trigger nicht funktionieren
+
 # 4.0.2
 - MIG-241 - Optimiert die Migration von Eigenschaftsoptionen
 - MIG-242 - Optimiert die Migration von Kunden
