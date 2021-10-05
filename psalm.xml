@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <psalm
-        autoloader="../../../vendor/autoload.php"
-        findUnusedVariablesAndParams="true"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns="https://getpsalm.org/schema/config"
-        xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    autoloader="bin/static-analyze-autoloader.php"
+    findUnusedVariablesAndParams="true"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
@@ -42,8 +42,26 @@
             <errorLevel type="info">
                 <referencedMethod name="Doctrine\DBAL\Driver\ResultStatement::fetchAll"/>
                 <referencedMethod name="Doctrine\DBAL\Driver\ResultStatement::fetchColumn"/>
+                <referencedMethod name="Shopware\Core\Framework\Struct\Collection::getIterator"/>
             </errorLevel>
         </DeprecatedMethod>
+
+        <DeprecatedConstant>
+            <errorLevel type="info">
+                <file name="src/Profile/Magento/Converter/CustomerConverter.php"/>
+                <file name="src/Profile/Magento/Converter/NewsletterRecipientConverter.php"/>
+                <file name="src/Profile/Magento/Converter/OrderConverter.php"/>
+                <file name="src/Profile/Magento/Converter/SalesChannelConverter.php"/>
+                <file name="src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php"/>
+            </errorLevel>
+        </DeprecatedConstant>
+
+        <RedundantCast>
+            <errorLevel type="info">
+                <!-- Shopware\Core\System\Salutation\SalutationEntity::getSalutationKey() returns null|string in newer Shopware versions -->
+                <file name="src/Profile/Magento/Premapping/SalutationReader.php"/>
+            </errorLevel>
+        </RedundantCast>
     </issueHandlers>
 
     <forbiddenFunctions>

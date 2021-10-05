@@ -34,6 +34,8 @@ PHP analyze:
         - ./psh.phar init
         - php bin/console plugin:install --activate SwagMigrationAssistant
         - php bin/console plugin:install --activate SwagMigrationMagento
+        - composer dump-autoload --dev -d custom/plugins/SwagMigrationMagento
+        - composer dump-autoload --dev -d custom/plugins/SwagMigrationAssistant
         - cd $CI_PROJECT_DIR/development/custom/plugins/SwagMigrationMagento
         - php ../../../dev-ops/analyze/vendor/bin/ecs check --config=../../../vendor/shopware/platform/easy-coding-standard.php src tests
         - php ../../../dev-ops/analyze/vendor/bin/ecs check --fix --config=easy-coding-standard.php
@@ -49,8 +51,8 @@ PHPUnit (MariaDB):
        - ./psh.phar init
        - php bin/console plugin:install --activate SwagMigrationAssistant
        - php bin/console plugin:install --activate SwagMigrationMagento
-       - composer dump-autoload -d custom/plugins/SwagMigrationMagento
-       - composer dump-autoload -d custom/plugins/SwagMigrationAssistant
+       - composer dump-autoload --dev -d custom/plugins/SwagMigrationMagento
+       - composer dump-autoload --dev -d custom/plugins/SwagMigrationAssistant
        - touch custom/plugins/SwagMigrationAssistant/vendor/composer/InstalledVersions.php
        - touch custom/plugins/SwagMigrationMagento/vendor/composer/InstalledVersions.php
        - ./psh.phar init-test-databases
