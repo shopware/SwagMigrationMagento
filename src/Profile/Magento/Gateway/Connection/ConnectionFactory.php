@@ -36,6 +36,9 @@ class ConnectionFactory implements ConnectionFactoryInterface
             'port' => $credentials['dbPort'] ?? '',
             'driver' => 'pdo_mysql',
             'charset' => 'utf8mb4',
+            'driverOptions' => [
+                \PDO::ATTR_STRINGIFY_FETCHES => true,
+            ],
         ];
 
         $connection = DriverManager::getConnection($connectionParams);
