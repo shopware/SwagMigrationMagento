@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSet\DataSet;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class OrderDataSet extends DataSet
 {
     public static function getEntity(): string

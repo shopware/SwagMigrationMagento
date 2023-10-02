@@ -7,10 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento22CustomerGroupReader extends CustomerGroupReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

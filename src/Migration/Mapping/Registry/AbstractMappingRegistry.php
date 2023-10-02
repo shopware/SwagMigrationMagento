@@ -7,6 +7,9 @@
 
 namespace Swag\MigrationMagento\Migration\Mapping\Registry;
 
+use Shopware\Core\Framework\Log\Package;
+
+#[Package('services-settings')]
 class AbstractMappingRegistry implements MappingRegistryInterface
 {
     /**

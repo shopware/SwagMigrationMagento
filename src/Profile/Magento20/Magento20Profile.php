@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\Profile\Magento2Profile;
 
+#[Package('services-settings')]
 class Magento20Profile extends Magento2Profile
 {
     public const PROFILE_NAME = 'magento20';

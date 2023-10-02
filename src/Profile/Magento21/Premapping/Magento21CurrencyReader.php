@@ -7,10 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento21\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CurrencyReader;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento21CurrencyReader extends Magento2CurrencyReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

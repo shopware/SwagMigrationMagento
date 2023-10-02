@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento21\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\NewsletterRecipientDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento21NewsletterRecipientStatusReader extends NewsletterRecipientStatusReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

@@ -8,7 +8,9 @@
 namespace Swag\MigrationMagento\Profile\Magento19\PasswordEncoder;
 
 use Shopware\Core\Checkout\Customer\Password\LegacyEncoder\LegacyEncoderInterface;
+use Shopware\Core\Framework\Log\Package;
 
+#[Package('services-settings')]
 class MagentoEncoder implements LegacyEncoderInterface
 {
     public function getName(): string

@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SalesChannelDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19SalesChannelConverter;
@@ -21,6 +22,7 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+#[Package('services-settings')]
 class Magento19SalesChannelConverterTest extends TestCase
 {
     private Magento19SalesChannelConverter $salesChannelConverter;

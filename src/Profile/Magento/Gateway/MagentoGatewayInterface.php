@@ -7,9 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway;
 
+use Shopware\Core\Framework\Log\Package;
 use SwagMigrationAssistant\Migration\Gateway\GatewayInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 interface MagentoGatewayInterface extends GatewayInterface
 {
     public function readTable(MigrationContextInterface $migrationContext, string $tableName, array $filter = []): array;

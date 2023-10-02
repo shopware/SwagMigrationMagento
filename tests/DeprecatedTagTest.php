@@ -8,9 +8,11 @@
 namespace Swag\MigrationMagento\Test;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Plugin\Composer\Factory;
 use Symfony\Component\Finder\Finder;
 
+#[Package('services-settings')]
 class DeprecatedTagTest extends TestCase
 {
     /**

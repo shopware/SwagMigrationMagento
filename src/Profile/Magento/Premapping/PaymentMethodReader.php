@@ -12,6 +12,7 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
@@ -21,6 +22,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
+#[Package('services-settings')]
 abstract class PaymentMethodReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'payment_method';

@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Argon2Id13Encoder;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Md5Encoder;
@@ -14,6 +15,7 @@ use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Sha256Encoder
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 
+#[Package('services-settings')]
 abstract class Magento2CustomerConverter extends CustomerConverter
 {
     private const PASSWORD_HASH_SPLIT_LIMIT = 3;

@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductMultiSelectPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento23ProductMultiSelectPropertyRelationConverter extends ProductMultiSelectPropertyRelationConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

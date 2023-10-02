@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NotAssociatedMediaDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19NotAssociatedMediaConverter;
@@ -20,6 +21,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 
+#[Package('services-settings')]
 class Magento19NotAssociatedMediaConverterTest extends TestCase
 {
     /**

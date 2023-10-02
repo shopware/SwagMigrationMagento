@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento22MediaConverter extends MediaConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

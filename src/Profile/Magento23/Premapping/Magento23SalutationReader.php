@@ -7,12 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento23SalutationReader extends SalutationReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

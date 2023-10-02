@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento23OrderStateReader extends OrderStateReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

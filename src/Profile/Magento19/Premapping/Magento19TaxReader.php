@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\SeoUrlDataSelection;
@@ -14,6 +15,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento19TaxReader extends TaxReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

@@ -8,11 +8,13 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductOptionRelationReader;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
+#[Package('services-settings')]
 abstract class Magento2ProductOptionRelationReader extends ProductOptionRelationReader
 {
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct

@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Profile;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 
+#[Package('services-settings')]
 abstract class Magento2Profile implements MagentoProfileInterface
 {
     public const SOURCE_SYSTEM_NAME = 'Magento';

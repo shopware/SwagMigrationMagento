@@ -10,9 +10,11 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Connection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ConnectionException;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Exception\InvalidTablePrefixException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class ConnectionFactory implements ConnectionFactoryInterface
 {
     public function createDatabaseConnection(MigrationContextInterface $migrationContext): ?Connection

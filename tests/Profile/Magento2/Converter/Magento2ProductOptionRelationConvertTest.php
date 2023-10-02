@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductOptionRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductOptionRelationConverter;
@@ -19,6 +20,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+#[Package('services-settings')]
 class Magento2ProductOptionRelationConvertTest extends TestCase
 {
     /**

@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
@@ -18,6 +19,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DataSelectionInterface;
 use SwagMigrationAssistant\Migration\DataSelection\DataSelectionStruct;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class BasicSettingsDataSelection implements DataSelectionInterface
 {
     public const IDENTIFIER = 'basicSettings';

@@ -7,10 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use Swag\MigrationMagento\Profile\Magento\Gateway\TableReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class LocalTableReader implements TableReaderInterface
 {
     protected ConnectionFactoryInterface $connectionFactory;

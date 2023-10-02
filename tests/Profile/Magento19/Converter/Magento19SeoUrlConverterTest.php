@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19SeoUrlConverter;
@@ -20,6 +21,7 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Profile\Shopware\DataSelection\DataSet\SeoUrlDataSet;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+#[Package('services-settings')]
 class Magento19SeoUrlConverterTest extends TestCase
 {
     /**

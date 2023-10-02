@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -24,6 +25,7 @@ use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFou
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 
+#[Package('services-settings')]
 class Magento2ProductConverterTest extends TestCase
 {
     /**

@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 
+#[Package('services-settings')]
 class Magento19Profile implements MagentoProfileInterface
 {
     public const PROFILE_NAME = 'magento19';
