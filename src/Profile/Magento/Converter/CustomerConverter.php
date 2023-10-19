@@ -7,11 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
-use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -24,25 +24,13 @@ use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 
 abstract class CustomerConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * @var NumberRangeValueGeneratorInterface
-     */
-    protected $numberRangeValueGenerator;
+    protected NumberRangeValueGeneratorInterface $numberRangeValueGenerator;
 
     /**
      * @var string[]
@@ -147,32 +135,25 @@ abstract class CustomerConverter extends MagentoConverter
         /*
          * Set sales channel
          */
-        $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
         if (isset($data['store_id'])) {
-            $salesChannelMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                MagentoDefaultEntities::STORE,
-                $data['store_id'],
-                $context
-            );
-
-            if ($salesChannelMapping !== null) {
-                $this->mappingIds[] = $salesChannelMapping['id'];
-                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
-            }
-
-            $languageMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                MagentoDefaultEntities::STORE_LANGUAGE,
-                $data['store_id'],
-                $context
-            );
-
-            if ($languageMapping !== null) {
-                $this->mappingIds[] = $languageMapping['id'];
-                $converted['languageId'] = $languageMapping['entityUuid'];
-            }
+            $this->setSalesChannelId($data,$converted);
+            $this->setLanguageId($data,$converted);
             unset($data['store_id']);
+        }
+
+        if (empty($converted['salesChannelId'])) {
+            $this->setSalesChannelIdViaAdminStore($converted);
+        }
+
+        if (empty($converted['salesChannelId'])) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::CUSTOMER,
+                $this->oldIdentifier,
+                'salesChannelId'
+            ));
+
+            return new ConvertStruct(null, $this->originalData);
         }
 
         $converted['guest'] = false;
@@ -510,5 +491,60 @@ abstract class CustomerConverter extends MagentoConverter
         unset($data['password_hash']);
 
         return true;
+    }
+
+    private function setSalesChannelId(array $data, array &$converted): void
+    {
+        $salesChannelMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            MagentoDefaultEntities::STORE,
+            $data['store_id'],
+            $this->context
+        );
+
+        if ($salesChannelMapping !== null) {
+            $this->mappingIds[] = $salesChannelMapping['id'];
+            $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+        }
+    }
+
+    private function setLanguageId(array $data, array &$converted): void
+    {
+        $languageMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            MagentoDefaultEntities::STORE_LANGUAGE,
+            $data['store_id'],
+            $this->context
+        );
+
+        if ($languageMapping !== null) {
+            $this->mappingIds[] = $languageMapping['id'];
+            $converted['languageId'] = $languageMapping['entityUuid'];
+        }
+    }
+
+    private function setSalesChannelIdViaAdminStore(array &$converted): void
+    {
+        $adminStore = $this->mappingService->getMapping(
+            $this->connectionId,
+            AdminStoreReader::getMappingName(),
+            'admin_store',
+            $this->context
+        );
+
+        if ($adminStore !== null) {
+            $adminStoreId = $adminStore['entityValue'];
+            $salesChannelMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                MagentoDefaultEntities::STORE,
+                $adminStoreId,
+                $this->context
+            );
+
+            if ($salesChannelMapping !== null) {
+                $this->mappingIds[] = $salesChannelMapping['id'];
+                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+            }
+        }
     }
 }

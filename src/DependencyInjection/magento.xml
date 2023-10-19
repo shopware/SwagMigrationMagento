@@ -140,6 +140,8 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader" abstract="true"/>
 
+        <service id="Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader" abstract="true"/>
+
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader" abstract="true"/>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader" abstract="true"/>

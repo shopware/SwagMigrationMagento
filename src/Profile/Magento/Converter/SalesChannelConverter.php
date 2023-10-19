@@ -20,24 +20,16 @@ use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class SalesChannelConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * @var MagentoMappingServiceInterface
-     */
-    protected $mappingService;
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
     /**
      * @var string[]
@@ -54,15 +46,9 @@ abstract class SalesChannelConverter extends MagentoConverter
         'root_category_id',
     ];
 
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
     public function __construct(MagentoMappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
     {
@@ -109,7 +95,6 @@ abstract class SalesChannelConverter extends MagentoConverter
             'default_customer_group',
             $context
         );
-        $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
         if ($defaultCustomerGroupId !== null) {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -120,6 +105,19 @@ abstract class SalesChannelConverter extends MagentoConverter
             if ($mapping !== null) {
                 $converted['customerGroupId'] = $mapping['entityUuid'];
             }
+        }
+
+        if (!isset($converted['customerGroupId'])) {
+            $this->loggingService->addLogEntry(
+                new AssociationRequiredMissingLog(
+                    $this->runId,
+                    DefaultEntities::CUSTOMER_GROUP,
+                    'default_customer_group',
+                    DefaultEntities::SALES_CHANNEL
+                )
+            );
+
+            return new ConvertStruct(null, $this->originalData);
         }
 
         /*

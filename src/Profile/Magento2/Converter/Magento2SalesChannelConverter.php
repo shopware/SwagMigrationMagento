@@ -72,7 +72,6 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $context
         );
 
-        $converted['customerGroupId'] = Defaults::FALLBACK_CUSTOMER_GROUP;
         if ($defaultCustomerGroupId !== null) {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -83,6 +82,19 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             if ($mapping !== null) {
                 $converted['customerGroupId'] = $mapping['entityUuid'];
             }
+        }
+
+        if (!isset($converted['customerGroupId'])) {
+            $this->loggingService->addLogEntry(
+                new AssociationRequiredMissingLog(
+                    $this->runId,
+                    DefaultEntities::CUSTOMER_GROUP,
+                    'default_customer_group',
+                    DefaultEntities::SALES_CHANNEL
+                )
+            );
+
+            return new ConvertStruct(null, $this->originalData);
         }
 
         /*

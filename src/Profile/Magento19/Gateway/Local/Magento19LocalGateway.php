@@ -10,7 +10,8 @@ namespace Swag\MigrationMagento\Profile\Magento19\Gateway\Local;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Currency\CurrencyEntity;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
@@ -27,37 +28,28 @@ class Magento19LocalGateway implements MagentoGatewayInterface
 {
     public const GATEWAY_NAME = 'local';
 
-    /**
-     * @var ReaderRegistryInterface
-     */
-    private $readerRegistry;
+    private ReaderRegistryInterface $readerRegistry;
+
+    private ConnectionFactoryInterface $connectionFactory;
+
+    private EnvironmentReaderInterface $localEnvironmentReader;
 
     /**
-     * @var ConnectionFactoryInterface
+     * @var EntityRepository<EntityCollection<CurrencyEntity>>
      */
-    private $connectionFactory;
+    private EntityRepository $currencyRepository;
+
+    private TableReaderInterface $localTableReader;
 
     /**
-     * @var EnvironmentReaderInterface
+     * @param EntityRepository<EntityCollection<CurrencyEntity>> $currencyRepository
      */
-    private $localEnvironmentReader;
-
-    /**
-     * @var EntityRepositoryInterface
-     */
-    private $currencyRepository;
-
-    /**
-     * @var TableReaderInterface
-     */
-    private $localTableReader;
-
     public function __construct(
         ReaderRegistryInterface $readerRegistry,
         EnvironmentReaderInterface $localEnvironmentReader,
         TableReaderInterface $localTableReader,
         ConnectionFactoryInterface $connectionFactory,
-        EntityRepositoryInterface $currencyRepository
+        EntityRepository $currencyRepository
     ) {
         $this->readerRegistry = $readerRegistry;
         $this->localEnvironmentReader = $localEnvironmentReader;
@@ -183,7 +175,7 @@ WHERE path LIKE 'payment/%/title'
 AND scope = 'default' AND (value = true OR REPLACE(REPLACE(config.path, '/title', ''), 'payment/', '') IN (SELECT DISTINCT(method) FROM {$tablePrefix}sales_flat_order_payment));
 SQL;
 
-        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     public function readCustomerGroups(MigrationContextInterface $migrationContext): array
@@ -200,7 +192,7 @@ SELECT *
 FROM {$tablePrefix}customer_group;
 SQL;
 
-        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     public function readCarriers(MigrationContextInterface $migrationContext): array
@@ -231,7 +223,7 @@ FROM
 WHERE carrier.carrier_id = carrier_active.carrier_id;
 SQL;
 
-        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     public function readGenders(MigrationContextInterface $migrationContext): array
@@ -253,12 +245,25 @@ SQL;
 
         $query->where('attr.attribute_code = \'gender\' AND is_user_defined = false AND store_id = 0');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
+        return $query->executeQuery()->fetchAllAssociative();
+    }
+
+    public function readStores(MigrationContextInterface $migrationContext): array
+    {
+        $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        if ($connection === null) {
             return [];
         }
 
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
+        $query = $connection->createQueryBuilder();
+
+        $query->select('store_id');
+        $query->addSelect('name');
+        $query->from($tablePrefix . 'core_store');
+        $query->where('store_id != 0');
+
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function getTablePrefixFromCredentials(MigrationContextInterface $migrationContext): string

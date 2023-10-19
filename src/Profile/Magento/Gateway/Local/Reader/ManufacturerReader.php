@@ -7,7 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class ManufacturerReader extends AbstractReader
@@ -49,7 +50,7 @@ INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute
 WHERE optionValue.store_id = 0
 SQL;
 
-        return $this->connection->executeQuery($sql)->fetchAll();
+        return $this->connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     protected function fetchTranslations(array $ids): array
@@ -66,6 +67,8 @@ INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute
 WHERE optionValue.store_id != 0 AND optionValue.option_id IN (?);
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_INT_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $result = $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::INTEGER])->fetchAllAssociative();
+
+        return FetchModeHelper::group($result);
     }
 }

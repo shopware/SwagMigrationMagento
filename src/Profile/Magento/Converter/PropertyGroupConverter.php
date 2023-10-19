@@ -16,25 +16,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class PropertyGroupConverter extends MagentoConverter
 {
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
     public function getSourceIdentifier(array $data): string
     {

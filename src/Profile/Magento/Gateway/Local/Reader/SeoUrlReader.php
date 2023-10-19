@@ -7,8 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -44,7 +43,7 @@ LEFT JOIN {$this->tablePrefix}catalog_product_entity AS product ON product.entit
 WHERE seo.options IS NULL
 AND (product.type_id IN (?) OR (seo.product_id IS NULL AND seo.category_id IS NOT NULL));
 SQL;
-        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [Connection::PARAM_STR_ARRAY])->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [ArrayParameterType::STRING])->fetchOne();
 
         return new TotalStruct(DefaultEntities::SEO_URL, $total);
     }
@@ -60,17 +59,12 @@ SQL;
 
         $query->where('seo.options IS NULL');
         $query->andWhere('product.type_id IN (:types) OR (seo.product_id IS NULL AND seo.category_id IS NOT NULL)');
-        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, ArrayParameterType::STRING);
         $query->addOrderBy('seo.url_rewrite_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 }

@@ -10,13 +10,16 @@ namespace Swag\MigrationMagento\Profile\Magento\Media;
 use Doctrine\DBAL\Connection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
+use GuzzleHttp\Promise\Utils;
 use Shopware\Core\Content\Media\Exception\DuplicatedMediaFileNameException;
 use Shopware\Core\Content\Media\Exception\EmptyMediaFilenameException;
 use Shopware\Core\Content\Media\Exception\IllegalFileNameException;
 use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Content\Media\File\MediaFile;
+use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
@@ -28,6 +31,7 @@ use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileProcessorInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
+use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileEntity;
 use SwagMigrationAssistant\Migration\MessageQueue\Handler\ProcessMediaHandler;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Media\BaseMediaService;
@@ -35,33 +39,28 @@ use SwagMigrationAssistant\Profile\Shopware\Media\BaseMediaService;
 class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
 {
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<SwagMigrationMediaFileEntity>>
      */
-    protected $mediaFileRepo;
+    protected EntityRepository $mediaFileRepo;
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<MediaEntity>>
      */
-    protected $mediaRepo;
+    protected EntityRepository $mediaRepo;
+
+    protected FileSaver $fileSaver;
+
+    protected LoggingServiceInterface $loggingService;
+
+    protected MigrationContextInterface $migrationContext;
 
     /**
-     * @var FileSaver
+     * @param EntityRepository<EntityCollection<SwagMigrationMediaFileEntity>> $migrationMediaFileRepo
+     * @param EntityRepository<EntityCollection<MediaEntity>> $mediaRepo
      */
-    protected $fileSaver;
-
-    /**
-     * @var LoggingServiceInterface
-     */
-    protected $loggingService;
-
-    /**
-     * @var MigrationContextInterface
-     */
-    protected $migrationContext;
-
     public function __construct(
-        EntityRepositoryInterface $migrationMediaFileRepo,
-        EntityRepositoryInterface $mediaRepo,
+        EntityRepository $migrationMediaFileRepo,
+        EntityRepository $mediaRepo,
         FileSaver $fileSaver,
         LoggingServiceInterface $loggingService,
         Connection $dbalConnection
@@ -364,7 +363,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
 
         // Wait for the requests to complete, even if some of them fail
         /** @var array $results */
-        $results = Promise\settle($promises)->wait();
+        $results = Utils::settle($promises)->wait();
 
         //handle responses
         $failureUuids = [];

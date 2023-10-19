@@ -7,8 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -52,7 +52,7 @@ INNER JOIN {$this->tablePrefix}review_entity AS re ON re.entity_id = review.enti
 LEFT JOIN {$this->tablePrefix}catalog_product_entity AS product ON review.entity_pk_value = product.entity_id
 WHERE product.type_id IN (?)
 SQL;
-        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [Connection::PARAM_STR_ARRAY])->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [ArrayParameterType::STRING])->fetchOne();
 
         return new TotalStruct(DefaultEntities::PRODUCT_REVIEW, $total);
     }
@@ -76,18 +76,13 @@ SQL;
         $query->leftJoin('review', $this->tablePrefix . 'catalog_product_entity', 'product', 'review.entity_pk_value = product.entity_id');
 
         $query->andWhere('product.type_id IN (:types)');
-        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, ArrayParameterType::STRING);
         $query->addOrderBy('review.entity_id');
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function fetchRatings(array $ids): array
@@ -102,13 +97,10 @@ SQL;
         $query->addSelect('rating.rating_code AS `opt.rating_code`');
 
         $query->andWhere('opt.review_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($result);
     }
 }

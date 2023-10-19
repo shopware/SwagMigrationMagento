@@ -7,17 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Driver\ResultStatement;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use Swag\MigrationMagento\Profile\Magento\Gateway\TableReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class LocalTableReader implements TableReaderInterface
 {
-    /**
-     * @var ConnectionFactoryInterface
-     */
-    protected $connectionFactory;
+    protected ConnectionFactoryInterface $connectionFactory;
 
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
@@ -42,11 +38,6 @@ class LocalTableReader implements TableReaderInterface
             }
         }
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 }

@@ -7,7 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SeoUrlReader;
@@ -50,7 +50,7 @@ FROM {$this->tablePrefix}url_rewrite seo
 LEFT JOIN {$this->tablePrefix}catalog_product_entity AS product ON seo.entity_id = product.entity_id AND entity_type = 'product'
 WHERE (product.type_id IN (?) AND entity_type = 'product') OR entity_type != 'product';
 SQL;
-        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [Connection::PARAM_STR_ARRAY])->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql, [ProductReader::$ALLOWED_PRODUCT_TYPES], [ArrayParameterType::STRING])->fetchOne();
 
         return new TotalStruct(DefaultEntities::SEO_URL, $total);
     }
@@ -65,17 +65,12 @@ SQL;
         $query->leftJoin('seo', $this->tablePrefix . 'catalog_product_entity', 'product', 'seo.entity_id = product.entity_id AND entity_type = \'product\'');
 
         $query->andWhere('(product.type_id IN (:types) AND entity_type = \'product\') OR entity_type != \'product\'');
-        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('types', ProductReader::$ALLOWED_PRODUCT_TYPES, ArrayParameterType::STRING);
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
-        $query = $query->execute();
 
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function setCategoryId(array &$seoUrl): void

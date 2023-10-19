@@ -12,24 +12,16 @@ use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\CurrencyRegistry;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CurrencyConverter extends MagentoConverter
 {
-    /**
-     * @var MagentoMappingServiceInterface
-     */
-    protected $mappingService;
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
     public function getSourceIdentifier(array $data): string
     {

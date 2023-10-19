@@ -7,52 +7,73 @@
 
 namespace Swag\MigrationMagento\Migration\Mapping;
 
+use Shopware\Core\Checkout\Document\Aggregate\DocumentType\DocumentTypeEntity;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
+use Shopware\Core\Content\Category\CategoryEntity;
+use Shopware\Core\Content\Cms\CmsPageEntity;
+use Shopware\Core\Content\Media\Aggregate\MediaDefaultFolder\MediaDefaultFolderEntity;
+use Shopware\Core\Content\Media\Aggregate\MediaThumbnailSize\MediaThumbnailSizeEntity;
+use Shopware\Core\Content\Rule\RuleEntity;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriterInterface;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Country\CountryEntity;
+use Shopware\Core\System\Currency\CurrencyEntity;
+use Shopware\Core\System\DeliveryTime\DeliveryTimeEntity;
+use Shopware\Core\System\Language\LanguageEntity;
+use Shopware\Core\System\Locale\LocaleEntity;
+use Shopware\Core\System\NumberRange\NumberRangeEntity;
 use Shopware\Core\System\StateMachine\Aggregation\StateMachineState\StateMachineStateEntity;
 use Shopware\Core\System\StateMachine\StateMachineEntity;
 use Shopware\Core\System\Tax\TaxEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
+use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingEntity;
 
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
 {
     /**
-     * @var EntityRepositoryInterface
+     * @param EntityRepository<EntityCollection<SwagMigrationMappingEntity>> $migrationMappingRepo
+     * @param EntityRepository<EntityCollection<LocaleEntity>> $localeRepository
+     * @param EntityRepository<EntityCollection<LanguageEntity>> $languageRepository
+     * @param EntityRepository<EntityCollection<CountryEntity>> $countryRepository
+     * @param EntityRepository<EntityCollection<CurrencyEntity>> $currencyRepository
+     * @param EntityRepository<EntityCollection<TaxEntity>> $taxRepo
+     * @param EntityRepository<EntityCollection<NumberRangeEntity>> $numberRangeRepo
+     * @param EntityRepository<EntityCollection<RuleEntity>> $ruleRepo
+     * @param EntityRepository<EntityCollection<MediaThumbnailSizeEntity>> $thumbnailSizeRepo
+     * @param EntityRepository<EntityCollection<MediaDefaultFolderEntity>> $mediaDefaultRepo
+     * @param EntityRepository<EntityCollection<CategoryEntity>> $categoryRepo
+     * @param EntityRepository<EntityCollection<CmsPageEntity>> $cmsPageRepo
+     * @param EntityRepository<EntityCollection<DeliveryTimeEntity>> $deliveryTimeRepo
+     * @param EntityRepository<EntityCollection<DocumentTypeEntity>> $documentTypeRepo
+     * @param EntityRepository<EntityCollection<StateMachineEntity>> $stateMachineRepo
+     * @param EntityRepository<EntityCollection<StateMachineStateEntity>> $stateMachineStateRepo
      */
-    private $stateMachineRepo;
-
-    /**
-     * @var EntityRepositoryInterface
-     */
-    private $stateMachineStateRepo;
-
     public function __construct(
-        EntityRepositoryInterface $migrationMappingRepo,
-        EntityRepositoryInterface $localeRepository,
-        EntityRepositoryInterface $languageRepository,
-        EntityRepositoryInterface $countryRepository,
-        EntityRepositoryInterface $currencyRepository,
-        EntityRepositoryInterface $taxRepo,
-        EntityRepositoryInterface $numberRangeRepo,
-        EntityRepositoryInterface $ruleRepo,
-        EntityRepositoryInterface $thumbnailSizeRepo,
-        EntityRepositoryInterface $mediaDefaultRepo,
-        EntityRepositoryInterface $categoryRepo,
-        EntityRepositoryInterface $cmsPageRepo,
-        EntityRepositoryInterface $deliveryTimeRepo,
-        EntityRepositoryInterface $documentTypeRepo,
+        EntityRepository $migrationMappingRepo,
+        EntityRepository $localeRepository,
+        EntityRepository $languageRepository,
+        EntityRepository $countryRepository,
+        EntityRepository $currencyRepository,
+        EntityRepository $taxRepo,
+        EntityRepository $numberRangeRepo,
+        EntityRepository $ruleRepo,
+        EntityRepository $thumbnailSizeRepo,
+        EntityRepository $mediaDefaultRepo,
+        EntityRepository $categoryRepo,
+        EntityRepository $cmsPageRepo,
+        EntityRepository $deliveryTimeRepo,
+        EntityRepository $documentTypeRepo,
         EntityWriterInterface $entityWriter,
         EntityDefinition $mappingDefinition,
-        EntityRepositoryInterface $stateMachineRepo,
-        EntityRepositoryInterface $stateMachineStateRepo
+        private EntityRepository $stateMachineRepo,
+        private EntityRepository $stateMachineStateRepo,
     ) {
         parent::__construct(
             $migrationMappingRepo,
@@ -72,9 +93,6 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
             $entityWriter,
             $mappingDefinition
         );
-
-        $this->stateMachineRepo = $stateMachineRepo;
-        $this->stateMachineStateRepo = $stateMachineStateRepo;
     }
 
     public function getMagentoCountryUuid(string $iso, string $connectionId, Context $context): ?string

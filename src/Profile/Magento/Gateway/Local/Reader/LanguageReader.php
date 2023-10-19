@@ -7,7 +7,6 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class LanguageReader extends AbstractReader
@@ -47,12 +46,7 @@ abstract class LanguageReader extends AbstractReader
         $query->addSelect('websitelocale.value as websiteLocale');
         $query->addSelect('defaultlocale.value as defaultLocale');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configurations = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $configurations = $query->executeQuery()->fetchAllAssociative();
         $storeConfigs = [];
         $defaultAndWebsiteLocales = [];
         foreach ($configurations as $storeConfig) {

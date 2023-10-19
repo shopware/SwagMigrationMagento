@@ -9,7 +9,8 @@ namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Checkout\Order\Aggregate\OrderDelivery\OrderDeliveryStates;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
@@ -30,33 +31,34 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
     private const MAPPING_NAME = 'order_delivery_state';
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<StateMachineEntity>>
      */
-    protected $stateMachineRepo;
+    protected EntityRepository $stateMachineRepo;
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<StateMachineStateEntity>>
      */
-    protected $stateMachineStateRepo;
-
-    /**
-     * @var string[]
-     */
-    protected $preselectionDictionary = [];
-
-    /**
-     * @var string
-     */
-    private $connectionPremappingValue = '';
+    protected EntityRepository $stateMachineStateRepo;
 
     /**
      * @var string[]
      */
-    private $choiceUuids;
+    protected array $preselectionDictionary = [];
 
+    private string $connectionPremappingValue = '';
+
+    /**
+     * @var string[]
+     */
+    private array $choiceUuids;
+
+    /**
+     * @param EntityRepository<EntityCollection<StateMachineEntity>> $stateMachineRepo
+     * @param EntityRepository<EntityCollection<StateMachineStateEntity>> $stateMachineStateRepo
+     */
     public function __construct(
-        EntityRepositoryInterface $stateMachineRepo,
-        EntityRepositoryInterface $stateMachineStateRepo
+        EntityRepository $stateMachineRepo,
+        EntityRepository $stateMachineStateRepo
     ) {
         $this->stateMachineRepo = $stateMachineRepo;
         $this->stateMachineStateRepo = $stateMachineStateRepo;

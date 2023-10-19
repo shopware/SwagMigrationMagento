@@ -22,11 +22,6 @@ abstract class Magento2CountryReader extends CountryReader
         $query->addSelect('country.iso2_code as isoCode, country.*');
         $query->from($this->tablePrefix . 'directory_country', 'country');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 }

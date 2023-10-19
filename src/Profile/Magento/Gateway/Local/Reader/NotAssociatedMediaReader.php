@@ -12,10 +12,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class NotAssociatedMediaReader extends AbstractReader
 {
-    /**
-     * @var string
-     */
-    protected $sourcePath;
+    protected string $sourcePath;
 
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {

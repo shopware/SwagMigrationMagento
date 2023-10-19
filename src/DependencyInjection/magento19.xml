@@ -322,8 +322,14 @@
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19AdminStoreReader"
+                parent="Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
         <service id="Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader"
-                parent="Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader">
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader">
             <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
             <argument type="service" id="salutation.repository"/>
             <tag name="shopware.migration.pre_mapping_reader"/>

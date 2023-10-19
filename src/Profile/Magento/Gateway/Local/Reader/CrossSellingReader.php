@@ -7,8 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -43,8 +42,8 @@ SQL;
         $total = (int) $this->connection->executeQuery(
             $sql,
             [ProductReader::$ALLOWED_PRODUCT_TYPES],
-            [Connection::PARAM_STR_ARRAY]
-        )->fetchColumn();
+            [ArrayParameterType::STRING]
+        )->fetchOne();
 
         return new TotalStruct(DefaultEntities::CROSS_SELLING, $total);
     }
@@ -72,14 +71,9 @@ SQL;
 
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
-        $query->setParameter('productType', ProductReader::$ALLOWED_PRODUCT_TYPES, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('productType', ProductReader::$ALLOWED_PRODUCT_TYPES, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     private function enrichWithPositionData(array &$fetchedCrossSelling, int $offset): void

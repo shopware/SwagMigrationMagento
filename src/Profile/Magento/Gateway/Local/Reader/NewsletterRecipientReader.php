@@ -7,8 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -53,7 +53,7 @@ abstract class NewsletterRecipientReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}newsletter_subscriber;
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::NEWSLETTER_RECIPIENT, $total);
     }
@@ -65,14 +65,9 @@ SQL;
         $query->from($this->tablePrefix . 'newsletter_subscriber', 'recipient');
         $this->addTableSelection($query, $this->tablePrefix . 'newsletter_subscriber', 'recipient');
         $query->where('recipient.subscriber_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function fetchCustomers(array $ids): array
@@ -84,15 +79,11 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'customer_entity', 'customer');
         $query->where('customer.entity_id IN (:ids)');
         $query->orderBy('customer.entity_id');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
+        $result = $query->executeQuery()->fetchAllAssociative();
         $fetchedCustomers = $this->mapData(
-            $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE),
+            FetchModeHelper::groupUnique($result),
             [],
             ['customer']
         );

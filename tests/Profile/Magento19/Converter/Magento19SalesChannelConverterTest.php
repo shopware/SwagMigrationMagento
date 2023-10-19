@@ -23,45 +23,25 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class Magento19SalesChannelConverterTest extends TestCase
 {
-    /**
-     * @var Magento19SalesChannelConverter
-     */
-    private $salesChannelConverter;
+    private Magento19SalesChannelConverter $salesChannelConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var string
-     */
-    private $defaultShippingMethodId;
+    private string $defaultShippingMethodId;
 
-    /**
-     * @var string
-     */
-    private $defaultPaymentMethodId;
+    private string $defaultPaymentMethodId;
+
+    private string $defaultCustomerGroupOldId;
+
+    private string $defaultCustomerGroupId;
 
     protected function setUp(): void
     {
@@ -86,6 +66,8 @@ class Magento19SalesChannelConverterTest extends TestCase
 
         $this->defaultPaymentMethodId = Uuid::randomHex();
         $this->defaultShippingMethodId = Uuid::randomHex();
+        $this->defaultCustomerGroupOldId = Uuid::randomHex();
+        $this->defaultCustomerGroupId = Uuid::randomHex();
 
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, Uuid::randomHex());
@@ -102,7 +84,8 @@ class Magento19SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'ups', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'default_shipping_method', $context, null, null, $this->defaultShippingMethodId);
-        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $context, null, null, Uuid::randomHex());
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, $this->defaultCustomerGroupOldId, $context, null, null, $this->defaultCustomerGroupId);
+        $this->mappingService->pushValueMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $this->defaultCustomerGroupOldId);
     }
 
     public function testSupports(): void
@@ -130,6 +113,7 @@ class Magento19SalesChannelConverterTest extends TestCase
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
+        static::assertSame($this->defaultCustomerGroupId, $converted['customerGroupId']);
         static::assertCount(3, $converted['paymentMethods']);
         static::assertCount(5, $converted['shippingMethods']);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -301,6 +285,6 @@ class Magento19SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
-        static::assertSame(Defaults::FALLBACK_CUSTOMER_GROUP, $converted['customerGroupId']);
+        static::assertSame($this->defaultCustomerGroupId, $converted['customerGroupId']);
     }
 }

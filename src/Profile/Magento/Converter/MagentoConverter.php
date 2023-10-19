@@ -12,6 +12,7 @@ use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class MagentoConverter extends Converter
@@ -23,14 +24,13 @@ abstract class MagentoConverter extends Converter
     protected const TYPE_DATETIME = 'datetime';
 
     /**
-     * @var MigrationContextInterface
+     * @var MagentoMappingServiceInterface|MappingServiceInterface $mappingService
      */
-    protected $migrationContext;
+    protected MappingServiceInterface $mappingService;
 
-    /**
-     * @var array
-     */
-    protected $originalData;
+    protected MigrationContextInterface $migrationContext;
+
+    protected array $originalData;
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,

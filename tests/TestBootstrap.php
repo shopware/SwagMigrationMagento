@@ -5,40 +5,23 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Core\Framework\Test\TestCaseBase\KernelLifecycleManager;
-use Symfony\Component\Dotenv\Dotenv;
+use Shopware\Core\TestBootstrapper;
 
-function getProjectDir(): string
-{
-    if (isset($_SERVER['PROJECT_ROOT']) && file_exists($_SERVER['PROJECT_ROOT'])) {
-        return $_SERVER['PROJECT_ROOT'];
-    }
-    if (isset($_ENV['PROJECT_ROOT']) && file_exists($_ENV['PROJECT_ROOT'])) {
-        return $_ENV['PROJECT_ROOT'];
-    }
-
-    $rootDir = __DIR__;
-    $dir = $rootDir;
-    while (!file_exists($dir . '/.env')) {
-        if ($dir === dirname($dir)) {
-            return $rootDir;
-        }
-        $dir = dirname($dir);
-    }
-
-    return $dir;
+if (is_readable(__DIR__ . '/../vendor/shopware/platform/src/Core/TestBootstrapper.php')) {
+    require __DIR__ . '/../vendor/shopware/platform/src/Core/TestBootstrapper.php';
+} elseif (is_readable(__DIR__ . '/../vendor/shopware/core/TestBootstrapper.php')) {
+    require __DIR__ . '/../vendor/shopware/core/TestBootstrapper.php';
+} else {
+    // vendored from platform, only use local TestBootstrapper if not already defined in platform
+    require __DIR__ . '/TestBootstrapper.php';
 }
 
-define('TEST_PROJECT_DIR', getProjectDir());
-
-$loader = require TEST_PROJECT_DIR . '/vendor/autoload.php';
-KernelLifecycleManager::prepare($loader);
-require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../../SwagMigrationAssistant/vendor/autoload.php';
-
-if (!class_exists(Dotenv::class)) {
-    throw new RuntimeException('APP_ENV environment variable is not defined. You need to define environment variables for configuration or add "symfony/dotenv" as a Composer dependency to load variables from a .env file.');
-}
-(new Dotenv())->load(TEST_PROJECT_DIR . '/.env');
-
-putenv('DATABASE_URL=' . getenv('DATABASE_URL') . '_test');
+return (new TestBootstrapper())
+    ->setProjectDir($_SERVER['PROJECT_ROOT'] ?? dirname(__DIR__, 4))
+    ->setLoadEnvFile(true)
+    ->setForceInstallPlugins(true)
+    ->addActivePlugins('SwagMigrationAssistant', 'SwagMigrationMagento')
+    ->addCallingPlugin()
+    ->bootstrap()
+    ->setClassLoader(require dirname(__DIR__) . '/vendor/autoload.php')
+    ->getClassLoader();

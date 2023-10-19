@@ -8,7 +8,8 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Premapping;
 
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Currency\CurrencyEntity;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -22,17 +23,17 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
     protected const MAPPING_NAME = 'currency';
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<CurrencyEntity>>
      */
-    protected $currencyRepo;
+    protected EntityRepository $currencyRepo;
+
+    protected array $preselectionDictionary;
 
     /**
-     * @var array
+     * @param EntityRepository<EntityCollection<CurrencyEntity>> $countryRepo
      */
-    protected $preselectionDictionary;
-
     public function __construct(
-        EntityRepositoryInterface $countryRepo
+        EntityRepository $countryRepo
     ) {
         $this->currencyRepo = $countryRepo;
     }

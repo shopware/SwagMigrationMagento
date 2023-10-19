@@ -24,12 +24,9 @@ abstract class CustomerGroupReader extends AbstractPremappingReader
     /**
      * @var string[]
      */
-    protected $preselectionDictionary = [];
+    protected array $preselectionDictionary = [];
 
-    /**
-     * @var GatewayRegistryInterface
-     */
-    private $gatewayRegistry;
+    private GatewayRegistryInterface $gatewayRegistry;
 
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry
@@ -83,7 +80,7 @@ abstract class CustomerGroupReader extends AbstractPremappingReader
 
         $choices = [];
         foreach ($customerGroups as $customerGroup) {
-            $choices[] = new PremappingChoiceStruct($customerGroup['customer_group_id'], $customerGroup['customer_group_code']);
+            $choices[] = new PremappingChoiceStruct((string) $customerGroup['customer_group_id'], (string) $customerGroup['customer_group_code']);
         }
 
         return $choices;

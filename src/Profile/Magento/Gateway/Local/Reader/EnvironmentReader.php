@@ -8,27 +8,17 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 class EnvironmentReader implements EnvironmentReaderInterface
 {
-    /**
-     * @var ConnectionFactoryInterface
-     */
-    protected $connectionFactory;
+    protected ConnectionFactoryInterface $connectionFactory;
 
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    protected Connection $connection;
 
-    /**
-     * @var string
-     */
-    protected $tablePrefix;
+    protected string $tablePrefix;
 
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
@@ -84,14 +74,9 @@ class EnvironmentReader implements EnvironmentReaderInterface
             ->from($this->tablePrefix . 'core_config_data')
             ->where('scope = "default"')
             ->andWhere('path = "general/locale/code"')
-            ->execute();
+            ->executeQuery();
 
-        if (!($query instanceof ResultStatement)) {
-            return '';
-        }
-
-        $value = $query->fetch(\PDO::FETCH_COLUMN);
-
+        $value = $query->fetchOne();
         if ($value === false) {
             return '';
         }
@@ -107,14 +92,9 @@ class EnvironmentReader implements EnvironmentReaderInterface
             ->from($this->tablePrefix . 'core_config_data')
             ->where('scope = "default"')
             ->andWhere('path = "currency/options/base"')
-            ->execute();
+            ->executeQuery();
 
-        if (!($query instanceof ResultStatement)) {
-            return '';
-        }
-
-        $value = $query->fetch(\PDO::FETCH_COLUMN);
-
+        $value = $query->fetchOne();
         if ($value === false) {
             return '';
         }
@@ -124,7 +104,7 @@ class EnvironmentReader implements EnvironmentReaderInterface
 
     protected function isMagento2(): bool
     {
-        return $this->connection->getSchemaManager()->tablesExist($this->tablePrefix . 'store_website');
+        return $this->connection->createSchemaManager()->tablesExist($this->tablePrefix . 'store_website');
     }
 
     protected function getAdditionalData(): array

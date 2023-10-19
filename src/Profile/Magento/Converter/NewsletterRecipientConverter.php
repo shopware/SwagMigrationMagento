@@ -19,25 +19,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class NewsletterRecipientConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var array
-     */
-    protected $originalData;
+    protected array $originalData;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
     public function getSourceIdentifier(array $data): string
     {
@@ -87,7 +75,6 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         $converted['languageId'] = $languageMapping['entityUuid'];
         $converted['hash'] = $data['subscriber_confirm_code'];
 
-        $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
         $salesChannelMapping = $this->getSalesChannelMapping($data);
         if ($salesChannelMapping === null) {
             return new ConvertStruct(null, $this->originalData);

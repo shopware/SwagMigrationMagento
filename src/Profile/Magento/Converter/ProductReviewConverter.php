@@ -16,15 +16,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class ProductReviewConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
     public function getSourceIdentifier(array $data): string
     {

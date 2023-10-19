@@ -7,7 +7,6 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Driver\ResultStatement;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -39,12 +38,7 @@ abstract class ProductOptionRelationReader extends AbstractReader
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_super_attribute', 'super_attr', 'super_attr.attribute_id = eav.attribute_id AND super_attr.product_id = relation.parent_id');
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option', 'option_value', 'option_value.option_id = entity_int.value AND option_value.attribute_id = eav.attribute_id');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            $total = 0;
-        } else {
-            $total = (int) $query->fetchColumn();
-        }
+        $total = (int) $query->executeQuery()->fetchOne();
 
         return new TotalStruct(DefaultEntities::PRODUCT_OPTION_RELATION, $total);
     }
@@ -68,11 +62,6 @@ abstract class ProductOptionRelationReader extends AbstractReader
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 }

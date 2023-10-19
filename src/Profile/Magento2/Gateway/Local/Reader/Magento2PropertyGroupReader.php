@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\PropertyGroupReader;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -25,7 +26,7 @@ FROM {$this->tablePrefix}eav_attribute AS eav
 INNER JOIN {$this->tablePrefix}catalog_eav_attribute AS eav_settings ON eav_settings.attribute_id = eav.attribute_id
 WHERE eav.is_user_defined = 1 AND (eav_settings.is_filterable = 1 OR eav.frontend_input = 'select') AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::PROPERTY_GROUP, $total);
     }
@@ -48,11 +49,8 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
+        return FetchModeHelper::groupUnique($rows);
     }
 }

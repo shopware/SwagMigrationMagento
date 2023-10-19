@@ -12,19 +12,14 @@ use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\CountryRegistry;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CountryConverter extends MagentoConverter
 {
-    /**
-     * @var MagentoMappingServiceInterface
-     */
-    protected $mappingService;
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
     public function getSourceIdentifier(array $data): string
     {

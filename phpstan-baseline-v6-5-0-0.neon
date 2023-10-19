@@ -1,0 +1,1061 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^PHPDoc tag @param for parameter \\$categoryRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Category\\\\CategoryEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$cmsPageRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Cms\\\\CmsPageEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$countryRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Country\\\\CountryEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$currencyRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$deliveryTimeRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\DeliveryTime\\\\DeliveryTimeEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$documentTypeRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Checkout\\\\Document\\\\Aggregate\\\\DocumentType\\\\DocumentTypeEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$languageRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Language\\\\LanguageEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$localeRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Locale\\\\LocaleEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$mediaDefaultRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Media\\\\Aggregate\\\\MediaDefaultFolder\\\\MediaDefaultFolderEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$migrationMappingRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\SwagMigrationMappingEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$numberRangeRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\NumberRange\\\\NumberRangeEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$ruleRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Rule\\\\RuleEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$stateMachineRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\StateMachineEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$stateMachineStateRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\Aggregation\\\\StateMachineState\\\\StateMachineStateEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$taxRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Tax\\\\TaxEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$thumbnailSizeRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Media\\\\Aggregate\\\\MediaThumbnailSize\\\\MediaThumbnailSizeEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc type for property Swag\\\\MigrationMagento\\\\Migration\\\\Mapping\\\\MagentoMappingService\\:\\:\\$stateMachineRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\StateMachineEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^PHPDoc type for property Swag\\\\MigrationMagento\\\\Migration\\\\Mapping\\\\MagentoMappingService\\:\\:\\$stateMachineStateRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\Aggregation\\\\StateMachineState\\\\StateMachineStateEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Migration/Mapping/MagentoMappingService.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CategoryConverter.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CountryConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CountryConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CurrencyConverter.php
+
+		-
+			message: "#^Cannot call static method getEntity\\(\\) on SwagMigrationAssistant\\\\Migration\\\\DataSelection\\\\DataSet\\\\DataSet\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CustomFieldConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CustomFieldConverter.php
+
+		-
+			message: "#^Offset 'entityUuid' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CustomerConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CustomerConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CustomerGroupConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/LanguageConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ManufacturerConverter.php
+
+		-
+			message: "#^Offset 'translations' on array\\{id\\: mixed, translations\\: array\\} in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ManufacturerConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/MediaConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/NewsletterRecipientConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/NotAssociatedMediaConverter.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTransactionStateUuid\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/OrderConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/OrderConverter.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTaxRate\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ProductConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ProductConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ProductReviewConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
+			count: 2
+			path: src/Profile/Magento/Converter/SalesChannelConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/SalesChannelConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/SeoUrlConverter.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Cannot call method createSchemaManager\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\AbstractReader\\:\\:buildArrayFromChunks\\(\\) has parameter \\$value with no type specified\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\AbstractReader\\:\\:childrenUtf8ize\\(\\) should return array\\<string\\>\\|bool\\|string but returns array\\<array\\<string\\>\\|bool\\|string\\>\\|bool\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/CategoryReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CountryReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/CustomerReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/LanguageReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ManufacturerReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
+
+		-
+			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectTextPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectTextPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductOptionRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 6
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 7
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
+
+		-
+			message: "#^Cannot access offset 'defaultAllowedCurre…' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 7
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Offset 'allowedCountries' on array\\{defaultCountry\\: mixed\\} in isset\\(\\) does not exist\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
+
+		-
+			message: "#^Cannot call static method getEntity\\(\\) on SwagMigrationAssistant\\\\Migration\\\\DataSelection\\\\DataSet\\\\DataSet\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$mediaRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Media\\\\MediaEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$migrationMediaFileRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<SwagMigrationAssistant\\\\Migration\\\\Media\\\\SwagMigrationMediaFileEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:\\$mediaFileRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<SwagMigrationAssistant\\\\Migration\\\\Media\\\\SwagMigrationMediaFileEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:\\$mediaRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Content\\\\Media\\\\MediaEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Parameter \\#1 \\$stream of function fwrite expects resource, resource\\|false given\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Parameter \\#2 \\$destination of method Shopware\\\\Core\\\\Content\\\\Media\\\\File\\\\FileSaver\\:\\:persistFileToMedia\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Parameter \\#2 \\$mimeType of class Shopware\\\\Core\\\\Content\\\\Media\\\\File\\\\MediaFile constructor expects string, string\\|false given\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Parameter \\#4 \\$fileSize of method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:persistFileToMedia\\(\\) expects int, int\\<0, max\\>\\|false given\\.$#"
+			count: 1
+			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Call to an undefined method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\MagentoGatewayInterface\\:\\:readStores\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/AdminStoreReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$stateMachineRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\StateMachineEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderDeliveryStateReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$stateMachineStateRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\Aggregation\\\\StateMachineState\\\\StateMachineStateEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderDeliveryStateReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\OrderDeliveryStateReader\\:\\:\\$stateMachineRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\StateMachineEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderDeliveryStateReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\OrderDeliveryStateReader\\:\\:\\$stateMachineStateRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\Aggregation\\\\StateMachineState\\\\StateMachineStateEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderDeliveryStateReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$stateMachineRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\StateMachineEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderStateReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$stateMachineStateRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\Aggregation\\\\StateMachineState\\\\StateMachineStateEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderStateReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\OrderStateReader\\:\\:\\$stateMachineRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\StateMachineEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderStateReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\OrderStateReader\\:\\:\\$stateMachineStateRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\StateMachine\\\\Aggregation\\\\StateMachineState\\\\StateMachineStateEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/OrderStateReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$paymentMethodRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Checkout\\\\Payment\\\\PaymentMethodEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/PaymentMethodReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\PaymentMethodReader\\:\\:\\$paymentMethodRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Checkout\\\\Payment\\\\PaymentMethodEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/PaymentMethodReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$salutationRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Salutation\\\\SalutationEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/SalutationReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\SalutationReader\\:\\:\\$salutationRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Salutation\\\\SalutationEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/SalutationReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$paymentMethodRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Checkout\\\\Payment\\\\PaymentMethodEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/ShippingMethodReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\ShippingMethodReader\\:\\:\\$paymentMethodRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\Checkout\\\\Payment\\\\PaymentMethodEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/ShippingMethodReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$taxRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Tax\\\\TaxEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/TaxReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\TaxReader\\:\\:\\$taxRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Tax\\\\TaxEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/TaxReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$currencyRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento19/Gateway/Local/Magento19LocalGateway.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento19\\\\Gateway\\\\Local\\\\Magento19LocalGateway\\:\\:\\$currencyRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento19/Gateway/Local/Magento19LocalGateway.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$currencyRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Magento2LocalGateway.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Magento2LocalGateway\\:\\:\\$currencyRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Magento2LocalGateway.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CategoryReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CountryReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CustomerReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2LanguageReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductOptionRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
+
+		-
+			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$countryRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Country\\\\CountryEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Premapping/Magento2CountryReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CountryReader\\:\\:\\$countryRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Country\\\\CountryEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Premapping/Magento2CountryReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$countryRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Premapping/Magento2CurrencyReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CurrencyReader\\:\\:\\$currencyRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Currency\\\\CurrencyEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Premapping/Magento2CurrencyReader.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$languageRepository contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Language\\\\LanguageEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Premapping/Magento2LanguageReader.php
+
+		-
+			message: "#^PHPDoc tag @var for property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2LanguageReader\\:\\:\\$languageRepo contains generic type Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository\\<Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityCollection\\<Shopware\\\\Core\\\\System\\\\Language\\\\LanguageEntity\\>\\> but class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\EntityRepository is not generic\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Premapping/Magento2LanguageReader.php
+
+		-
+			message: "#^Access to an undefined property Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:\\$uuids\\.$#"
+			count: 1
+			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 3
+			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CategoryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CountryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
+
+		-
+			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 3
+			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CurrencyConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
+
+		-
+			message: "#^Offset 'customerNumber' does not exist on array\\|null\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 6
+			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CustomerGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19LanguageConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19ManufacturerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19MediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
+
+		-
+			message: "#^Cannot call method getId\\(\\) on string\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19NewsletterRecipientConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19NewsletterRecipientConverterTest\\:\\:\\$mappingService has no type specified\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19NotAssociatedMediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
+
+		-
+			message: "#^Offset 'orderCustomer' does not exist on array\\|null\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19OrderConverterTest\\:\\:\\$billingAddressId \\(array\\) does not accept string\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 5
+			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19ProductCustomFieldConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19ProductReviewConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
+
+		-
+			message: "#^Offset 'customerGroupId' does not exist on array\\|null\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 3
+			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 3
+			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 8
+			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CountryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
+
+		-
+			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 3
+			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CurrencyConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 8
+			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2LanguageConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ManufacturerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2MediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
+
+		-
+			message: "#^Cannot call method getId\\(\\) on string\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2NewsletterRecipientConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2NewsletterRecipientConverterTest\\:\\:\\$mappingService has no type specified\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Offset 'price' does not exist on array\\|null\\.$#"
+			count: 4
+			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 5
+			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductCustomFieldConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductReviewConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
+
+		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 3
+			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 3
+			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
