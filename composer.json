@@ -10,8 +10,8 @@
         }
     ],
     "require": {
-        "shopware/core": "~6.4.0",
-        "swag/migration-assistant": "~4.0"
+        "shopware/core": "~6.5.0",
+        "swag/migration-assistant": "~5.0"
     },
     "extra": {
         "shopware-plugin-class": "Swag\\MigrationMagento\\SwagMigrationMagento",
@@ -32,6 +32,27 @@
             "de-DE": "https://issues.shopware.com/",
             "en-GB": "https://issues.shopware.com/"
         }
+    },
+    "scripts": {
+        "lint": [
+            "@ecs-fix",
+            "@phpstan",
+            "@phpunit"
+        ],
+        "ecs": "../../../vendor/bin/ecs check src tests",
+        "ecs-fix": "../../../vendor/bin/ecs check --fix src tests",
+        "init:admin": "npm ci --no-audit --prefer-offline --prefix src/Resources/app/administration",
+        "lint:admin": "npm run lint-fix --prefix src/Resources/app/administration",
+        "lint:admin:ci": "npm run lint-ci --prefix src/Resources/app/administration",
+        "phpunit": "../../../vendor/bin/phpunit",
+        "phpstan": [
+            "php bin/phpstan-config-generator.php",
+            "../../../vendor/bin/phpstan analyze"
+        ],
+        "phpstan-min-version": [
+            "php bin/phpstan-config-generator.php --configuration=phpstan-v6-5-0-0.neon.dist",
+            "../../../vendor/bin/phpstan analyze"
+        ]
     },
     "autoload": {
         "psr-4": {

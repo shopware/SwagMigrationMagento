@@ -7,8 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -37,7 +36,7 @@ abstract class MediaReader extends AbstractReader
 SELECT count(DISTINCT value)
 FROM {$this->tablePrefix}catalog_product_entity_media_gallery
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::MEDIA, $total);
     }
@@ -58,13 +57,8 @@ SQL;
         $query->addSelect('media_details.label');
 
         $query->where('media.value IN (:id)');
-        $query->setParameter('id', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('id', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 }

@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SalesChannelReader;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -25,7 +27,7 @@ SELECT COUNT(*)
 FROM {$this->tablePrefix}store_group
 WHERE website_id != 0;
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::SALES_CHANNEL, $total);
     }
@@ -41,12 +43,7 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function fetchStoreViews(array $groupIds): array
@@ -58,13 +55,10 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'store', 'storeView');
 
         $query->andWhere('storeView.group_id IN (:ids)');
-        $query->setParameter('ids', $groupIds, Connection::PARAM_INT_ARRAY);
+        $query->setParameter('ids', $groupIds, ArrayParameterType::INTEGER);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP);
+        return FetchModeHelper::group($rows);
     }
 }

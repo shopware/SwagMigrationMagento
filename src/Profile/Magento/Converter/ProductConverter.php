@@ -21,46 +21,26 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\ParentEntityForChildNotFoundException;
 
 abstract class ProductConverter extends MagentoConverter
 {
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var MediaFileServiceInterface
-     */
-    protected $mediaFileService;
+    protected MediaFileServiceInterface $mediaFileService;
 
-    /**
-     * @var string
-     */
-    protected $runUuid;
+    protected string $runUuid;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
-    /**
-     * @var MagentoMappingServiceInterface
-     */
-    protected $mappingService;
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
-    /**
-     * @var bool
-     */
-    private $priceIsGross;
+    private bool $priceIsGross;
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,

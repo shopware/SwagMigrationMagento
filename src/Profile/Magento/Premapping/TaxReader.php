@@ -8,7 +8,8 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
 use Shopware\Core\System\Tax\TaxEntity;
@@ -28,29 +29,26 @@ abstract class TaxReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'tax';
 
-    /**
-     * @var GatewayRegistryInterface
-     */
-    private $gatewayRegistry;
+    private GatewayRegistryInterface $gatewayRegistry;
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<TaxEntity>>
      */
-    private $taxRepo;
+    private EntityRepository $taxRepo;
 
-    /**
-     * @var array
-     */
-    private $preselectionDictionary;
+    private array $preselectionDictionary;
 
     /**
      * @var string[]
      */
-    private $choiceUuids;
+    private array $choiceUuids;
 
+    /**
+     * @param EntityRepository<EntityCollection<TaxEntity>> $taxRepo
+     */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
-        EntityRepositoryInterface $taxRepo
+        EntityRepository $taxRepo
     ) {
         $this->gatewayRegistry = $gatewayRegistry;
         $this->taxRepo = $taxRepo;
@@ -99,7 +97,7 @@ abstract class TaxReader extends AbstractPremappingReader
                 }
             }
 
-            $entityData[] = new PremappingEntityStruct($data['class_id'], $data['class_name'], $uuid);
+            $entityData[] = new PremappingEntityStruct((string) $data['class_id'], (string) $data['class_name'], $uuid);
         }
         \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());

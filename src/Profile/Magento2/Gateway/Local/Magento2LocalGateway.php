@@ -10,7 +10,9 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local;
 use Doctrine\DBAL\Driver\ResultStatement;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Currency\CurrencyEntity;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
@@ -26,37 +28,28 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
 {
     public const GATEWAY_NAME = 'local';
 
-    /**
-     * @var ReaderRegistryInterface
-     */
-    private $readerRegistry;
+    private ReaderRegistryInterface $readerRegistry;
+
+    private ConnectionFactoryInterface $connectionFactory;
+
+    private EnvironmentReaderInterface $localEnvironmentReader;
 
     /**
-     * @var ConnectionFactoryInterface
+     * @var EntityRepository<EntityCollection<CurrencyEntity>>
      */
-    private $connectionFactory;
+    private EntityRepository $currencyRepository;
+
+    private TableReaderInterface $localTableReader;
 
     /**
-     * @var EnvironmentReaderInterface
+     * @param EntityRepository<EntityCollection<CurrencyEntity>> $currencyRepository
      */
-    private $localEnvironmentReader;
-
-    /**
-     * @var EntityRepositoryInterface
-     */
-    private $currencyRepository;
-
-    /**
-     * @var TableReaderInterface
-     */
-    private $localTableReader;
-
     public function __construct(
         ReaderRegistryInterface $readerRegistry,
         EnvironmentReaderInterface $localEnvironmentReader,
         TableReaderInterface $localTableReader,
         ConnectionFactoryInterface $connectionFactory,
-        EntityRepositoryInterface $currencyRepository
+        EntityRepository $currencyRepository
     ) {
         $this->readerRegistry = $readerRegistry;
         $this->localEnvironmentReader = $localEnvironmentReader;
@@ -199,14 +192,16 @@ FROM (
 WHERE payment.payment_id = payment_active.payment_id;
 SQL;
 
-        $configPayments = $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
+        $rows = $connection->executeQuery($sql)->fetchAllAssociative();
+        $configPayments = FetchModeHelper::groupUnique($rows);
 
         $sql = <<<SQL
 SELECT DISTINCT salesOrder.method AS identifier, salesOrder.method AS payment_id, salesOrder.method AS value
 FROM {$tablePrefix}sales_order_payment AS salesOrder;
 SQL;
 
-        $orderPayments = $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
+        $rows = $connection->executeQuery($sql)->fetchAllAssociative();
+        $orderPayments = FetchModeHelper::groupUnique($rows);
 
         $result = [];
         foreach ($configPayments as $key => $payment) {
@@ -246,7 +241,7 @@ SELECT *
 FROM {$tablePrefix}customer_group;
 SQL;
 
-        return $connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     /**
@@ -279,12 +274,7 @@ FROM (
 WHERE carrier.carrier_id = carrier_active.carrier_id;
 SQL;
 
-        $query = $connection->executeQuery($sql);
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     public function readGenders(MigrationContextInterface $migrationContext): array
@@ -307,12 +297,25 @@ SQL;
 
         $query->where('attr.attribute_code = \'gender\' AND is_user_defined = false AND store_id = 0');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
+        return $query->executeQuery()->fetchAllAssociative();
+    }
+
+    public function readStores(MigrationContextInterface $migrationContext): array
+    {
+        $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        if ($connection === null) {
             return [];
         }
 
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
+        $query = $connection->createQueryBuilder();
+
+        $query->select('store_id');
+        $query->addSelect('name');
+        $query->from($tablePrefix . 'store');
+        $query->where('store_id != 0');
+
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function getTablePrefixFromCredentials(MigrationContextInterface $migrationContext): string

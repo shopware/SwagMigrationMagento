@@ -8,7 +8,8 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Premapping;
 
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\System\Country\CountryEntity;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -22,17 +23,17 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
     private const MAPPING_NAME = 'country';
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<CountryEntity>>
      */
-    private $countryRepo;
+    private EntityRepository $countryRepo;
+
+    private array $preselectionDictionary;
 
     /**
-     * @var array
+     * @param EntityRepository<EntityCollection<CountryEntity>> $countryRepo
      */
-    private $preselectionDictionary;
-
     public function __construct(
-        EntityRepositoryInterface $countryRepo
+        EntityRepository $countryRepo
     ) {
         $this->countryRepo = $countryRepo;
     }

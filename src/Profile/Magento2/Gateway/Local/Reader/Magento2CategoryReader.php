@@ -7,7 +7,9 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CategoryReader;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -104,7 +106,7 @@ SQL;
             $sql,
             [$migrationContext->getLimit(), $migrationContext->getOffset()],
             [\PDO::PARAM_INT, \PDO::PARAM_INT]
-        )->fetchAll(\PDO::FETCH_ASSOC);
+        )->fetchAllAssociative();
     }
 
     protected function appendTranslations(array $ids, array &$fetchedCategories): void
@@ -179,11 +181,12 @@ AND CASE attribute.backend_type
 GROUP BY category.entity_id, attribute_id, attribute_code, value, store_id;
 SQL;
 
-        $fetchedTranslations = $this->connection->executeQuery(
+        $rows = $this->connection->executeQuery(
             $sql,
             [$ids],
-            [Connection::PARAM_STR_ARRAY]
-        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+            [ArrayParameterType::STRING]
+        )->fetchAllAssociative();
+        $fetchedTranslations = FetchModeHelper::group($rows);
 
         foreach ($fetchedCategories as &$fetchedCategory) {
             if (isset($fetchedTranslations[$fetchedCategory['entity_id']])) {

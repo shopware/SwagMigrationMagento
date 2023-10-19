@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
 
 abstract class Magento2ProductReader extends ProductReader
@@ -33,12 +35,9 @@ AND mediaGalleryValue.value_id = mediaGallery.value_id
 ORDER BY productId, position;
 SQL;
 
-        $query = $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY]);
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $rows = $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($rows);
     }
 
     protected function fetchConfiguratorSettings(): array
@@ -62,13 +61,10 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('entity_int.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $this->combinedProductIds, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($rows);
     }
 }

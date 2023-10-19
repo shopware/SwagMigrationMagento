@@ -1,9 +1,16 @@
 parameters:
 	ignoreErrors:
+		-   "#^Out of 508 possible property types, only 33 %% actually have it\\. Add more property types to get over 99 %%$#"
+
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/CategoryConverter.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/CountryConverter.php
 
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
@@ -51,6 +58,11 @@ parameters:
 			path: src/Profile/Magento/Converter/ManufacturerConverter.php
 
 		-
+			message: "#^Offset 'translations' on array\\{id\\: mixed, translations\\: array\\} in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ManufacturerConverter.php
+
+		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/MediaConverter.php
@@ -66,9 +78,19 @@ parameters:
 			path: src/Profile/Magento/Converter/NotAssociatedMediaConverter.php
 
 		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTransactionStateUuid\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/OrderConverter.php
+
+		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/OrderConverter.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTaxRate\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Converter/ProductConverter.php
 
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
@@ -86,6 +108,11 @@ parameters:
 			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
 
 		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
+			count: 2
+			path: src/Profile/Magento/Converter/SalesChannelConverter.php
+
+		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/SalesChannelConverter.php
@@ -96,12 +123,22 @@ parameters:
 			path: src/Profile/Magento/Converter/SeoUrlConverter.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\AbstractReader\\:\\:buildArrayFromChunks\\(\\) has parameter \\$value with no typehint specified\\.$#"
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Cannot call method createSchemaManager\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
 		-
-			message: "#^Parameter \\#2 \\.\\.\\.\\$args of function array_merge expects array, array\\|false given\\.$#"
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+		-
+			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\AbstractReader\\:\\:buildArrayFromChunks\\(\\) has parameter \\$value with no type specified\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
@@ -111,9 +148,194 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
 		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/CategoryReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CountryReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/CustomerReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/LanguageReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ManufacturerReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
+
+		-
 			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectTextPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectTextPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductOptionRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 6
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 7
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
+
+		-
+			message: "#^Cannot access offset 'defaultAllowedCurre…' on array\\<string, mixed\\>\\|false\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 7
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 3
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Offset 'allowedCountries' on array\\{defaultCountry\\: mixed\\} in isset\\(\\) does not exist\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
 
 		-
 			message: "#^Cannot call static method getEntity\\(\\) on SwagMigrationAssistant\\\\Migration\\\\DataSelection\\\\DataSet\\\\DataSet\\|null\\.$#"
@@ -121,12 +343,12 @@ parameters:
 			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
 		-
-			message: "#^Parameter \\#4 \\$fileSize of method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:persistFileToMedia\\(\\) expects int, int\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
 			count: 1
 			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
 		-
-			message: "#^Parameter \\#2 \\$mimeType of class Shopware\\\\Core\\\\Content\\\\Media\\\\File\\\\MediaFile constructor expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$stream of function fwrite expects resource, resource\\|false given\\.$#"
 			count: 1
 			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
@@ -136,14 +358,29 @@ parameters:
 			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
 		-
-			message: "#^Parameter \\#1 \\$fp of function fwrite expects resource, resource\\|false given\\.$#"
+			message: "#^Parameter \\#2 \\$mimeType of class Shopware\\\\Core\\\\Content\\\\Media\\\\File\\\\MediaFile constructor expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
 		-
-			message: "#^Parameter \\#1 \\$fp of function fclose expects resource, resource\\|false given\\.$#"
+			message: "#^Parameter \\#4 \\$fileSize of method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:persistFileToMedia\\(\\) expects int, int\\<0, max\\>\\|false given\\.$#"
 			count: 1
 			path: src/Profile/Magento/Media/LocalMediaProcessor.php
+
+		-
+			message: "#^Call to an undefined method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\MagentoGatewayInterface\\:\\:readStores\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/AdminStoreReader.php
+
+		-
+			message: "#^Call to an undefined method Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\Entity\\:\\:getId\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento/Premapping/SalutationReader.php
+
+		-
+			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
 
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
@@ -151,9 +388,119 @@ parameters:
 			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
 
 		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CategoryReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CountryReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CustomerReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2LanguageReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 4
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductMultiSelectPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductOptionRelationReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductPropertyRelationReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 2
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
+
+		-
+			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
+
+		-
+			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
+
+		-
+			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
+			count: 1
+			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
+
+		-
 			message: "#^Access to an undefined property Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:\\$uuids\\.$#"
 			count: 1
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
+
+		-
+			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getMappings\\(\\) return type with generic class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\Search\\\\EntitySearchResult does not specify its types\\: TEntityCollection$#"
+			count: 1
+			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 3
+			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CategoryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -162,38 +509,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 4
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 7
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayNotHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 4
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'name' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'metaTitle' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'metaDescription' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'keywords' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CountryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -201,19 +518,9 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
-
-		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
 			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
 
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
@@ -221,14 +528,9 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
 
 		-
-			message: "#^Offset 'productId' does not exist on array\\|null\\.$#"
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
-			count: 7
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CurrencyConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -236,69 +538,19 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
-
-		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CustomerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 10
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
 			message: "#^Offset 'customerNumber' does not exist on array\\|null\\.$#"
-			count: 4
+			count: 2
 			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
 
 		-
-			message: "#^Offset 'legacyEncoder' does not exist on array\\|null\\.$#"
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 6
+			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
+
+		-
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'legacyPassword' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'salesChannelId' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'lastName' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'addresses' does not exist on array\\|null\\.$#"
-			count: 9
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'defaultBillingAddre…' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'defaultShippingAddr…' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19CustomerGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -308,7 +560,7 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19LanguageConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -317,8 +569,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19ManufacturerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -328,22 +580,7 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayNotHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
-
-		-
-			message: "#^Offset 'name' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19MediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -351,17 +588,12 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
 
 		-
+			message: "#^Cannot call method getId\\(\\) on string\\.$#"
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+
+		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayNotHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19NewsletterRecipientConverterTest\\:\\:\\$mappingService has no typehint specified\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
 
@@ -371,19 +603,14 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
 
 		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19NewsletterRecipientConverterTest\\:\\:\\$mappingService has no type specified\\.$#"
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+
+		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Offset 'status' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19NotAssociatedMediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -391,18 +618,13 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19OrderConverterTest\\:\\:\\$mappingService has no typehint specified\\.$#"
-			count: 1
+			message: "#^Offset 'orderCustomer' does not exist on array\\|null\\.$#"
+			count: 2
 			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
 
 		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19OrderConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
 			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
 
 		-
@@ -412,18 +634,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Offset 'orderCustomer' does not exist on array\\|null\\.$#"
-			count: 10
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
+			count: 5
+			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19ProductCustomFieldConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -432,18 +644,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 13
-			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Offset 'customFields' does not exist on array\\|null\\.$#"
-			count: 13
-			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Offset 'name' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
+			count: 1
+			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19ProductReviewConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -452,68 +654,13 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
+			count: 2
+			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Offset 'options' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayNotHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Offset 'name' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19SalesChannelConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Offset 'paymentMethods' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Offset 'shippingMethods' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
 
 		-
 			message: "#^Offset 'customerGroupId' does not exist on array\\|null\\.$#"
@@ -523,62 +670,22 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
+			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
 
 		-
-			message: "#^Offset 'foreignKey' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'salesChannelId' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'languageId' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'seoPathInfo' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'pathInfo' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'routeName' does not exist on array\\|null\\.$#"
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 3
 			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 12
+			count: 8
 			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
 
 		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 20
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'metaTitle' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'metaDescription' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
-
-		-
-			message: "#^Offset 'keywords' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CountryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -586,19 +693,9 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
 
 		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
-
-		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
@@ -606,14 +703,9 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-
-			message: "#^Offset 'productId' does not exist on array\\|null\\.$#"
+			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Offset 'assignedProducts' does not exist on array\\|null\\.$#"
-			count: 7
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CurrencyConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -622,68 +714,13 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
+			count: 8
 			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 12
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'legacyEncoder' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'legacyPassword' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'salesChannelId' does not exist on array\\|null\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'lastName' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'customerNumber' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'addresses' does not exist on array\\|null\\.$#"
-			count: 9
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'defaultBillingAddre…' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Offset 'defaultShippingAddr…' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -693,7 +730,7 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2LanguageConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -703,7 +740,7 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ManufacturerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -712,13 +749,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2MediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -726,17 +758,12 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
 
 		-
+			message: "#^Cannot call method getId\\(\\) on string\\.$#"
+			count: 2
+			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+
+		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayNotHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2NewsletterRecipientConverterTest\\:\\:\\$mappingService has no typehint specified\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
 
@@ -746,19 +773,19 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
 
 		-
+			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2NewsletterRecipientConverterTest\\:\\:\\$mappingService has no type specified\\.$#"
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+
+		-
+			message: "#^Offset 'price' does not exist on array\\|null\\.$#"
+			count: 4
+			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
+
+		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Offset 'status' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
 			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -767,43 +794,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Offset 'weight' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Offset 'minPurchase' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayNotHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Offset 'name' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Offset 'keywords' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Offset 'price' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
+			count: 5
+			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductCustomFieldConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -812,18 +804,8 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 13
-			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Offset 'customFields' does not exist on array\\|null\\.$#"
-			count: 13
-			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Offset 'name' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
+			count: 1
+			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductReviewConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -833,7 +815,7 @@ parameters:
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
+			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
@@ -842,70 +824,10 @@ parameters:
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
-
-		-
-			message: "#^Offset 'options' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
-
-		-
-			message: "#^Offset 'translations' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2SalesChannelConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
-
-		-
-			message: "#^Offset 'paymentMethods' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
-
-		-
-			message: "#^Offset 'shippingMethods' does not exist on array\\|null\\.$#"
 			count: 3
 			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'foreignKey' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'salesChannelId' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'languageId' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'seoPathInfo' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'pathInfo' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Offset 'routeName' does not exist on array\\|null\\.$#"
 			count: 3
 			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php

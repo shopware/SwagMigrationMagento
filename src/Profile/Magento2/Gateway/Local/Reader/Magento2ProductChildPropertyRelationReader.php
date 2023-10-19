@@ -7,7 +7,9 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection as ConnectionAlias;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductChildPropertyRelationReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
@@ -40,7 +42,7 @@ AND entity_int.attribute_id IN (
     AND eav.frontend_input = 'select'
 );
 SQL;
-        $total = (int) $this->connection->executeQuery($query)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($query)->fetchOne();
 
         return new TotalStruct(DefaultEntities::PRODUCT_CHILD_PROPERTY_RELATION, $total);
     }
@@ -65,7 +67,7 @@ AND NOT EXISTS(
 )
 LIMIT :limit OFFSET :offset
 SQL;
-        $query = $this->connection->executeQuery(
+        return $this->connection->executeQuery(
             $sql,
             [
                 'validTypes' => ProductReader::$ALLOWED_PRODUCT_TYPES,
@@ -73,12 +75,10 @@ SQL;
                 'offset' => $migrationContext->getOffset(),
             ],
             [
-                'validTypes' => ConnectionAlias::PARAM_STR_ARRAY,
+                'validTypes' => ArrayParameterType::STRING,
                 'limit' => \PDO::PARAM_INT,
                 'offset' => \PDO::PARAM_INT,
             ]
-        );
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        )->fetchAllAssociative();
     }
 }

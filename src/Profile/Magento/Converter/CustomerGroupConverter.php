@@ -14,15 +14,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CustomerGroupConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
     public function getSourceIdentifier(array $data): string
     {

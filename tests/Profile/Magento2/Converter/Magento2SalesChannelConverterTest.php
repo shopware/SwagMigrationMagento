@@ -22,45 +22,23 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 class Magento2SalesChannelConverterTest extends TestCase
 {
-    /**
-     * @var Magento23SalesChannelConverter
-     */
-    private $salesChannelConverter;
+    private Magento23SalesChannelConverter $salesChannelConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var string
-     */
-    private $defaultShippingMethodId;
+    private string $defaultShippingMethodId;
 
-    /**
-     * @var string
-     */
-    private $defaultPaymentMethodId;
+    private string $defaultPaymentMethodId;
+
+    private string $defaultCustomerGroupId;
 
     protected function setUp(): void
     {
@@ -85,6 +63,7 @@ class Magento2SalesChannelConverterTest extends TestCase
 
         $this->defaultPaymentMethodId = Uuid::randomHex();
         $this->defaultShippingMethodId = Uuid::randomHex();
+        $this->defaultCustomerGroupId = Uuid::randomHex();
 
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, Uuid::randomHex());
@@ -101,7 +80,8 @@ class Magento2SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'ups', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'default_shipping_method', $context, null, null, $this->defaultShippingMethodId);
-        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $context, null, null, Uuid::randomHex());
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, $this->defaultCustomerGroupId, $context, null, null, Uuid::randomHex());
+        $this->mappingService->pushValueMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $this->defaultCustomerGroupId);
     }
 
     public function testSupports(): void

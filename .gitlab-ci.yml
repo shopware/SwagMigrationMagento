@@ -1,76 +1,59 @@
 variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: "tcp://docker:2375"
-    MYSQL_ROOT_PASSWORD: app
-    DEVELOPMENT_BRANCH: "v6.4.0.0"
-    PLATFORM_BRANCH: "v6.4.0.0"
-    ASSISTANT_BRANCH: "master"
-    WEB_DOCUMENT_ROOT: $CI_PROJECT_DIR/development/public
-    DEV_IMAGE: shopware/development:7.4-composer-2
+  PLATFORM_MIN_VERSION: 'v6.5.0.0'
+  MIGRATION_ASSISTANT_BRANCH: 'master'
+  PLUGIN_DEPENDENCIES:
+    value: >
+      [
+        { "name": "SwagMigrationAssistant", "url": "gitlab.shopware.com/shopware/6/services/migration-assistant", "branch": "$MIGRATION_ASSISTANT_BRANCH" }
+      ]
 
-stages:
-    - Static analyzes
-    - PHPUnit
+include:
+  project: 'shopware/6/product/platform'
+  ref: 'trunk'
+  file: '.gitlab/templates/plugin.yml'
 
-default:
-    image: $DEV_IMAGE
-    before_script:
-        - zip -rq plugin.zip .
-        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/development.git --branch $DEVELOPMENT_BRANCH
-        - rm -rf development/platform
-        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/product/platform.git development/platform --branch $PLATFORM_BRANCH
-        - git clone http://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.shopware.com/shopware/6/services/migration-assistant.git development/custom/plugins/SwagMigrationAssistant --branch $ASSISTANT_BRANCH
-        - unzip -q plugin.zip -d development/custom/plugins/SwagMigrationMagento
-        - cd development
-        - cp -v dev-ops/gitlab/.psh.yaml.override .
-        - /entrypoint supervisord > /dev/null 2>&1 &
+phpunit:
+  services:
+    -   name: $MYSQL_IMAGE
+        alias: database
+        entrypoint: [ 'sh', '-c', "docker-entrypoint.sh $MYSQL_CMD" ]
+  script:
+    -   composer dump-autoload --dev -d "${PROJECT_ROOT}/custom/plugins/${PLUGIN_NAME}"
+    -   php
+      -d pcov.enabled=1 -d pcov.directory=$PWD/src -d pcov.exclude='~(vendor|tests|node_modules)~'
+      ${PROJECT_ROOT}/vendor/bin/phpunit
+      --configuration phpunit.xml.dist
+      --log-junit ${CI_PROJECT_DIR}/phpunit.junit.xml
+      --colors=never
+      --coverage-cobertura ${CI_PROJECT_DIR}/cobertura.xml
+      --coverage-text | grep -v -E '^Shopware\\|^  Methods:' # do not output covered files lines
+  parallel:
+    matrix:
+      -   MYSQL_IMAGE:
+            - mysql:8.0
+          DEV_IMAGE: [ 'shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
+          MYSQL_CMD: $MYSQL8_CMD
+          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, 'trunk' ]
+      -   MYSQL_IMAGE:
+            - mariadb:10.3
+          DEV_IMAGE: [ 'shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
+          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, 'trunk' ]
+          RUN_IN_MR: 'false'
+      - MYSQL_IMAGE:
+          - mariadb:10.5
+        DEV_IMAGE: [ 'shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
+        PLATFORM_BRANCH: 'trunk'
+        RUN_IN_MR: 'false'
 
-PHP analyze:
-    stage: Static analyzes
-    services:
-        -   name: mysql:5.7
-            alias: mysql
-    script:
-        - ./psh.phar init
-        - php bin/console plugin:install --activate SwagMigrationAssistant
-        - php bin/console plugin:install --activate SwagMigrationMagento
-        - composer dump-autoload --dev -d custom/plugins/SwagMigrationMagento
-        - composer dump-autoload --dev -d custom/plugins/SwagMigrationAssistant
-        - cd $CI_PROJECT_DIR/development/custom/plugins/SwagMigrationMagento
-        - php ../../../dev-ops/analyze/vendor/bin/ecs check --config=../../../vendor/shopware/platform/easy-coding-standard.php src tests
-        - php ../../../dev-ops/analyze/vendor/bin/ecs check --fix --config=easy-coding-standard.php
-        - bin/static-analyze.sh
-
-PHPUnit (MariaDB):
-   stage: PHPUnit
-   needs: [PHP analyze]
-   services:
-       -   name: mariadb:10.3.28
-           alias: mysql
-   script:
-       - ./psh.phar init
-       - php bin/console plugin:install --activate SwagMigrationAssistant
-       - php bin/console plugin:install --activate SwagMigrationMagento
-       - composer dump-autoload --dev -d custom/plugins/SwagMigrationMagento
-       - composer dump-autoload --dev -d custom/plugins/SwagMigrationAssistant
-       - touch custom/plugins/SwagMigrationAssistant/vendor/composer/InstalledVersions.php
-       - touch custom/plugins/SwagMigrationMagento/vendor/composer/InstalledVersions.php
-       - ./psh.phar init-test-databases
-       - php -d pcov.enabled=1 -d pcov.directory=$CI_PROJECT_DIR
-           vendor/bin/phpunit
-           --configuration custom/plugins/SwagMigrationMagento/phpunit.xml.dist
-           --log-junit build/artifacts/phpunit.junit.xml
-           --colors=never
-           --coverage-clover build/artifacts/phpunit.clover.xml
-           --coverage-html build/artifacts/phpunit-coverage-html
-           --coverage-text
-   coverage: '/^\s*Lines:\s*(\d+(?:\.\d+)?%)/'
-   artifacts:
-       paths:
-           - development/build/artifacts/phpunit.clover.xml
-       reports:
-           junit: development/build/artifacts/phpunit.junit.xml
-   parallel:
-       matrix:
-           -   DEV_IMAGE: shopware/development:8.0-composer-2
-           -   DEV_IMAGE: shopware/development:7.4-composer-2
+phpstan:
+  script:
+    - composer dump-autoload --dev -d "${PROJECT_ROOT}/custom/plugins/SwagMigrationAssistant"
+    - >
+        if [ "$PLATFORM_BRANCH" == "trunk" ];
+          then composer phpstan;
+          else composer phpstan-min-version
+        fi
+  parallel:
+    matrix:
+      -   DEV_IMAGE: ['shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
+          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, 'trunk' ]

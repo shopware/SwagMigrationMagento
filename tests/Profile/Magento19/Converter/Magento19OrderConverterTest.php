@@ -32,47 +32,28 @@ class Magento19OrderConverterTest extends TestCase
     use KernelTestBehaviour;
     use DatabaseTransactionBehaviour;
 
-    /**
-     * @var Magento19OrderConverter
-     */
-    private $orderConverter;
+    private Magento19OrderConverter $orderConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var string
-     */
-    private $defaultSalutation;
+    private string $defaultSalutation;
 
     /**
      * @var array
      */
     private $billingAddressId;
 
-    /**
-     * @var string
-     */
-    private $shippingAddressId;
+    private string $shippingAddressId;
+
+    private string $storeUuid;
 
     protected function setUp(): void
     {
@@ -180,6 +161,17 @@ class Magento19OrderConverterTest extends TestCase
             $customerGroupUuid
         );
 
+        $this->storeUuid = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE,
+            '1',
+            $context,
+            null,
+            null,
+            $this->storeUuid
+        );
+
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             MagentoDefaultEntities::STORE_LANGUAGE,
@@ -228,6 +220,7 @@ class Magento19OrderConverterTest extends TestCase
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
+        static::assertSame($this->storeUuid, $converted['salesChannelId']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 

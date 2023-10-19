@@ -7,9 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
+use Shopware\Core\Checkout\Payment\PaymentMethodEntity;
 use Shopware\Core\Checkout\Shipping\ShippingMethodEntity;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
@@ -25,28 +27,25 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
     private const MAPPING_NAME = 'shipping_method';
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<PaymentMethodEntity>>
      */
-    private $paymentMethodRepo;
+    private EntityRepository $paymentMethodRepo;
 
-    /**
-     * @var GatewayRegistryInterface
-     */
-    private $gatewayRegistry;
+    private GatewayRegistryInterface $gatewayRegistry;
 
-    /**
-     * @var array
-     */
-    private $preselectionDictionary;
+    private array $preselectionDictionary;
 
     /**
      * @var string[]
      */
-    private $choiceUuids;
+    private array $choiceUuids;
 
+    /**
+     * @param EntityRepository<EntityCollection<PaymentMethodEntity>> $paymentMethodRepo
+     */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
-        EntityRepositoryInterface $paymentMethodRepo
+        EntityRepository $paymentMethodRepo
     ) {
         $this->gatewayRegistry = $gatewayRegistry;
         $this->paymentMethodRepo = $paymentMethodRepo;

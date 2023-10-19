@@ -7,7 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CountryReader extends AbstractReader
@@ -33,14 +33,9 @@ abstract class CountryReader extends AbstractReader
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value');
         $query->andwhere('path = \'general/country/allow\'');
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configurations = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
-
+        $configurations = FetchModeHelper::groupUnique($rows);
         $countryConfig = [];
         foreach ($configurations as $config) {
             if (isset($config['value'])) {

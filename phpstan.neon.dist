@@ -8,10 +8,12 @@ parameters:
     symfony:
         constant_hassers: false
         # the placeholder "%ShopwareHashedCacheDir%" will be replaced on execution by bin/phpstan-config-generator.php script
-        container_xml_path: '../../..%ShopwareHashedCacheDir%/Shopware_Development_KernelDevDebugContainer.xml'
-    featureToggles:
-        unusedClassElements: true
-    excludes_analyse:
+        container_xml_path: '../../..%ShopwareHashedCacheDir%/%ShopwareKernelClass%DevDebugContainer.xml'
+    paths:
+        -   src
+        -   tests
+    excludePaths:
+        -   src/Resources
         - vendor
     bootstrapFiles:
         -   bin/static-analyze-autoloader.php

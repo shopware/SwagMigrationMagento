@@ -7,8 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\Struct\StockConfigurationStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -25,10 +25,7 @@ abstract class ProductReader extends AbstractReader
         'downloadable',
     ];
 
-    /**
-     * @var int
-     */
-    protected $productEntityTypeId;
+    protected int $productEntityTypeId;
 
     /**
      * @var array|null
@@ -70,8 +67,8 @@ SQL;
         $total = (int) $this->connection->executeQuery(
             $sql,
             [self::$ALLOWED_PRODUCT_TYPES],
-            [Connection::PARAM_STR_ARRAY]
-        )->fetchColumn();
+            [ArrayParameterType::STRING]
+        )->fetchOne();
 
         return new TotalStruct(DefaultEntities::PRODUCT, $total);
     }
@@ -115,11 +112,11 @@ SQL;
                 $migrationContext->getOffset(),
             ],
             [
-                Connection::PARAM_STR_ARRAY,
+                ArrayParameterType::STRING,
                 \PDO::PARAM_INT,
                 \PDO::PARAM_INT,
             ]
-        )->fetchAll(\PDO::FETCH_ASSOC);
+        )->fetchAllAssociative();
     }
 
     protected function fetchProductAttributes(array $ids): array
@@ -182,13 +179,13 @@ AND CASE attribute.backend_type
     END IS NOT NULL
 ORDER BY store_id, attribute_id;
 SQL;
-        $fetchedAttributes = $this->connection->executeQuery(
+        $rows = $this->connection->executeQuery(
             $sql,
             [$ids],
-            [Connection::PARAM_STR_ARRAY]
-        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+            [ArrayParameterType::STRING]
+        )->fetchAllAssociative();
 
-        return $fetchedAttributes;
+        return FetchModeHelper::group($rows);
     }
 
     protected function appendDefaultAttributes(array $attributes, array &$fetchedProduct): void
@@ -299,7 +296,7 @@ SQL;
             $resultSet[] = $product;
         }
         unset(
-            $fetchedProducts,
+            $product,
             $attributes,
             $categories,
             $media,
@@ -323,7 +320,13 @@ WHERE productCategory.product_id IN (?)
 ORDER BY productCategory.position
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $rows = $this->connection->executeQuery(
+            $sql,
+            [$ids],
+            [ArrayParameterType::STRING]
+        )->fetchAllAssociative();
+
+        return FetchModeHelper::group($rows);
     }
 
     protected function fetchProductMedia(array $ids): array
@@ -344,7 +347,13 @@ AND mediaGalleryValue.store_id = 0
 ORDER BY productId, position;
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $rows = $this->connection->executeQuery(
+            $sql,
+            [$ids],
+            [ArrayParameterType::STRING]
+        )->fetchAllAssociative();
+
+        return FetchModeHelper::group($rows);
     }
 
     protected function fetchProductPrices(array $ids): array
@@ -360,7 +369,13 @@ WHERE price.entity_id IN (?)
 ORDER BY price.entity_id, price.all_groups DESC, price.customer_group_id, price.qty;
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $rows = $this->connection->executeQuery(
+            $sql,
+            [$ids],
+            [ArrayParameterType::STRING]
+        )->fetchAllAssociative();
+
+        return FetchModeHelper::group($rows);
     }
 
     protected function fetchConfiguratorSettings(): array
@@ -384,14 +399,11 @@ SQL;
         $query->innerJoin('product', $this->tablePrefix . 'eav_attribute_option_value', 'option_value', 'option_value.option_id = entity_int.value AND option_value.store_id = 0');
 
         $query->where('entity_int.entity_id IN (:ids)');
-        $query->setParameter('ids', $this->combinedProductIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $this->combinedProductIds, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($rows);
     }
 
     protected function fetchVisibility(array $ids): array
@@ -406,14 +418,11 @@ SQL;
         $query->where('attribute.attribute_code =  \'status\'');
         $query->andWhere('product_int.entity_id IN (:ids)');
         $query->orderBy('product_int.value');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($rows);
     }
 
     protected function fetchLocales(): array
@@ -424,14 +433,10 @@ SQL;
         $query->addSelect('value AS locale');
         $query->from($this->tablePrefix . 'core_config_data', 'locales');
         $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $locales = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
-        foreach ($locales as $storeId => &$locale) {
+        $locales = FetchModeHelper::keyPair($rows);
+        foreach ($locales as &$locale) {
             $locale = \str_replace('_', '-', $locale);
         }
 
@@ -445,12 +450,7 @@ SQL;
         $query->from($this->tablePrefix . 'core_config_data');
         $query->orWhere('scope = \'default\' AND path = \'tax/calculation/price_includes_tax\'');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return false;
-        }
-
-        return (bool) $query->fetchColumn();
+        return (bool) $query->executeQuery()->fetchOne();
     }
 
     protected function getStockConfiguration(): StockConfigurationStruct
@@ -463,14 +463,9 @@ SQL;
         $query->from($this->tablePrefix . 'core_config_data');
         $query->andWhere('scope = \'default\'');
         $query->andWhere('path = \'cataloginventory/item_options/min_sale_qty\' OR path = \'cataloginventory/item_options/max_sale_qty\'');
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return new StockConfigurationStruct($minPurchase, $maxPurchase);
-        }
-
-        $result = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
-
+        $result = FetchModeHelper::keyPair($rows);
         if (isset($result['cataloginventory/item_options/min_sale_qty'])
             && \is_numeric($result['cataloginventory/item_options/min_sale_qty'])
         ) {
@@ -490,7 +485,7 @@ SQL;
 SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = 'catalog_product';
 SQL;
 
-        return (int) $this->connection->executeQuery($sql)->fetchColumn();
+        return (int) $this->connection->executeQuery($sql)->fetchOne();
     }
 
     private function fetchCombinedProductIdsForPropertyFetching(array $ids): void
@@ -500,14 +495,8 @@ SQL;
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');
         $query->innerJoin('product', $this->tablePrefix . 'catalog_product_relation', 'relation', 'relation.parent_id = product.entity_id');
         $query->where('product.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
-        $query = $query->execute();
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        if (!($query instanceof ResultStatement)) {
-            $childIds = [];
-        } else {
-            $childIds = $query->fetchAll(\PDO::FETCH_COLUMN);
-        }
-        $this->combinedProductIds = \array_merge($ids, $childIds);
+        $this->combinedProductIds = \array_merge($ids, $query->executeQuery()->fetchFirstColumn());
     }
 }

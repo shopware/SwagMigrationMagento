@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader;
 
@@ -24,6 +25,6 @@ LEFT JOIN {$this->tablePrefix}directory_country AS directory_country ON director
  WHERE customer_address.parent_id IN (?);
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();
     }
 }

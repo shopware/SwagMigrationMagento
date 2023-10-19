@@ -7,8 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -103,7 +103,7 @@ WHERE eav.frontend_input != ''
 AND eav.is_user_defined = 1
 AND eav.attribute_code NOT IN ('manufacturer', 'cost');
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::PRODUCT_CUSTOM_FIELD, $total);
     }
@@ -129,12 +129,11 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $this->mapData($query->fetchAll(\PDO::FETCH_ASSOC), [], ['eav', 'setId', 'setName']);
+        return $this->mapData(
+            $query->executeQuery()->fetchAllAssociative(),
+            [],
+            ['eav', 'setId', 'setName']
+        );
     }
 
     protected function fetchSelectOptions(array $ids): array
@@ -150,7 +149,9 @@ INNER JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.attribute
 WHERE attribute.attribute_id IN (?) AND store_id = 0;
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        $result = $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();
+
+        return FetchModeHelper::group($result);
     }
 
     protected function fetchAttributeOptionTranslations(array $ids): array
@@ -166,14 +167,11 @@ SQL;
         $query->innerJoin('attributeOption', $this->tablePrefix . 'eav_attribute_option_value', 'optionValue', 'optionValue.option_id = attributeOption.option_id AND optionValue.store_id != 0');
 
         $query->where('attributeOption.option_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::INTEGER);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($result);
     }
 
     protected function fetchAttributeTranslations(array $ids): array
@@ -187,14 +185,11 @@ SQL;
         $query->from($this->tablePrefix . 'eav_attribute_label', 'attributeLabel');
 
         $query->where('attributeLabel.attribute_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::INTEGER);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($result);
     }
 
     protected function fetchLocales(): array
@@ -206,14 +201,10 @@ SQL;
         $query->from($this->tablePrefix . 'core_config_data', 'locales');
 
         $query->orWhere('scope = \'stores\' AND path = \'general/locale/code\'');
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $locales = $query->fetchAll(\PDO::FETCH_KEY_PAIR);
-        foreach ($locales as $storeId => &$locale) {
+        $locales = FetchModeHelper::keyPair($rows);
+        foreach ($locales as &$locale) {
             $locale = \str_replace('_', '-', $locale);
         }
 

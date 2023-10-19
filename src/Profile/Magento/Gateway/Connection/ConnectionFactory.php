@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Connection;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Exception\ConnectionException;
 use Swag\MigrationMagento\Exception\InvalidTablePrefixException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -43,10 +44,18 @@ class ConnectionFactory implements ConnectionFactoryInterface
 
         $connection = DriverManager::getConnection($connectionParams);
 
+        try {
+            if (\is_object($connection->getNativeConnection()) && \method_exists($connection->getNativeConnection(), 'setAttribute')) {
+                $connection->getNativeConnection()->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, true);
+            }
+        } catch (ConnectionException $exception) {
+            // nth
+        }
+
         if (!isset($credentials['tablePrefix']) || $credentials['tablePrefix'] === '') {
             return $connection;
         }
-        $schemaManager = $connection->getSchemaManager();
+        $schemaManager = $connection->createSchemaManager();
         if (!$schemaManager->tablesExist([$credentials['tablePrefix'] . 'customer_entity'])) {
             throw new InvalidTablePrefixException('The configured table prefix is invalid.');
         }

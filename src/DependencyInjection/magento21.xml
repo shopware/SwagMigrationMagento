@@ -324,6 +324,12 @@
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento21\Premapping\Magento21AdminStoreReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
         <service id="Swag\MigrationMagento\Profile\Magento21\Premapping\Magento21OrderStateReader">
             <argument type="service" id="state_machine.repository"/>
             <argument type="service" id="state_machine_state.repository"/>

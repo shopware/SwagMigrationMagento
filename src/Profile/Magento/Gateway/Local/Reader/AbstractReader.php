@@ -7,9 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -17,20 +18,11 @@ use SwagMigrationAssistant\Migration\TotalStruct;
 
 abstract class AbstractReader implements ReaderInterface
 {
-    /**
-     * @var ConnectionFactoryInterface
-     */
-    protected $connectionFactory;
+    protected ConnectionFactoryInterface $connectionFactory;
 
-    /**
-     * @var Connection
-     */
-    protected $connection;
+    protected ?Connection $connection = null;
 
-    /**
-     * @var string
-     */
-    protected $tablePrefix;
+    protected string $tablePrefix;
 
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
@@ -81,13 +73,9 @@ abstract class AbstractReader implements ReaderInterface
         $query->addSelect('locale.value AS locale');
         $query->from($this->tablePrefix . 'core_config_data', 'locale');
         $query->where('locale.scope = \'default\' AND path = \'general/locale/code\'');
-        $query = $query->execute();
+        $query = $query->executeQuery();
 
-        if (!($query instanceof ResultStatement)) {
-            return '';
-        }
-
-        return $query->fetch(\PDO::FETCH_COLUMN);
+        return $query->fetchOne();
     }
 
     protected function utf8ize(array $array): array
@@ -101,7 +89,7 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function addTableSelection(QueryBuilder $query, string $table, string $tableAlias): void
     {
-        $columns = $this->connection->getSchemaManager()->listTableColumns($table);
+        $columns = $this->connection->createSchemaManager()->listTableColumns($table);
 
         foreach ($columns as $column) {
             $selection = \str_replace(
@@ -147,8 +135,6 @@ abstract class AbstractReader implements ReaderInterface
 
                 if (empty(\array_filter($value))) {
                     unset($data[$key]);
-
-                    continue;
                 }
             }
         }
@@ -170,13 +156,9 @@ abstract class AbstractReader implements ReaderInterface
 
         $query->setFirstResult($offset);
         $query->setMaxResults($limit);
+        $query = $query->executeQuery();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_COLUMN);
+        return $query->fetchFirstColumn();
     }
 
     protected function fetchIdentifiersByRelation(string $table, string $identifier, string $relationKey, array $relationIds): array
@@ -186,14 +168,10 @@ abstract class AbstractReader implements ReaderInterface
             ->from($table)
             ->where($relationKey . ' IN (:ids)')
             ->addOrderBy($identifier)
-            ->setParameter('ids', $relationIds, Connection::PARAM_STR_ARRAY);
+            ->setParameter('ids', $relationIds, ArrayParameterType::STRING);
+        $query = $query->executeQuery();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_COLUMN);
+        return $query->fetchFirstColumn();
     }
 
     protected function mapData(array $data, array $result = [], array $pathsToRemove = []): array
@@ -260,11 +238,13 @@ AND attribute.frontend_input IS NOT NULL
 GROUP BY {$entity}.entity_id, attribute_code, value;
 SQL;
 
-        return $this->connection->executeQuery(
+        $rows = $this->connection->executeQuery(
             $sql,
             [$ids, $customAttributes],
-            [Connection::PARAM_STR_ARRAY, Connection::PARAM_STR_ARRAY]
-        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+            [ArrayParameterType::STRING, ArrayParameterType::STRING]
+        )->fetchAllAssociative();
+
+        return FetchModeHelper::group($rows);
     }
 
     protected function appendAttributes(array &$fetchedEntities, array $fetchDefaultAttributes): void

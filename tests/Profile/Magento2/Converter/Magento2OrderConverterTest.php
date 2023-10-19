@@ -83,6 +83,8 @@ class Magento2OrderConverterTest extends TestCase
      */
     private $shippedDeliveryState;
 
+    private string $storeUuid;
+
     protected function setUp(): void
     {
         $this->mappingService = new DummyMagentoMappingService();
@@ -107,6 +109,17 @@ class Magento2OrderConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
+        $this->storeUuid = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE,
+            '1',
+            $context,
+            null,
+            null,
+            $this->storeUuid
+        );
+
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::CUSTOMER,
@@ -278,6 +291,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
+        static::assertSame($this->storeUuid, $converted['salesChannelId']);
         static::assertSame(\round((float) $orderData[0]['orders']['subtotal'] + (float) $orderData[0]['orders']['shipping_amount'], 2), $converted['price']->getNetPrice());
         static::assertSame(\round((float) $orderData[0]['orders']['grand_total'], 2), $converted['price']->getTotalPrice());
         static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);

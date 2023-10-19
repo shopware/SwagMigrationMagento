@@ -7,17 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection as ConnectionAlias;
+use Doctrine\DBAL\ArrayParameterType;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
 abstract class ProductPropertyRelationReader extends AbstractReader
 {
-    /**
-     * @var int
-     */
-    protected $productEntityTypeId;
+    protected int $productEntityTypeId;
 
     public function read(MigrationContextInterface $migrationContext): array
     {
@@ -54,7 +51,7 @@ AND entity_int.attribute_id IN (
     AND eav_settings.is_configurable = 1
 );
 SQL;
-        $total = (int) $this->connection->executeQuery($query)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($query)->fetchOne();
 
         return new TotalStruct(DefaultEntities::PRODUCT_PROPERTY_RELATION, $total);
     }
@@ -90,13 +87,13 @@ SQL;
                 'offset' => $migrationContext->getOffset(),
             ],
             [
-                'validTypes' => ConnectionAlias::PARAM_STR_ARRAY,
+                'validTypes' => ArrayParameterType::STRING,
                 'limit' => \PDO::PARAM_INT,
                 'offset' => \PDO::PARAM_INT,
             ]
         );
 
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->fetchAllAssociative();
     }
 
     private function readProductEntityTypeId(): int
@@ -105,6 +102,6 @@ SQL;
 SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = 'catalog_product';
 SQL;
 
-        return (int) $this->connection->executeQuery($sql)->fetchColumn();
+        return (int) $this->connection->executeQuery($sql)->fetchOne();
     }
 }

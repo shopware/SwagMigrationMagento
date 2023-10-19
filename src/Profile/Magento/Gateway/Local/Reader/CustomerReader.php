@@ -7,7 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -57,7 +57,7 @@ abstract class CustomerReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}customer_entity;
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::CUSTOMER, $total);
     }
@@ -71,7 +71,7 @@ WHERE customer.entity_id IN (?)
 ORDER BY customer.entity_id;
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();
     }
 
     protected function fetchAddresses(array $ids): array
@@ -88,6 +88,6 @@ LEFT JOIN {$this->tablePrefix}directory_country AS directory_country ON director
  WHERE customer_address.parent_id IN (?);
 SQL;
 
-        return $this->connection->executeQuery($sql, [$ids], [Connection::PARAM_STR_ARRAY])->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();
     }
 }

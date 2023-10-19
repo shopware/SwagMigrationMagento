@@ -7,8 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\ResultStatement;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -51,7 +51,7 @@ abstract class OrderReader extends AbstractReader
 SELECT COUNT(*)
 FROM {$this->tablePrefix}sales_flat_order;
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::ORDER, $total);
     }
@@ -85,14 +85,9 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_address', 'shippingAddress');
 
         $query->where('orders.entity_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll(\PDO::FETCH_ASSOC);
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function fetchDetails(array $ids): array
@@ -108,14 +103,11 @@ SQL;
 
         $query->where('items.order_id IN (:ids)');
         $query->andWhere('items.product_type != \'configurable\'');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+        return FetchModeHelper::group($result);
     }
 
     protected function fetchShipments(array $ids): array
@@ -127,14 +119,14 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_shipment', 'shipment');
 
         $query->where('shipment.order_id IN (:ids)');
-        $query->setParameter('ids', $ids, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $ids, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $shipments = $this->mapData($query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC), [], ['shipment']);
+        $result = $query->executeQuery()->fetchAllAssociative();
+        $shipments = $this->mapData(
+            FetchModeHelper::group($result),
+            [],
+            ['shipment']
+        );
 
         $shipmentIds = [];
         foreach ($shipments as $shipment) {
@@ -153,14 +145,14 @@ SQL;
         $query->addSelect('childOrderItem.item_id as `item.child_item_id`');
 
         $query->where('item.parent_id in (:ids)');
-        $query->setParameter('ids', $shipmentIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('ids', $shipmentIds, ArrayParameterType::STRING);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $shipmentItems = $this->mapData($query->fetchAll(\PDO::FETCH_GROUP), [], ['item']);
+        $result = $query->executeQuery()->fetchAllAssociative();
+        $shipmentItems = $this->mapData(
+            FetchModeHelper::group($result),
+            [],
+            ['item']
+        );
 
         foreach ($shipments as &$shipment) {
             foreach ($shipment as &$value) {

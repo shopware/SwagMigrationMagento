@@ -7,7 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 abstract class CurrencyReader extends AbstractReader
@@ -37,14 +37,9 @@ abstract class CurrencyReader extends AbstractReader
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value');
         $query->andWhere('path = \'currency/options/allow\'');
-        $query = $query->execute();
+        $rows = $query->executeQuery()->fetchAllAssociative();
 
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configurations = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
-
+        $configurations = FetchModeHelper::groupUnique($rows);
         $currencyConfig = [];
         foreach ($configurations as $config) {
             if (isset($config['value'])) {
@@ -62,14 +57,8 @@ abstract class CurrencyReader extends AbstractReader
         $query->from($this->tablePrefix . 'core_config_data', 'baseCurrency');
         $query->addSelect('value');
         $query->andwhere('path = \'currency/options/base\' AND scope = \'default\'');
-        $query = $query->execute();
 
-        if (!($query instanceof ResultStatement)) {
-            return '';
-        }
-
-        $value = $query->fetch(\PDO::FETCH_COLUMN);
-
+        $value = $query->executeQuery()->fetchOne();
         if ($value === false) {
             return '';
         }

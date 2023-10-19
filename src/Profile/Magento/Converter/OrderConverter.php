@@ -17,70 +17,45 @@ use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRule;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
-use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as MagentoOrderDeliveryStateReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 
 abstract class OrderConverter extends MagentoConverter
 {
-    /**
-     * @var MagentoMappingServiceInterface
-     */
-    protected $mappingService;
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * @var string
-     */
-    protected $uuid;
+    protected string $uuid;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
-    /**
-     * @var TaxCalculator
-     */
-    protected $taxCalculator;
+    protected TaxCalculator $taxCalculator;
 
-    /**
-     * @var string
-     */
-    protected $salutationUuid;
+    protected string $salutationUuid;
 
-    /**
-     * @var NumberRangeValueGeneratorInterface
-     */
-    protected $numberRangeValueGenerator;
+    protected NumberRangeValueGeneratorInterface $numberRangeValueGenerator;
 
     /**
      * @var string[]
@@ -185,9 +160,31 @@ abstract class OrderConverter extends MagentoConverter
         /*
          * Set sales channel
          */
-        $converted['salesChannelId'] = Defaults::SALES_CHANNEL;
         if (isset($data['orders']['store_id'])) {
             $this->convertSalesChannel($converted, $data);
+        }
+
+        if (!isset($converted['salesChannelId'])) {
+            $this->setSalesChannelIdViaAdminStore($converted);
+
+            if (!isset($converted['salesChannelId'])) {
+                if (isset($data['orders']['store_id'])) {
+                    $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                        $this->runId,
+                        MagentoDefaultEntities::STORE,
+                        $data['orders']['store_id'],
+                        DefaultEntities::ORDER));
+                } else {
+                    $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                        $this->runId,
+                        DefaultEntities::ORDER,
+                        $this->oldIdentifier,
+                        'store_id'
+                    ));
+                }
+
+                return new ConvertStruct(null, $this->originalData);
+            }
         }
 
         if (!$this->convertOrderCustomer($converted, $data)) {
@@ -799,7 +796,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->salutationUuid = $mapping['entityUuid'];
         }
 
-        if ($this->salutationUuid === null) {
+        if (!isset($this->salutationUuid)) {
             return false;
         }
         $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
@@ -874,7 +871,7 @@ abstract class OrderConverter extends MagentoConverter
         return true;
     }
 
-    protected function convertSalesChannel(array &$converted, array &$data): void
+    protected function convertSalesChannel(array &$converted, array $data): void
     {
         $salesChannelMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -886,6 +883,31 @@ abstract class OrderConverter extends MagentoConverter
         if ($salesChannelMapping !== null) {
             $this->mappingIds[] = $salesChannelMapping['id'];
             $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+        }
+    }
+
+    private function setSalesChannelIdViaAdminStore(array &$converted): void
+    {
+        $adminStore = $this->mappingService->getMapping(
+            $this->connectionId,
+            AdminStoreReader::getMappingName(),
+            'admin_store',
+            $this->context
+        );
+
+        if ($adminStore !== null) {
+            $adminStoreId = $adminStore['entityValue'];
+            $salesChannelMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                MagentoDefaultEntities::STORE,
+                $adminStoreId,
+                $this->context
+            );
+
+            if ($salesChannelMapping !== null) {
+                $this->mappingIds[] = $salesChannelMapping['id'];
+                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+            }
         }
     }
 

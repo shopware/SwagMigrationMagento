@@ -7,7 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -24,6 +25,10 @@ abstract class CategoryReader extends AbstractReader
         $this->appendTranslations($ids, $fetchedCategories);
 
         foreach ($fetchedCategories as &$category) {
+            if ($category['defaultLocale'] === null) {
+                continue;
+            }
+
             $category['defaultLocale'] = \str_replace('_', '-', $category['defaultLocale']);
         }
 
@@ -39,7 +44,7 @@ SELECT COUNT(*)
 FROM {$this->tablePrefix}catalog_category_entity
 WHERE parent_id != 0;
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::CATEGORY, $total);
     }
@@ -122,7 +127,7 @@ SQL;
             $sql,
             [$migrationContext->getLimit(), $migrationContext->getOffset()],
             [\PDO::PARAM_INT, \PDO::PARAM_INT]
-        )->fetchAll(\PDO::FETCH_ASSOC);
+        )->fetchAllAssociative();
     }
 
     protected function appendTranslations(array $ids, array &$fetchedCategories): void
@@ -197,12 +202,13 @@ AND CASE attribute.backend_type
 GROUP BY category.entity_id, attribute_id, attribute_code, value, store_id;
 SQL;
 
-        $fetchedTranslations = $this->connection->executeQuery(
+        $rows = $this->connection->executeQuery(
             $sql,
             [$ids],
-            [Connection::PARAM_STR_ARRAY]
-        )->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_ASSOC);
+            [ArrayParameterType::STRING]
+        )->fetchAllAssociative();
 
+        $fetchedTranslations = FetchModeHelper::group($rows);
         foreach ($fetchedCategories as &$fetchedCategory) {
             if (isset($fetchedTranslations[$fetchedCategory['entity_id']])) {
                 $attributes = $fetchedTranslations[$fetchedCategory['entity_id']];

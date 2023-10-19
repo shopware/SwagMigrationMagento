@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -84,7 +86,7 @@ SELECT COUNT(*)
 FROM {$this->tablePrefix}core_store_group
 WHERE website_id != 0;
 SQL;
-        $total = (int) $this->connection->executeQuery($sql)->fetchColumn();
+        $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
         return new TotalStruct(DefaultEntities::SALES_CHANNEL, $total);
     }
@@ -131,12 +133,7 @@ SQL;
         );
         $query->addSelect('defaultLocale.value AS defaultLocale');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $defaults = $query->fetch(\PDO::FETCH_ASSOC);
+        $defaults = $query->executeQuery()->fetchAssociative();
 
         if ($defaults['defaultAllowedCurrencies'] === null) {
             $defaults['defaultAllowedCountries'] = '';
@@ -167,12 +164,7 @@ SQL;
         $query->setFirstResult($migrationContext->getOffset());
         $query->setMaxResults($migrationContext->getLimit());
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        return $query->fetchAll();
+        return $query->executeQuery()->fetchAllAssociative();
     }
 
     protected function fetchStoreViews(array $groupIds): array
@@ -184,14 +176,11 @@ SQL;
         $this->addTableSelection($query, $this->tablePrefix . 'core_store', 'storeView');
 
         $query->andWhere('storeView.group_id IN (:ids)');
-        $query->setParameter('ids', $groupIds, Connection::PARAM_INT_ARRAY);
+        $query->setParameter('ids', $groupIds, ArrayParameterType::INTEGER);
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
+        $result = $query->fetchAllAssociative();
 
-        return $query->fetchAll(\PDO::FETCH_GROUP);
+        return FetchModeHelper::group($result);
     }
 
     protected function fetchCarriers(): array
@@ -216,7 +205,7 @@ WHERE carrier.carrier_id = carrier_active.carrier_id
 ORDER BY carrier_active.scope
 SQL;
 
-        return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     protected function setCarriers(array &$store, array $carriers): void
@@ -263,7 +252,7 @@ WHERE payment.payment_id = payment_active.payment_id
 ORDER BY payment_active.scope;
 SQL;
 
-        return $this->connection->executeQuery($sql)->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->connection->executeQuery($sql)->fetchAllAssociative();
     }
 
     protected function setPayments(array &$store, array $payments): void
@@ -300,15 +289,10 @@ SQL;
         $query->andWhere('scope = \'websites\'');
         $query->andWhere('scope_id IN (:websiteId)');
         $query->andWhere('(path = \'currency/options/allow\' OR path = \'general/locale/code\' OR path = \'currency/options/default\' OR path = \'general/country/allow\' OR path = \'general/country/default\')');
-        $query->setParameter('websiteId', $websiteIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('websiteId', $websiteIds, ArrayParameterType::STRING);
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configs = $query->fetchAll(\PDO::FETCH_GROUP);
-
+        $configs = FetchModeHelper::group($result);
         $returnConfig = [];
         foreach ($configs as $key => $config) {
             foreach ($config as $entry) {
@@ -366,15 +350,10 @@ SQL;
         $query->andWhere('scope = \'stores\'');
         $query->andWhere('scope_id IN (:storeId)');
         $query->andWhere('path = \'currency/options/allow\'');
-        $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('storeId', $storeIds, ArrayParameterType::STRING);
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $storeCurrencies = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
-
+        $storeCurrencies = FetchModeHelper::groupUnique($result);
         foreach ($storeCurrencies as $key => $storeCurrency) {
             if (isset($storeCurrency['currencies'])) {
                 $storeCurrencies[$key] = \explode(',', $storeCurrency['currencies']);
@@ -396,15 +375,10 @@ SQL;
         $query->andWhere('scope = \'stores\'');
         $query->andWhere('scope_id IN (:storeId)');
         $query->andWhere('path = \'general/country/allow\' OR path = \'general/country/default\'');
-        $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('storeId', $storeIds, ArrayParameterType::STRING);
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configurations = $query->fetchAll(\PDO::FETCH_GROUP);
-
+        $configurations = FetchModeHelper::group($result);
         $storeCountryConfig = [];
         foreach ($configurations as $key => $storeConfig) {
             foreach ($storeConfig as $config) {
@@ -430,15 +404,10 @@ SQL;
         $query->addSelect('value AS locale');
 
         $query->orWhere('scope = \'stores\' AND scope_id IN (:storeId) AND path = \'general/locale/code\'');
-        $query->setParameter('storeId', $storeIds, Connection::PARAM_STR_ARRAY);
+        $query->setParameter('storeId', $storeIds, ArrayParameterType::STRING);
+        $result = $query->executeQuery()->fetchAllAssociative();
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configurations = $query->fetchAll(\PDO::FETCH_GROUP | \PDO::FETCH_UNIQUE);
-
+        $configurations = FetchModeHelper::groupUnique($result);
         $storeConfigs = [];
         foreach ($configurations as $key => $storeConfig) {
             $storeConfigs[$key] = \str_replace('_', '-', $storeConfig['locale']);

@@ -104,6 +104,12 @@ class DummyMagentoMappingService extends MagentoMappingService
     public function pushValueMapping(string $connectionId, string $entity, string $oldIdentifier, string $value): void
     {
         $this->values[$entity][$oldIdentifier] = $value;
+        $this->mappings[\md5($entity . $oldIdentifier)] = [
+            'connectionId' => $connectionId,
+            'entity' => $entity,
+            'oldIdentifier' => $oldIdentifier,
+            'entityValue' => $value,
+        ];
     }
 
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array
@@ -147,7 +153,11 @@ class DummyMagentoMappingService extends MagentoMappingService
     public function deleteMapping(string $entityUuid, string $connectionId, Context $context): void
     {
         foreach ($this->writeArray as $writeMapping) {
-            if ($writeMapping['connectionId'] === $connectionId && $writeMapping['entityUuid'] === $entityUuid) {
+            if (
+                isset($writeMapping['entityUuid']) &&
+                $writeMapping['connectionId'] === $connectionId &&
+                $writeMapping['entityUuid'] === $entityUuid
+            ) {
                 unset($writeMapping);
 
                 break;
@@ -155,7 +165,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         }
 
         foreach ($this->mappings as $hash => $mapping) {
-            if ($mapping['entityUuid'] === $entityUuid) {
+            if (isset($mapping['entityUuid']) && $mapping['entityUuid'] === $entityUuid) {
                 unset($this->mappings[$hash]);
             }
         }

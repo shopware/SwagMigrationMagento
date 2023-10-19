@@ -48,12 +48,7 @@ abstract class Magento2LanguageReader extends LanguageReader
         $query->addSelect('websitelocale.value as websiteLocale');
         $query->addSelect('defaultlocale.value as defaultLocale');
 
-        $query = $query->execute();
-        if (!($query instanceof ResultStatement)) {
-            return [];
-        }
-
-        $configurations = $query->fetchAll(\PDO::FETCH_ASSOC);
+        $configurations = $query->executeQuery()->fetchAllAssociative();
 
         $storeConfigs = [];
         foreach ($configurations as $storeConfig) {

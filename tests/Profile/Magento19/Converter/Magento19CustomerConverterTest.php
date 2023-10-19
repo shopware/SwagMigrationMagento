@@ -15,6 +15,8 @@ use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder;
@@ -30,50 +32,27 @@ class Magento19CustomerConverterTest extends TestCase
     use KernelTestBehaviour;
     use DatabaseTransactionBehaviour;
 
-    /**
-     * @var Magento19CustomerConverter
-     */
-    private $customerConverter;
+    private Magento19CustomerConverter $customerConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var string
-     */
-    private $mrMappingUuid;
+    private string $mrMappingUuid;
 
-    /**
-     * @var string
-     */
-    private $paymentMappingUuid;
+    private string $paymentMappingUuid;
 
-    /**
-     * @var string
-     */
-    private $countryMappingUuid;
+    private string $countryMappingUuid;
 
-    /**
-     * @var string
-     */
-    private $customerGroupUuid;
+    private string $customerGroupUuid;
+
+    private string $adminSalesChannelStoreId;
+
+    private string $adminSalesChannelUuid;
 
     protected function setUp(): void
     {
@@ -97,6 +76,24 @@ class Magento19CustomerConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
+        $this->adminSalesChannelStoreId = '3';
+        $this->adminSalesChannelUuid = Uuid::randomHex();
+        $mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            MagentoDefaultEntities::STORE,
+            $this->adminSalesChannelStoreId,
+            $context,
+            null,
+            null,
+            $this->adminSalesChannelUuid
+        );
+        $mappingService->pushValueMapping(
+            $this->connection->getId(),
+            AdminStoreReader::getMappingName(),
+            'admin_store',
+            $this->adminSalesChannelStoreId
+        );
+
         $this->mrMappingUuid = Uuid::randomHex();
         $mappingService->getOrCreateMapping(
             $this->connection->getId(),
@@ -160,6 +157,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
+        static::assertSame($this->adminSalesChannelUuid, $converted['salesChannelId']);
         static::assertNotNull($convertResult->getMappingUuid());
 
         static::assertSame('10000', $converted['customerNumber']);
@@ -247,7 +245,7 @@ class Magento19CustomerConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
-        static::assertSame(Defaults::SALES_CHANNEL, $converted['salesChannelId']);
+        static::assertSame($this->adminSalesChannelUuid, $converted['salesChannelId']);
         static::assertSame('Berg', $converted['lastName']);
         static::assertSame('10000', $converted['customerNumber']);
         static::assertCount(0, $this->loggingService->getLoggingArray());

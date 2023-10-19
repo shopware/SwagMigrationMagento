@@ -8,7 +8,8 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
@@ -31,26 +32,26 @@ abstract class SalutationReader extends AbstractPremappingReader
     /**
      * @var string[]
      */
-    protected $preselectionDictionary = [];
+    protected array $preselectionDictionary = [];
 
     /**
-     * @var EntityRepositoryInterface
+     * @var EntityRepository<EntityCollection<SalutationEntity>>
      */
-    private $salutationRepo;
+    private EntityRepository $salutationRepo;
 
-    /**
-     * @var GatewayRegistryInterface
-     */
-    private $gatewayRegistry;
+    private GatewayRegistryInterface $gatewayRegistry;
 
     /**
      * @var string[]
      */
-    private $choiceUuids;
+    private array $choiceUuids;
 
+    /**
+     * @param EntityRepository<EntityCollection<SalutationEntity>> $salutationRepo
+     */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
-        EntityRepositoryInterface $salutationRepo
+        EntityRepository $salutationRepo
     ) {
         $this->gatewayRegistry = $gatewayRegistry;
         $this->salutationRepo = $salutationRepo;
