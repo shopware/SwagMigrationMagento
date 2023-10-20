@@ -7,12 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento21\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductCustomFieldConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductCustomFieldDataSet;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento21ProductCustomFieldConverter extends ProductCustomFieldConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

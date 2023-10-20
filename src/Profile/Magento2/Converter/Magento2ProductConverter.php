@@ -8,10 +8,12 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 abstract class Magento2ProductConverter extends ProductConverter
 {
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct

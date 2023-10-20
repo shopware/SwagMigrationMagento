@@ -8,9 +8,11 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Driver\ResultStatement;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CountryReader;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 abstract class Magento2CountryReader extends CountryReader
 {
     public function read(MigrationContextInterface $migrationContext, array $params = []): array

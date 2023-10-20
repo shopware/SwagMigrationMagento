@@ -7,12 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Gateway\Local\Reader;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2CustomerReader;
 use Swag\MigrationMagento\Profile\Magento22\Gateway\Local\Magento22LocalGateway;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento22CustomerReader extends Magento2CustomerReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

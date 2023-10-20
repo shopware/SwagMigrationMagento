@@ -9,8 +9,10 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader;
 
+#[Package('services-settings')]
 abstract class Magento2CustomerReader extends CustomerReader
 {
     protected function fetchAddresses(array $ids): array

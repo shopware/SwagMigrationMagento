@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\LanguageDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento19LanguageConverter extends LanguageConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

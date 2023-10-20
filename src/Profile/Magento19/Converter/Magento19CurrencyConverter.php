@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\CurrencyConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento19CurrencyConverter extends CurrencyConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

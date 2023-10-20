@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento19CustomerConverter extends CustomerConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

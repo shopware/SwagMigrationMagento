@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\NewsletterRecipientDataSelection;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -16,6 +17,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
+#[Package('services-settings')]
 abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
 {
     protected const MAPPING_NAME = 'newsletter_status';

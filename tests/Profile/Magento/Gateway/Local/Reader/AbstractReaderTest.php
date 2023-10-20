@@ -8,8 +8,10 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento\Gateway\Local\Reader;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory;
 
+#[Package('services-settings')]
 class AbstractReaderTest extends TestCase
 {
     /**

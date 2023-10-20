@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\CurrencyRegistry;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
@@ -15,6 +16,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 abstract class CurrencyConverter extends MagentoConverter
 {
     protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;

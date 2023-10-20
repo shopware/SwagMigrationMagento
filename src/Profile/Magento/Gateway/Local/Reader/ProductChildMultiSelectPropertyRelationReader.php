@@ -8,10 +8,12 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as DefaultEntitiesAlias;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
+#[Package('services-settings')]
 abstract class ProductChildMultiSelectPropertyRelationReader extends AbstractReader
 {
     protected int $productEntityTypeId;

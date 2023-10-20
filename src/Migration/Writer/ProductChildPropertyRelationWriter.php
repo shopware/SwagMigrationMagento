@@ -7,9 +7,11 @@
 
 namespace Swag\MigrationMagento\Migration\Writer;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Writer\AbstractWriter;
 
+#[Package('services-settings')]
 class ProductChildPropertyRelationWriter extends AbstractWriter
 {
     public function supports(): string

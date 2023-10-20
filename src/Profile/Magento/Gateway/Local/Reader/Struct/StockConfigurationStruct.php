@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\Struct;
 
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Struct\Struct;
 
+#[Package('services-settings')]
 class StockConfigurationStruct extends Struct
 {
     /**

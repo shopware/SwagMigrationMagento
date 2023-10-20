@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2ProductConverter;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento22ProductConverter extends Magento2ProductConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento22\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDataSet;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento22PropertyGroupConverter extends PropertyGroupConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

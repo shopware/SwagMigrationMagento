@@ -7,8 +7,10 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway;
 
+use Shopware\Core\Framework\Log\Package;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 interface TableReaderInterface
 {
     /**

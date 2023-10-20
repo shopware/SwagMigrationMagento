@@ -9,11 +9,13 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\Driver\ResultStatement;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\PropertyGroupReader;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
+#[Package('services-settings')]
 abstract class Magento2PropertyGroupReader extends PropertyGroupReader
 {
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct

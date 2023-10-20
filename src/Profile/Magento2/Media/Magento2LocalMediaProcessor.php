@@ -8,9 +8,11 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Media;
 
 use GuzzleHttp\Client;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 abstract class Magento2LocalMediaProcessor extends LocalMediaProcessor
 {
     public const PUBLIC_PATH = '/pub';

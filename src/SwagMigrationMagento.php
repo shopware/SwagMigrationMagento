@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento;
 
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Plugin;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 
+#[Package('services-settings')]
 class SwagMigrationMagento extends Plugin
 {
     /**

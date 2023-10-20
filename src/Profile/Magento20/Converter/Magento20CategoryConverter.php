@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento20CategoryConverter extends CategoryConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

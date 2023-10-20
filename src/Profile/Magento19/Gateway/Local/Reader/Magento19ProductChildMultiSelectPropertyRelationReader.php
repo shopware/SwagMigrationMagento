@@ -7,12 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Reader;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildMultiSelectPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductChildMultiSelectPropertyRelationReader;
 use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento19ProductChildMultiSelectPropertyRelationReader extends ProductChildMultiSelectPropertyRelationReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

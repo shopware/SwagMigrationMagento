@@ -20,6 +20,7 @@ use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
@@ -36,6 +37,7 @@ use SwagMigrationAssistant\Migration\MessageQueue\Handler\ProcessMediaHandler;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Media\BaseMediaService;
 
+#[Package('services-settings')]
 class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
 {
     /**

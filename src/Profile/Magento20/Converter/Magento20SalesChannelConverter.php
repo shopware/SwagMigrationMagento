@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SalesChannelDataSet;
 use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2SalesChannelConverter;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento20SalesChannelConverter extends Magento2SalesChannelConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

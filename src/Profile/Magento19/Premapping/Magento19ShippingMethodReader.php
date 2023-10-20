@@ -7,10 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento19\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento19ShippingMethodReader extends ShippingMethodReader
 {
     /**

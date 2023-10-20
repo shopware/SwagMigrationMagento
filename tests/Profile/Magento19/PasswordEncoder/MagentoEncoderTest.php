@@ -8,8 +8,10 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento\PasswordEncoder;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder;
 
+#[Package('services-settings')]
 class MagentoEncoderTest extends TestCase
 {
     public function testGetDisplayName(): void

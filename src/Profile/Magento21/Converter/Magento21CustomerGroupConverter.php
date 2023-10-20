@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento21\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\CustomerGroupConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerGroupDataSet;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento21CustomerGroupConverter extends CustomerGroupConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

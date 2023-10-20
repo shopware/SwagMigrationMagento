@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -29,6 +30,7 @@ use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredM
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+#[Package('services-settings')]
 class Magento2OrderConverterTest extends TestCase
 {
     use KernelTestBehaviour;

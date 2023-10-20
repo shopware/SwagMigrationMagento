@@ -13,6 +13,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\System\Salutation\SalutationEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
@@ -25,6 +26,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
+#[Package('services-settings')]
 abstract class SalutationReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'salutation';

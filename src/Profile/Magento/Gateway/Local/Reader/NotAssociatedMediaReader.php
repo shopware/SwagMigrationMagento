@@ -7,9 +7,11 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 abstract class NotAssociatedMediaReader extends AbstractReader
 {
     protected string $sourcePath;

@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
@@ -17,6 +18,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
+#[Package('services-settings')]
 abstract class CustomerGroupReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'customer_group';

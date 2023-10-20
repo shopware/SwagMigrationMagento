@@ -7,10 +7,12 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Premapping;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CountryReader;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento23CountryReader extends Magento2CountryReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

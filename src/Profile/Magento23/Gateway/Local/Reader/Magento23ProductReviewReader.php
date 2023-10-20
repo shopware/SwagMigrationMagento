@@ -7,12 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Reader;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReviewReader;
 use Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Magento23LocalGateway;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento23ProductReviewReader extends ProductReviewReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

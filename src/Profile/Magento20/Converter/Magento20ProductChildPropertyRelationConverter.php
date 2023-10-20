@@ -7,11 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento20\Converter;
 
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\ProductPropertyRelationConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductChildPropertyRelationDataSet;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+#[Package('services-settings')]
 class Magento20ProductChildPropertyRelationConverter extends ProductPropertyRelationConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool
