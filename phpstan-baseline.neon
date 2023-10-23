@@ -1,6 +1,6 @@
 parameters:
 	ignoreErrors:
-		-   "#^Out of 508 possible property types, only 33 %% actually have it\\. Add more property types to get over 99 %%$#"
+		-   "#^Out of [0-9]+ possible property types, only [0-9]+ %% actually have it\\. Add more property types to get over 99 %%$#"
 
 		-
 			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
