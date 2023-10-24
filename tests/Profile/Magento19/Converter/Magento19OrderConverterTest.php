@@ -17,6 +17,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\OrderDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as MagentoOrderDeliveryStateReader;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19OrderConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
@@ -26,6 +27,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
+use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 #[Package('services-settings')]
@@ -54,6 +56,8 @@ class Magento19OrderConverterTest extends TestCase
     private $billingAddressId;
 
     private string $shippingAddressId;
+
+    private string $shippingMethodId;
 
     private string $storeUuid;
 
@@ -202,6 +206,27 @@ class Magento19OrderConverterTest extends TestCase
             null,
             $this->shippingAddressId
         );
+
+        $this->shippingMethodId = Uuid::randomHex();
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::SHIPPING_METHOD,
+            'ups',
+            $context,
+            null,
+            null,
+            $this->shippingMethodId
+        );
+
+        $this->mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            OrderDeliveryStateReader::getMappingName(),
+            MagentoOrderDeliveryStateReader::DEFAULT_OPEN_STATUS,
+            $context,
+            null,
+            null,
+            Uuid::randomHex()
+        );
     }
 
     public function testSupports(): void
@@ -224,6 +249,37 @@ class Magento19OrderConverterTest extends TestCase
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->storeUuid, $converted['salesChannelId']);
         static::assertNotNull($convertResult->getMappingUuid());
+    }
+
+    public function testConvertWithShippingMethod(): void
+    {
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $order = $orderData[0];
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($converted);
+        static::assertArrayHasKey('deliveries', $converted);
+        static::assertArrayHasKey('shippingMethodId', $converted['deliveries'][0]);
+        static::assertSame($this->shippingMethodId, $converted['deliveries'][0]['shippingMethodId']);
+    }
+
+    public function testConvertWithoutShippingMethod(): void
+    {
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $order = $orderData[0];
+        $order['orders']['shipping_method'] = null;
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
+
+        $converted = $convertResult->getConverted();
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($converted);
+        static::assertArrayNotHasKey('deliveries', $converted);
     }
 
     public function testConvertWithoutCustomer(): void

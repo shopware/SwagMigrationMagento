@@ -1077,6 +1077,10 @@ abstract class OrderConverter extends MagentoConverter
             $this->context
         );
 
+        if (!isset($data['orders']['shipping_method'])) {
+            return;
+        }
+
         $shippingMethodId = $this->getShippingMethod($data['orders']['shipping_method']);
 
         if ($deliveryStateMapping === null || $shippingMethodId === null) {
