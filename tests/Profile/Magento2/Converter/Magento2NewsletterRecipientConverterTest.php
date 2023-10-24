@@ -99,10 +99,14 @@ class Magento2NewsletterRecipientConverterTest extends TestCase
         );
 
         $this->newsletterStatus = 'Subscribed';
-        $this->mappingService->pushValueMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             Magento23NewsletterRecipientStatusReader::getMappingName(),
             '1',
+            Context::createDefaultContext(),
+            null,
+            null,
+            null,
             $this->newsletterStatus
         );
 

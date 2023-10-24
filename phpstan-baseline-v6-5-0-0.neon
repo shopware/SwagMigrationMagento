@@ -721,11 +721,6 @@ parameters:
 			path: src/Profile/Magento2/Premapping/Magento2LanguageReader.php
 
 		-
-			message: "#^Access to an undefined property Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:\\$uuids\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
-
-		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
 			count: 3
 			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
@@ -889,11 +884,6 @@ parameters:
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Converter\\\\Magento19PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Offset 'customerGroupId' does not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
 
 		-
 			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"

@@ -83,7 +83,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'default_shipping_method', $context, null, null, $this->defaultShippingMethodId);
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, $this->defaultCustomerGroupId, $context, null, null, Uuid::randomHex());
-        $this->mappingService->pushValueMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $this->defaultCustomerGroupId);
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $context, null, null, null, $this->defaultCustomerGroupId);
     }
 
     public function testSupports(): void
