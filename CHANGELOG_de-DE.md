@@ -1,4 +1,4 @@
-# REPLACE-GLOBALLY-WITH-NEXT-VERSION
+# 5.0.0
 - MIG-859 - Profil für Shopware 6.5 aktualisiert
 
 # 4.0.3
