@@ -99,10 +99,14 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
         );
 
         $this->newsletterStatus = 'Subscribed';
-        $this->mappingService->pushValueMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             Magento19NewsletterRecipientStatusReader::getMappingName(),
             '1',
+            Context::createDefaultContext(),
+            null,
+            null,
+            null,
             $this->newsletterStatus
         );
 

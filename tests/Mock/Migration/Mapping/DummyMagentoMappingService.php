@@ -100,18 +100,11 @@ class DummyMagentoMappingService extends MagentoMappingService
 
     public function getValue(string $connectionId, string $entityName, string $oldIdentifier, Context $context): ?string
     {
-        return $this->values[$entityName][$oldIdentifier] ?? null;
-    }
+        if (!isset($this->mappings[\md5($entityName . $oldIdentifier)])) {
+            return null;
+        }
 
-    public function pushValueMapping(string $connectionId, string $entity, string $oldIdentifier, string $value): void
-    {
-        $this->values[$entity][$oldIdentifier] = $value;
-        $this->mappings[\md5($entity . $oldIdentifier)] = [
-            'connectionId' => $connectionId,
-            'entity' => $entity,
-            'oldIdentifier' => $oldIdentifier,
-            'entityValue' => $value,
-        ];
+        return $this->mappings[\md5($entityName . $oldIdentifier)]['entityValue'];
     }
 
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array
@@ -137,17 +130,13 @@ class DummyMagentoMappingService extends MagentoMappingService
                 $oldIdentifier,
                 $updateData['checksum'] ?? null,
                 $updateData['additionalData'] ?? null,
-                $updateData['entityUuid'] ?? null
+                $updateData['entityUuid'] ?? null,
+                $updateData['entityValue'] ?? null,
             );
         }
 
         $mapping = \array_merge($mapping, $updateData);
         $this->saveMapping($mapping);
-
-        // required for tests
-        if (isset($mapping['entityValue'])) {
-            $this->values[$entityName][$oldIdentifier] = $mapping['entityValue'];
-        }
 
         return $mapping;
     }
@@ -171,15 +160,6 @@ class DummyMagentoMappingService extends MagentoMappingService
                 unset($this->mappings[$hash]);
             }
         }
-    }
-
-    public function pushMapping(string $connectionId, string $entity, string $oldIdentifier, string $uuid): void
-    {
-        $this->uuids[$entity][$oldIdentifier] = $uuid;
-    }
-
-    public function bulkDeleteMapping(array $mappingUuids, Context $context): void
-    {
     }
 
     public function getLanguageUuid(string $connectionId, string $localeCode, Context $context, bool $withoutMapping = false): ?string

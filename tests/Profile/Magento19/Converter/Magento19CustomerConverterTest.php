@@ -89,10 +89,14 @@ class Magento19CustomerConverterTest extends TestCase
             null,
             $this->adminSalesChannelUuid
         );
-        $mappingService->pushValueMapping(
+        $mappingService->getOrCreateMapping(
             $this->connection->getId(),
             AdminStoreReader::getMappingName(),
             'admin_store',
+            $context,
+            null,
+            null,
+            null,
             $this->adminSalesChannelStoreId
         );
 

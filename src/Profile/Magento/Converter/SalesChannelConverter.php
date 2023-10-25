@@ -202,10 +202,14 @@ abstract class SalesChannelConverter extends MagentoConverter
             $languageUuid = $defaultLanguage->getId();
         }
 
-        $this->mappingService->pushValueMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::LOCALE,
             'global_default',
+            $context,
+            null,
+            null,
+            null,
             $data['defaultLocale']
         );
 

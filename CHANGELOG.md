@@ -1,3 +1,6 @@
+# REPLACE-GLOBALLY-WITH-NEXT-VERSION
+- MIG-859 - Update profile for Shopware 6.5
+
 # 4.0.3
 - MIG-269 - Fix missing order data for systems where MySQL trigger do not work
 

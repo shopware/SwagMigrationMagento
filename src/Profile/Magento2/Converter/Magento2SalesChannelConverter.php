@@ -115,7 +115,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
         $this->setStores($data, $converted);
 
-        $languageUuid = $this->setLanguageUuid($data, $converted);
+        $languageUuid = $this->setLanguageUuid($data, $converted, $context);
         if ($languageUuid === null) {
             return new ConvertStruct(null, $this->originalData);
         }
@@ -199,7 +199,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         unset($data['storeViews']);
     }
 
-    protected function setLanguageUuid(array &$data, array &$converted): ?string
+    protected function setLanguageUuid(array &$data, array &$converted, Context $context): ?string
     {
         $languageUuid = null;
         if (!empty($data['defaultLocale'])) {
@@ -235,10 +235,14 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $languageUuid = $languageMapping['entityUuid'];
         }
 
-        $this->mappingService->pushValueMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::LOCALE,
             'global_default',
+            $context,
+            null,
+            null,
+            null,
             $data['defaultLocale']
         );
 

@@ -87,7 +87,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'usps', $context, null, null, Uuid::randomHex());
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::SHIPPING_METHOD, 'default_shipping_method', $context, null, null, $this->defaultShippingMethodId);
         $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, $this->defaultCustomerGroupOldId, $context, null, null, $this->defaultCustomerGroupId);
-        $this->mappingService->pushValueMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $this->defaultCustomerGroupOldId);
+        $this->mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::CUSTOMER_GROUP, 'default_customer_group', $context, null, null, null, $this->defaultCustomerGroupOldId);
     }
 
     public function testSupports(): void
@@ -286,7 +286,11 @@ class Magento19SalesChannelConverterTest extends TestCase
         $this->mappingService->deleteDummyMapping(DefaultEntities::CUSTOMER_GROUP, 'default_customer_group');
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
+        static::assertNull($converted);
 
-        static::assertSame($this->defaultCustomerGroupId, $converted['customerGroupId']);
+        $logs = $this->loggingService->getLoggingArray();
+        static::assertCount(1, $logs);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CUSTOMER_GROUP');
+        static::assertSame($logs[0]['parameters']['sourceId'], 'default_customer_group');
     }
 }

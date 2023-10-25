@@ -69,10 +69,14 @@ class Magento2ProductCustomFieldConverterTest extends TestCase
             250
         );
 
-        $mappingService->pushValueMapping(
+        $mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::LOCALE,
             'global_default',
+            Context::createDefaultContext(),
+            null,
+            null,
+            null,
             'de-DE'
         );
 
