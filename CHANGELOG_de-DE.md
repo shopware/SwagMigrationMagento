@@ -1,3 +1,6 @@
+# 5.1.0
+- NTR - Unterstützung der Abhängigkeit Migration-Assistant ~7.0
+
 # 5.0.0
 - MIG-859 - Profil für Shopware 6.5 aktualisiert
 
