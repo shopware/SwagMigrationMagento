@@ -9,7 +9,7 @@ variables:
 
 include:
   project: 'shopware/6/product/platform'
-  ref: 'trunk'
+  ref: '6.5.x'
   file: '.gitlab/templates/plugin.yml'
 
 phpunit:
@@ -33,27 +33,27 @@ phpunit:
             - mysql:8.0
           DEV_IMAGE: [ 'shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
           MYSQL_CMD: $MYSQL8_CMD
-          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, 'trunk' ]
+          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, '6.5.x' ]
       -   MYSQL_IMAGE:
             - mariadb:10.3
           DEV_IMAGE: [ 'shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
-          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, 'trunk' ]
+          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, '6.5.x' ]
           RUN_IN_MR: 'false'
       - MYSQL_IMAGE:
           - mariadb:10.5
         DEV_IMAGE: [ 'shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
-        PLATFORM_BRANCH: 'trunk'
+        PLATFORM_BRANCH: '6.5.x'
         RUN_IN_MR: 'false'
 
 phpstan:
   script:
     - composer dump-autoload --dev -d "${PROJECT_ROOT}/custom/plugins/SwagMigrationAssistant"
     - >
-        if [ "$PLATFORM_BRANCH" == "trunk" ];
+        if [ "$PLATFORM_BRANCH" == "6.5.x" ];
           then composer phpstan;
           else composer phpstan-min-version
         fi
   parallel:
     matrix:
       -   DEV_IMAGE: ['shopware/development:8.1-composer-2', 'shopware/development:8.2-composer-2' ]
-          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, 'trunk' ]
+          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION, '6.5.x' ]
