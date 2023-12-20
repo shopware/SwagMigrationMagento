@@ -651,7 +651,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['status']);
     }
 
-    public function requiredProperties(): array
+    public static function requiredProperties(): array
     {
         return [
             ['orders', null],

@@ -235,7 +235,7 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertSame($customerData[0]['password_hash'], $converted['legacyPassword']);
     }
 
-    public function requiredProperties(): array
+    public static function requiredProperties(): array
     {
         return [
             ['email', null],
@@ -346,7 +346,7 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertSame($logs[1]['parameters']['emptyField'], 'address data');
     }
 
-    public function requiredAddressProperties(): array
+    public static function requiredAddressProperties(): array
     {
         return [
             ['firstname', null],

@@ -101,7 +101,7 @@ class Magento19ProductMultiSelectPropertyRelationConverterTest extends TestCase
         static::assertSame($relationUuid['entityUuid'], $converted['properties'][0]['id']);
     }
 
-    public function getNormalDataProvider(): array
+    public static function getNormalDataProvider(): array
     {
         $data = require __DIR__ . '/../../../_fixtures/product_property_data.php';
 
@@ -134,7 +134,7 @@ class Magento19ProductMultiSelectPropertyRelationConverterTest extends TestCase
         static::assertNull($converted);
     }
 
-    public function getWithoutMappingDataProvider(): array
+    public static function getWithoutMappingDataProvider(): array
     {
         $data = require __DIR__ . '/../../../_fixtures/product_property_data.php';
 
