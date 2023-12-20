@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\Adapter\Kernel\KernelFactory;
 use Shopware\Core\Framework\Plugin\KernelPluginLoader\StaticKernelPluginLoader;
 use Shopware\Core\DevOps\StaticAnalyze\StaticAnalyzeKernel;
 use Swag\MigrationMagento\SwagMigrationMagento;
@@ -27,27 +27,33 @@ $magentoComposerJson = json_decode((string) file_get_contents($magentoPluginRoot
 $assistantPluginRootPath = $magentoPluginRootPath . '/../SwagMigrationAssistant';
 $assistantComposerJson = json_decode((string) file_get_contents($assistantPluginRootPath . '/composer.json'), true);
 
-$swagAssistant = [
-    'autoload' => $assistantComposerJson['autoload'],
-    'baseClass' => SwagMigrationAssistant::class,
-    'managedByComposer' => false,
-    'name' => 'SwagMigrationAssistant',
-    'version' => $assistantComposerJson['version'],
-    'active' => true,
-    'path' => $assistantPluginRootPath,
+$plugins = [
+    [
+        'autoload' => $assistantComposerJson['autoload'],
+        'baseClass' => SwagMigrationAssistant::class,
+        'managedByComposer' => false,
+        'name' => 'SwagMigrationAssistant',
+        'version' => $assistantComposerJson['version'],
+        'active' => true,
+        'path' => $assistantPluginRootPath,
+    ],
+    [
+        'autoload' => $magentoComposerJson['autoload'],
+        'baseClass' => SwagMigrationMagento::class,
+        'managedByComposer' => false,
+        'name' => 'SwagMigrationMagento',
+        'version' => $magentoComposerJson['version'],
+        'active' => true,
+        'path' => $magentoPluginRootPath,
+    ],
 ];
-$swagMagento = [
-    'autoload' => $magentoComposerJson['autoload'],
-    'baseClass' => SwagMigrationMagento::class,
-    'managedByComposer' => false,
-    'name' => 'SwagMigrationMagento',
-    'version' => $magentoComposerJson['version'],
-    'active' => true,
-    'path' => $magentoPluginRootPath,
-];
-$pluginLoader = new StaticKernelPluginLoader($classLoader, null, [$swagAssistant, $swagMagento]);
 
-$kernel = new StaticAnalyzeKernel('dev', true, $pluginLoader, 'phpstan-test-cache-id');
+$pluginLoader = new StaticKernelPluginLoader($classLoader, null, $plugins);
+
+KernelFactory::$kernelClass = StaticAnalyzeKernel::class;
+/** @var StaticAnalyzeKernel $kernel */
+$kernel = KernelFactory::create('dev', true, $classLoader, $pluginLoader);
+
 $kernel->boot();
 
 $configurationOption = getopt('c:', ['configuration:']);
