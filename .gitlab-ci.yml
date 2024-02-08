@@ -1,6 +1,6 @@
 variables:
   PLATFORM_MIN_VERSION: 'trunk'
-  MIGRATION_ASSISTANT_BRANCH: 'master'
+  MIGRATION_ASSISTANT_BRANCH: 'trunk'
   PLUGIN_DEPENDENCIES:
     value: >
       [
@@ -35,12 +35,7 @@ phpunit:
           MYSQL_CMD: $MYSQL8_CMD
           PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION ]
       -   MYSQL_IMAGE:
-            - mariadb:10.3
-          DEV_IMAGE: [ 'shopware/development:8.2-composer-2', 'shopware/development:8.3-composer-2'  ]
-          PLATFORM_BRANCH: [ $PLATFORM_MIN_VERSION ]
-          RUN_IN_MR: 'false'
-      -   MYSQL_IMAGE:
-            - mariadb:10.5
+            - mariadb:10.11
           DEV_IMAGE: [ 'shopware/development:8.2-composer-2', 'shopware/development:8.3-composer-2'  ]
           PLATFORM_BRANCH:  [ $PLATFORM_MIN_VERSION ]
           RUN_IN_MR: 'false'
