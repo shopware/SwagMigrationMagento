@@ -180,9 +180,7 @@ SQL;
         $query->andWhere('storeView.group_id IN (:ids)');
         $query->setParameter('ids', $groupIds, ArrayParameterType::INTEGER);
 
-        $result = $query->fetchAllAssociative();
-
-        return FetchModeHelper::group($result);
+        return FetchModeHelper::group($query->executeQuery()->fetchAllAssociative());
     }
 
     protected function fetchCarriers(): array
@@ -303,7 +301,7 @@ SQL;
                 }
 
                 $valueKey = null;
-                $value = $entry['value'];
+                $value = (string) $entry['value'];
                 switch ($entry['path']) {
                     case 'general/locale/code':
                         $valueKey = 'defaultLocale';
@@ -386,7 +384,7 @@ SQL;
             foreach ($storeConfig as $config) {
                 if ($config['path'] === 'general/country/allow') {
                     if (isset($storeCountryConfig[$key]['allowedCountries'])) {
-                        $storeCountryConfig[$key]['allowedCountries'] = \explode(',', $config['value']);
+                        $storeCountryConfig[$key]['allowedCountries'] = \explode(',', (string) $config['value']);
                     }
                 } else {
                     $storeCountryConfig[$key]['defaultCountry'] = $config['value'];
@@ -412,7 +410,7 @@ SQL;
         $configurations = FetchModeHelper::groupUnique($result);
         $storeConfigs = [];
         foreach ($configurations as $key => $storeConfig) {
-            $storeConfigs[$key] = \str_replace('_', '-', $storeConfig['locale']);
+            $storeConfigs[$key] = \str_replace('_', '-', (string) $storeConfig['locale']);
         }
         $configurations['stores'] = $storeConfigs;
 
