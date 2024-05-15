@@ -1,5 +1,6 @@
-# REPLACE_GLOBALLY_WITH_NEXT_VERSION
+# 6.0.1
 - MIG-974 - Mehr Länder hinzugefügt
+- MIG-982 - Unterstützung für Migrationsassistent ~11.0 hinzugefügt
 
 # 6.0.0
 - NTR - Unterstützung der Abhängigkeit Migration-Assistant ~10.0
