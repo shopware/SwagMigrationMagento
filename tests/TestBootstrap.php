@@ -11,9 +11,10 @@ if (is_readable(__DIR__ . '/../vendor/shopware/platform/src/Core/TestBootstrappe
     require __DIR__ . '/../vendor/shopware/platform/src/Core/TestBootstrapper.php';
 } elseif (is_readable(__DIR__ . '/../vendor/shopware/core/TestBootstrapper.php')) {
     require __DIR__ . '/../vendor/shopware/core/TestBootstrapper.php';
+} elseif (is_readable(__DIR__ . '/../../../../src/Core/TestBootstrapper.php')) {
+    require __DIR__ . '/../../../../src/Core/TestBootstrapper.php';
 } else {
-    // vendored from platform, only use local TestBootstrapper if not already defined in platform
-    require __DIR__ . '/TestBootstrapper.php';
+    exit('Could not find TestBootstrapper.php');
 }
 
 return (new TestBootstrapper())

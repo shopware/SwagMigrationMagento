@@ -28,44 +28,38 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
     /**
      * @var Magento19NewsletterRecipientConverter
      */
-    private $newsletterRecipientConverter;
+    private Magento19NewsletterRecipientConverter $newsletterRecipientConverter;
 
     /**
      * @var DummyLoggingService
      */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
     /**
      * @var string
      */
-    private $runId;
+    private string $runId;
+
+    private SwagMigrationConnectionEntity $connection;
+
+    private MigrationContext $migrationContext;
 
     /**
      * @var string
      */
-    private $connection;
-
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private string $languageUuid;
 
     /**
      * @var string
      */
-    private $languageUuid;
+    private string $salesChannelUuid;
 
     /**
      * @var string
      */
-    private $salesChannelUuid;
+    private string $newsletterStatus;
 
-    /**
-     * @var string
-     */
-    private $newsletterStatus;
-
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
     protected function setUp(): void
     {
@@ -137,6 +131,7 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
         $convertResult = $this->newsletterRecipientConverter->convert($newsletterRecipientData[0], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
+        self::assertNotNull($converted);
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
