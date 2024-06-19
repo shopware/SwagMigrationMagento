@@ -71,7 +71,7 @@ class DummyMagentoMappingService extends MagentoMappingService
     {
     }
 
-    public function saveMapping(array $mapping): void
+    protected function saveMapping(array $mapping): void
     {
         $entity = $mapping['entity'];
         $oldIdentifier = $mapping['oldIdentifier'];
@@ -145,9 +145,9 @@ class DummyMagentoMappingService extends MagentoMappingService
     {
         foreach ($this->writeArray as $writeMapping) {
             if (
-                isset($writeMapping['entityUuid']) &&
-                $writeMapping['connectionId'] === $connectionId &&
-                $writeMapping['entityUuid'] === $entityUuid
+                isset($writeMapping['entityUuid'])
+                && $writeMapping['connectionId'] === $connectionId
+                && $writeMapping['entityUuid'] === $entityUuid
             ) {
                 unset($writeMapping);
 

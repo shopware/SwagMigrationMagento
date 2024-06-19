@@ -31,13 +31,12 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
-use function round;
 
 #[Package('services-settings')]
 class Magento2OrderConverterTest extends TestCase
 {
-    use KernelTestBehaviour;
     use DatabaseTransactionBehaviour;
+    use KernelTestBehaviour;
 
     /**
      * @var Magento23OrderConverter
@@ -298,7 +297,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
         static::assertSame($this->storeUuid, $converted['salesChannelId']);
         $price = $converted['price'];
-        self::assertInstanceOf(CartPrice::class, $price);
+        static::assertInstanceOf(CartPrice::class, $price);
         static::assertSame(\round((float) $orderData[0]['orders']['subtotal'] + (float) $orderData[0]['orders']['shipping_amount'], 2), $price->getNetPrice());
         static::assertSame(\round((float) $orderData[0]['orders']['grand_total'], 2), $price->getTotalPrice());
         static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);

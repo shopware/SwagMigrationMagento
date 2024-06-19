@@ -8,7 +8,6 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection as ConnectionAlias;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;

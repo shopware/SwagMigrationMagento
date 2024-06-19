@@ -58,7 +58,7 @@ class ShippingMethodReaderTest extends TestCase
      */
     private $upsMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->context = Context::createDefaultContext();
 

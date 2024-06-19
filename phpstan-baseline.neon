@@ -2491,11 +2491,6 @@ parameters:
 			path: tests/DeprecatedTagTest.php
 
 		-
-			message: "#^Change \"saveMapping\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:createListItemMapping\\(\\) has parameter \\$additionalData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
@@ -2556,29 +2551,14 @@ parameters:
 			path: tests/Profile/Magento/Gateway/Local/Reader/DummyReader.php
 
 		-
-			message: "#^Change \"setUp\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
-
-		-
 			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
 
 		-
-			message: "#^Change \"setUp\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Premapping/SalutationReaderTest.php
-
-		-
 			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento/Premapping/SalutationReaderTest.php
-
-		-
-			message: "#^Change \"setUp\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Premapping/ShippingMethodReaderTest.php
 
 		-
 			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"

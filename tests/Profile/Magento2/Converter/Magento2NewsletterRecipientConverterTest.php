@@ -19,44 +19,25 @@ use Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23NewsletterRecipi
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\MigrationContext;
-use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 #[Package('services-settings')]
 class Magento2NewsletterRecipientConverterTest extends TestCase
 {
-    /**
-     * @var Magento23NewsletterRecipientConverter
-     */
     private Magento23NewsletterRecipientConverter $newsletterRecipientConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
     private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
     private string $runId;
 
     private SwagMigrationConnectionEntity $connection;
 
     private MigrationContext $migrationContext;
 
-    /**
-     * @var string
-     */
     private string $languageUuid;
 
-    /**
-     * @var string
-     */
     private string $salesChannelUuid;
 
-    /**
-     * @var string
-     */
     private string $newsletterStatus;
 
     private DummyMagentoMappingService $mappingService;
@@ -131,7 +112,7 @@ class Magento2NewsletterRecipientConverterTest extends TestCase
         $convertResult = $this->newsletterRecipientConverter->convert($newsletterRecipientData[0], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
-        self::assertNotNull($converted);
+        static::assertNotNull($converted);
 
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);

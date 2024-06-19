@@ -11,6 +11,7 @@ use Shopware\Core\Framework\Log\Package;
 
 /**
  * @phpstan-type MappingArray array<string, array{name: string}>
+ *
  * @template-extends AbstractMappingRegistry<MappingArray>
  */
 #[Package('services-settings')]

@@ -358,7 +358,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         MigrationContextInterface $migrationContext,
         Context $context
     ): array {
-        //Do download requests and store the promises
+        // Do download requests and store the promises
         $client = new Client([
             'verify' => false,
         ]);
@@ -368,7 +368,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         /** @var array $results */
         $results = Utils::settle($promises)->wait();
 
-        //handle responses
+        // handle responses
         $failureUuids = [];
         $finishedUuids = [];
         foreach ($results as $uuid => $result) {
