@@ -8,7 +8,6 @@
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
-use Doctrine\DBAL\Connection as ConnectionAlias;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as DefaultEntitiesAlias;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductMultiSelectPropertyRelationReader;
@@ -66,6 +65,7 @@ AND NOT EXISTS(
     WHERE child_rel.child_id = product.entity_id
 ) LIMIT :limit OFFSET :offset;
 SQL;
+
         return $this->connection->executeQuery(
             $sql,
             [

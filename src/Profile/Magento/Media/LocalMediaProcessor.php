@@ -11,6 +11,7 @@ use Doctrine\DBAL\Connection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Promise\Utils;
+use GuzzleHttp\Psr7\Response;
 use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Content\Media\File\MediaFile;
 use Shopware\Core\Content\Media\MediaEntity;
@@ -357,7 +358,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         MigrationContextInterface $migrationContext,
         Context $context
     ): array {
-        //Do download requests and store the promises
+        // Do download requests and store the promises
         $client = new Client([
             'verify' => false,
         ]);
@@ -367,7 +368,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         /** @var array $results */
         $results = Utils::settle($promises)->wait();
 
-        //handle responses
+        // handle responses
         $failureUuids = [];
         $finishedUuids = [];
         foreach ($results as $uuid => $result) {
@@ -403,6 +404,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 continue;
             }
 
+            /** @var Response $response */
             $response = $result['value'];
             $fileExtension = \pathinfo($additionalData['uri'], \PATHINFO_EXTENSION);
             $filePath = \sprintf('_temp/%s.%s', $uuid, $fileExtension);

@@ -138,8 +138,8 @@ abstract class CustomerConverter extends MagentoConverter
          * Set sales channel
          */
         if (isset($data['store_id'])) {
-            $this->setSalesChannelId($data,$converted);
-            $this->setLanguageId($data,$converted);
+            $this->setSalesChannelId($data, $converted);
+            $this->setLanguageId($data, $converted);
             unset($data['store_id']);
         }
 

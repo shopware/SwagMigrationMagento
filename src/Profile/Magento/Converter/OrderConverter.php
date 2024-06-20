@@ -175,7 +175,8 @@ abstract class OrderConverter extends MagentoConverter
                         $this->runId,
                         MagentoDefaultEntities::STORE,
                         $data['orders']['store_id'],
-                        DefaultEntities::ORDER));
+                        DefaultEntities::ORDER
+                    ));
                 } else {
                     $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                         $this->runId,

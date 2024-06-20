@@ -41,7 +41,7 @@ parameters:
 			path: src/Profile/Magento/Converter/CategoryConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: src/Profile/Magento/Converter/CategoryConverter.php
 
@@ -56,7 +56,7 @@ parameters:
 			path: src/Profile/Magento/Converter/CountryConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 4
 			path: src/Profile/Magento/Converter/CrossSellingConverter.php
 
@@ -91,14 +91,9 @@ parameters:
 			path: src/Profile/Magento/Converter/CustomFieldConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 3
 			path: src/Profile/Magento/Converter/CustomFieldConverter.php
-
-		-
-			message: "#^Getter method must return something, not void$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomerConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\CustomerConverter\\:\\:checkUnsetDefaultBillingAddress\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
@@ -191,7 +186,7 @@ parameters:
 			path: src/Profile/Magento/Converter/CustomerConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 3
 			path: src/Profile/Magento/Converter/CustomerConverter.php
 
@@ -211,7 +206,7 @@ parameters:
 			path: src/Profile/Magento/Converter/LanguageConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 4
 			path: src/Profile/Magento/Converter/LanguageConverter.php
 
@@ -276,7 +271,7 @@ parameters:
 			path: src/Profile/Magento/Converter/ManufacturerConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 4
 			path: src/Profile/Magento/Converter/ManufacturerConverter.php
 
@@ -286,7 +281,7 @@ parameters:
 			path: src/Profile/Magento/Converter/MediaConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 2
 			path: src/Profile/Magento/Converter/MediaConverter.php
 
@@ -321,18 +316,13 @@ parameters:
 			path: src/Profile/Magento/Converter/NotAssociatedMediaConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 2
 			path: src/Profile/Magento/Converter/NotAssociatedMediaConverter.php
 
 		-
 			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTransactionStateUuid\\(\\)\\.$#"
 			count: 1
-			path: src/Profile/Magento/Converter/OrderConverter.php
-
-		-
-			message: "#^Getter method must return something, not void$#"
-			count: 2
 			path: src/Profile/Magento/Converter/OrderConverter.php
 
 		-
@@ -471,7 +461,7 @@ parameters:
 			path: src/Profile/Magento/Converter/OrderConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 2
 			path: src/Profile/Magento/Converter/OrderConverter.php
 
@@ -631,11 +621,6 @@ parameters:
 			path: src/Profile/Magento/Converter/ProductReviewConverter.php
 
 		-
-			message: "#^Getter method must return something, not void$#"
-			count: 1
-			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\PropertyGroupConverter\\:\\:getProperties\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
@@ -653,11 +638,6 @@ parameters:
 		-
 			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
 			count: 2
-			path: src/Profile/Magento/Converter/SalesChannelConverter.php
-
-		-
-			message: "#^Getter method must return something, not void$#"
-			count: 1
 			path: src/Profile/Magento/Converter/SalesChannelConverter.php
 
 		-
@@ -726,7 +706,7 @@ parameters:
 			path: src/Profile/Magento/Converter/SalesChannelConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 1
 			path: src/Profile/Magento/Converter/SalesChannelConverter.php
 
@@ -736,7 +716,7 @@ parameters:
 			path: src/Profile/Magento/Converter/SeoUrlConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 1
 			path: src/Profile/Magento/Converter/SeoUrlConverter.php
 
@@ -1027,11 +1007,6 @@ parameters:
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\EnvironmentReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/EnvironmentReader.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\EnvironmentReader\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/EnvironmentReader.php
 
@@ -1521,7 +1496,7 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 2
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
 
@@ -1761,7 +1736,7 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 2
 			path: src/Profile/Magento/Gateway/Local/Reader/Struct/StockConfigurationStruct.php
 
@@ -1799,16 +1774,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\TableReaderInterface\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/TableReaderInterface.php
-
-		-
-			message: "#^Anonymous variable in a `\\$response\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Anonymous variable in a `\\$response\\-\\>getBody\\(\\)\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
 		-
 			message: "#^Cannot call static method getEntity\\(\\) on SwagMigrationAssistant\\\\Migration\\\\DataSelection\\\\DataSet\\\\DataSet\\|null\\.$#"
@@ -2046,7 +2011,7 @@ parameters:
 			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 1
 			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
 
@@ -2516,7 +2481,7 @@ parameters:
 			path: src/Profile/Magento23/Premapping/Magento23AdminStoreReader.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 1
 			path: tests/DeprecatedTagTest.php
 
@@ -2524,11 +2489,6 @@ parameters:
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\DeprecatedTagTest\\:\\:\\$whiteList type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/DeprecatedTagTest.php
-
-		-
-			message: "#^Change \"saveMapping\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:createListItemMapping\\(\\) has parameter \\$additionalData with no value type specified in iterable type array\\.$#"
@@ -2576,7 +2536,7 @@ parameters:
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 1
 			path: tests/Profile/Magento/Gateway/Local/Reader/AbstractReaderTest.php
 
@@ -2591,37 +2551,22 @@ parameters:
 			path: tests/Profile/Magento/Gateway/Local/Reader/DummyReader.php
 
 		-
-			message: "#^Change \"setUp\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
-
-		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
 
 		-
-			message: "#^Change \"setUp\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Premapping/SalutationReaderTest.php
-
-		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento/Premapping/SalutationReaderTest.php
 
 		-
-			message: "#^Change \"setUp\\(\\)\" method visibility to \"protected\" to respect parent method visibility\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Premapping/ShippingMethodReaderTest.php
-
-		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento/Premapping/ShippingMethodReaderTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
 
@@ -2641,7 +2586,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
 
@@ -2676,7 +2621,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 9
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
 
@@ -2691,7 +2636,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
 
@@ -2731,7 +2676,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
 
@@ -2746,7 +2691,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 7
 			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
 
@@ -2761,7 +2706,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
 
@@ -2776,7 +2721,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
 
@@ -2791,37 +2736,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
 
 		-
-			message: "#^Anonymous variable in a `\\$this\\-\\>mappingService\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 9
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19NewsletterRecipientConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19NewsletterRecipientConverterTest\\:\\:\\$mappingService has no type specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
 
@@ -2846,7 +2761,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
 
@@ -2886,7 +2801,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildMultiSelectPropertyRelationConverterTest.php
 
@@ -2911,17 +2826,17 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildPropertyRelationTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildPropertyRelationTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 7
 			path: tests/Profile/Magento19/Converter/Magento19ProductConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
 
@@ -2956,7 +2871,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConvertTest.php
 
@@ -2981,7 +2896,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConverterTest.php
 
@@ -3006,7 +2921,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductOptionRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductOptionRelationConvertTest.php
 
@@ -3031,12 +2946,12 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
 
@@ -3051,7 +2966,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
 
@@ -3076,7 +2991,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 11
 			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
 
@@ -3086,7 +3001,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 15
 			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
 
@@ -3101,7 +3016,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
 
@@ -3136,7 +3051,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 9
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
@@ -3151,7 +3066,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
 
@@ -3186,7 +3101,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
 
@@ -3201,7 +3116,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 7
 			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
 
@@ -3216,7 +3131,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
 
@@ -3231,7 +3146,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
 
@@ -3246,47 +3161,12 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
 
 		-
-			message: "#^Anonymous variable in a `\\$this\\-\\>mappingService\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Cannot call method getId\\(\\) on string\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 9
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2NewsletterRecipientConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2NewsletterRecipientConverterTest\\:\\:\\$mappingService has no type specified\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2NewsletterRecipientConverterTest.php
-
-		-
-			message: "#^Anonymous variable in a `\\$converted\\['price'\\]\\-\\>\\.\\.\\.\\(\\)` method call can lead to false dead methods\\. Make sure the variable type is known$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:requiredProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 9
 			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
 
@@ -3316,7 +3196,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
 
@@ -3341,7 +3221,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
 
@@ -3351,7 +3231,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 7
 			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
 
@@ -3366,7 +3246,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 5
 			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
 
@@ -3401,7 +3281,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
 
@@ -3426,7 +3306,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
 
@@ -3451,7 +3331,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
 
@@ -3476,12 +3356,12 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
 
@@ -3496,7 +3376,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
 
@@ -3516,7 +3396,7 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
 
 		-
-			message: "#^Out of 509 possible property types, only 171 \\- 33\\.5 %% actually have it\\. Add more property types to get over 99 %%$#"
+			message: "#^Out of 509 possible property types, only 189 \\- 37\\.1 %% actually have it\\. Add more property types to get over 99 %%$#"
 			count: 11
 			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
 

@@ -7,7 +7,6 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local;
 
-use Doctrine\DBAL\Driver\ResultStatement;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;

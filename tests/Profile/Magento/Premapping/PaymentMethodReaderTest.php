@@ -60,7 +60,7 @@ class PaymentMethodReaderTest extends TestCase
      */
     private $cashMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->context = Context::createDefaultContext();
 

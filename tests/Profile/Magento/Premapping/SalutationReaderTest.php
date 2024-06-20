@@ -58,7 +58,7 @@ class SalutationReaderTest extends TestCase
      */
     private $mrMock;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->context = Context::createDefaultContext();
 

@@ -14,7 +14,6 @@ use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-
 #[Package('services-settings')]
 class Magento20CustomerGroupReader extends CustomerGroupReader
 {

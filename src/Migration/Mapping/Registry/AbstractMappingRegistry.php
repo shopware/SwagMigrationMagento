@@ -11,6 +11,7 @@ use Shopware\Core\Framework\Log\Package;
 
 /**
  * @template TMappingArray of array
+ *
  * @template-implements MappingRegistryInterface<TMappingArray>
  */
 #[Package('services-settings')]

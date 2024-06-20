@@ -8,11 +8,6 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Sorting\FieldSorting;
-use Shopware\Core\System\Salutation\SalutationEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
@@ -82,7 +77,7 @@ abstract class AdminStoreReader extends AbstractPremappingReader
         }
 
         return [
-            new PremappingEntityStruct(self::MAPPING_NAME, 'Admin store replacement', $uuid)
+            new PremappingEntityStruct(self::MAPPING_NAME, 'Admin store replacement', $uuid),
         ];
     }
 
