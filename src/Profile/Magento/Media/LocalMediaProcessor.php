@@ -31,19 +31,14 @@ use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileProcessorInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
-use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileEntity;
+use SwagMigrationAssistant\Migration\Media\Processor\BaseMediaService;
+use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileCollection;
 use SwagMigrationAssistant\Migration\MessageQueue\Handler\ProcessMediaHandler;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
-use SwagMigrationAssistant\Profile\Shopware\Media\BaseMediaService;
 
 #[Package('services-settings')]
 class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
 {
-    /**
-     * @var EntityRepository<EntityCollection<SwagMigrationMediaFileEntity>>
-     */
-    protected EntityRepository $mediaFileRepo;
-
     /**
      * @var EntityRepository<EntityCollection<MediaEntity>>
      */
@@ -56,7 +51,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     protected MigrationContextInterface $migrationContext;
 
     /**
-     * @param EntityRepository<EntityCollection<SwagMigrationMediaFileEntity>> $migrationMediaFileRepo
+     * @param EntityRepository<SwagMigrationMediaFileCollection> $migrationMediaFileRepo
      * @param EntityRepository<EntityCollection<MediaEntity>> $mediaRepo
      */
     public function __construct(
@@ -66,11 +61,10 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         LoggingServiceInterface $loggingService,
         Connection $dbalConnection
     ) {
-        $this->mediaFileRepo = $migrationMediaFileRepo;
         $this->mediaRepo = $mediaRepo;
         $this->fileSaver = $fileSaver;
         $this->loggingService = $loggingService;
-        parent::__construct($dbalConnection);
+        parent::__construct($dbalConnection, $migrationMediaFileRepo);
     }
 
     public function supports(MigrationContextInterface $migrationContext): bool
@@ -281,7 +275,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             }
             $processedMedia[] = $mediaId;
         }
-        $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $processedMedia, $failureUuids);
+        $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $processedMedia, \array_values($failureUuids));
         $this->loggingService->saveLogging($context);
 
         return \array_values($mappedWorkload);
@@ -313,26 +307,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 $this->fileSaver->persistFileToMedia($mediaFile, Uuid::randomHex(), $mediaId, $context);
             }
         }
-    }
-
-    private function setProcessedFlag(string $runId, Context $context, array $finishedUuids, array $failureUuids): void
-    {
-        $mediaFiles = $this->getMediaFiles($finishedUuids, $runId);
-        $updateableMediaEntities = [];
-        foreach ($mediaFiles as $mediaFile) {
-            if (!\in_array($mediaFile['media_id'], $failureUuids, true)) {
-                $updateableMediaEntities[] = [
-                    'id' => $mediaFile['id'],
-                    'processed' => true,
-                ];
-            }
-        }
-
-        if (empty($updateableMediaEntities)) {
-            return;
-        }
-
-        $this->mediaFileRepo->update($updateableMediaEntities, $context);
     }
 
     private function getShopUrl(MigrationContextInterface $migrationContext): string
