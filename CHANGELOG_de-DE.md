@@ -1,3 +1,6 @@
+# 7.0.0
+- NTR - Unterstützte version des Migration-Assistant auf ~12.0 angehoben
+
 # 6.0.1
 - MIG-974 - Mehr Länder hinzugefügt
 - MIG-982 - Unterstützung für Migrationsassistent ~11.0 hinzugefügt

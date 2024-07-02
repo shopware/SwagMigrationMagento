@@ -1,3 +1,6 @@
+# 7.0.0
+- NTR - Raised and support minimum required migration assistant version ~12.0
+
 # 6.0.1
 - MIG-974 - Added more countries
 - MIG-982 - Added support for migration assistant ~11.0
