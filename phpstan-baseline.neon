@@ -36,39 +36,9 @@ parameters:
 			path: src/Profile/Magento/Converter/CategoryConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CategoryConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: src/Profile/Magento/Converter/CategoryConverter.php
-
-		-
 			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/CountryConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CountryConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 4
-			path: src/Profile/Magento/Converter/CrossSellingConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CurrencyConverter.php
-
-		-
-			message: "#^Cannot call static method getEntity\\(\\) on SwagMigrationAssistant\\\\Migration\\\\DataSelection\\\\DataSet\\\\DataSet\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomFieldConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\CustomFieldConverter\\:\\:getConfiguredCustomFieldData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
@@ -83,16 +53,6 @@ parameters:
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\CustomFieldConverter\\:\\:validateType\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: src/Profile/Magento/Converter/CustomFieldConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomFieldConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 3
 			path: src/Profile/Magento/Converter/CustomFieldConverter.php
 
 		-
@@ -176,39 +136,14 @@ parameters:
 			path: src/Profile/Magento/Converter/CustomerConverter.php
 
 		-
-			message: "#^Offset 'entityUuid' might not exist on array\\|null\\.$#"
+			message: "#^Property SwagMigrationAssistant\\\\Migration\\\\Converter\\\\Converter\\:\\:\\$mainMapping \\(array\\{id\\: string, connectionId\\: string, oldIdentifier\\: string\\|null, entityUuid\\: string\\|null, entityValue\\: string\\|null, checksum\\: string\\|null, additionalData\\: array\\|null\\}\\|null\\) does not accept array\\{entityValue\\: string\\}\\|array\\{id\\: string, connectionId\\: string, oldIdentifier\\: string\\|null, entityUuid\\: string\\|null, entityValue\\: string, checksum\\: string\\|null, additionalData\\: array\\|null\\}\\.$#"
 			count: 1
-			path: src/Profile/Magento/Converter/CustomerConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomerConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 3
 			path: src/Profile/Magento/Converter/CustomerConverter.php
 
 		-
 			message: "#^Setter method cannot return anything, only set value$#"
 			count: 1
 			path: src/Profile/Magento/Converter/CustomerConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomerGroupConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/LanguageConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 4
-			path: src/Profile/Magento/Converter/LanguageConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\MagentoConverter\\:\\:checkForEmptyRequiredDataFields\\(\\) has parameter \\$rawData with no value type specified in iterable type array\\.$#"
@@ -261,29 +196,9 @@ parameters:
 			path: src/Profile/Magento/Converter/MagentoConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ManufacturerConverter.php
-
-		-
 			message: "#^Offset 'translations' on array\\{id\\: mixed, translations\\: array\\} in isset\\(\\) always exists and is not nullable\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/ManufacturerConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 4
-			path: src/Profile/Magento/Converter/ManufacturerConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/MediaConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 2
-			path: src/Profile/Magento/Converter/MediaConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\NewsletterRecipientConverter\\:\\:getSalesChannelMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
@@ -301,24 +216,9 @@ parameters:
 			path: src/Profile/Magento/Converter/NewsletterRecipientConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/NewsletterRecipientConverter.php
-
-		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\NewsletterRecipientConverter\\:\\:\\$originalData type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/NewsletterRecipientConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/NotAssociatedMediaConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 2
-			path: src/Profile/Magento/Converter/NotAssociatedMediaConverter.php
 
 		-
 			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTransactionStateUuid\\(\\)\\.$#"
@@ -456,22 +356,7 @@ parameters:
 			path: src/Profile/Magento/Converter/OrderConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/OrderConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 2
-			path: src/Profile/Magento/Converter/OrderConverter.php
-
-		-
 			message: "#^Strict comparison using \\!\\=\\= between mixed and null will always evaluate to true\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/OrderConverter.php
-
-		-
-			message: "#^Throwing new exceptions within classes are not allowed\\. Please use domain exception pattern\\. See https\\://github\\.com/shopware/platform/blob/v6\\.4\\.20\\.0/adr/2022\\-02\\-24\\-domain\\-exceptions\\.md$#"
 			count: 1
 			path: src/Profile/Magento/Converter/OrderConverter.php
 
@@ -596,11 +481,6 @@ parameters:
 			path: src/Profile/Magento/Converter/ProductConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ProductConverter.php
-
-		-
 			message: "#^Setter method cannot return anything, only set value$#"
 			count: 1
 			path: src/Profile/Magento/Converter/ProductConverter.php
@@ -616,22 +496,12 @@ parameters:
 			path: src/Profile/Magento/Converter/ProductReviewConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ProductReviewConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\PropertyGroupConverter\\:\\:getProperties\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\PropertyGroupConverter\\:\\:getProperties\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
 
@@ -699,46 +569,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\SalesChannelConverter\\:\\:getShippingMethods\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/SalesChannelConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/SalesChannelConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 1
-			path: src/Profile/Magento/Converter/SalesChannelConverter.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/SeoUrlConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 1
-			path: src/Profile/Magento/Converter/SeoUrlConverter.php
-
-		-
-			message: "#^Throwing new exceptions within classes are not allowed\\. Please use domain exception pattern\\. See https\\://github\\.com/shopware/platform/blob/v6\\.4\\.20\\.0/adr/2022\\-02\\-24\\-domain\\-exceptions\\.md$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Connection/ConnectionFactory.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
-
-		-
-			message: "#^Cannot call method createSchemaManager\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\AbstractReader\\:\\:appendAttributes\\(\\) has parameter \\$fetchDefaultAttributes with no value type specified in iterable type array\\.$#"
@@ -851,11 +681,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/CategoryReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CategoryReader\\:\\:appendTranslations\\(\\) has parameter \\$fetchedCategories with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/CategoryReader.php
@@ -876,16 +701,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/CategoryReader.php
 
 		-
-			message: "#^Call to method Doctrine\\\\DBAL\\\\Query\\\\QueryBuilder\\:\\:andWhere\\(\\) with incorrect case\\: andwhere$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CountryReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CountryReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CountryReader\\:\\:fetchLocales\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/CountryReader.php
@@ -894,16 +709,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CountryReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/CountryReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CrossSellingReader\\:\\:enrichWithPositionData\\(\\) has parameter \\$fetchedCrossSelling with no value type specified in iterable type array\\.$#"
@@ -921,16 +726,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/CrossSellingReader.php
 
 		-
-			message: "#^Call to method Doctrine\\\\DBAL\\\\Query\\\\QueryBuilder\\:\\:andWhere\\(\\) with incorrect case\\: andwhere$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CurrencyReader\\:\\:fetchCurrencies\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php
@@ -939,16 +734,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CurrencyReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/CurrencyReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CustomerGroupReader\\:\\:fetchCustomerGroups\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -964,11 +749,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CustomerGroupReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/CustomerGroupReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/CustomerReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\CustomerReader\\:\\:fetchAddresses\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -1011,11 +791,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/EnvironmentReader.php
 
 		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/LanguageReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\LanguageReader\\:\\:fetchLocales\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/LanguageReader.php
@@ -1034,11 +809,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\LocalTableReader\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/LocalTableReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/ManufacturerReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ManufacturerReader\\:\\:fetchManufacturers\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -1061,16 +831,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ManufacturerReader.php
 
 		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\MediaReader\\:\\:fetchMedia\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
@@ -1084,16 +844,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\MediaReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/MediaReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\NewsletterRecipientReader\\:\\:fetchCustomers\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -1141,21 +891,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
 
 		-
-			message: "#^Throwing new exceptions within classes are not allowed\\. Please use domain exception pattern\\. See https\\://github\\.com/shopware/platform/blob/v6\\.4\\.20\\.0/adr/2022\\-02\\-24\\-domain\\-exceptions\\.md$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 4
-			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\OrderReader\\:\\:fetchDetails\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
@@ -1191,11 +926,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
-
-		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
@@ -1204,11 +934,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectTextPropertyRelationReader.php
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectTextPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
@@ -1221,11 +946,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectTextPropertyRelationReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php
-
-		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php
@@ -1234,16 +954,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildPropertyRelationReader\\:\\:fetchPropertyRelations\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 4
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductCustomFieldReader\\:\\:fetchAttributeOptionTranslations\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -1301,11 +1011,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
-
-		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
@@ -1314,11 +1019,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectTextPropertyRelationReader.php
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectTextPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
@@ -1331,19 +1031,9 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectTextPropertyRelationReader.php
 
 		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductOptionRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductOptionRelationReader\\:\\:fetchOptions\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductOptionRelationReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
@@ -1354,16 +1044,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductPropertyRelationReader\\:\\:fetchPropertyRelations\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 6
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 7
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
@@ -1496,26 +1176,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductReader\\:\\:\\$combinedProductIds type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductReviewReader\\:\\:fetchProductReviews\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
@@ -1534,16 +1194,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductReviewReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductReviewReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 4
-			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\PropertyGroupReader\\:\\:fetchGroupTranslations\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -1588,16 +1238,6 @@ parameters:
 		-
 			message: "#^Cannot access offset 'defaultAllowedCurre…' on array\\<string, mixed\\>\\|false\\.$#"
 			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 7
-			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 3
 			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
 
 		-
@@ -1716,16 +1356,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
 
 		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\SeoUrlReader\\:\\:fetchSeoUrls\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
@@ -1734,11 +1364,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\SeoUrlReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/SeoUrlReader.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 2
-			path: src/Profile/Magento/Gateway/Local/Reader/Struct/StockConfigurationStruct.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\MagentoGatewayInterface\\:\\:readCustomerGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -1774,11 +1399,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\TableReaderInterface\\:\\:read\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/TableReaderInterface.php
-
-		-
-			message: "#^Cannot call static method getEntity\\(\\) on SwagMigrationAssistant\\\\Migration\\\\DataSelection\\\\DataSet\\\\DataSet\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor has an uninitialized property \\$migrationContext\\. Give it default value or assign it in the constructor\\.$#"
@@ -1862,11 +1482,6 @@ parameters:
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\AdminStoreReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/AdminStoreReader.php
-
-		-
-			message: "#^This class is missing the \"\\#\\[Package\\(\\.\\.\\.\\)\\]\" attribute \\(recommendation\\: unknown\\)$#"
 			count: 1
 			path: src/Profile/Magento/Premapping/AdminStoreReader.php
 
@@ -1971,11 +1586,6 @@ parameters:
 			path: src/Profile/Magento19/Gateway/Local/Magento19LocalGateway.php
 
 		-
-			message: "#^This class is missing the \"\\#\\[Package\\(\\.\\.\\.\\)\\]\" attribute \\(recommendation\\: unknown\\)$#"
-			count: 1
-			path: src/Profile/Magento19/Premapping/Magento19AdminStoreReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerConverter\\:\\:setPassword\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Converter/Magento2CustomerConverter.php
@@ -1997,21 +1607,6 @@ parameters:
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverter\\:\\:convertOrderCustomer\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 1
-			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverter\\:\\:\\$billingAddress type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
-
-		-
-			message: "#^Throwing new exceptions within classes are not allowed\\. Please use domain exception pattern\\. See https\\://github\\.com/shopware/platform/blob/v6\\.4\\.20\\.0/adr/2022\\-02\\-24\\-domain\\-exceptions\\.md$#"
 			count: 1
 			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
 
@@ -2091,11 +1686,6 @@ parameters:
 			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
 
 		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
-
-		-
 			message: "#^Setter method cannot return anything, only set value$#"
 			count: 6
 			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
@@ -2136,11 +1726,6 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Magento2LocalGateway.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CategoryReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2CategoryReader\\:\\:appendTranslations\\(\\) has parameter \\$fetchedCategories with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CategoryReader.php
@@ -2156,19 +1741,9 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CategoryReader.php
 
 		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CountryReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2CountryReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CountryReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CustomerReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2CustomerReader\\:\\:fetchAddresses\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -2179,11 +1754,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2CustomerReader\\:\\:fetchAddresses\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2CustomerReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2LanguageReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2LanguageReader\\:\\:fetchLocales\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2199,16 +1769,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2NotAssociatedMediaReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2NotAssociatedMediaReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 4
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2OrderReader\\:\\:fetchDetails\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
@@ -2246,19 +1806,9 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2OrderReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildMultiSelectPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2ProductChildMultiSelectPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildMultiSelectPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildPropertyRelationReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2ProductChildPropertyRelationReader\\:\\:fetchPropertyRelations\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2266,19 +1816,9 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductChildPropertyRelationReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductMultiSelectPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2ProductMultiSelectPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductMultiSelectPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductOptionRelationReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2ProductOptionRelationReader\\:\\:fetchOptions\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2286,24 +1826,9 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductOptionRelationReader.php
 
 		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2ProductPropertyRelationReader\\:\\:fetchPropertyRelations\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductPropertyRelationReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2ProductReader\\:\\:fetchConfiguratorSettings\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2321,29 +1846,9 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2ProductReader.php
 
 		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2PropertyGroupReader\\:\\:fetchPropertyGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2PropertyGroupReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 2
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2SalesChannelReader\\:\\:fetchStoreGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2359,16 +1864,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2SalesChannelReader\\:\\:fetchStoreViews\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SalesChannelReader.php
-
-		-
-			message: "#^Cannot call method createQueryBuilder\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
-
-		-
-			message: "#^Cannot call method executeQuery\\(\\) on Doctrine\\\\DBAL\\\\Connection\\|null\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
 
 		-
 			message: "#^Dead catch \\- Error is never thrown in the try block\\.$#"
@@ -2451,52 +1946,12 @@ parameters:
 			path: src/Profile/Magento2/Premapping/Magento2LanguageReader.php
 
 		-
-			message: "#^This class is missing the \"\\#\\[Package\\(\\.\\.\\.\\)\\]\" attribute \\(recommendation\\: unknown\\)$#"
-			count: 1
-			path: src/Profile/Magento20/Premapping/Magento20AdminStoreReader.php
-
-		-
-			message: "#^This class is missing the \"\\#\\[Package\\(\\.\\.\\.\\)\\]\" attribute \\(recommendation\\: unknown\\)$#"
-			count: 1
-			path: src/Profile/Magento21/Premapping/Magento21AdminStoreReader.php
-
-		-
-			message: "#^This class is missing the \"\\#\\[Package\\(\\.\\.\\.\\)\\]\" attribute \\(recommendation\\: unknown\\)$#"
-			count: 1
-			path: src/Profile/Magento22/Premapping/Magento22AdminStoreReader.php
-
-		-
-			message: "#^This class is missing the \"\\#\\[Package\\(\\.\\.\\.\\)\\]\" attribute \\(recommendation\\: unknown\\)$#"
-			count: 1
-			path: src/Profile/Magento23/Premapping/Magento23AdminStoreReader.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 1
-			path: tests/DeprecatedTagTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\DeprecatedTagTest\\:\\:\\$whiteList type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/DeprecatedTagTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:createListItemMapping\\(\\) has parameter \\$additionalData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getMapping\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getMappings\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getMappings\\(\\) return type with generic class Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\Search\\\\EntitySearchResult does not specify its types\\: TEntityCollection$#"
 			count: 1
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
@@ -2526,124 +1981,9 @@ parameters:
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 1
-			path: tests/Profile/Magento/Gateway/Local/Reader/AbstractReaderTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\DummyReader\\:\\:testUtf8ize\\(\\) has parameter \\$array with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Gateway/Local/Reader/DummyReader.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\DummyReader\\:\\:testUtf8ize\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento/Gateway/Local/Reader/DummyReader.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento/Premapping/SalutationReaderTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento/Premapping/ShippingMethodReaderTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CategoryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CategoryConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CountryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CountryConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CrossSellingConverterTest\\:\\:createMapping\\(\\) has parameter \\$identifiers with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Offset 'assignedProducts' might not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 9
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CrossSellingConverterTest\\:\\:\\$compareProduct type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CrossSellingConverterTest\\:\\:\\$products type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CrossSellingConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CurrencyConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CurrencyConverterTest.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CustomerConverterTest\\:\\:requiredAddressProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -2656,117 +1996,7 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
 
 		-
-			message: "#^Offset 'customerNumber' might not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19CustomerConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19CustomerGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19CustomerGroupConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 7
-			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19LanguageConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19LanguageConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ManufacturerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ManufacturerConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19MediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19MediaConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19NotAssociatedMediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19NotAssociatedMediaConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19OrderConverterTest\\:\\:requiredProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Offset 'orderCustomer' might not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19OrderConverterTest\\:\\:\\$billingAddressId \\(array\\) does not accept string\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19OrderConverterTest\\:\\:\\$billingAddressId type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19OrderConverterTest.php
 
@@ -2791,11 +2021,6 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19ProductChildMultiSelectPropertyRelationConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductChildPropertyRelationTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildPropertyRelationTest.php
@@ -2816,31 +2041,6 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductChildPropertyRelationTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19ProductChildPropertyRelationTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 7
-			path: tests/Profile/Magento19/Converter/Magento19ProductConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 5
-			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductCustomFieldConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ProductCustomFieldConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductMultiSelectPropertyRelationConvertTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConvertTest.php
@@ -2858,11 +2058,6 @@ parameters:
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductMultiSelectPropertyRelationConvertTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConvertTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConvertTest.php
 
 		-
@@ -2886,11 +2081,6 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19ProductMultiSelectPropertyRelationConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductOptionRelationConvertTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento19/Converter/Magento19ProductOptionRelationConvertTest.php
@@ -2908,11 +2098,6 @@ parameters:
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductOptionRelationConvertTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ProductOptionRelationConvertTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
 			path: tests/Profile/Magento19/Converter/Magento19ProductOptionRelationConvertTest.php
 
 		-
@@ -2936,228 +2121,13 @@ parameters:
 			path: tests/Profile/Magento19/Converter/Magento19ProductPropertyRelationConvertTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19ProductPropertyRelationConvertTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19ProductReviewConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19ProductReviewConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento19\\\\Converter\\\\Magento19PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19PropertyGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 1
-			path: tests/Profile/Magento19/Converter/Magento19SalesChannelConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 11
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento19/Converter/Magento19SeoUrlConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 15
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 8
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 4
-			path: tests/Profile/Magento2/Converter/Magento2CategoryConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CountryConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CountryConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CrossSellingConverterTest\\:\\:createMapping\\(\\) has parameter \\$identifiers with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-
-			message: "#^Offset 'assignedProducts' might not exist on array\\|null\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Offset 'id' might not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 9
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CrossSellingConverterTest\\:\\:\\$compareProduct type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CrossSellingConverterTest\\:\\:\\$products type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CurrencyConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Use explicit names over dynamic ones$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CurrencyConverterTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerConverterTest\\:\\:requiredAddressProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerConverterTest\\:\\:requiredProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 8
-			path: tests/Profile/Magento2/Converter/Magento2CustomerConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2CustomerGroupConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 7
-			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2LanguageConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2LanguageConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ManufacturerConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ManufacturerConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2MediaConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2MediaConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:requiredProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 9
 			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
 
 		-
@@ -3186,11 +2156,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildPropertyRelationTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
@@ -3211,71 +2176,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
-
-		-
-			message: "#^Offset 'price' might not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 7
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 2
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 5
-			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 5
-			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductCustomFieldConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductCustomFieldConverterTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConvertTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConvertTest\\:\\:getWithoutMappingDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConvertTest\\:\\:testConvert\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConvertTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConvertTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConverterTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
@@ -3293,11 +2193,6 @@ parameters:
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConverterTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
 
 		-
@@ -3321,11 +2216,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
 
 		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductPropertyRelationConvertTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
@@ -3344,53 +2234,3 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductPropertyRelationConvertTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductReviewConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductReviewConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 6
-			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
-
-		-
-			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2PropertyGroupConverterTest\\:\\:\\$connection \\(string\\) does not accept SwagMigrationAssistant\\\\Migration\\\\Connection\\\\SwagMigrationConnectionEntity\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2PropertyGroupConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SalesChannelConverterTest.php
-
-		-
-			message: "#^Out of 508 possible property types, only 188 \\- 37\\.0 %% actually have it\\. Add more property types to get over 99 %%$#"
-			count: 11
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php
-
-		-
-			message: "#^Parameter \\#2 \\$array of static method PHPUnit\\\\Framework\\\\Assert\\:\\:assertArrayHasKey\\(\\) expects array\\|ArrayAccess, array\\|null given\\.$#"
-			count: 3
-			path: tests/Profile/Magento2/Converter/Magento2SeoUrlConverterTest.php

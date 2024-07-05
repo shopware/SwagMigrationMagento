@@ -23,39 +23,24 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('services-settings')]
 abstract class CategoryConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
+
+    protected Context $context;
+
+    protected string $entity_id;
 
     /**
-     * @var Context
+     * @var list<string>
      */
-    protected $context;
-
-    /**
-     * @var string
-     */
-    protected $entity_id;
-
-    /**
-     * @var string[]
-     */
-    protected static $requiredDataFieldKeys = [
+    protected static array $requiredDataFieldKeys = [
         'entity_id',
         'name',
         'defaultLocale',
     ];
 
-    /**
-     * @var MediaFileServiceInterface
-     */
-    private $mediaFileService;
+    private MediaFileServiceInterface $mediaFileService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
@@ -270,7 +255,7 @@ abstract class CategoryConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     protected function setCategoryTranslation(array &$data, array &$converted): void

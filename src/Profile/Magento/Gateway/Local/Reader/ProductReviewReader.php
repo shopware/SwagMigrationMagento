@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -20,6 +21,10 @@ abstract class ProductReviewReader extends AbstractReader
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
 
         $fetchedProductReviews = $this->mapData($this->fetchProductReviews($migrationContext), [], ['detail']);
         $ids = \array_column($fetchedProductReviews, 'review_id');
@@ -47,6 +52,10 @@ abstract class ProductReviewReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}review AS review
@@ -61,6 +70,10 @@ SQL;
 
     protected function fetchProductReviews(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->select('review.created_at AS `detail.created_at`');
@@ -89,6 +102,10 @@ SQL;
 
     protected function fetchRatings(array $ids): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'rating_option_vote', 'opt');

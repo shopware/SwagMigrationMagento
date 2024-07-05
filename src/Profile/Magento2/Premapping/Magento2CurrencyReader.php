@@ -59,7 +59,7 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
     {
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_currency'])) {
-            $uuid = $this->connectionPremappingDictionary['default_currency']['destinationUuid'];
+            $uuid = $this->connectionPremappingDictionary['default_currency']->getDestinationUuid();
         }
 
         $entityData = [];

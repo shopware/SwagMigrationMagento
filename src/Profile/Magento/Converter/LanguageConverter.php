@@ -19,25 +19,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('services-settings')]
 abstract class LanguageConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
     public function getSourceIdentifier(array $data): string
     {
@@ -136,6 +124,6 @@ abstract class LanguageConverter extends MagentoConverter
         }
         $this->updateMainMapping($migrationContext, $context);
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id'] ?? null);
     }
 }

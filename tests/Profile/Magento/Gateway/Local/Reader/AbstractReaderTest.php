@@ -14,10 +14,7 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory;
 #[Package('services-settings')]
 class AbstractReaderTest extends TestCase
 {
-    /**
-     * @var DummyReader
-     */
-    private $dummyReader;
+    private DummyReader $dummyReader;
 
     protected function setUp(): void
     {

@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -41,6 +42,10 @@ abstract class CategoryReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}catalog_category_entity
@@ -53,6 +58,10 @@ SQL;
 
     public function fetchCategories(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT
     category.*,
@@ -134,6 +143,10 @@ SQL;
 
     protected function appendTranslations(array $ids, array &$fetchedCategories): void
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT
     category.entity_id AS identifier,

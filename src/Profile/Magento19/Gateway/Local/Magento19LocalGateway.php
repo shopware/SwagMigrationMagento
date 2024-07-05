@@ -280,6 +280,6 @@ SQL;
             $tablePrefix = $credentials['tablePrefix'];
         }
 
-        return $tablePrefix;
+        return (string) $tablePrefix;
     }
 }

@@ -103,7 +103,7 @@ abstract class OrderStateReader extends AbstractPremappingReader
         foreach ($preMappingData as $data) {
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$data['status']])) {
-                $uuid = $this->connectionPremappingDictionary[$data['status']]['destinationUuid'];
+                $uuid = $this->connectionPremappingDictionary[$data['status']]->getDestinationUuid();
 
                 if (!isset($this->choiceUuids[$uuid])) {
                     $uuid = '';

@@ -28,9 +28,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 {
     /**
-     * @var string[]
+     * @var list<string>
      */
-    protected static $requiredDataFieldKeys = [
+    protected static array $requiredDataFieldKeys = [
         'website_id',
         'name',
         'group_id',
@@ -168,7 +168,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     protected function setStores(array &$data, array &$converted): void
@@ -218,7 +218,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $this->context
             );
 
-            if ($languageMapping === null) {
+            if ($languageMapping === null || !isset($languageMapping['entityUuid'])) {
                 $this->loggingService->addLogEntry(
                     new AssociationRequiredMissingLog(
                         $this->runId,
@@ -282,7 +282,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $this->context
             );
 
-            if ($currencyMapping === null) {
+            if ($currencyMapping === null || !isset($currencyMapping['entityUuid'])) {
                 $this->loggingService->addLogEntry(
                     new AssociationRequiredMissingLog(
                         $this->runId,

@@ -19,6 +19,7 @@ use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19NewsletterRecipi
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\MigrationContext;
+use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
 #[Package('services-settings')]
@@ -32,7 +33,7 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
 
     private SwagMigrationConnectionEntity $connection;
 
-    private MigrationContext $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
     private string $languageUuid;
 
@@ -112,8 +113,8 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
         $convertResult = $this->newsletterRecipientConverter->convert($newsletterRecipientData[0], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
-        static::assertNotNull($converted);
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());

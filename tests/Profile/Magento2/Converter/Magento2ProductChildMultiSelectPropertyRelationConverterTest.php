@@ -24,35 +24,17 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2ProductChildMultiSelectPropertyRelationConverterTest extends TestCase
 {
-    /**
-     * @var MigrationContext
-     */
-    private $migrationContext;
+    private MigrationContext $migrationContext;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var Magento23ProductChildMultiSelectPropertyRelationConverter
-     */
-    private $converter;
+    private Magento23ProductChildMultiSelectPropertyRelationConverter $converter;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
     protected function setUp(): void
     {

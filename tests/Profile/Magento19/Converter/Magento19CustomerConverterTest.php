@@ -161,6 +161,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->adminSalesChannelUuid, $converted['salesChannelId']);
@@ -177,6 +178,8 @@ class Magento19CustomerConverterTest extends TestCase
         $convertResultOne = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);
         $convertResultTwo = $this->customerConverter->convert($customerData[0], $context, $this->migrationContext);
 
+        static::assertNotNull($convertResultOne->getConverted());
+        static::assertNotNull($convertResultTwo->getConverted());
         static::assertSame($convertResultOne->getConverted()['customerNumber'], $convertResultTwo->getConverted()['customerNumber']);
     }
 
@@ -190,6 +193,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -246,6 +250,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
@@ -344,6 +349,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
@@ -380,6 +386,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
@@ -417,6 +424,7 @@ class Magento19CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);

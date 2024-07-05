@@ -24,11 +24,11 @@ use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23OrderConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23OrderStateReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
+use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
-use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
@@ -38,54 +38,27 @@ class Magento2OrderConverterTest extends TestCase
     use DatabaseTransactionBehaviour;
     use KernelTestBehaviour;
 
-    /**
-     * @var Magento23OrderConverter
-     */
-    private $orderConverter;
+    private Magento23OrderConverter $orderConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
     private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
     private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var string
-     */
-    private $defaultSalutation;
+    private string $defaultSalutation;
 
-    /**
-     * @var string
-     */
-    private $language;
+    private string $language;
 
-    /**
-     * @var string
-     */
-    private $customerGroup;
+    private string $customerGroup;
 
-    /**
-     * @var string
-     */
-    private $shippingMethod;
+    private string $shippingMethod;
 
-    /**
-     * @var array
-     */
-    private $shippedDeliveryState;
+    private array $shippedDeliveryState;
 
     private string $storeUuid;
 

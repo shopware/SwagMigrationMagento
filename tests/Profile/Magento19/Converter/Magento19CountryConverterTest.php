@@ -24,35 +24,17 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19CountryConverterTest extends TestCase
 {
-    /**
-     * @var Magento19CountryConverter
-     */
-    private $countryConverter;
+    private Magento19CountryConverter $countryConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var string
-     */
-    private $britainMappingUuid;
+    private string $britainMappingUuid;
 
     protected function setUp(): void
     {
@@ -87,7 +69,7 @@ class Magento19CountryConverterTest extends TestCase
             $this->britainMappingUuid
         );
 
-        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
     }
 
     public function testSupports(): void
@@ -106,9 +88,10 @@ class Magento19CountryConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
-        static::assertEquals($converted['id'], $this->britainMappingUuid);
+        static::assertSame($converted['id'], $this->britainMappingUuid);
         static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
@@ -122,6 +105,7 @@ class Magento19CountryConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);

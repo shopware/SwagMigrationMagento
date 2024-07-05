@@ -24,35 +24,17 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19ProductPropertyRelationConvertTest extends TestCase
 {
-    /**
-     * @var MigrationContext
-     */
-    private $migrationContext;
+    private MigrationContext $migrationContext;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var Magento19ProductPropertyRelationConverter
-     */
-    private $converter;
+    private Magento19ProductPropertyRelationConverter $converter;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
     protected function setUp(): void
     {

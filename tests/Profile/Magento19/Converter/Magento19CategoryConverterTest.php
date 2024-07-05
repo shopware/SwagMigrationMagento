@@ -28,35 +28,17 @@ use Symfony\Component\HttpFoundation\Response;
 #[Package('services-settings')]
 class Magento19CategoryConverterTest extends TestCase
 {
-    /**
-     * @var Magento19CategoryConverter
-     */
-    private $categoryConverter;
+    private Magento19CategoryConverter $categoryConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var string
-     */
-    private $languageUuid;
+    private string $languageUuid;
 
     protected function setUp(): void
     {
@@ -90,7 +72,7 @@ class Magento19CategoryConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
-        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
         $mappingService->getOrCreateMapping($this->connection->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
         $this->categoryConverter = new Magento19CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
     }
@@ -110,6 +92,7 @@ class Magento19CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey($this->languageUuid, $converted['translations']);
@@ -147,6 +130,7 @@ class Magento19CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey($this->languageUuid, $converted['translations']);
@@ -167,6 +151,8 @@ class Magento19CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter->convert($categoryData[2], $context, $this->migrationContext);
 
         $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);

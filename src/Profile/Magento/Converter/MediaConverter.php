@@ -22,15 +22,9 @@ abstract class MediaConverter extends MagentoConverter
 {
     public const PRODUCT_MEDIA_PATH = '/media/catalog/product';
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var MediaFileServiceInterface
-     */
-    protected $mediaFileService;
+    protected MediaFileServiceInterface $mediaFileService;
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
@@ -112,6 +106,6 @@ abstract class MediaConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 }

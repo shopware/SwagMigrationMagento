@@ -116,7 +116,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     private function getSalesChannelMapping(array $data): ?array

@@ -24,30 +24,15 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19ProductCustomFieldConverterTest extends TestCase
 {
-    /**
-     * @var Magento19ProductCustomFieldConverter
-     */
-    private $productCustomFieldConverter;
+    private Magento19ProductCustomFieldConverter $productCustomFieldConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
     protected function setUp(): void
     {
@@ -100,6 +85,7 @@ class Magento19ProductCustomFieldConverterTest extends TestCase
         $converted = $convertResult->getConverted();
         $technicalName = 'migration_attribute_' . $customFieldData[0]['setId'] . '_' . $customFieldData[0]['attribute_code'] . '_' . $customFieldData[0]['attribute_id'];
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
@@ -122,6 +108,7 @@ class Magento19ProductCustomFieldConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
@@ -141,6 +128,7 @@ class Magento19ProductCustomFieldConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
@@ -160,6 +148,7 @@ class Magento19ProductCustomFieldConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);
@@ -177,6 +166,7 @@ class Magento19ProductCustomFieldConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('customFields', $converted);

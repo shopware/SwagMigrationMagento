@@ -20,15 +20,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('services-settings')]
 abstract class NotAssociatedMediaConverter extends MagentoConverter
 {
-    /**
-     * @var MediaFileServiceInterface
-     */
-    protected $mediaFileService;
+    protected MediaFileServiceInterface $mediaFileService;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
@@ -99,6 +93,6 @@ abstract class NotAssociatedMediaConverter extends MagentoConverter
             $data = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id'] ?? null);
     }
 }

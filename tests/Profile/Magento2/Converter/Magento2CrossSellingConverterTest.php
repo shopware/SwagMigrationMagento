@@ -25,54 +25,36 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2CrossSellingConverterTest extends TestCase
 {
-    /**
-     * @var Magento23CrossSellingConverter
-     */
-    private $crossSellingConverter;
+    private Magento23CrossSellingConverter $crossSellingConverter;
+
+    private DummyLoggingService $loggingService;
+
+    private string $runId;
+
+    private SwagMigrationConnectionEntity $connection;
+
+    private MigrationContextInterface $migrationContext;
+
+    private DummyMagentoMappingService $mappingService;
 
     /**
-     * @var DummyLoggingService
+     * @var array<mixed>
      */
-    private $loggingService;
+    private array $products = [];
 
     /**
-     * @var string
+     * @var list<string>
      */
-    private $runId;
-
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection;
-
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
-
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
-
-    /**
-     * @var array
-     */
-    private $products;
-
-    /**
-     * @var string[]
-     */
-    private $type = [
+    private array $type = [
         'Cross-sells',
         'Up-sells',
         'Related products',
     ];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
-    private $compareProduct = [
+    private array $compareProduct = [
         'id' => null,
         'name' => 'Cross-sells',
         'type' => 'productList',
@@ -156,6 +138,8 @@ class Magento2CrossSellingConverterTest extends TestCase
         $convertResult2 = $this->crossSellingConverter->convert($data[1], $context, $this->migrationContext);
         $converted2 = $convertResult2->getConverted();
 
+        static::assertNotNull($converted1);
+        static::assertNotNull($converted2);
         static::assertSame($converted1['id'], $converted2['id']);
         static::assertSame($converted1['productId'], $converted2['productId']);
         static::assertSame($converted1['assignedProducts'][0]['id'], $converted2['assignedProducts']['0']['id']);
@@ -203,6 +187,9 @@ class Magento2CrossSellingConverterTest extends TestCase
     private function checkProduct(string $fromIndex, string $toIndex, ConvertStruct $convertStruct, string $type, int $position): void
     {
         $converted = $convertStruct->getConverted();
+
+        static::assertNotNull($converted);
+
         $this->compareProduct['id'] = $converted['id'];
         $this->compareProduct['name'] = $type;
         $this->compareProduct['productId'] = $this->products[$fromIndex]['entityUuid'];

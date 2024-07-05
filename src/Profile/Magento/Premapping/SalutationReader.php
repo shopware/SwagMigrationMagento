@@ -95,7 +95,7 @@ abstract class SalutationReader extends AbstractPremappingReader
         foreach ($salutations as $salutation) {
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$salutation['option_id']])) {
-                $uuid = $this->connectionPremappingDictionary[$salutation['option_id']]['destinationUuid'];
+                $uuid = $this->connectionPremappingDictionary[$salutation['option_id']]->getDestinationUuid();
 
                 if (!isset($this->choiceUuids[$uuid])) {
                     $uuid = '';
@@ -111,7 +111,7 @@ abstract class SalutationReader extends AbstractPremappingReader
 
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_salutation'])) {
-            $uuid = $this->connectionPremappingDictionary['default_salutation']['destinationUuid'];
+            $uuid = $this->connectionPremappingDictionary['default_salutation']->getDestinationUuid();
 
             if (!isset($this->choiceUuids[$uuid])) {
                 $uuid = '';

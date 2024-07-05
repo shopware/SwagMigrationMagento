@@ -25,6 +25,7 @@ use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistry;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\Local\ShopwareLocalGateway;
 
@@ -33,30 +34,15 @@ class SalutationReaderTest extends TestCase
 {
     use KernelTestBehaviour;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var Magento19SalutationReader
-     */
-    private $reader;
+    private Magento19SalutationReader $reader;
 
-    /**
-     * @var Context
-     */
-    private $context;
+    private Context $context;
 
-    /**
-     * @var SalutationEntity
-     */
-    private $msMock;
+    private SalutationEntity $msMock;
 
-    /**
-     * @var SalutationEntity
-     */
-    private $mrMock;
+    private SalutationEntity $mrMock;
 
     protected function setUp(): void
     {
@@ -80,28 +66,16 @@ class SalutationReaderTest extends TestCase
         $this->msMock->setLetterName('Ms');
         $this->msMock->setSalutationKey('Ms');
 
-        $premapping = [[
-            'entity' => 'salutation',
-            'mapping' => [
-                0 => [
-                    'sourceId' => '1',
-                    'description' => 'mr',
-                    'destinationUuid' => $this->mrMock->getId(),
-                ],
-                1 => [
-                    'sourceId' => '2',
-                    'description' => 'ms',
-                    'destinationUuid' => $this->msMock->getId(),
-                ],
-
-                2 => [
-                    'sourceId' => 'salutation-invalid',
-                    'description' => 'salutation-invalid',
-                    'destinationUuid' => Uuid::randomHex(),
-                ],
+        $premapping = new PremappingStruct(
+            'salutation',
+            [
+                new PremappingEntityStruct('1', 'mr', $this->mrMock->getId()),
+                new PremappingEntityStruct('2', 'ms', $this->msMock->getId()),
+                new PremappingEntityStruct('salutation-invalid', 'salutation-invalid', Uuid::randomHex()),
             ],
-        ]];
-        $connection->setPremapping($premapping);
+            []
+        );
+        $connection->setPremapping([$premapping]);
 
         $mock = $this->createMock(EntityRepository::class);
         $mock->method('search')->willReturn(new EntitySearchResult(SalutationDefinition::ENTITY_NAME, 2, new EntityCollection([$this->mrMock, $this->msMock]), null, new Criteria(), $this->context));
@@ -128,8 +102,6 @@ class SalutationReaderTest extends TestCase
     public function testGetPremapping(): void
     {
         $result = $this->reader->getPremapping($this->context, $this->migrationContext);
-
-        static::assertInstanceOf(PremappingStruct::class, $result);
 
         static::assertCount(4, $result->getMapping());
         static::assertCount(2, $result->getChoices());

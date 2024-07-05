@@ -22,10 +22,7 @@ abstract class SeoUrlConverter extends MagentoConverter
     protected const ROUTE_NAME_NAVIGATION = 'frontend.navigation.page';
     protected const ROUTE_NAME_PRODUCT = 'frontend.detail.page';
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
     public function getSourceIdentifier(array $data): string
     {
@@ -217,6 +214,6 @@ abstract class SeoUrlConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 }

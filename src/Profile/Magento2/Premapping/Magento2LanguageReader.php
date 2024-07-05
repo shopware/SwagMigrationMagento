@@ -59,7 +59,7 @@ abstract class Magento2LanguageReader extends AbstractPremappingReader
     {
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_language'])) {
-            $uuid = $this->connectionPremappingDictionary['default_language']['destinationUuid'];
+            $uuid = $this->connectionPremappingDictionary['default_language']->getDestinationUuid();
         }
 
         $entityData = [];

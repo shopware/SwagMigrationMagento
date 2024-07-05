@@ -92,7 +92,7 @@ abstract class TaxReader extends AbstractPremappingReader
         foreach ($preMappingData as $data) {
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$data['class_id']])) {
-                $uuid = $this->connectionPremappingDictionary[$data['class_id']]['destinationUuid'];
+                $uuid = $this->connectionPremappingDictionary[$data['class_id']]->getDestinationUuid();
 
                 if (!isset($this->choiceUuids[$uuid])) {
                     $uuid = '';

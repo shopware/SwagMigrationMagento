@@ -11,7 +11,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Shopware\Core\Framework\Log\Package;
-use Swag\MigrationMagento\Exception\InvalidTablePrefixException;
+use Swag\MigrationMagento\Exception\MigrationMagentoException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -59,7 +59,7 @@ class ConnectionFactory implements ConnectionFactoryInterface
         }
         $schemaManager = $connection->createSchemaManager();
         if (!$schemaManager->tablesExist([$credentials['tablePrefix'] . 'customer_entity'])) {
-            throw new InvalidTablePrefixException('The configured table prefix is invalid.');
+            throw MigrationMagentoException::incorrectTablePrefix((string) $credentials['tablePrefix']);
         }
 
         return $connection;

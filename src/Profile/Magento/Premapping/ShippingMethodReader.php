@@ -90,7 +90,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
         foreach ($preMappingData as $data) {
             $uuid = '';
             if (isset($this->connectionPremappingDictionary[$data['carrier_id']])) {
-                $uuid = $this->connectionPremappingDictionary[$data['carrier_id']]['destinationUuid'];
+                $uuid = $this->connectionPremappingDictionary[$data['carrier_id']]->getDestinationUuid();
 
                 if (!isset($this->choiceUuids[$uuid])) {
                     $uuid = '';
@@ -102,7 +102,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
 
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_shipping_method'])) {
-            $uuid = $this->connectionPremappingDictionary['default_shipping_method']['destinationUuid'];
+            $uuid = $this->connectionPremappingDictionary['default_shipping_method']->getDestinationUuid();
 
             if (!isset($this->choiceUuids[$uuid])) {
                 $uuid = '';

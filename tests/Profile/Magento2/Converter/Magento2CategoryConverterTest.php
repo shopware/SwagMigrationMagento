@@ -34,80 +34,35 @@ use Symfony\Component\HttpFoundation\Response;
 #[Package('services-settings')]
 class Magento2CategoryConverterTest extends TestCase
 {
-    /**
-     * @var Magento20CategoryConverter
-     */
-    private $categoryConverter20;
+    private Magento20CategoryConverter $categoryConverter20;
 
-    /**
-     * @var Magento21CategoryConverter
-     */
-    private $categoryConverter21;
+    private Magento21CategoryConverter $categoryConverter21;
 
-    /**
-     * @var Magento22CategoryConverter
-     */
-    private $categoryConverter22;
+    private Magento22CategoryConverter $categoryConverter22;
 
-    /**
-     * @var Magento23CategoryConverter
-     */
-    private $categoryConverter23;
+    private Magento23CategoryConverter $categoryConverter23;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection20;
+    private SwagMigrationConnectionEntity $connection20;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection21;
+    private SwagMigrationConnectionEntity $connection21;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection22;
+    private SwagMigrationConnectionEntity $connection22;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection23;
+    private SwagMigrationConnectionEntity $connection23;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext20;
+    private MigrationContextInterface $migrationContext20;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext21;
+    private MigrationContextInterface $migrationContext21;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext22;
+    private MigrationContextInterface $migrationContext22;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext23;
+    private MigrationContextInterface $migrationContext23;
 
-    /**
-     * @var string
-     */
-    private $languageUuid;
+    private string $languageUuid;
 
     protected function setUp(): void
     {
@@ -206,10 +161,10 @@ class Magento2CategoryConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
-        $mappingService->getOrCreateMapping($this->connection20->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
-        $mappingService->getOrCreateMapping($this->connection21->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
-        $mappingService->getOrCreateMapping($this->connection22->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
-        $mappingService->getOrCreateMapping($this->connection23->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $mappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection20->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection21->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection22->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
+        $mappingService->getOrCreateMapping($this->connection23->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
         $mappingService->getOrCreateMapping($this->connection20->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
         $mappingService->getOrCreateMapping($this->connection21->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
         $mappingService->getOrCreateMapping($this->connection22->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
@@ -243,6 +198,7 @@ class Magento2CategoryConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey($this->languageUuid, $converted['translations']);
@@ -284,6 +240,7 @@ class Magento2CategoryConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey($this->languageUuid, $converted['translations']);
@@ -325,6 +282,7 @@ class Magento2CategoryConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey($this->languageUuid, $converted['translations']);
@@ -366,6 +324,7 @@ class Magento2CategoryConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey($this->languageUuid, $converted['translations']);
@@ -407,6 +366,8 @@ class Magento2CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter20->convert($categoryData[2], $context, $this->migrationContext20);
 
         $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
@@ -422,6 +383,8 @@ class Magento2CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter21->convert($categoryData[2], $context, $this->migrationContext21);
 
         $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
@@ -437,6 +400,8 @@ class Magento2CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter22->convert($categoryData[2], $context, $this->migrationContext22);
 
         $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
@@ -452,6 +417,8 @@ class Magento2CategoryConverterTest extends TestCase
         $convertResult = $this->categoryConverter23->convert($categoryData[2], $context, $this->migrationContext23);
 
         $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);

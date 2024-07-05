@@ -28,40 +28,19 @@ use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 #[Package('services-settings')]
 class Magento19ProductConverterTest extends TestCase
 {
-    /**
-     * @var Magento19ProductConverter
-     */
-    private $productConverter;
+    private Magento19ProductConverter $productConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var string
-     */
-    private $languageUuid;
+    private string $languageUuid;
 
     protected function setUp(): void
     {

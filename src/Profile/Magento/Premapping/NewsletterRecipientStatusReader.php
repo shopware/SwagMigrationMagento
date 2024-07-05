@@ -70,13 +70,13 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
         }
 
         foreach ($connectionPremapping as $premapping) {
-            if ($premapping['entity'] !== self::MAPPING_NAME) {
+            if ($premapping->getEntity() !== self::MAPPING_NAME) {
                 continue;
             }
 
-            foreach ($premapping['mapping'] as $premapping) {
-                $mapping[] = new PremappingEntityStruct($premapping['sourceId'], $premapping['description'], $premapping['destinationUuid']);
-                unset($choices[$premapping['sourceId']]);
+            foreach ($premapping->getMapping() as $entry) {
+                $mapping[] = new PremappingEntityStruct($entry->getSourceId(), $entry->getDescription(), $entry->getDestinationUuid());
+                unset($choices[$entry->getSourceId()]);
             }
         }
 

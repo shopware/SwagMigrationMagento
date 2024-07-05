@@ -59,7 +59,7 @@ class EnvironmentReader implements EnvironmentReaderInterface
         $this->connection = $dbConnection;
         $credentials = $connection->getCredentialFields();
         if (isset($credentials['tablePrefix'])) {
-            $this->tablePrefix = $credentials['tablePrefix'];
+            $this->tablePrefix = (string) $credentials['tablePrefix'];
         }
     }
 

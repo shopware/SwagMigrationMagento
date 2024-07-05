@@ -23,11 +23,11 @@ use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19OrderConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
+use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
-use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
@@ -51,10 +51,7 @@ class Magento19OrderConverterTest extends TestCase
 
     private string $defaultSalutation;
 
-    /**
-     * @var array
-     */
-    private $billingAddressId;
+    private string $billingAddressId;
 
     private string $shippingAddressId;
 
@@ -246,6 +243,7 @@ class Magento19OrderConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->storeUuid, $converted['salesChannelId']);
@@ -327,6 +325,7 @@ class Magento19OrderConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -421,6 +420,7 @@ class Magento19OrderConverterTest extends TestCase
         $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertArrayHasKey('customerId', $converted['orderCustomer']);
         static::assertCount(2, $converted['orderCustomer']['customer']['addresses']);
         static::assertSame($this->billingAddressId, $converted['orderCustomer']['customer']['defaultBillingAddressId']);
@@ -429,6 +429,7 @@ class Magento19OrderConverterTest extends TestCase
         $secondConvertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
         $convertedSecond = $secondConvertResult->getConverted();
 
+        static::assertNotNull($convertedSecond);
         static::assertArrayHasKey('customerId', $convertedSecond['orderCustomer']);
         static::assertSame($converted['orderCustomer']['customerId'], $convertedSecond['orderCustomer']['customerId']);
         static::assertCount(2, $converted['orderCustomer']['customer']['addresses']);

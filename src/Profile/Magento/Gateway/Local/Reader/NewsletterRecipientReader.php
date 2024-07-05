@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -51,6 +52,10 @@ abstract class NewsletterRecipientReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}newsletter_subscriber;
@@ -62,6 +67,10 @@ SQL;
 
     protected function fetchNewsletterRecipients(array $ids, MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'newsletter_subscriber', 'recipient');
@@ -74,6 +83,10 @@ SQL;
 
     protected function fetchCustomers(array $ids): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'customer_entity', 'customer');
