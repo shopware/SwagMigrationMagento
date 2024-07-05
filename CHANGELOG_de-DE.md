@@ -1,5 +1,6 @@
 # 8.0.0
 - MIG-919 - Unterstützte und minimum Version des Migration-Assistant auf ~13.0 angehoben
+- MIG-1011 - Sicherstellung, dass Datenbankattribute (wie z. B. "stringify fetches") bei lokalen Gateway-Verbindungen immer gesetzt sind
 
 # 7.0.0
 - NTR - Unterstützte und minimum Version des Migration-Assistant auf ~12.0 angehoben
