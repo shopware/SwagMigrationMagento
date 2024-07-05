@@ -21,10 +21,10 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
-use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
+use Swag\MigrationMagento\Exception\MigrationMagentoException;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
-use SwagMigrationAssistant\Exception\NoFileSystemPermissionsException;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\CannotGetFileRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
@@ -70,14 +70,13 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento19Profile
-            && $migrationContext->getDataSet()::getEntity() === MediaDataSet::getEntity();
+            && $this->getDataSetEntity($migrationContext) === MediaDataSet::getEntity();
     }
 
     public function process(
         MigrationContextInterface $migrationContext,
         Context $context,
-        array $workload,
-        int $fileChunkByteSize
+        array $workload
     ): array {
         $mappedWorkload = [];
         $this->migrationContext = $migrationContext;
@@ -88,11 +87,10 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         }
 
         if (!\is_dir('_temp') && !\mkdir('_temp') && !\is_dir('_temp')) {
-            $exception = new NoFileSystemPermissionsException();
             $this->loggingService->addLogEntry(new ExceptionRunLog(
                 $runId,
                 DefaultEntities::MEDIA,
-                $exception
+                MigrationException::noFileSystemPermissions(),
             ));
             $this->loggingService->saveLogging($context);
 
@@ -108,11 +106,10 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $shopUrl = $this->getShopUrl($migrationContext);
 
             if ($shopUrl === '') {
-                $exception = new MediaPathNotReachableException($installationRoot);
                 $this->loggingService->addLogEntry(new ExceptionRunLog(
                     $runId,
                     DefaultEntities::MEDIA,
-                    $exception
+                    MigrationMagentoException::mediaPathNotReachable($installationRoot),
                 ));
                 $this->loggingService->saveLogging($context);
 
@@ -192,7 +189,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
             return '';
         }
-        $installRoot = $credentials['installationRoot'];
+        $installRoot = (string) $credentials['installationRoot'];
         $installRoot = \ltrim($installRoot, '/');
         $installRoot = \rtrim($installRoot, '/');
         $installRoot = '/' . $installRoot;
@@ -321,7 +318,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             return '';
         }
 
-        return \rtrim($credentials['shopUrl'], '/');
+        return \rtrim((string) $credentials['shopUrl'], '/');
     }
 
     private function downloadMediaFiles(

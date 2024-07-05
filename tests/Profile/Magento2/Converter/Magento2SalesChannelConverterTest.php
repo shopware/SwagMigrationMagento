@@ -102,6 +102,7 @@ class Magento2SalesChannelConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertCount(3, $converted['paymentMethods']);
@@ -176,6 +177,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertCount(2, $converted['paymentMethods']);
@@ -199,6 +201,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertCount(3, $converted['paymentMethods']);

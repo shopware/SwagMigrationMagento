@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as DefaultEntitiesAlias;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
@@ -21,6 +22,11 @@ abstract class ProductChildMultiSelectPropertyRelationReader extends AbstractRea
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $this->productEntityTypeId = $this->readProductEntityTypeId();
 
         $query = <<<SQL
@@ -76,6 +82,10 @@ SQL;
 
     protected function fetchMultiSelectProperties(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT DISTINCT product.entity_id, entity_varchar.value AS option_value
 FROM {$this->tablePrefix}catalog_product_entity AS product
@@ -112,6 +122,10 @@ SQL;
 
     private function readProductEntityTypeId(): int
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = 'catalog_product';
 SQL;

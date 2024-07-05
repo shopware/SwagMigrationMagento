@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
@@ -19,6 +20,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
+#[Package('services-settings')]
 abstract class AdminStoreReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'admin_store';
@@ -69,7 +71,7 @@ abstract class AdminStoreReader extends AbstractPremappingReader
     {
         $uuid = '';
         if (isset($this->connectionPremappingDictionary[self::MAPPING_NAME])) {
-            $uuid = $this->connectionPremappingDictionary[self::MAPPING_NAME]['destinationUuid'];
+            $uuid = $this->connectionPremappingDictionary[self::MAPPING_NAME]->getDestinationUuid();
 
             if (!isset($this->choiceUuids[$uuid])) {
                 $uuid = '';

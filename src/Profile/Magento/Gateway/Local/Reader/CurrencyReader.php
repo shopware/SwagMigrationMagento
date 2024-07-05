@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -33,6 +34,10 @@ abstract class CurrencyReader extends AbstractReader
 
     protected function fetchCurrencies(): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'currency');
@@ -54,11 +59,15 @@ abstract class CurrencyReader extends AbstractReader
 
     protected function fetchBaseCurrency(): string
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'baseCurrency');
         $query->addSelect('value');
-        $query->andwhere('path = \'currency/options/base\' AND scope = \'default\'');
+        $query->andWhere('path = \'currency/options/base\' AND scope = \'default\'');
 
         $value = $query->executeQuery()->fetchOne();
         if ($value === false) {

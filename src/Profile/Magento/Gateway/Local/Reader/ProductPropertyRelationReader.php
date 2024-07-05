@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -29,6 +30,11 @@ abstract class ProductPropertyRelationReader extends AbstractReader
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $this->productEntityTypeId = $this->readProductEntityTypeId();
 
         $query = <<<SQL
@@ -60,6 +66,10 @@ SQL;
 
     protected function fetchPropertyRelations(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $this->productEntityTypeId = $this->readProductEntityTypeId();
 
         $sql = <<<SQL
@@ -100,6 +110,10 @@ SQL;
 
     private function readProductEntityTypeId(): int
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = 'catalog_product';
 SQL;

@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductOptionRelationReader;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -19,6 +20,10 @@ abstract class Magento2ProductOptionRelationReader extends ProductOptionRelation
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
 
         $query = $this->connection->createQueryBuilder();
 
@@ -39,6 +44,10 @@ abstract class Magento2ProductOptionRelationReader extends ProductOptionRelation
 
     protected function fetchOptions(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('DISTINCT product.entity_id');

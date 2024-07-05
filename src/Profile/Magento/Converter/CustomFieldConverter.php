@@ -18,15 +18,12 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('services-settings')]
 abstract class CustomFieldConverter extends Converter
 {
-    /**
-     * @var MigrationContextInterface
-     */
-    protected $migrationContext;
+    protected MigrationContextInterface $migrationContext;
 
     /**
-     * @var string[]
+     * @var array<string, string>
      */
-    protected $typeMapping = [
+    protected array $typeMapping = [
         'price' => 'float',
         'select' => 'select',
         'multiselect' => 'select',
@@ -36,10 +33,7 @@ abstract class CustomFieldConverter extends Converter
         'boolean' => 'bool',
     ];
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
     public function getSourceIdentifier(array $data): string
     {
@@ -58,7 +52,9 @@ abstract class CustomFieldConverter extends Converter
             $this->connectionId = $connection->getId();
         }
 
-        if ($type === null) {
+        $entityName = $this->getDataSetEntity($migrationContext);
+
+        if ($type === null || $entityName === null) {
             return new ConvertStruct(null, $data);
         }
 
@@ -117,7 +113,7 @@ abstract class CustomFieldConverter extends Converter
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
-            $migrationContext->getDataSet()::getEntity(),
+            $entityName,
             $data['attribute_id'] . '_' . $data['setId'],
             $context,
             $this->checksum
@@ -162,7 +158,7 @@ abstract class CustomFieldConverter extends Converter
             $data = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id'] ?? null);
     }
 
     abstract protected function getCustomFieldEntityName(): string;

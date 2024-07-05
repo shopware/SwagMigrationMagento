@@ -25,6 +25,7 @@ use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistry;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\Local\ShopwareLocalGateway;
 
@@ -33,30 +34,15 @@ class ShippingMethodReaderTest extends TestCase
 {
     use KernelTestBehaviour;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var Magento19ShippingMethodReader
-     */
-    private $reader;
+    private Magento19ShippingMethodReader $reader;
 
-    /**
-     * @var Context
-     */
-    private $context;
+    private Context $context;
 
-    /**
-     * @var ShippingMethodEntity
-     */
-    private $dhlMock;
+    private ShippingMethodEntity $dhlMock;
 
-    /**
-     * @var ShippingMethodEntity
-     */
-    private $upsMock;
+    private ShippingMethodEntity $upsMock;
 
     protected function setUp(): void
     {
@@ -76,27 +62,16 @@ class ShippingMethodReaderTest extends TestCase
         $this->upsMock->setId(Uuid::randomHex());
         $this->upsMock->setName('UPS');
 
-        $premapping = [[
-            'entity' => 'shipping_method',
-            'mapping' => [
-                0 => [
-                    'sourceId' => 'dhl',
-                    'description' => 'dhl',
-                    'destinationUuid' => $this->dhlMock->getId(),
-                ],
-                1 => [
-                    'sourceId' => 'ups',
-                    'description' => 'ups',
-                    'destinationUuid' => $this->upsMock->getId(),
-                ],
-
-                2 => [
-                    'sourceId' => 'shipment-invalid',
-                    'description' => 'shipment-invalid',
-                    'destinationUuid' => Uuid::randomHex(),
-                ],
-            ],
-        ]];
+        $premapping = [
+            new PremappingStruct(
+                'shipping_method',
+                [
+                    new PremappingEntityStruct('dhl', 'DHL', $this->dhlMock->getId()),
+                    new PremappingEntityStruct('ups', 'UPS', $this->upsMock->getId()),
+                    new PremappingEntityStruct('shipment-invalid', 'shipment-invalid', Uuid::randomHex()),
+                ]
+            ),
+        ];
         $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
@@ -124,8 +99,6 @@ class ShippingMethodReaderTest extends TestCase
     public function testGetPremapping(): void
     {
         $result = $this->reader->getPremapping($this->context, $this->migrationContext);
-
-        static::assertInstanceOf(PremappingStruct::class, $result);
 
         static::assertCount(5, $result->getMapping());
         static::assertCount(2, $result->getChoices());

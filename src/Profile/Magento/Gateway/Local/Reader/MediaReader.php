@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -31,6 +32,10 @@ abstract class MediaReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT count(DISTINCT value)
 FROM {$this->tablePrefix}catalog_product_entity_media_gallery
@@ -42,6 +47,10 @@ SQL;
 
     protected function fetchMedia(array $ids): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'catalog_product_entity_media_gallery', 'media');

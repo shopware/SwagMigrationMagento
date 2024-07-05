@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\PropertyGroupReader;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -20,6 +21,10 @@ abstract class Magento2PropertyGroupReader extends PropertyGroupReader
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
 
         $sql = <<<SQL
 SELECT COUNT(*)
@@ -34,6 +39,10 @@ SQL;
 
     public function fetchPropertyGroups(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('eav.attribute_id AS identifier');

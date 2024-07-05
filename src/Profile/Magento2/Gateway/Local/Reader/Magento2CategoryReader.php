@@ -11,6 +11,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CategoryReader;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -18,6 +19,10 @@ abstract class Magento2CategoryReader extends CategoryReader
 {
     public function fetchCategories(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT
     category.*,
@@ -112,6 +117,10 @@ SQL;
 
     protected function appendTranslations(array $ids, array &$fetchedCategories): void
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT
     category.entity_id AS identifier,

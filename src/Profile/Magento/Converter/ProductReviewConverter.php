@@ -166,7 +166,7 @@ abstract class ProductReviewConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     protected function setPoints(array &$converted, array &$data): void

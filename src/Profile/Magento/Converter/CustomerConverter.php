@@ -35,18 +35,18 @@ abstract class CustomerConverter extends MagentoConverter
     protected NumberRangeValueGeneratorInterface $numberRangeValueGenerator;
 
     /**
-     * @var string[]
+     * @var list<string>
      */
-    protected static $requiredDataFieldKeys = [
+    protected static array $requiredDataFieldKeys = [
         'email',
         'firstname',
         'lastname',
     ];
 
     /**
-     * @var string[]
+     * @var list<string>
      */
-    protected static $requiredAddressDataFieldKeys = [
+    protected static array $requiredAddressDataFieldKeys = [
         'entity_id',
         'firstname',
         'lastname',
@@ -58,10 +58,7 @@ abstract class CustomerConverter extends MagentoConverter
         'country_iso3',
     ];
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
@@ -233,7 +230,7 @@ abstract class CustomerConverter extends MagentoConverter
         /*
          * Set addresses
          */
-        if (isset($data['addresses']) && !empty($data['addresses'])) {
+        if (isset($data['addresses'], $this->mainMapping['entityUuid']) && !empty($data['addresses'])) {
             $this->getAddresses($data, $converted, $this->mainMapping['entityUuid']);
             unset($data['addresses']);
         }
@@ -282,7 +279,7 @@ abstract class CustomerConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     protected function getAddresses(array &$originalData, array &$converted, string $customerUuid): void
@@ -534,7 +531,7 @@ abstract class CustomerConverter extends MagentoConverter
             $this->context
         );
 
-        if ($adminStore !== null) {
+        if ($adminStore !== null && isset($adminStore['entityValue'])) {
             $adminStoreId = $adminStore['entityValue'];
             $salesChannelMapping = $this->mappingService->getMapping(
                 $this->connectionId,

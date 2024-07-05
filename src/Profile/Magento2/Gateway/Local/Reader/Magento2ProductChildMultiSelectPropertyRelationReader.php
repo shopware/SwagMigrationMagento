@@ -12,6 +12,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as DefaultEntitiesAlias;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductChildMultiSelectPropertyRelationReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
@@ -21,6 +22,10 @@ abstract class Magento2ProductChildMultiSelectPropertyRelationReader extends Pro
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
 
         $query = <<<SQL
 SELECT COUNT(entity_varchar.entity_id)
@@ -49,6 +54,10 @@ SQL;
 
     protected function fetchMultiSelectProperties(MigrationContextInterface $migrationContext): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $sql = <<<SQL
 SELECT DISTINCT product.entity_id, entity_varchar.value AS option_value
 FROM {$this->tablePrefix}catalog_product_entity AS product

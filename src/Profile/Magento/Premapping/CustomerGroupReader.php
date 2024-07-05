@@ -64,7 +64,7 @@ abstract class CustomerGroupReader extends AbstractPremappingReader
         $magentoId = '';
         $entityData = [];
         if (isset($this->connectionPremappingDictionary['default_customer_group'])) {
-            $magentoId = $this->connectionPremappingDictionary['default_customer_group']['destinationUuid'];
+            $magentoId = $this->connectionPremappingDictionary['default_customer_group']->getDestinationUuid();
         }
         $entityData[] = new PremappingEntityStruct('default_customer_group', 'Default customer group', $magentoId);
 

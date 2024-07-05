@@ -27,6 +27,8 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
+use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
@@ -35,7 +37,6 @@ use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
-use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 
 #[Package('services-settings')]
@@ -60,9 +61,9 @@ abstract class OrderConverter extends MagentoConverter
     protected NumberRangeValueGeneratorInterface $numberRangeValueGenerator;
 
     /**
-     * @var string[]
+     * @var list<string>
      */
-    protected static $requiredDataFieldKeys = [
+    protected static array $requiredDataFieldKeys = [
         'orders',
         'billingAddress',
         'shippingAddress',
@@ -70,9 +71,9 @@ abstract class OrderConverter extends MagentoConverter
     ];
 
     /**
-     * @var string[]
+     * @var list<string>
      */
-    protected static $requiredCustomerDataFieldKeys = [
+    protected static array $requiredCustomerDataFieldKeys = [
         'customer_email',
         'customer_firstname',
         'customer_lastname',
@@ -153,6 +154,8 @@ abstract class OrderConverter extends MagentoConverter
             $this->context,
             $this->checksum
         );
+
+        \assert(isset($this->mainMapping['entityUuid']));
 
         $converted = [];
         $converted['id'] = $this->mainMapping['entityUuid'];
@@ -243,7 +246,7 @@ abstract class OrderConverter extends MagentoConverter
         }
         $this->updateMainMapping($migrationContext, $context);
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     protected function getSalutation(string $salutation): ?string
@@ -735,7 +738,7 @@ abstract class OrderConverter extends MagentoConverter
             );
 
             if ($customerMapping === null) {
-                throw new AssociationEntityRequiredMissingException(
+                throw MigrationException::associationEntityRequiredMissing(
                     DefaultEntities::ORDER,
                     DefaultEntities::CUSTOMER
                 );
@@ -785,7 +788,7 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($mapping === null) {
+            if ($mapping === null || !isset($mapping['entityUuid'], $mapping['id'])) {
                 $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,
@@ -898,7 +901,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->context
         );
 
-        if ($adminStore !== null) {
+        if ($adminStore !== null && isset($adminStore['entityValue'])) {
             $adminStoreId = $adminStore['entityValue'];
             $salesChannelMapping = $this->mappingService->getMapping(
                 $this->connectionId,

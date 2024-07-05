@@ -113,6 +113,7 @@ class Magento19SalesChannelConverterTest extends TestCase
             $context
         );
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->defaultCustomerGroupId, $converted['customerGroupId']);
@@ -143,7 +144,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertSame($salesChannelData[0]['group_id'], $logs[0]['parameters']['sourceId']);
         static::assertSame('defaultLocale', $logs[0]['parameters']['emptyField']);
         static::assertSame('system default language', $logs[0]['parameters']['replacementField']);
-        static::assertSame($this->mappingService::DEFAULT_LANGUAGE_UUID, $converted['languageId']);
+        static::assertSame(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['languageId']);
     }
 
     public function testConvertWithoutDefaultCurrency(): void
@@ -198,6 +199,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertCount(2, $converted['paymentMethods']);
@@ -221,6 +223,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertCount(3, $converted['paymentMethods']);

@@ -24,60 +24,27 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2SeoUrlConverterTest extends TestCase
 {
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var Magento23SeoUrlConverter
-     */
-    private $seoUrlConverter;
+    private Magento23SeoUrlConverter $seoUrlConverter;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var SwagMigrationConnectionEntity
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContext
-     */
-    private $migrationContext;
+    private MigrationContext $migrationContext;
 
-    /**
-     * @var Context
-     */
-    private $context;
+    private Context $context;
 
-    /**
-     * @var string
-     */
-    private $languageId;
+    private string $languageId;
 
-    /**
-     * @var string
-     */
-    private $salesChannelId;
+    private string $salesChannelId;
 
-    /**
-     * @var string
-     */
-    private $productId;
+    private string $productId;
 
-    /**
-     * @var string
-     */
-    private $categoryId;
+    private string $categoryId;
 
     protected function setUp(): void
     {
@@ -201,6 +168,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         $convertResult = $this->seoUrlConverter->convert($seoUrlData[0], $this->context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->productId, $converted['foreignKey']);
@@ -218,6 +186,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         $convertResult = $this->seoUrlConverter->convert($seoUrlData[1], $this->context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->productId, $converted['foreignKey']);
@@ -256,6 +225,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         $convertResult = $this->seoUrlConverter->convert($seoUrlData[2], $this->context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->categoryId, $converted['foreignKey']);

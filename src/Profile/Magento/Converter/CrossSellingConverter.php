@@ -18,25 +18,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('services-settings')]
 abstract class CrossSellingConverter extends MagentoConverter
 {
-    /**
-     * @var string
-     */
-    protected $runId;
+    protected string $runId;
 
-    /**
-     * @var string
-     */
-    protected $oldIdentifier;
+    protected string $oldIdentifier;
 
-    /**
-     * @var string
-     */
-    protected $connectionId;
+    protected string $connectionId;
 
-    /**
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
     public function getSourceIdentifier(array $data): string
     {
@@ -148,6 +136,6 @@ abstract class CrossSellingConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 }

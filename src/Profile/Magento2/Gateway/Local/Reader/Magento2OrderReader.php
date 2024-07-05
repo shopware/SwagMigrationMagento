@@ -11,6 +11,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\OrderReader;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -21,6 +22,10 @@ abstract class Magento2OrderReader extends OrderReader
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
 
         $sql = <<<SQL
 SELECT COUNT(*)
@@ -61,6 +66,10 @@ SQL;
 
     protected function fetchOrders(array $ids): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'sales_order', 'orders');
@@ -95,6 +104,10 @@ SQL;
 
     protected function fetchDetails(array $ids): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'sales_order_item', 'items');
@@ -115,7 +128,12 @@ SQL;
 
     protected function fetchShipments(array $ids): array
     {
-        $query = $this->connection->createQueryBuilder();
+        $connection = $this->connection;
+        if ($connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
+        $query = $connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'sales_shipment', 'shipment');
         $query->addSelect('shipment.order_id as identifier');
@@ -136,7 +154,7 @@ SQL;
             }
         }
 
-        $query = $this->connection->createQueryBuilder();
+        $query = $connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'sales_shipment_item', 'item');
         $query->addSelect('item.parent_id as identifier');

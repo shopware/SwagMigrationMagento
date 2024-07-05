@@ -101,6 +101,6 @@ abstract class CountryConverter extends MagentoConverter
             $data = null;
         }
 
-        return new ConvertStruct($converted, $data, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $data, $this->mainMapping['id'] ?? null);
     }
 }

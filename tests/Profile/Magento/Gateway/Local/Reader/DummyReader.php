@@ -24,6 +24,11 @@ class DummyReader extends AbstractReader
         return [];
     }
 
+    /**
+     * @param array<mixed> $array
+     *
+     * @return array<mixed>
+     */
     public function testUtf8ize(array $array): array
     {
         return $this->utf8ize($array);

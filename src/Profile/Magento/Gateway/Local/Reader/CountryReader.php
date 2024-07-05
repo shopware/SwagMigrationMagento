@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -29,12 +30,16 @@ abstract class CountryReader extends AbstractReader
 
     protected function fetchLocales(): array
     {
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
+
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'country');
         $query->addSelect('scope_id as store_id');
         $query->addSelect('value');
-        $query->andwhere('path = \'general/country/allow\'');
+        $query->andWhere('path = \'general/country/allow\'');
         $rows = $query->executeQuery()->fetchAllAssociative();
 
         $configurations = FetchModeHelper::groupUnique($rows);

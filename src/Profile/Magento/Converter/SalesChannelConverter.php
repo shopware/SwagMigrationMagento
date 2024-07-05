@@ -34,9 +34,9 @@ abstract class SalesChannelConverter extends MagentoConverter
     protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
     /**
-     * @var string[]
+     * @var list<string>
      */
-    protected static $requiredDataFieldKeys = [
+    protected static array $requiredDataFieldKeys = [
         'website_id',
         'name',
         'carriers',
@@ -376,7 +376,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             $resultData = null;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
     protected function getSalesChannelLanguages(string $languageUuid, array $data, Context $context): array

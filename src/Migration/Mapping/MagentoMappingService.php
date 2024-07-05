@@ -7,15 +7,15 @@
 
 namespace Swag\MigrationMagento\Migration\Mapping;
 
-use Shopware\Core\Checkout\Document\Aggregate\DocumentType\DocumentTypeEntity;
+use Psr\Log\LoggerInterface;
+use Shopware\Core\Checkout\Document\Aggregate\DocumentType\DocumentTypeCollection;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
-use Shopware\Core\Content\Category\CategoryEntity;
-use Shopware\Core\Content\Cms\CmsPageEntity;
-use Shopware\Core\Content\Media\Aggregate\MediaDefaultFolder\MediaDefaultFolderEntity;
-use Shopware\Core\Content\Media\Aggregate\MediaThumbnailSize\MediaThumbnailSizeEntity;
-use Shopware\Core\Content\Rule\RuleEntity;
+use Shopware\Core\Content\Category\CategoryCollection;
+use Shopware\Core\Content\Cms\CmsPageCollection;
+use Shopware\Core\Content\Media\Aggregate\MediaDefaultFolder\MediaDefaultFolderCollection;
+use Shopware\Core\Content\Media\Aggregate\MediaThumbnailSize\MediaThumbnailSizeCollection;
+use Shopware\Core\Content\Rule\RuleCollection;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityDefinition;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -23,39 +23,43 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriterInterface;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\Country\CountryCollection;
 use Shopware\Core\System\Country\CountryEntity;
-use Shopware\Core\System\Currency\CurrencyEntity;
-use Shopware\Core\System\DeliveryTime\DeliveryTimeEntity;
-use Shopware\Core\System\Language\LanguageEntity;
-use Shopware\Core\System\Locale\LocaleEntity;
-use Shopware\Core\System\NumberRange\NumberRangeEntity;
+use Shopware\Core\System\Currency\CurrencyCollection;
+use Shopware\Core\System\DeliveryTime\DeliveryTimeCollection;
+use Shopware\Core\System\Language\LanguageCollection;
+use Shopware\Core\System\Locale\LocaleCollection;
+use Shopware\Core\System\NumberRange\NumberRangeCollection;
+use Shopware\Core\System\StateMachine\Aggregation\StateMachineState\StateMachineStateCollection;
 use Shopware\Core\System\StateMachine\Aggregation\StateMachineState\StateMachineStateEntity;
+use Shopware\Core\System\StateMachine\StateMachineCollection;
 use Shopware\Core\System\StateMachine\StateMachineEntity;
+use Shopware\Core\System\Tax\TaxCollection;
 use Shopware\Core\System\Tax\TaxEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
-use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingEntity;
+use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingCollection;
 
 #[Package('services-settings')]
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
 {
     /**
-     * @param EntityRepository<EntityCollection<SwagMigrationMappingEntity>> $migrationMappingRepo
-     * @param EntityRepository<EntityCollection<LocaleEntity>> $localeRepository
-     * @param EntityRepository<EntityCollection<LanguageEntity>> $languageRepository
-     * @param EntityRepository<EntityCollection<CountryEntity>> $countryRepository
-     * @param EntityRepository<EntityCollection<CurrencyEntity>> $currencyRepository
-     * @param EntityRepository<EntityCollection<TaxEntity>> $taxRepo
-     * @param EntityRepository<EntityCollection<NumberRangeEntity>> $numberRangeRepo
-     * @param EntityRepository<EntityCollection<RuleEntity>> $ruleRepo
-     * @param EntityRepository<EntityCollection<MediaThumbnailSizeEntity>> $thumbnailSizeRepo
-     * @param EntityRepository<EntityCollection<MediaDefaultFolderEntity>> $mediaDefaultRepo
-     * @param EntityRepository<EntityCollection<CategoryEntity>> $categoryRepo
-     * @param EntityRepository<EntityCollection<CmsPageEntity>> $cmsPageRepo
-     * @param EntityRepository<EntityCollection<DeliveryTimeEntity>> $deliveryTimeRepo
-     * @param EntityRepository<EntityCollection<DocumentTypeEntity>> $documentTypeRepo
-     * @param EntityRepository<EntityCollection<StateMachineEntity>> $stateMachineRepo
-     * @param EntityRepository<EntityCollection<StateMachineStateEntity>> $stateMachineStateRepo
+     * @param EntityRepository<SwagMigrationMappingCollection> $migrationMappingRepo
+     * @param EntityRepository<LocaleCollection> $localeRepository
+     * @param EntityRepository<LanguageCollection> $languageRepository
+     * @param EntityRepository<CountryCollection> $countryRepository
+     * @param EntityRepository<CurrencyCollection> $currencyRepository
+     * @param EntityRepository<TaxCollection> $taxRepo
+     * @param EntityRepository<NumberRangeCollection> $numberRangeRepo
+     * @param EntityRepository<RuleCollection> $ruleRepo
+     * @param EntityRepository<MediaThumbnailSizeCollection> $thumbnailSizeRepo
+     * @param EntityRepository<MediaDefaultFolderCollection> $mediaDefaultRepo
+     * @param EntityRepository<CategoryCollection> $categoryRepo
+     * @param EntityRepository<CmsPageCollection> $cmsPageRepo
+     * @param EntityRepository<DeliveryTimeCollection> $deliveryTimeRepo
+     * @param EntityRepository<DocumentTypeCollection> $documentTypeRepo
+     * @param EntityRepository<StateMachineCollection> $stateMachineRepo
+     * @param EntityRepository<StateMachineStateCollection> $stateMachineStateRepo
      */
     public function __construct(
         EntityRepository $migrationMappingRepo,
@@ -74,8 +78,9 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         EntityRepository $documentTypeRepo,
         EntityWriterInterface $entityWriter,
         EntityDefinition $mappingDefinition,
-        private EntityRepository $stateMachineRepo,
-        private EntityRepository $stateMachineStateRepo,
+        protected LoggerInterface $logger,
+        private readonly EntityRepository $stateMachineRepo,
+        private readonly EntityRepository $stateMachineStateRepo,
     ) {
         parent::__construct(
             $migrationMappingRepo,
@@ -93,7 +98,8 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
             $deliveryTimeRepo,
             $documentTypeRepo,
             $entityWriter,
-            $mappingDefinition
+            $mappingDefinition,
+            $logger
         );
     }
 

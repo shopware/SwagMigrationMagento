@@ -28,40 +28,19 @@ use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 #[Package('services-settings')]
 class Magento2ProductConverterTest extends TestCase
 {
-    /**
-     * @var Magento23ProductConverter
-     */
-    private $productConverter;
+    private Magento23ProductConverter $productConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
-    /**
-     * @var string
-     */
-    private $languageUuid;
+    private string $languageUuid;
 
     protected function setUp(): void
     {
@@ -174,6 +153,7 @@ class Magento2ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -209,6 +189,7 @@ class Magento2ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -304,6 +285,7 @@ class Magento2ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertSame(0.0, $converted['price'][0]['net']);
         static::assertSame(0.0, $converted['price'][0]['gross']);
     }
@@ -338,6 +320,7 @@ class Magento2ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertSame(190.0, $converted['price'][0]['net']);
     }
 
@@ -351,6 +334,7 @@ class Magento2ProductConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertSame(159.66, $converted['price'][0]['net']);
     }
 }

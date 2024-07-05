@@ -23,30 +23,15 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19CustomerGroupConverterTest extends TestCase
 {
-    /**
-     * @var Magento19CustomerGroupConverter
-     */
-    private $customerGroupConverter;
+    private Magento19CustomerGroupConverter $customerGroupConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
     protected function setUp(): void
     {
@@ -86,6 +71,7 @@ class Magento19CustomerGroupConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());

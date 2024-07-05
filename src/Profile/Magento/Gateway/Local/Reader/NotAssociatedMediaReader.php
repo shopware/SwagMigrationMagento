@@ -8,7 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\Log\Package;
-use Swag\MigrationMagento\Exception\MediaPathNotReachableException;
+use Swag\MigrationMagento\Exception\MigrationMagentoException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -22,7 +22,7 @@ abstract class NotAssociatedMediaReader extends AbstractReader
         $this->sourcePath = $installationRoot . '/media/wysiwyg/';
 
         if ($installationRoot === '' || \is_dir($this->sourcePath) === false) {
-            throw new MediaPathNotReachableException($this->sourcePath);
+            throw MigrationMagentoException::mediaPathNotReachable($this->sourcePath);
         }
 
         $files = [];
@@ -56,7 +56,7 @@ abstract class NotAssociatedMediaReader extends AbstractReader
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
             return '';
         }
-        $installRoot = $credentials['installationRoot'];
+        $installRoot = (string) $credentials['installationRoot'];
         $installRoot = \ltrim($installRoot, '/');
         $installRoot = \rtrim($installRoot, '/');
         $installRoot = '/' . $installRoot;

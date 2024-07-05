@@ -25,35 +25,17 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19ProductReviewConverterTest extends TestCase
 {
-    /**
-     * @var Magento19ProductReviewConverter
-     */
-    private $productReviewConverter;
+    private Magento19ProductReviewConverter $productReviewConverter;
 
-    /**
-     * @var DummyLoggingService
-     */
-    private $loggingService;
+    private DummyLoggingService $loggingService;
 
-    /**
-     * @var string
-     */
-    private $runId;
+    private string $runId;
 
-    /**
-     * @var string
-     */
-    private $connection;
+    private SwagMigrationConnectionEntity $connection;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var DummyMagentoMappingService
-     */
-    private $mappingService;
+    private DummyMagentoMappingService $mappingService;
 
     protected function setUp(): void
     {
@@ -134,6 +116,7 @@ class Magento19ProductReviewConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());

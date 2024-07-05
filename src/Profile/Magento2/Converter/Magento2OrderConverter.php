@@ -10,17 +10,18 @@ namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
+use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
-use SwagMigrationAssistant\Profile\Shopware\Exception\AssociationEntityRequiredMissingException;
 
 #[Package('services-settings')]
 abstract class Magento2OrderConverter extends OrderConverter
 {
     /**
-     * @var array
+     * @var array<mixed>
      */
-    protected $billingAddress;
+    protected array $billingAddress = [];
 
     /**
      * @throws AssociationEntityRequiredMissingException
@@ -37,7 +38,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerMapping === null) {
-                throw new AssociationEntityRequiredMissingException(
+                throw MigrationException::associationEntityRequiredMissing(
                     DefaultEntities::ORDER,
                     DefaultEntities::CUSTOMER
                 );
@@ -73,7 +74,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
 
-            if ($mapping === null) {
+            if ($mapping === null || !isset($mapping['entityUuid'])) {
                 $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,

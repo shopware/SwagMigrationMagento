@@ -163,6 +163,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($this->adminSalesChannelUuid, $converted['salesChannelId']);
@@ -179,8 +180,8 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         $converted = $convertResult->getConverted();
 
-        static::assertNull($convertResult->getUnmapped());
         static::assertNotNull($converted);
+        static::assertNull($convertResult->getUnmapped());
         static::assertCount(0, $logs);
         static::assertSame(Magento2Argon2Id13Encoder::NAME, $converted['legacyEncoder']);
         static::assertSame($customerData[1]['password_hash'], $converted['legacyPassword']);
@@ -195,6 +196,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -211,6 +213,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -228,6 +231,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
@@ -235,6 +239,9 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertSame($customerData[0]['password_hash'], $converted['legacyPassword']);
     }
 
+    /**
+     * @return list<list{string|null}>
+     */
     public static function requiredProperties(): array
     {
         return [
@@ -284,6 +291,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
@@ -344,6 +352,9 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertSame($logs[1]['parameters']['emptyField'], 'address data');
     }
 
+    /**
+     * @return list<list{string|null}>
+     */
     public static function requiredAddressProperties(): array
     {
         return [
@@ -382,6 +393,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
@@ -418,6 +430,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);
@@ -455,6 +468,7 @@ class Magento2CustomerConverterTest extends TestCase
 
         $converted = $convertResult->getConverted();
 
+        static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('addresses', $converted);

@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CountryReader;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -17,6 +18,10 @@ abstract class Magento2CountryReader extends CountryReader
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
+
+        if ($this->connection === null) {
+            throw MigrationException::databaseConnectionError();
+        }
 
         $query = $this->connection->createQueryBuilder();
 

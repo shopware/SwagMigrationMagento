@@ -13,15 +13,9 @@ use Shopware\Core\Framework\Struct\Struct;
 #[Package('services-settings')]
 class StockConfigurationStruct extends Struct
 {
-    /**
-     * @var int
-     */
-    private $minPurchase;
+    private int $minPurchase;
 
-    /**
-     * @var int
-     */
-    private $maxPurchase;
+    private int $maxPurchase;
 
     public function __construct(int $minPurchase, int $maxPurchase)
     {

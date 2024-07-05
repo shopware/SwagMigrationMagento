@@ -59,7 +59,7 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
     {
         $uuid = '';
         if (isset($this->connectionPremappingDictionary['default_country'])) {
-            $uuid = $this->connectionPremappingDictionary['default_country']['destinationUuid'];
+            $uuid = $this->connectionPremappingDictionary['default_country']->getDestinationUuid();
         }
 
         $entityData = [];

@@ -27,6 +27,7 @@ use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistry;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\Local\ShopwareLocalGateway;
 
@@ -35,30 +36,15 @@ class PaymentMethodReaderTest extends TestCase
 {
     use KernelTestBehaviour;
 
-    /**
-     * @var MigrationContextInterface
-     */
-    private $migrationContext;
+    private MigrationContextInterface $migrationContext;
 
-    /**
-     * @var Magento19PaymentMethodReader
-     */
-    private $reader;
+    private Magento19PaymentMethodReader $reader;
 
-    /**
-     * @var Context
-     */
-    private $context;
+    private Context $context;
 
-    /**
-     * @var PaymentMethodEntity
-     */
-    private $debitMock;
+    private PaymentMethodEntity $debitMock;
 
-    /**
-     * @var PaymentMethodEntity
-     */
-    private $cashMock;
+    private PaymentMethodEntity $cashMock;
 
     protected function setUp(): void
     {
@@ -80,27 +66,17 @@ class PaymentMethodReaderTest extends TestCase
         $this->cashMock->setName('Cash');
         $this->cashMock->setHandlerIdentifier(CashPayment::class);
 
-        $premapping = [[
-            'entity' => 'payment_method',
-            'mapping' => [
-                0 => [
-                    'sourceId' => 'direct',
-                    'description' => 'direct',
-                    'destinationUuid' => $this->debitMock->getId(),
+        $premapping = [
+            new PremappingStruct(
+                'payment_method',
+                [
+                    new PremappingEntityStruct('direct', 'direct', $this->debitMock->getId()),
+                    new PremappingEntityStruct('cash', 'cash', $this->cashMock->getId()),
+                    new PremappingEntityStruct('payment-invalid', 'payment-invalid', Uuid::randomHex()),
                 ],
-                1 => [
-                    'sourceId' => 'cash',
-                    'description' => 'cash',
-                    'destinationUuid' => $this->cashMock->getId(),
-                ],
-
-                2 => [
-                    'sourceId' => 'payment-invalid',
-                    'description' => 'payment-invalid',
-                    'destinationUuid' => Uuid::randomHex(),
-                ],
-            ],
-        ]];
+                []
+            ),
+        ];
         $connection->setPremapping($premapping);
 
         $mock = $this->createMock(EntityRepository::class);
@@ -128,8 +104,6 @@ class PaymentMethodReaderTest extends TestCase
     public function testGetPremapping(): void
     {
         $result = $this->reader->getPremapping($this->context, $this->migrationContext);
-
-        static::assertInstanceOf(PremappingStruct::class, $result);
 
         static::assertCount(5, $result->getMapping());
         static::assertCount(2, $result->getChoices());
