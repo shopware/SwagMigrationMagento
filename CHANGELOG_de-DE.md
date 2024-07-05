@@ -1,8 +1,8 @@
-# REPLACE-GLOBALLY-WITH-NEXT-VERSION (MAJOR NEEDED)
-- MIG-919 - Unterstützung der Abhängigkeit Migration-Assistant #REPLACE-GLOBALLY-WITH-NEXT-VERSION#
+# 8.0.0
+- MIG-919 - Unterstützte und minimum Version des Migration-Assistant auf ~13.0 angehoben
 
 # 7.0.0
-- NTR - Unterstützte version des Migration-Assistant auf ~12.0 angehoben
+- NTR - Unterstützte und minimum Version des Migration-Assistant auf ~12.0 angehoben
 
 # 6.0.1
 - MIG-974 - Mehr Länder hinzugefügt

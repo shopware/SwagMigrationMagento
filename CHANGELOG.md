@@ -1,5 +1,5 @@
-# REPLACE-GLOBALLY-WITH-NEXT-VERSION (MAJOR NEEDED)
-- MIG-919 - Support for migration assistant #REPLACE-GLOBALLY-WITH-NEXT-VERSION#
+# 8.0.0
+- MIG-919 - Raised and support minimum required migration assistant version  ~13.0
 
 # 7.0.0
 - NTR - Raised and support minimum required migration assistant version ~12.0
