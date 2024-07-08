@@ -1,7 +1,7 @@
 {
     "name": "swag/migration-magento",
     "description": "Magento 1 & 2 profiles for Shopware Migration Assistant",
-    "version": "7.0.0",
+    "version": "8.0.0",
     "type": "shopware-platform-plugin",
     "license": "MIT",
     "authors": [
@@ -11,7 +11,7 @@
     ],
     "require": {
         "shopware/core": "~6.6.0",
-        "swag/migration-assistant": "~12.0"
+        "swag/migration-assistant": "~13.0"
     },
     "extra": {
         "shopware-plugin-class": "Swag\\MigrationMagento\\SwagMigrationMagento",
@@ -73,5 +73,10 @@
     },
     "suggest": {
         "ext-sodium": "Allows you to use the argon2id13 encoder to migrate customer passwords of Magento 2."
+    },
+    "config": {
+        "allow-plugins": {
+            "symfony/runtime": true
+        }
     }
 }
