@@ -1,5 +1,6 @@
 # 8.0.0
 - MIG-919 - Raised and support minimum required migration assistant version  ~13.0
+- MIG-1011 - Ensure database attributes (like stringify fetches) are always set on local gateway connections
 
 # 7.0.0
 - NTR - Raised and support minimum required migration assistant version ~12.0

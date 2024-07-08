@@ -12,6 +12,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception\ConnectionException;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -36,8 +37,11 @@ class ConnectionFactory implements ConnectionFactoryInterface
             'user' => (string) ($credentials['dbUser'] ?? ''),
             'password' => (string) ($credentials['dbPassword'] ?? ''),
             'host' => (string) ($credentials['dbHost'] ?? ''),
-            'driver' => 'pdo_mysql',
             'charset' => 'utf8mb4',
+            'driver' => 'pdo_mysql',
+            'driverOptions' => [
+                \PDO::ATTR_STRINGIFY_FETCHES => true,
+            ],
         ];
 
         if (isset($credentials['dbPort'])) {
@@ -45,23 +49,37 @@ class ConnectionFactory implements ConnectionFactoryInterface
         }
 
         $connection = DriverManager::getConnection($connectionParams);
-
-        try {
-            if (\is_object($connection->getNativeConnection()) && \method_exists($connection->getNativeConnection(), 'setAttribute')) {
-                $connection->getNativeConnection()->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, true);
-            }
-        } catch (ConnectionException $exception) {
-            // nth
-        }
+        $this->ensureConnectionAttributes($connection);
 
         if (!isset($credentials['tablePrefix']) || $credentials['tablePrefix'] === '') {
             return $connection;
         }
+
         $schemaManager = $connection->createSchemaManager();
         if (!$schemaManager->tablesExist([$credentials['tablePrefix'] . 'customer_entity'])) {
             throw MigrationMagentoException::incorrectTablePrefix((string) $credentials['tablePrefix']);
         }
 
         return $connection;
+    }
+
+    private function ensureConnectionAttributes(Connection $connection): void
+    {
+        try {
+            $nativeConnection = $connection->getNativeConnection();
+            // we can assume that the underlying connection always uses the 'pdo_mysql' driver,
+            // as specified in $connectionParams passed to DriverManager::getConnection above
+            if (!$nativeConnection instanceof \PDO) {
+                throw MigrationException::databaseConnectionAttributesWrong();
+            }
+
+            $successfullySet = $nativeConnection->setAttribute(\PDO::ATTR_STRINGIFY_FETCHES, true);
+            if (!$successfullySet) {
+                throw MigrationException::databaseConnectionAttributesWrong();
+            }
+        } catch (ConnectionException $exception) {
+            // $connection->getNativeConnection() tries to connect to the DB
+            // we want to ignore connection errors at this point
+        }
     }
 }
