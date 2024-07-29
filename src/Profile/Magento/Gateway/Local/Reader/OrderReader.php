@@ -87,6 +87,26 @@ SQL;
         );
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_address', 'billingAddress');
 
+        // join on country table to get country iso2 and iso3 code
+        $query->leftJoin(
+            'billingAddress',
+            $this->tablePrefix . 'directory_country',
+            'billingCountry',
+            'billingAddress.country_id = billingCountry.country_id'
+        );
+        $query->addSelect('billingCountry.iso2_code as `billingAddress.country_iso2`');
+        $query->addSelect('billingCountry.iso3_code as `billingAddress.country_iso3`');
+
+        // join on region table to get region code
+        $query->leftJoin(
+            'billingAddress',
+            $this->tablePrefix . 'directory_country_region',
+            'billingRegion',
+            'billingAddress.region_id = billingRegion.region_id'
+        );
+
+        $query->addSelect('billingRegion.code as `billingAddress.region_code`');
+
         $query->leftJoin(
             'orders',
             $this->tablePrefix . 'sales_flat_order_address',
@@ -94,6 +114,25 @@ SQL;
             'shippingAddress.parent_id = orders.entity_id AND shippingAddress.address_type = \'shipping\''
         );
         $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_order_address', 'shippingAddress');
+
+        // join on country table to get country iso2 and iso3 code
+        $query->leftJoin(
+            'shippingAddress',
+            $this->tablePrefix . 'directory_country',
+            'shippingCountry',
+            'shippingAddress.country_id = shippingCountry.country_id'
+        );
+        $query->addSelect('shippingCountry.iso2_code as `shippingAddress.country_iso2`');
+        $query->addSelect('shippingCountry.iso3_code as `shippingAddress.country_iso3`');
+
+        // join on region table to get region code
+        $query->leftJoin(
+            'shippingAddress',
+            $this->tablePrefix . 'directory_country_region',
+            'shippingRegion',
+            'shippingAddress.region_id = shippingRegion.region_id'
+        );
+        $query->addSelect('shippingRegion.code as `shippingAddress.region_code`');
 
         $query->where('orders.entity_id IN (:ids)');
         $query->setParameter('ids', $ids, ArrayParameterType::STRING);

@@ -88,15 +88,30 @@ SQL;
         }
 
         $sql = <<<SQL
-SELECT
-    customer_address.*,
-    directory_country.iso2_code AS country_iso2,
-    directory_country.iso3_code AS country_iso3
-FROM {$this->tablePrefix}customer_address_entity customer_address
-LEFT JOIN {$this->tablePrefix}eav_attribute AS attribute ON attribute.entity_type_id = customer_address.entity_type_id AND attribute.attribute_code = 'country_id'
-LEFT JOIN {$this->tablePrefix}customer_address_entity_varchar AS country_attribute ON attribute.attribute_id = country_attribute.attribute_id AND country_attribute.entity_id = customer_address.entity_id
-LEFT JOIN {$this->tablePrefix}directory_country AS directory_country ON directory_country.country_id = country_attribute.value
- WHERE customer_address.parent_id IN (?);
+            SELECT
+                customer_address.*,
+                directory_country.iso2_code AS country_iso2,
+                directory_country.iso3_code AS country_iso3,
+                directory_country_region.code AS region_code,
+                region_attribute.value AS region_name
+            FROM {$this->tablePrefix}customer_address_entity customer_address
+                LEFT JOIN {$this->tablePrefix}eav_attribute AS country_eav_attribute
+                    ON country_eav_attribute.entity_type_id = customer_address.entity_type_id AND country_eav_attribute.attribute_code = 'country_id'
+                LEFT JOIN {$this->tablePrefix}eav_attribute AS region_id_eav_attribute
+                    ON region_id_eav_attribute.entity_type_id = customer_address.entity_type_id AND region_id_eav_attribute.attribute_code = 'region_id'
+                LEFT JOIN {$this->tablePrefix}eav_attribute AS region_eav_attribute
+                    ON region_eav_attribute.entity_type_id = customer_address.entity_type_id AND region_eav_attribute.attribute_code = 'region'
+                LEFT JOIN {$this->tablePrefix}customer_address_entity_varchar AS country_attribute
+                    ON country_eav_attribute.attribute_id = country_attribute.attribute_id AND country_attribute.entity_id = customer_address.entity_id
+                LEFT JOIN {$this->tablePrefix}customer_address_entity_int AS region_id_attribute
+                    ON region_id_eav_attribute.attribute_id = region_id_attribute.attribute_id AND region_id_attribute.entity_id = customer_address.entity_id
+                LEFT JOIN {$this->tablePrefix}customer_address_entity_varchar AS region_attribute
+                    ON region_eav_attribute.attribute_id = region_attribute.attribute_id AND region_attribute.entity_id = customer_address.entity_id
+                LEFT JOIN {$this->tablePrefix}directory_country AS directory_country
+                    ON directory_country.country_id = country_attribute.value
+                LEFT JOIN {$this->tablePrefix}directory_country_region AS directory_country_region
+                    ON directory_country_region.region_id = region_id_attribute.value
+            WHERE customer_address.parent_id IN (?);
 SQL;
 
         return $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();

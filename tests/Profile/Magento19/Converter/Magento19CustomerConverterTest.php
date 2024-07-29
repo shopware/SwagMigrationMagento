@@ -56,6 +56,8 @@ class Magento19CustomerConverterTest extends TestCase
 
     private string $adminSalesChannelUuid;
 
+    private string $countryStateMappingUuid;
+
     protected function setUp(): void
     {
         $mappingService = new DummyMagentoMappingService();
@@ -142,6 +144,17 @@ class Magento19CustomerConverterTest extends TestCase
             null,
             null,
             $this->countryMappingUuid
+        );
+
+        $this->countryStateMappingUuid = Uuid::randomHex();
+        $mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::COUNTRY_STATE,
+            '24',
+            $context,
+            null,
+            null,
+            $this->countryStateMappingUuid
         );
     }
 
@@ -447,5 +460,83 @@ class Magento19CustomerConverterTest extends TestCase
         static::assertSame($logs[2]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
         static::assertSame($logs[2]['parameters']['emptyField'], 'default billing and shipping address');
         static::assertSame($logs[2]['parameters']['replacementField'], 'first address');
+    }
+
+    public function testConvertCountryStateWithMapping(): void
+    {
+        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
+        $customerData = $customerData[0];
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->customerConverter->convert(
+            $customerData,
+            $context,
+            $this->migrationContext
+        );
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
+        static::assertArrayHasKey('id', $converted);
+        static::assertArrayHasKey('addresses', $converted);
+        static::assertArrayHasKey('countryStateId', $converted['addresses'][0]);
+        static::assertSame($this->countryStateMappingUuid, $converted['addresses'][0]['countryStateId']);
+    }
+
+    public function testConvertExistingCountryStateWithoutMapping(): void
+    {
+        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
+        $customerData = $customerData[0];
+        $customerData['addresses'][0]['region_id'] = '9999';
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->customerConverter->convert(
+            $customerData,
+            $context,
+            $this->migrationContext
+        );
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
+        static::assertArrayHasKey('id', $converted);
+        static::assertArrayHasKey('addresses', $converted);
+        static::assertArrayHasKey('countryState', $converted['addresses'][0]);
+        static::assertArrayHasKey('id', $converted['addresses'][0]['countryState']);
+        static::assertSame('Indiana', $converted['addresses'][0]['countryState']['name']);
+        static::assertSame('IN', $converted['addresses'][0]['countryState']['shortCode']);
+    }
+
+    public function testConvertNotExistingCountryStateWithoutMapping(): void
+    {
+        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
+        $customerData = $customerData[0];
+        $customerData['addresses'][0]['region_id'] = '9999';
+        $customerData['addresses'][0]['region_code'] = 'XY';
+        $customerData['addresses'][0]['region_name'] = null;
+
+        $context = Context::createDefaultContext();
+        $convertResult = $this->customerConverter->convert(
+            $customerData,
+            $context,
+            $this->migrationContext
+        );
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
+        static::assertArrayHasKey('id', $converted);
+        static::assertArrayHasKey('addresses', $converted);
+        static::assertArrayNotHasKey('countryStateId', $converted['addresses'][0]);
+
+        $logs = $this->loggingService->getLoggingArray();
+
+        static::assertCount(1, $logs);
+
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_COUNTRY_STATE_ENTITY_UNKNOWN');
+        static::assertSame($logs[0]['parameters']['sourceId'], '9999');
+        static::assertSame($logs[0]['parameters']['entity'], DefaultEntities::COUNTRY_STATE);
+        static::assertSame($logs[0]['parameters']['requiredForSourceId'], $customerData['entity_id']);
+        static::assertSame($logs[0]['parameters']['requiredForEntity'], DefaultEntities::CUSTOMER);
     }
 }

@@ -145,6 +145,16 @@ class Magento2CustomerConverterTest extends TestCase
             null,
             $this->countryMappingUuid
         );
+
+        $mappingService->getOrCreateMapping(
+            $this->connection->getId(),
+            DefaultEntities::COUNTRY_STATE,
+            '24',
+            $context,
+            null,
+            null,
+            Uuid::randomHex()
+        );
     }
 
     public function testSupports(): void

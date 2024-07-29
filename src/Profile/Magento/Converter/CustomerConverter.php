@@ -20,12 +20,15 @@ use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 
 #[Package('services-settings')]
 abstract class CustomerConverter extends MagentoConverter
 {
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
+
     protected string $runId;
 
     protected string $connectionId;
@@ -336,7 +339,7 @@ abstract class CustomerConverter extends MagentoConverter
                         $this->runId,
                         DefaultEntities::COUNTRY,
                         $address['country_id'],
-                        DefaultEntities::ORDER,
+                        DefaultEntities::CUSTOMER,
                         $this->oldIdentifier
                     )
                 );
@@ -345,6 +348,46 @@ abstract class CustomerConverter extends MagentoConverter
             }
 
             $newAddress['countryId'] = $countryUuid;
+
+            if (isset($address['region_id'])
+                && isset($address['region_code'])
+                && $this->mappingService instanceof MagentoMappingServiceInterface
+            ) {
+                $countryStateUuid = $this->mappingService->getCountryStateUuid(
+                    $address['region_id'],
+                    $address['country_iso2'],
+                    $address['region_code'],
+                    $this->connectionId,
+                    $this->context
+                );
+
+                if ($countryStateUuid !== null) {
+                    $newAddress['countryStateId'] = $countryStateUuid;
+                } elseif (!empty($address['region_name'])) {
+                    $mapping = $this->mappingService->createMapping(
+                        $this->connectionId,
+                        DefaultEntities::COUNTRY_STATE,
+                        $address['region_id']
+                    );
+
+                    $newAddress['countryState'] = [
+                        'id' => $mapping['entityUuid'],
+                        'name' => $address['region_name'],
+                        'shortCode' => $address['region_code'],
+                        'countryId' => $countryUuid,
+                    ];
+                } else {
+                    $this->loggingService->addLogEntry(
+                        new UnknownEntityLog(
+                            $this->runId,
+                            DefaultEntities::COUNTRY_STATE,
+                            $address['region_id'],
+                            DefaultEntities::CUSTOMER,
+                            $this->oldIdentifier
+                        )
+                    );
+                }
+            }
 
             $this->convertValue($newAddress, 'firstName', $address, 'firstname');
             $this->convertValue($newAddress, 'lastName', $address, 'lastname');

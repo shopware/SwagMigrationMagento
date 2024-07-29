@@ -1,3 +1,6 @@
+# REPLACE-GLOBALLY-WITH-NEXT-VERSION
+- MIG-1034 - Für Kunden- und Bestelladressen werden jetzt auch die Bundesländer migriert
+
 # 8.0.0
 - MIG-919 - Unterstützte und minimum Version des Migration-Assistant auf ~13.0 angehoben
 - MIG-1011 - Sicherstellung, dass Datenbankattribute (wie z. B. "stringify fetches") bei lokalen Gateway-Verbindungen immer gesetzt sind
