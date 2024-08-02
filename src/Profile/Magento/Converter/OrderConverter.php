@@ -439,6 +439,14 @@ abstract class OrderConverter extends MagentoConverter
             );
 
             if ($deliveryStateMapping === null) {
+                $this->loggingService->addLogEntry(new UnknownEntityLog(
+                    $this->runId,
+                    DefaultEntities::STATE_MACHINE_STATE,
+                    MagentoOrderDeliveryStateReader::DEFAULT_SHIPPED_STATUS,
+                    DefaultEntities::ORDER_DELIVERY,
+                    $shipment['entity_id']
+                ));
+
                 continue;
             }
 
@@ -453,6 +461,13 @@ abstract class OrderConverter extends MagentoConverter
             }
 
             if (!isset($delivery['shippingMethodId'])) {
+                $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                    $this->runId,
+                    DefaultEntities::SHIPPING_METHOD,
+                    $data['orders']['shipping_method'],
+                    DefaultEntities::ORDER
+                ));
+
                 continue;
             }
 
@@ -573,14 +588,26 @@ abstract class OrderConverter extends MagentoConverter
         $this->mappingIds[] = $mapping['id'];
         $address['id'] = $mapping['entityUuid'];
 
-        $mapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::COUNTRY,
+        if (!isset($originalData['country_id']) || !isset($originalData['country_iso2']) || !isset($originalData['country_iso3'])) {
+            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->runId,
+                DefaultEntities::ORDER,
+                $this->oldIdentifier,
+                'country_id, country_iso2, country_iso3'
+            ));
+
+            return [];
+        }
+
+        $countryUuid = $this->mappingService->getCountryUuid(
             $originalData['country_id'],
+            $originalData['country_iso2'],
+            $originalData['country_iso3'],
+            $this->connectionId,
             $this->context
         );
 
-        if ($mapping === null) {
+        if ($countryUuid === null) {
             $this->loggingService->addLogEntry(
                 new UnknownEntityLog(
                     $this->runId,
@@ -593,20 +620,48 @@ abstract class OrderConverter extends MagentoConverter
 
             return [];
         }
-        $this->mappingIds[] = $mapping['id'];
-        $address['countryId'] = $mapping['entityUuid'];
 
-        if (isset($originalData['stateID'])) {
-            $mapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                DefaultEntities::COUNTRY_STATE,
+        $address['countryId'] = $countryUuid;
+
+        if (isset($originalData['region_id'])
+            && isset($originalData['region_code'])
+            && isset($originalData['country_iso2'])
+            && isset($originalData['country_iso3'])
+            && $this->mappingService instanceof MagentoMappingServiceInterface
+        ) {
+            $countryStateUuid = $this->mappingService->getCountryStateUuid(
                 $originalData['region_id'],
+                $originalData['country_iso2'],
+                $originalData['region_code'],
+                $this->connectionId,
                 $this->context
             );
 
-            if ($mapping !== null) {
-                $this->mappingIds[] = $mapping['id'];
-                $address['countryStateId'] = $mapping['entityUuid'];
+            if ($countryStateUuid !== null) {
+                $address['countryStateId'] = $countryStateUuid;
+            } elseif (!empty($originalData['region'])) {
+                $mapping = $this->mappingService->createMapping(
+                    $this->connectionId,
+                    DefaultEntities::COUNTRY_STATE,
+                    $originalData['region_id']
+                );
+
+                $address['countryState'] = [
+                    'id' => $mapping['entityUuid'],
+                    'name' => $originalData['region'],
+                    'shortCode' => $originalData['region_code'],
+                    'countryId' => $countryUuid,
+                ];
+            } else {
+                $this->loggingService->addLogEntry(
+                    new UnknownEntityLog(
+                        $this->runId,
+                        DefaultEntities::COUNTRY_STATE,
+                        $originalData['region_id'],
+                        DefaultEntities::ORDER,
+                        $this->oldIdentifier
+                    )
+                );
             }
         }
 

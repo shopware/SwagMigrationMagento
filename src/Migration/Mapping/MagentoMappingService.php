@@ -23,6 +23,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Write\EntityWriterInterface;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\Country\Aggregate\CountryState\CountryStateCollection;
 use Shopware\Core\System\Country\CountryCollection;
 use Shopware\Core\System\Country\CountryEntity;
 use Shopware\Core\System\Currency\CurrencyCollection;
@@ -60,6 +61,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
      * @param EntityRepository<DocumentTypeCollection> $documentTypeRepo
      * @param EntityRepository<StateMachineCollection> $stateMachineRepo
      * @param EntityRepository<StateMachineStateCollection> $stateMachineStateRepo
+     * @param EntityRepository<CountryStateCollection> $countryStateRepo
      */
     public function __construct(
         EntityRepository $migrationMappingRepo,
@@ -81,6 +83,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         protected LoggerInterface $logger,
         private readonly EntityRepository $stateMachineRepo,
         private readonly EntityRepository $stateMachineStateRepo,
+        private readonly EntityRepository $countryStateRepo
     ) {
         parent::__construct(
             $migrationMappingRepo,
@@ -175,5 +178,35 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         }
 
         return $tax->getTaxRate();
+    }
+
+    public function getCountryStateUuid(string $oldIdentifier, string $countryIso, string $countryStateCode, string $connectionId, Context $context): ?string
+    {
+        $countryStateMapping = $this->getMapping($connectionId, DefaultEntities::COUNTRY_STATE, $oldIdentifier, $context);
+
+        if ($countryStateMapping !== null) {
+            return $countryStateMapping['entityUuid'];
+        }
+
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('shortCode', $countryIso . '-' . $countryStateCode));
+        $criteria->addFilter(new EqualsFilter('country.iso', $countryIso));
+        $criteria->setLimit(1);
+
+        $countryStateUuid = $this->countryStateRepo->searchIds($criteria, $context)->firstId();
+
+        if ($countryStateUuid !== null) {
+            $this->saveMapping(
+                [
+                    'id' => Uuid::randomHex(),
+                    'connectionId' => $connectionId,
+                    'entity' => DefaultEntities::COUNTRY_STATE,
+                    'oldIdentifier' => $oldIdentifier,
+                    'entityUuid' => $countryStateUuid,
+                ]
+            );
+        }
+
+        return $countryStateUuid;
     }
 }

@@ -1,3 +1,6 @@
+# REPLACE-GLOBALLY-WITH-NEXT-VERSION
+- MIG-1034 - Fixed country states not being migrated for both customer and order addresses
+
 # 8.0.0
 - MIG-919 - Raised and support minimum required migration assistant version  ~13.0
 - MIG-1011 - Ensure database attributes (like stringify fetches) are always set on local gateway connections

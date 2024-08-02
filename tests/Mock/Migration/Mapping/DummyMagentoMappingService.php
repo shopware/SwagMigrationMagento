@@ -294,4 +294,15 @@ class DummyMagentoMappingService extends MagentoMappingService
     {
         return 19.0;
     }
+
+    public function getCountryStateUuid(string $oldIdentifier, string $countryIso, string $countryStateCode, string $connectionId, Context $context): ?string
+    {
+        $mapping = $this->getMapping($connectionId, DefaultEntities::COUNTRY_STATE, $oldIdentifier, $context);
+
+        if ($mapping !== null) {
+            return $mapping['entityUuid'];
+        }
+
+        return null;
+    }
 }

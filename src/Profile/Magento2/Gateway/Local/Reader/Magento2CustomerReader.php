@@ -22,13 +22,18 @@ abstract class Magento2CustomerReader extends CustomerReader
         }
 
         $sql = <<<SQL
-SELECT
-    customer_address.*,
-    directory_country.iso2_code AS country_iso2,
-    directory_country.iso3_code AS country_iso3
-FROM {$this->tablePrefix}customer_address_entity customer_address
-LEFT JOIN {$this->tablePrefix}directory_country AS directory_country ON directory_country.country_id = customer_address.country_id
- WHERE customer_address.parent_id IN (?);
+            SELECT
+                customer_address.*,
+                directory_country.iso2_code AS country_iso2,
+                directory_country.iso3_code AS country_iso3,
+                directory_country_region.code AS region_code,
+                customer_address.region AS region_name
+            FROM {$this->tablePrefix}customer_address_entity customer_address
+                LEFT JOIN {$this->tablePrefix}directory_country AS directory_country
+                    ON directory_country.country_id = customer_address.country_id
+                LEFT JOIN {$this->tablePrefix}directory_country_region AS directory_country_region
+                    ON directory_country_region.region_id = customer_address.region_id
+            WHERE customer_address.parent_id IN (?);
 SQL;
 
         return $this->connection->executeQuery($sql, [$ids], [ArrayParameterType::STRING])->fetchAllAssociative();
