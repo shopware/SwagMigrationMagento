@@ -1,5 +1,6 @@
 # REPLACE-GLOBALLY-WITH-NEXT-VERSION
 - MIG-1034 - Fixed country states not being migrated for both customer and order addresses
+- MIG-1040 - Media migration now uses the system's temporary directory to download files.
 
 # 8.0.0
 - MIG-919 - Raised and support minimum required migration assistant version  ~13.0

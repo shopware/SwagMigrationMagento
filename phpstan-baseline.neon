@@ -1401,81 +1401,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/TableReaderInterface.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor has an uninitialized property \\$migrationContext\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:copyMediaFiles\\(\\) has parameter \\$media with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:doMediaDownloadRequests\\(\\) has parameter \\$media with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:doMediaDownloadRequests\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:downloadMediaFiles\\(\\) has parameter \\$mappedWorkload with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:downloadMediaFiles\\(\\) has parameter \\$media with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:downloadMediaFiles\\(\\) has parameter \\$workload with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:downloadMediaFiles\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:getMediaPathMapping\\(\\) has parameter \\$media with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$results has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Parameter \\#1 \\$stream of function fclose expects resource, resource\\|false given\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Parameter \\#1 \\$stream of function fwrite expects resource, resource\\|false given\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Parameter \\#2 \\$destination of method Shopware\\\\Core\\\\Content\\\\Media\\\\File\\\\FileSaver\\:\\:persistFileToMedia\\(\\) expects string, string\\|null given\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Parameter \\#2 \\$mimeType of class Shopware\\\\Core\\\\Content\\\\Media\\\\File\\\\MediaFile constructor expects string, string\\|false given\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
-			message: "#^Parameter \\#4 \\$fileSize of method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Media\\\\LocalMediaProcessor\\:\\:persistFileToMedia\\(\\) expects int, int\\<0, max\\>\\|false given\\.$#"
-			count: 1
-			path: src/Profile/Magento/Media/LocalMediaProcessor.php
-
-		-
 			message: "#^Call to an undefined method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\MagentoGatewayInterface\\:\\:readStores\\(\\)\\.$#"
 			count: 1
 			path: src/Profile/Magento/Premapping/AdminStoreReader.php
@@ -1889,16 +1814,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Reader\\\\Magento2SeoUrlReader\\:\\:setProductData\\(\\) has parameter \\$seoUrl with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Media\\\\Magento2LocalMediaProcessor\\:\\:doMediaDownloadRequests\\(\\) has parameter \\$media with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Media/Magento2LocalMediaProcessor.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Media\\\\Magento2LocalMediaProcessor\\:\\:doMediaDownloadRequests\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Media/Magento2LocalMediaProcessor.php
 
 		-
 			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CountryReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
