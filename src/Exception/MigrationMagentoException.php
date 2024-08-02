@@ -18,6 +18,10 @@ class MigrationMagentoException extends HttpException
 
     public const MEDIA_PATH_NOT_REACHABLE = 'SWAG_MIGRATION_MAGENTO__MEDIA_PATH_NOT_REACHABLE';
 
+    public const MEDIA_FILE_SIZE_ERROR = 'SWAG_MIGRATION_MAGENTO__MEDIA_FILE_SIZE_ERROR';
+
+    public const MEDIA_MIME_TYPE_ERROR = 'SWAG_MIGRATION_MAGENTO__MEDIA_MIME_TYPE_ERROR';
+
     public static function incorrectTablePrefix(string $prefix): self
     {
         return new self(
@@ -33,6 +37,24 @@ class MigrationMagentoException extends HttpException
             Response::HTTP_BAD_REQUEST,
             self::MEDIA_PATH_NOT_REACHABLE,
             \sprintf('The local media path %s is not reachable.', $path)
+        );
+    }
+
+    public static function mediaFileSizeError(string $path): self
+    {
+        return new self(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            self::MEDIA_FILE_SIZE_ERROR,
+            \sprintf('Could not determine size of file %s', $path)
+        );
+    }
+
+    public static function mediaMimeTypeError(string $path): self
+    {
+        return new self(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            self::MEDIA_MIME_TYPE_ERROR,
+            \sprintf('Could not determine mime type of file %s', $path)
         );
     }
 }

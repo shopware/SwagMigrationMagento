@@ -14,20 +14,21 @@ use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
 use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Content\Media\File\MediaFile;
-use Shopware\Core\Content\Media\MediaEntity;
+use Shopware\Core\Content\Media\MediaCollection;
 use Shopware\Core\Content\Media\MediaException;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
+use Swag\MigrationMagento\Migration\Logging\FileHandleErrorLog;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\CannotGetFileRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
+use SwagMigrationAssistant\Migration\Logging\Log\MimeTypeErrorLog;
+use SwagMigrationAssistant\Migration\Logging\Log\TemporaryFileErrorLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileProcessorInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
@@ -40,7 +41,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
 {
     /**
-     * @var EntityRepository<EntityCollection<MediaEntity>>
+     * @var EntityRepository<MediaCollection>
      */
     protected EntityRepository $mediaRepo;
 
@@ -52,7 +53,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
 
     /**
      * @param EntityRepository<SwagMigrationMediaFileCollection> $migrationMediaFileRepo
-     * @param EntityRepository<EntityCollection<MediaEntity>> $mediaRepo
+     * @param EntityRepository<MediaCollection> $mediaRepo
      */
     public function __construct(
         EntityRepository $migrationMediaFileRepo,
@@ -84,17 +85,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
 
         foreach ($workload as $work) {
             $mappedWorkload[$work->getMediaId()] = $work;
-        }
-
-        if (!\is_dir('_temp') && !\mkdir('_temp') && !\is_dir('_temp')) {
-            $this->loggingService->addLogEntry(new ExceptionRunLog(
-                $runId,
-                DefaultEntities::MEDIA,
-                MigrationException::noFileSystemPermissions(),
-            ));
-            $this->loggingService->saveLogging($context);
-
-            return $workload;
         }
 
         $media = $this->getMediaFiles(\array_keys($mappedWorkload), $migrationContext->getRunUuid());
@@ -132,7 +122,10 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     /**
      * Start all the download requests for the media in parallel (async) and return the promise array.
      *
+     * @param array<array<string, mixed>> $media
      * @param MediaProcessWorkloadStruct[] $mappedWorkload
+     *
+     * @return array<Promise\PromiseInterface>
      */
     protected function doMediaDownloadRequests(array $media, array &$mappedWorkload, Client $client, string $shopUrl): array
     {
@@ -208,6 +201,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     }
 
     /**
+     * @param array<array<string, mixed>> $media
      * @param MediaProcessWorkloadStruct[] $mappedWorkload
      *
      * @return MediaProcessWorkloadStruct[]
@@ -222,6 +216,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     }
 
     /**
+     * @param array<array<string, mixed>> $media
      * @param MediaProcessWorkloadStruct[] $mappedWorkload
      *
      * @return MediaProcessWorkloadStruct[]
@@ -241,13 +236,37 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $sourcePath = $this->getInstallationRoot($migrationContext) . $mappedWorkload[$mediaId]->getAdditionalData()['path'];
 
             $fileExtension = \pathinfo($sourcePath, \PATHINFO_EXTENSION);
-            $filePath = \sprintf('_temp/%s.%s', $rowId, $fileExtension);
+            $filePath = \tempnam(\sys_get_temp_dir(), 'SwagMigrationMagento-');
+            if ($filePath === false) {
+                $failureUuids[] = (string) $mediaId;
+                $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                $this->loggingService->addLogEntry(new TemporaryFileErrorLog(
+                    $mappedWorkload[$mediaId]->getRunId(),
+                    DefaultEntities::MEDIA,
+                    $mediaId
+                ));
+
+                continue;
+            }
 
             if (\copy($sourcePath, $filePath)) {
                 try {
                     $fileSize = \filesize($filePath);
+                    if ($fileSize === false) {
+                        throw MigrationMagentoException::mediaFileSizeError($filePath);
+                    }
+
                     $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
-                    $this->persistFileToMedia($filePath, $mediaId, $mediaFile['file_name'], $fileSize, $fileExtension, $context);
+                    $this->persistFileToMedia(
+                        $filePath,
+                        $mediaId,
+                        $mediaFile['file_name'],
+                        $fileSize,
+                        $fileExtension,
+                        $mappedWorkload,
+                        $failureUuids,
+                        $context
+                    );
                 } catch (\Exception $e) {
                     $failureUuids[] = $mediaId;
                     $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
@@ -268,27 +287,45 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                     $mediaId,
                     $sourcePath
                 ));
-                $failureUuids[$rowId] = $mediaId;
+                $failureUuids[] = $mediaId;
             }
             $processedMedia[] = $mediaId;
         }
-        $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $processedMedia, \array_values($failureUuids));
+        $this->setProcessedFlag($migrationContext->getRunUuid(), $context, $processedMedia, $failureUuids);
         $this->loggingService->saveLogging($context);
 
         return \array_values($mappedWorkload);
     }
 
+    /**
+     * @param array<MediaProcessWorkloadStruct> $mappedWorkload
+     * @param list<string> $failedMedia
+     */
     private function persistFileToMedia(
         string $filePath,
         string $mediaId,
         string $fileName,
         int $fileSize,
         string $fileExtension,
+        array $mappedWorkload,
+        array &$failedMedia,
         Context $context
     ): void {
         $mimeType = \mime_content_type($filePath);
+        if ($mimeType === false) {
+            $failedMedia[] = $mediaId;
+            $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+            $this->loggingService->addLogEntry(new MimeTypeErrorLog(
+                $mappedWorkload[$mediaId]->getRunId(),
+                DefaultEntities::MEDIA,
+                $mediaId
+            ));
+
+            return;
+        }
+
         $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
-        $fileName = \preg_replace('/[^a-z0-9_-]+/', '-', \mb_strtolower($fileName));
+        $fileName = (string) \preg_replace('/[^a-z0-9_-]+/', '-', \mb_strtolower($fileName));
 
         try {
             $this->fileSaver->persistFileToMedia($mediaFile, $fileName, $mediaId, $context);
@@ -321,6 +358,13 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         return \rtrim((string) $credentials['shopUrl'], '/');
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $media
+     * @param array<int, MediaProcessWorkloadStruct> $mappedWorkload
+     * @param array<int, mixed> $workload
+     *
+     * @return array<MediaProcessWorkloadStruct>
+     */
     private function downloadMediaFiles(
         array $media,
         string $shopUrl,
@@ -336,7 +380,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         $promises = $this->doMediaDownloadRequests($media, $mappedWorkload, $client, $shopUrl);
 
         // Wait for the requests to complete, even if some of them fail
-        /** @var array $results */
         $results = Utils::settle($promises)->wait();
 
         // handle responses
@@ -378,14 +421,38 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             /** @var Response $response */
             $response = $result['value'];
             $fileExtension = \pathinfo($additionalData['uri'], \PATHINFO_EXTENSION);
-            $filePath = \sprintf('_temp/%s.%s', $uuid, $fileExtension);
+            $filePath = \tempnam(\sys_get_temp_dir(), 'SwagMigrationMagento-');
+            if ($filePath === false) {
+                $failureUuids[] = $uuid;
+                $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                $this->loggingService->addLogEntry(new TemporaryFileErrorLog(
+                    $mappedWorkload[$uuid]->getRunId(),
+                    DefaultEntities::MEDIA,
+                    $uuid
+                ));
+
+                continue;
+            }
+
             $streamContext = \stream_context_create([
                 'http' => [
                     'follow_location' => 0,
                     'max_redirects' => 0,
                 ],
             ]);
+
             $fileHandle = \fopen($filePath, 'ab', false, $streamContext);
+            if ($fileHandle === false) {
+                $failureUuids[] = $uuid;
+                $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                $this->loggingService->addLogEntry(new FileHandleErrorLog(
+                    $mappedWorkload[$uuid]->getRunId(),
+                    DefaultEntities::MEDIA,
+                    $uuid
+                ));
+
+                continue;
+            }
             \fwrite($fileHandle, $response->getBody()->getContents());
             $fileSize = (int) \filesize($filePath);
             \fclose($fileHandle);
@@ -398,6 +465,8 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                         $additionalData['file_name'],
                         $fileSize,
                         $fileExtension,
+                        $mappedWorkload,
+                        $failureUuids,
                         $context
                     );
                     \unlink($filePath);

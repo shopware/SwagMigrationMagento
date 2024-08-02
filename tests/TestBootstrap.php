@@ -20,7 +20,6 @@ if (is_readable(__DIR__ . '/../vendor/shopware/platform/src/Core/TestBootstrappe
 return (new TestBootstrapper())
     ->setProjectDir($_SERVER['PROJECT_ROOT'] ?? dirname(__DIR__, 4))
     ->setLoadEnvFile(true)
-    ->setForceInstallPlugins(true)
     ->addActivePlugins('SwagMigrationAssistant', 'SwagMigrationMagento')
     ->addCallingPlugin()
     ->bootstrap()

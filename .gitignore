@@ -8,3 +8,4 @@ phpstan.neon
 /var/
 src/Resources/public/administration/
 src/Resources/public/static/
+composer.lock
