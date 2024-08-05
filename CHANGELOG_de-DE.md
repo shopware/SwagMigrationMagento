@@ -1,4 +1,4 @@
-# REPLACE-GLOBALLY-WITH-NEXT-VERSION
+# 8.1.0
 - MIG-1034 - Für Kunden- und Bestelladressen werden jetzt auch die Bundesländer migriert
 - MIG-1040 - Die Medienmigration verwendet jetzt das temporäre Verzeichnis des Systems zum Herunterladen von Dateien.
 
