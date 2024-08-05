@@ -1,4 +1,4 @@
-# REPLACE-GLOBALLY-WITH-NEXT-VERSION
+# 8.1.0
 - MIG-1034 - Fixed country states not being migrated for both customer and order addresses
 - MIG-1040 - Media migration now uses the system's temporary directory to download files.
 
