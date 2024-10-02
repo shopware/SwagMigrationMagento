@@ -78,12 +78,12 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         EntityRepository $cmsPageRepo,
         EntityRepository $deliveryTimeRepo,
         EntityRepository $documentTypeRepo,
+        EntityRepository $countryStateRepo,
         EntityWriterInterface $entityWriter,
         EntityDefinition $mappingDefinition,
         protected LoggerInterface $logger,
         private readonly EntityRepository $stateMachineRepo,
-        private readonly EntityRepository $stateMachineStateRepo,
-        private readonly EntityRepository $countryStateRepo
+        private readonly EntityRepository $stateMachineStateRepo
     ) {
         parent::__construct(
             $migrationMappingRepo,
@@ -100,6 +100,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
             $cmsPageRepo,
             $deliveryTimeRepo,
             $documentTypeRepo,
+            $countryStateRepo,
             $entityWriter,
             $mappingDefinition,
             $logger
@@ -178,35 +179,5 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         }
 
         return $tax->getTaxRate();
-    }
-
-    public function getCountryStateUuid(string $oldIdentifier, string $countryIso, string $countryStateCode, string $connectionId, Context $context): ?string
-    {
-        $countryStateMapping = $this->getMapping($connectionId, DefaultEntities::COUNTRY_STATE, $oldIdentifier, $context);
-
-        if ($countryStateMapping !== null) {
-            return $countryStateMapping['entityUuid'];
-        }
-
-        $criteria = new Criteria();
-        $criteria->addFilter(new EqualsFilter('shortCode', $countryIso . '-' . $countryStateCode));
-        $criteria->addFilter(new EqualsFilter('country.iso', $countryIso));
-        $criteria->setLimit(1);
-
-        $countryStateUuid = $this->countryStateRepo->searchIds($criteria, $context)->firstId();
-
-        if ($countryStateUuid !== null) {
-            $this->saveMapping(
-                [
-                    'id' => Uuid::randomHex(),
-                    'connectionId' => $connectionId,
-                    'entity' => DefaultEntities::COUNTRY_STATE,
-                    'oldIdentifier' => $oldIdentifier,
-                    'entityUuid' => $countryStateUuid,
-                ]
-            );
-        }
-
-        return $countryStateUuid;
     }
 }

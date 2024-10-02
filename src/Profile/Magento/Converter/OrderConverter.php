@@ -625,9 +625,6 @@ abstract class OrderConverter extends MagentoConverter
 
         if (isset($originalData['region_id'])
             && isset($originalData['region_code'])
-            && isset($originalData['country_iso2'])
-            && isset($originalData['country_iso3'])
-            && $this->mappingService instanceof MagentoMappingServiceInterface
         ) {
             $countryStateUuid = $this->mappingService->getCountryStateUuid(
                 $originalData['region_id'],
