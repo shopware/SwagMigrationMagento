@@ -83,7 +83,7 @@ abstract class OrderConverter extends MagentoConverter
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         TaxCalculator $taxCalculator,
-        NumberRangeValueGeneratorInterface $numberRangeValueGenerator
+        NumberRangeValueGeneratorInterface $numberRangeValueGenerator,
     ) {
         parent::__construct($mappingService, $loggingService);
 

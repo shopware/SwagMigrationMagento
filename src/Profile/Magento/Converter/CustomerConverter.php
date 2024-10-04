@@ -66,7 +66,7 @@ abstract class CustomerConverter extends MagentoConverter
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
-        NumberRangeValueGeneratorInterface $numberRangeValueGenerator
+        NumberRangeValueGeneratorInterface $numberRangeValueGenerator,
     ) {
         parent::__construct($mappingService, $loggingService);
 

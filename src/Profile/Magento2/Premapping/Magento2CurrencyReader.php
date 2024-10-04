@@ -35,7 +35,7 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
      * @param EntityRepository<EntityCollection<CurrencyEntity>> $countryRepo
      */
     public function __construct(
-        EntityRepository $countryRepo
+        EntityRepository $countryRepo,
     ) {
         $this->currencyRepo = $countryRepo;
     }

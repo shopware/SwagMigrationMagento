@@ -60,7 +60,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         EntityRepository $mediaRepo,
         FileSaver $fileSaver,
         LoggingServiceInterface $loggingService,
-        Connection $dbalConnection
+        Connection $dbalConnection,
     ) {
         $this->mediaRepo = $mediaRepo;
         $this->fileSaver = $fileSaver;
@@ -77,7 +77,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     public function process(
         MigrationContextInterface $migrationContext,
         Context $context,
-        array $workload
+        array $workload,
     ): array {
         $mappedWorkload = [];
         $this->migrationContext = $migrationContext;
@@ -225,7 +225,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         array $media,
         array $mappedWorkload,
         MigrationContextInterface $migrationContext,
-        Context $context
+        Context $context,
     ): array {
         $processedMedia = [];
         $failureUuids = [];
@@ -309,7 +309,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         string $fileExtension,
         array $mappedWorkload,
         array &$failedMedia,
-        Context $context
+        Context $context,
     ): void {
         $mimeType = \mime_content_type($filePath);
         if ($mimeType === false) {
@@ -371,7 +371,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         array $mappedWorkload,
         array $workload,
         MigrationContextInterface $migrationContext,
-        Context $context
+        Context $context,
     ): array {
         // Do download requests and store the promises
         $client = new Client([

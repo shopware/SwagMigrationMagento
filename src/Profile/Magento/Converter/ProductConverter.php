@@ -47,7 +47,7 @@ abstract class ProductConverter extends MagentoConverter
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
-        MediaFileServiceInterface $mediaFileService
+        MediaFileServiceInterface $mediaFileService,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -375,7 +375,7 @@ abstract class ProductConverter extends MagentoConverter
         array &$sourceData,
         string $sourceKey,
         string $castType = self::TYPE_STRING,
-        bool $unset = true
+        bool $unset = true,
     ): void {
         if ($defaultLanguage === null || !isset($newData['translations'][$defaultLanguage->getId()][$newKey])) {
             $this->convertValue($newData, $newKey, $sourceData, $sourceKey, $castType, $unset);

@@ -83,7 +83,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         EntityDefinition $mappingDefinition,
         protected LoggerInterface $logger,
         private readonly EntityRepository $stateMachineRepo,
-        private readonly EntityRepository $stateMachineStateRepo
+        private readonly EntityRepository $stateMachineStateRepo,
     ) {
         parent::__construct(
             $migrationMappingRepo,

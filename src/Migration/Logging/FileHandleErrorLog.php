@@ -16,7 +16,7 @@ class FileHandleErrorLog extends BaseRunLogEntry
     public function __construct(
         string $runId,
         string $entity,
-        ?string $sourceId = null
+        ?string $sourceId = null,
     ) {
         parent::__construct($runId, $entity, $sourceId);
     }

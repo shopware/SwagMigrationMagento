@@ -60,7 +60,7 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
      */
     public function __construct(
         EntityRepository $stateMachineRepo,
-        EntityRepository $stateMachineStateRepo
+        EntityRepository $stateMachineStateRepo,
     ) {
         $this->stateMachineRepo = $stateMachineRepo;
         $this->stateMachineStateRepo = $stateMachineStateRepo;

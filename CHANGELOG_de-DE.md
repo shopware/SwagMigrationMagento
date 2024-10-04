@@ -1,5 +1,5 @@
 # REPLACE_GLOBAL_WITH_NEXT_VERSION
-- MIG-1039 - Aktualisierte Länderstatuskonvertierung zur Verwendung neuer Methoden des Migrationsassistenten
+- MIG-1039 - Die Bundesländer werden jetzt über den MigrationAssistent konvertiert
 - MIG-1039 - [BREAKING] Methode `getCountryStateUuid` aus `Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface` und ihrer Standardimplementierung `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` entfernt.
 
 # 8.1.0
