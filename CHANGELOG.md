@@ -1,3 +1,7 @@
+# REPLACE_GLOBAL_WITH_NEXT_VERSION
+- MIG-1039 - Updated country state conversion to use new methods provided by the migration assistant
+- MIG-1039 - [BREAKING] Removed method `getCountryStateUuid` from `Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface` and its default implementation `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService`
+
 # 8.1.0
 - MIG-1034 - Fixed country states not being migrated for both customer and order addresses
 - MIG-1040 - Media migration now uses the system's temporary directory to download files.

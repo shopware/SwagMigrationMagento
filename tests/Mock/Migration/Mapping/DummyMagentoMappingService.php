@@ -37,7 +37,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         string $oldIdentifier,
         Context $context,
         ?array $additionalData = null,
-        ?string $newUuid = null
+        ?string $newUuid = null,
     ): void {
         $uuid = Uuid::randomHex();
         if ($newUuid !== null) {
@@ -122,7 +122,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         string $entityName,
         string $oldIdentifier,
         array $updateData,
-        Context $context
+        Context $context,
     ): array {
         $mapping = $this->getMapping($connectionId, $entityName, $oldIdentifier, $context);
 

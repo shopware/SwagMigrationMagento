@@ -9,3 +9,4 @@ phpstan.neon
 src/Resources/public/administration/
 src/Resources/public/static/
 composer.lock
+/migration_magento.cache

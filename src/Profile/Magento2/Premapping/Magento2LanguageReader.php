@@ -35,7 +35,7 @@ abstract class Magento2LanguageReader extends AbstractPremappingReader
      * @param EntityRepository<EntityCollection<LanguageEntity>> $languageRepository
      */
     public function __construct(
-        EntityRepository $languageRepository
+        EntityRepository $languageRepository,
     ) {
         $this->languageRepo = $languageRepository;
     }

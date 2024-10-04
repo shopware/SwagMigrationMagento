@@ -50,7 +50,7 @@ abstract class TaxReader extends AbstractPremappingReader
      */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
-        EntityRepository $taxRepo
+        EntityRepository $taxRepo,
     ) {
         $this->gatewayRegistry = $gatewayRegistry;
         $this->taxRepo = $taxRepo;

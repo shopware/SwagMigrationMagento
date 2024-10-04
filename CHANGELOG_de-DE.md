@@ -1,3 +1,7 @@
+# REPLACE_GLOBAL_WITH_NEXT_VERSION
+- MIG-1039 - Die Bundesländer werden jetzt über den MigrationAssistent konvertiert
+- MIG-1039 - [BREAKING] Methode `getCountryStateUuid` aus `Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface` und ihrer Standardimplementierung `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` entfernt.
+
 # 8.1.0
 - MIG-1034 - Für Kunden- und Bestelladressen werden jetzt auch die Bundesländer migriert
 - MIG-1040 - Die Medienmigration verwendet jetzt das temporäre Verzeichnis des Systems zum Herunterladen von Dateien.

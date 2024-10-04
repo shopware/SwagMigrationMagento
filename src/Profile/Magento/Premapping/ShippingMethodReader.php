@@ -47,7 +47,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
      */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
-        EntityRepository $paymentMethodRepo
+        EntityRepository $paymentMethodRepo,
     ) {
         $this->gatewayRegistry = $gatewayRegistry;
         $this->paymentMethodRepo = $paymentMethodRepo;

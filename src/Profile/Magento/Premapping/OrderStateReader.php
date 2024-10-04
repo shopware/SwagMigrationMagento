@@ -61,7 +61,7 @@ abstract class OrderStateReader extends AbstractPremappingReader
     public function __construct(
         EntityRepository $stateMachineRepo,
         EntityRepository $stateMachineStateRepo,
-        GatewayRegistryInterface $gatewayRegistry
+        GatewayRegistryInterface $gatewayRegistry,
     ) {
         $this->stateMachineRepo = $stateMachineRepo;
         $this->stateMachineStateRepo = $stateMachineStateRepo;

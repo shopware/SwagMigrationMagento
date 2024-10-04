@@ -66,7 +66,7 @@ abstract class CustomerConverter extends MagentoConverter
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
-        NumberRangeValueGeneratorInterface $numberRangeValueGenerator
+        NumberRangeValueGeneratorInterface $numberRangeValueGenerator,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -351,7 +351,6 @@ abstract class CustomerConverter extends MagentoConverter
 
             if (isset($address['region_id'])
                 && isset($address['region_code'])
-                && $this->mappingService instanceof MagentoMappingServiceInterface
             ) {
                 $countryStateUuid = $this->mappingService->getCountryStateUuid(
                     $address['region_id'],

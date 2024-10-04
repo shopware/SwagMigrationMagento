@@ -53,7 +53,7 @@ abstract class SalutationReader extends AbstractPremappingReader
      */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
-        EntityRepository $salutationRepo
+        EntityRepository $salutationRepo,
     ) {
         $this->gatewayRegistry = $gatewayRegistry;
         $this->salutationRepo = $salutationRepo;

@@ -35,7 +35,7 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
      * @param EntityRepository<EntityCollection<CountryEntity>> $countryRepo
      */
     public function __construct(
-        EntityRepository $countryRepo
+        EntityRepository $countryRepo,
     ) {
         $this->countryRepo = $countryRepo;
     }

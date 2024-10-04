@@ -50,7 +50,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         EnvironmentReaderInterface $localEnvironmentReader,
         TableReaderInterface $localTableReader,
         ConnectionFactoryInterface $connectionFactory,
-        EntityRepository $currencyRepository
+        EntityRepository $currencyRepository,
     ) {
         $this->readerRegistry = $readerRegistry;
         $this->localEnvironmentReader = $localEnvironmentReader;

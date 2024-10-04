@@ -45,7 +45,7 @@ abstract class CategoryConverter extends MagentoConverter
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
-        MediaFileServiceInterface $mediaFileService
+        MediaFileServiceInterface $mediaFileService,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -351,7 +351,7 @@ abstract class CategoryConverter extends MagentoConverter
         array &$sourceData,
         string $sourceKey,
         string $castType = self::TYPE_STRING,
-        bool $unset = true
+        bool $unset = true,
     ): void {
         if (!isset($newData['translations'][$defaultLanguage][$newKey]) || $defaultLanguage === '') {
             $this->convertValue($newData, $newKey, $sourceData, $sourceKey, $castType, $unset);

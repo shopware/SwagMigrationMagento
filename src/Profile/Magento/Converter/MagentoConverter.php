@@ -33,7 +33,7 @@ abstract class MagentoConverter extends Converter
 
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
-        LoggingServiceInterface $loggingService
+        LoggingServiceInterface $loggingService,
     ) {
         parent::__construct($mappingService, $loggingService);
     }
@@ -44,7 +44,7 @@ abstract class MagentoConverter extends Converter
         array &$sourceData,
         string $sourceKey,
         string $castType = self::TYPE_STRING,
-        bool $unset = true
+        bool $unset = true,
     ): void {
         if (isset($sourceData[$sourceKey]) && $sourceData[$sourceKey] !== '') {
             switch ($castType) {
