@@ -15,9 +15,12 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CurrencyConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -25,6 +28,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2CurrencyConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento23CurrencyConverter $currencyConverter;
 
     private DummyLoggingService $loggingService;
@@ -37,11 +42,18 @@ class Magento2CurrencyConverterTest extends TestCase
 
     private string $euroMappingUuid;
 
+    private string $expectedDefaultLanguageId;
+
     protected function setUp(): void
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->currencyConverter = new Magento23CurrencyConverter($mappingService, $this->loggingService);
+        $this->currencyConverter = new Magento23CurrencyConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(CurrencyLookup::class),
+            $this->getContainer()->get(LanguageLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -59,7 +71,11 @@ class Magento2CurrencyConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
-        $this->euroMappingUuid = Uuid::randomHex();
+
+        $euroMappingUuid = $this->getCurrencyIdByCode('EUR');
+        static::assertNotNull($euroMappingUuid);
+        $this->euroMappingUuid = $euroMappingUuid;
+
         $mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::CURRENCY,
@@ -70,7 +86,11 @@ class Magento2CurrencyConverterTest extends TestCase
             $this->euroMappingUuid
         );
 
-        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
+        $expectedDefaultLanguageId = $this->getLanguageIdByLocaleCode('de-DE');
+        static::assertIsString($expectedDefaultLanguageId);
+        $this->expectedDefaultLanguageId = $expectedDefaultLanguageId;
+
+        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $this->expectedDefaultLanguageId);
     }
 
     public function testSupports(): void
@@ -93,7 +113,7 @@ class Magento2CurrencyConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($converted['id'], $this->euroMappingUuid);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->expectedDefaultLanguageId, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
@@ -109,7 +129,7 @@ class Magento2CurrencyConverterTest extends TestCase
         static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->expectedDefaultLanguageId, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 

@@ -9,8 +9,11 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -23,6 +26,14 @@ abstract class ManufacturerConverter extends MagentoConverter
     protected string $connectionId;
 
     protected Context $context;
+
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        private readonly LanguageLookup $languageLookup,
+    ) {
+        parent::__construct($mappingService, $loggingService);
+    }
 
     public function getSourceIdentifier(array $data): string
     {
@@ -73,7 +84,7 @@ abstract class ManufacturerConverter extends MagentoConverter
         }
         unset($data['translations']);
 
-        $language = $this->mappingService->getDefaultLanguage($this->context);
+        $language = $this->languageLookup->getLanguageEntity($this->context);
         if ($language === null || !isset($converted['translations'][$language->getId()]['name'])) {
             $this->convertValue($converted, 'name', $data, 'value');
         }

@@ -17,6 +17,10 @@ use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -46,6 +50,10 @@ abstract class CategoryConverter extends MagentoConverter
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         MediaFileServiceInterface $mediaFileService,
+        private readonly MediaDefaultFolderLookup $mediaFolderLookup,
+        private readonly LowestRootCategoryLookup $lowestRootCategoryLookup,
+        private readonly DefaultCmsPageLookup $defaultCmsPageLookup,
+        private readonly LanguageLookup $languageLookup,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -119,7 +127,7 @@ abstract class CategoryConverter extends MagentoConverter
         /*
          * Set cms page with default cms page
          */
-        $cmsPageUuid = $this->mappingService->getDefaultCmsPageUuid($this->connectionId, $context);
+        $cmsPageUuid = $this->defaultCmsPageLookup->get($context);
         if ($cmsPageUuid !== null) {
             $converted['cmsPageId'] = $cmsPageUuid;
         }
@@ -142,8 +150,7 @@ abstract class CategoryConverter extends MagentoConverter
             $this->mappingIds[] = $parentMapping['id'];
             $converted['parentId'] = $parentMapping['entityUuid'];
         } elseif (!isset($data['previousSiblingId'])) {
-            $previousSiblingUuid = $this->mappingService->getLowestRootCategoryUuid($context);
-
+            $previousSiblingUuid = $this->lowestRootCategoryLookup->get($context);
             if ($previousSiblingUuid !== null) {
                 $converted['afterCategoryId'] = $previousSiblingUuid;
             }
@@ -260,8 +267,7 @@ abstract class CategoryConverter extends MagentoConverter
 
     protected function setCategoryTranslation(array &$data, array &$converted): void
     {
-        $defaultLanguage = $this->mappingService->getDefaultLanguage($this->context);
-
+        $defaultLanguage = $this->languageLookup->getLanguageEntity($this->context);
         $defaultLanguageId = '';
         if ($defaultLanguage !== null) {
             $defaultLanguageId = $defaultLanguage->getId();
@@ -274,7 +280,7 @@ abstract class CategoryConverter extends MagentoConverter
         $this->convertTranslationValue($defaultLanguageId, $converted, 'metaDescription', $data, 'meta_description');
         $this->convertTranslationValue($defaultLanguageId, $converted, 'keywords', $data, 'meta_keywords');
 
-        $language = $this->mappingService->getDefaultLanguage($this->context);
+        $language = $this->languageLookup->getLanguageEntity($this->context);
         if ($language === null) {
             return;
         }
@@ -293,7 +299,7 @@ abstract class CategoryConverter extends MagentoConverter
         }
 
         try {
-            $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
+            $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
         } catch (\Exception $exception) {
             $this->mappingService->deleteMapping($converted['id'], $this->connectionId, $this->context);
 
@@ -375,8 +381,7 @@ abstract class CategoryConverter extends MagentoConverter
         $categoryMedia['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
-        $albumUuid = $this->mappingService->getDefaultFolderIdByEntity(DefaultEntities::CATEGORY, $this->migrationContext, $this->context);
-
+        $albumUuid = $this->mediaFolderLookup->get(DefaultEntities::CATEGORY, $this->context);
         if ($albumUuid !== null) {
             $categoryMedia['mediaFolderId'] = $albumUuid;
         }

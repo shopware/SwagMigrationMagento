@@ -23,6 +23,9 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\TaxLookup;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -48,6 +51,9 @@ abstract class ProductConverter extends MagentoConverter
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         MediaFileServiceInterface $mediaFileService,
+        private readonly MediaDefaultFolderLookup $mediaFolderLookup,
+        private readonly LanguageLookup $languageLookup,
+        private readonly TaxLookup $taxLookup,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -276,16 +282,14 @@ abstract class ProductConverter extends MagentoConverter
                 (int) $data['attribute_set_id']
             );
 
-            if (isset($converted['translations'])) {
-                foreach ($converted['translations'] as &$translation) {
-                    $translation['productId'] = $converted['id'];
-                }
-                unset($translation);
+            foreach ($converted['translations'] as &$translation) {
+                $translation['productId'] = $converted['id'];
             }
+            unset($translation);
         }
         unset($data['translations']);
 
-        $language = $this->mappingService->getDefaultLanguage($this->context);
+        $language = $this->languageLookup->getLanguageEntity($this->context);
         $this->convertTranslationValue($language, $converted, 'name', $data, 'name');
         $this->convertTranslationValue($language, $converted, 'description', $data, 'description');
         $this->convertTranslationValue($language, $converted, 'metaTitle', $data, 'meta_title');
@@ -485,7 +489,7 @@ abstract class ProductConverter extends MagentoConverter
     {
         $taxRate = 0;
         if (isset($converted['taxId'])) {
-            $taxRate = $this->mappingService->getTaxRate(
+            $taxRate = $this->taxLookup->getTaxRate(
                 $converted['taxId'],
                 $this->context
             );
@@ -767,8 +771,7 @@ abstract class ProductConverter extends MagentoConverter
             $this->convertValue($newMedia, 'name', $mediaData, 'description');
             $newMedia['description'] = $newMedia['name'];
 
-            $folderUuid = $this->mappingService->getDefaultFolderIdByEntity(DefaultEntities::PRODUCT, $this->migrationContext, $this->context);
-
+            $folderUuid = $this->mediaFolderLookup->get(DefaultEntities::PRODUCT, $this->context);
             if ($folderUuid !== null) {
                 $newMedia['mediaFolderId'] = $folderUuid;
             }

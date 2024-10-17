@@ -8,6 +8,8 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento19\Converter;
 
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Defaults;
+use Shopware\Core\Framework\Api\Context\SystemSource;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -15,10 +17,15 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CategoryDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19CategoryConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -28,6 +35,8 @@ use Symfony\Component\HttpFoundation\Response;
 #[Package('services-settings')]
 class Magento19CategoryConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19CategoryConverter $categoryConverter;
 
     private DummyLoggingService $loggingService;
@@ -52,7 +61,10 @@ class Magento19CategoryConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->languageUuid = DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID;
+        $languageUuid = $this->getLanguageIdByLocaleCode('de-DE');
+        static::assertIsString($languageUuid);
+        $this->languageUuid = $languageUuid;
+
         $mappingService->createMapping(
             $this->connection->getId(),
             MagentoDefaultEntities::STORE_LANGUAGE,
@@ -74,7 +86,15 @@ class Magento19CategoryConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
         $mappingService->getOrCreateMapping($this->connection->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
-        $this->categoryConverter = new Magento19CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
+        $this->categoryConverter = new Magento19CategoryConverter(
+            $mappingService,
+            $this->loggingService,
+            $mediaFileService,
+            $this->getContainer()->get(MediaDefaultFolderLookup::class),
+            $this->getContainer()->get(LowestRootCategoryLookup::class),
+            $this->getContainer()->get(DefaultCmsPageLookup::class),
+            $this->getContainer()->get(LanguageLookup::class),
+        );
     }
 
     public function testSupports(): void
@@ -88,7 +108,16 @@ class Magento19CategoryConverterTest extends TestCase
     {
         $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
 
-        $context = Context::createDefaultContext();
+        $context = new Context(
+            new SystemSource(),
+            [],
+            Defaults::CURRENCY,
+            [$this->languageUuid],
+            Defaults::LIVE_VERSION,
+            1.0,
+            false
+        );
+
         $convertResult = $this->categoryConverter->convert($categoryData[1], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
 
@@ -156,7 +185,7 @@ class Magento19CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->languageUuid, $converted['translations']);
     }
 
     public function testConvertWithParentButParentNotConverted(): void

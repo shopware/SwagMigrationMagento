@@ -15,8 +15,10 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDat
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19PropertyGroupConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +26,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19PropertyGroupConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19PropertyGroupConverter $propertyGroupConverter;
 
     private DummyLoggingService $loggingService;
@@ -57,7 +61,11 @@ class Magento19PropertyGroupConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->propertyGroupConverter = new Magento19PropertyGroupConverter($mappingService, $this->loggingService);
+        $this->propertyGroupConverter = new Magento19PropertyGroupConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class),
+        );
 
         $this->migrationContext = new MigrationContext(
             new Magento19Profile(),
@@ -76,7 +84,7 @@ class Magento19PropertyGroupConverterTest extends TestCase
         static::assertTrue($supportsDefinition);
     }
 
-    public function testConvert(): void
+    public function testConvertAAA(): void
     {
         $propertyGroupData = require __DIR__ . '/../../../_fixtures/property_group_data.php';
 
@@ -101,7 +109,7 @@ class Magento19PropertyGroupConverterTest extends TestCase
             $converted['translations'][$this->languageUuid]['name']
         );
 
-        static::assertArrayNotHasKey('name', $converted);
+        static::assertArrayHasKey('name', $converted);
     }
 
     public function testConvertWithoutTranslations(): void

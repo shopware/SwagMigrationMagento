@@ -9,11 +9,14 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\LanguageRegistry;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use SwagMigrationAssistant\Exception\LocaleNotFoundException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LocaleLookup;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -26,6 +29,15 @@ abstract class LanguageConverter extends MagentoConverter
     protected string $connectionId;
 
     protected Context $context;
+
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        private readonly LanguageLookup $languageLookup,
+        private readonly LocaleLookup $localeLookup,
+    ) {
+        parent::__construct($mappingService, $loggingService);
+    }
 
     public function getSourceIdentifier(array $data): string
     {
@@ -47,13 +59,7 @@ abstract class LanguageConverter extends MagentoConverter
             $this->connectionId = $connection->getId();
         }
 
-        $languageUuid = $this->mappingService->getLanguageUuid(
-            $this->connectionId,
-            $this->oldIdentifier,
-            $this->context,
-            true
-        );
-
+        $languageUuid = $this->languageLookup->get($this->oldIdentifier, $context);
         if ($languageUuid !== null) {
             foreach ($data['stores'] as $storeId) {
                 $this->mappingService->getOrCreateMapping(
@@ -69,22 +75,13 @@ abstract class LanguageConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
+
         $languageData = LanguageRegistry::get($this->oldIdentifier);
         if ($languageData === null) {
             return new ConvertStruct(null, $this->originalData);
         }
 
-        $localeUuid = null;
-
-        try {
-            $localeUuid = $this->mappingService->getLocaleUuid(
-                $this->connectionId,
-                $this->oldIdentifier,
-                $this->context
-            );
-        } catch (LocaleNotFoundException $exception) {
-        }
-
+        $localeUuid = $this->localeLookup->get($this->oldIdentifier, $this->context);
         if ($localeUuid === null) {
             return new ConvertStruct(null, $this->originalData);
         }

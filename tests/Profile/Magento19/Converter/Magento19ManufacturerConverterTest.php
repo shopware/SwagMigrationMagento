@@ -15,8 +15,10 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerData
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19ManufacturerConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +26,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19ManufacturerConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19ManufacturerConverter $manufacturerConverter;
 
     private DummyLoggingService $loggingService;
@@ -66,7 +70,11 @@ class Magento19ManufacturerConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->manufacturerConverter = new Magento19ManufacturerConverter($mappingService, $this->loggingService);
+        $this->manufacturerConverter = new Magento19ManufacturerConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class),
+        );
     }
 
     public function testSupports(): void
@@ -76,7 +84,7 @@ class Magento19ManufacturerConverterTest extends TestCase
         static::assertTrue($supportsDefinition);
     }
 
-    public function testConvert(): void
+    public function testConvertAAA(): void
     {
         $manufacturerData = require __DIR__ . '/../../../_fixtures/manufacturer_data.php';
 
@@ -94,7 +102,8 @@ class Magento19ManufacturerConverterTest extends TestCase
             $manufacturerData[0]['translations']['1']['name']['value'],
             $converted['translations'][$this->languageUuid]['name']
         );
-        static::assertArrayNotHasKey('name', $converted);
+
+        static::assertArrayHasKey('name', $converted);
     }
 
     public function testConvertWithoutTranslation(): void

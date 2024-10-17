@@ -14,9 +14,17 @@ use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 #[Package('services-settings')]
 interface MagentoMappingServiceInterface extends MappingServiceInterface
 {
-    public function getMagentoCountryUuid(string $iso, string $connectionId, Context $context): ?string;
+    /**
+     * @param array<string, mixed>|null $additionalData
+     */
+    public function createListItemMapping(
+        string $connectionId,
+        string $entityName,
+        string $oldIdentifier,
+        Context $context,
+        ?array $additionalData = null,
+        ?string $newUuid = null,
+    ): void;
 
-    public function getTransactionStateUuid(string $state, Context $context): ?string;
-
-    public function getTaxRate(string $uuid, Context $context): ?float;
+    public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array;
 }
