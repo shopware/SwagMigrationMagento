@@ -21,10 +21,15 @@ use Swag\MigrationMagento\Profile\Magento22\Converter\Magento22CategoryConverter
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CategoryConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -34,6 +39,8 @@ use Symfony\Component\HttpFoundation\Response;
 #[Package('services-settings')]
 class Magento2CategoryConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento20CategoryConverter $categoryConverter20;
 
     private Magento21CategoryConverter $categoryConverter21;
@@ -64,11 +71,17 @@ class Magento2CategoryConverterTest extends TestCase
 
     private string $languageUuid;
 
+    private string $defaultLanguageUuid;
+
     protected function setUp(): void
     {
         $mediaFileService = new DummyMediaFileService();
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
+
+        $defaultLanguageUuid = $this->getLanguageIdByLocaleCode('de-DE');
+        static::assertIsString($defaultLanguageUuid);
+        $this->defaultLanguageUuid = $defaultLanguageUuid;
 
         $this->runId = Uuid::randomHex();
 
@@ -170,10 +183,15 @@ class Magento2CategoryConverterTest extends TestCase
         $mappingService->getOrCreateMapping($this->connection22->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
         $mappingService->getOrCreateMapping($this->connection23->getId(), MagentoDefaultEntities::ROOT_CATEGORY, '1', $context);
 
-        $this->categoryConverter20 = new Magento20CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
-        $this->categoryConverter21 = new Magento21CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
-        $this->categoryConverter22 = new Magento22CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
-        $this->categoryConverter23 = new Magento23CategoryConverter($mappingService, $this->loggingService, $mediaFileService);
+        $mediaFolderLookup = $this->getContainer()->get(MediaDefaultFolderLookup::class);
+        $lowestRootCategoryLookup = $this->getContainer()->get(LowestRootCategoryLookup::class);
+        $defaultCmsPageLookup = $this->getContainer()->get(DefaultCmsPageLookup::class);
+        $languageLookup = $this->getContainer()->get(LanguageLookup::class);
+
+        $this->categoryConverter20 = new Magento20CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter21 = new Magento21CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter22 = new Magento22CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter23 = new Magento23CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
     }
 
     public function testSupports(): void
@@ -371,7 +389,7 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->defaultLanguageUuid, $converted['translations']);
     }
 
     public function testConvertWithParent21(): void
@@ -388,7 +406,7 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->defaultLanguageUuid, $converted['translations']);
     }
 
     public function testConvertWithParent22(): void
@@ -405,7 +423,7 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->defaultLanguageUuid, $converted['translations']);
     }
 
     public function testConvertWithParent23(): void
@@ -422,7 +440,7 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertArrayHasKey('parentId', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->defaultLanguageUuid, $converted['translations']);
     }
 
     public function testConvertWithParentButParentNotConverted20(): void

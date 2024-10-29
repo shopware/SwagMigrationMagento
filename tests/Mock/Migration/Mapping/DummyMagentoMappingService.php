@@ -67,7 +67,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         );
     }
 
-    public function writeMapping(Context $context): void
+    public function writeMapping(): void
     {
     }
 

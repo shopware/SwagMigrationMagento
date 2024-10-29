@@ -242,43 +242,78 @@
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
             <argument type="service" id="Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CurrencyConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CustomerGroupConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\TaxLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LocaleLookup"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CustomFieldConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>

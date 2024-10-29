@@ -14,9 +14,12 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19CurrencyConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +27,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19CurrencyConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19CurrencyConverter $currencyConverter;
 
     private DummyLoggingService $loggingService;
@@ -36,11 +41,22 @@ class Magento19CurrencyConverterTest extends TestCase
 
     private string $euroMappingUuid;
 
+    private string $defaultLanguageUuid;
+
     protected function setUp(): void
     {
+        $defaultLanguageUuid = $this->getLanguageIdByLocaleCode('de-DE');
+        static::assertIsString($defaultLanguageUuid);
+        $this->defaultLanguageUuid = $defaultLanguageUuid;
+
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->currencyConverter = new Magento19CurrencyConverter($mappingService, $this->loggingService);
+        $this->currencyConverter = new Magento19CurrencyConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(CurrencyLookup::class),
+            $this->getContainer()->get(LanguageLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -58,7 +74,11 @@ class Magento19CurrencyConverterTest extends TestCase
         );
 
         $context = Context::createDefaultContext();
-        $this->euroMappingUuid = Uuid::randomHex();
+
+        $euroMappingUuid = $this->getCurrencyIdByCode('EUR');
+        static::assertIsString($euroMappingUuid);
+        $this->euroMappingUuid = $euroMappingUuid;
+
         $mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::CURRENCY,
@@ -92,7 +112,7 @@ class Magento19CurrencyConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($converted['id'], $this->euroMappingUuid);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->defaultLanguageUuid, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
@@ -108,7 +128,7 @@ class Magento19CurrencyConverterTest extends TestCase
         static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->defaultLanguageUuid, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 

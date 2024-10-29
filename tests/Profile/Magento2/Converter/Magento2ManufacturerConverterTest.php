@@ -15,8 +15,10 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ManufacturerData
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ManufacturerConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +26,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2ManufacturerConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento23ManufacturerConverter $manufacturerConverter;
 
     private DummyLoggingService $loggingService;
@@ -66,7 +70,11 @@ class Magento2ManufacturerConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->manufacturerConverter = new Magento23ManufacturerConverter($mappingService, $this->loggingService);
+        $this->manufacturerConverter = new Magento23ManufacturerConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class),
+        );
     }
 
     public function testSupports(): void

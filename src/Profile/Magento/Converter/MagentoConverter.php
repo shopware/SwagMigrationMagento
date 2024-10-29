@@ -25,7 +25,7 @@ abstract class MagentoConverter extends Converter
     protected const TYPE_FLOAT = 'float';
     protected const TYPE_DATETIME = 'datetime';
 
-    protected MappingServiceInterface $mappingService;
+    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
     protected MigrationContextInterface $migrationContext;
 

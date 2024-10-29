@@ -27,6 +27,10 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
@@ -68,7 +72,16 @@ class Magento2OrderConverterTest extends TestCase
         $this->loggingService = new DummyLoggingService();
         $taxCalculator = new TaxCalculator();
 
-        $this->orderConverter = new Magento23OrderConverter($this->mappingService, $this->loggingService, $taxCalculator, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
+        $this->orderConverter = new Magento23OrderConverter(
+            $this->mappingService,
+            $this->loggingService,
+            $taxCalculator,
+            $this->getContainer()->get(NumberRangeValueGeneratorInterface::class),
+            $this->getContainer()->get(CountryLookup::class),
+            $this->getContainer()->get(CurrencyLookup::class),
+            $this->getContainer()->get(CountryStateLookup::class),
+            $this->getContainer()->get(StateMachineStateLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -391,7 +404,12 @@ class Magento2OrderConverterTest extends TestCase
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $order = $orderData[0];
 
-        $order['billingAddress']['country_id'] = 'foobar';
+        $order['billingAddress'] = [
+            'entity_id' => '1',
+            'country_id' => '1',
+            'country_iso2' => 'Fo',
+            'country_iso3' => 'BAR',
+        ];
 
         $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
 
@@ -441,10 +459,16 @@ class Magento2OrderConverterTest extends TestCase
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $order = $orderData[0];
 
+        unset($order['orders']['customer_lastname'], $order['orders']['customer_firstname']);
         $order['orders']['customer_is_guest'] = '1';
-        unset($order['orders']['customer_lastname']);
-        unset($order['orders']['customer_firstname']);
-        $order['shippingAddress']['country_id'] = 'foobar';
+
+        $order['shippingAddress'] = [
+            'entity_id' => '1',
+            'country_id' => '1',
+            'country_iso2' => 'Fo',
+            'country_iso3' => 'BAR',
+        ];
+
         $order['billingAddress']['firstname'] = 'Foo';
         $order['billingAddress']['lastname'] = 'bar';
 
@@ -478,10 +502,16 @@ class Magento2OrderConverterTest extends TestCase
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $order = $orderData[0];
 
+        $address = [
+            'entity_id' => '1',
+            'country_id' => '1',
+            'country_iso2' => 'Fo',
+            'country_iso3' => 'BAR',
+        ];
+        $order['billingAddress'] = $address;
+        $order['shippingAddress'] = $address;
+        unset($order['orders']['customer_lastname'], $order['orders']['customer_firstname']);
         $order['orders']['customer_is_guest'] = '1';
-        unset($order['orders']['customer_lastname']);
-        unset($order['orders']['customer_firstname']);
-        $order['billingAddress']['country_id'] = 'foobar';
 
         $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
 

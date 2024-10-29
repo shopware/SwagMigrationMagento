@@ -14,8 +14,10 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23MediaConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +26,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 #[Package('services-settings')]
 class Magento2MediaConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento23MediaConverter $mediaConverter;
 
     private DummyLoggingService $loggingService;
@@ -39,7 +43,12 @@ class Magento2MediaConverterTest extends TestCase
         $mediaFileService = new DummyMediaFileService();
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->mediaConverter = new Magento23MediaConverter($mappingService, $this->loggingService, $mediaFileService);
+        $this->mediaConverter = new Magento23MediaConverter(
+            $mappingService,
+            $this->loggingService,
+            $mediaFileService,
+            $this->getContainer()->get(MediaDefaultFolderLookup::class)
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();

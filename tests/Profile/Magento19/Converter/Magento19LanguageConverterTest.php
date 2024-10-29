@@ -14,9 +14,13 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\LanguageDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19LanguageConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LocaleLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +28,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19LanguageConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19LanguageConverter $languageConverter;
 
     private DummyLoggingService $loggingService;
@@ -42,7 +48,12 @@ class Magento19LanguageConverterTest extends TestCase
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->languageConverter = new Magento19LanguageConverter($mappingService, $this->loggingService);
+        $this->languageConverter = new Magento19LanguageConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class),
+            $this->getContainer()->get(LocaleLookup::class)
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -121,20 +132,9 @@ class Magento19LanguageConverterTest extends TestCase
         $languageData = require __DIR__ . '/../../../_fixtures/language_data.php';
 
         $context = Context::createDefaultContext();
-        $convertResult = $this->languageConverter->convert($languageData[2], $context, $this->migrationContext);
 
-        static::assertNull($convertResult->getConverted());
-        static::assertNotNull($convertResult->getUnmapped());
-    }
-
-    public function testConvertOfNotExistingLanguageWithNotExistingLocale(): void
-    {
-        $languageData = require __DIR__ . '/../../../_fixtures/language_data.php';
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->languageConverter->convert($languageData[3], $context, $this->migrationContext);
-
-        static::assertNull($convertResult->getConverted());
-        static::assertNotNull($convertResult->getUnmapped());
+        $this->expectException(MigrationException::class);
+        $this->expectExceptionMessage('Locale with code: "lo-LO" for language lookup not found.');
+        $this->languageConverter->convert($languageData[2], $context, $this->migrationContext);
     }
 }

@@ -14,9 +14,13 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\SalesChannelDataSet;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23SalesChannelConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +28,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2SalesChannelConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento23SalesChannelConverter $salesChannelConverter;
 
     private DummyLoggingService $loggingService;
@@ -46,7 +52,13 @@ class Magento2SalesChannelConverterTest extends TestCase
     {
         $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->salesChannelConverter = new Magento23SalesChannelConverter($this->mappingService, $this->loggingService);
+        $this->salesChannelConverter = new Magento23SalesChannelConverter(
+            $this->mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(CurrencyLookup::class),
+            $this->getContainer()->get(LanguageLookup::class),
+            $this->getContainer()->get(CountryLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -113,8 +125,7 @@ class Magento2SalesChannelConverterTest extends TestCase
     public function testConvertWithoutDefaultLanguage(): void
     {
         $salesChannelData = require __DIR__ . '/../../../_fixtures/sales_channel_data.php';
-
-        $this->mappingService->deleteDummyMapping(DefaultEntities::LANGUAGE, 'de-DE');
+        $salesChannelData[0]['defaultLocale'] = 'nl-NL';
 
         $context = Context::createDefaultContext();
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
@@ -132,8 +143,7 @@ class Magento2SalesChannelConverterTest extends TestCase
     public function testConvertWithoutDefaultCurrency(): void
     {
         $salesChannelData = require __DIR__ . '/../../../_fixtures/sales_channel_data.php';
-
-        $this->mappingService->deleteDummyMapping(DefaultEntities::CURRENCY, 'EUR');
+        $salesChannelData[0]['defaultCurrency'] = 'SKR';
 
         $context = Context::createDefaultContext();
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);

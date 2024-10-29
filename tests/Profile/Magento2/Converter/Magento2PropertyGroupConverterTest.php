@@ -15,8 +15,10 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\PropertyGroupDat
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23PropertyGroupConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +26,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2PropertyGroupConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento23PropertyGroupConverter $propertyGroupConverter;
 
     private DummyLoggingService $loggingService;
@@ -57,7 +61,11 @@ class Magento2PropertyGroupConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->propertyGroupConverter = new Magento23PropertyGroupConverter($mappingService, $this->loggingService);
+        $this->propertyGroupConverter = new Magento23PropertyGroupConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class)
+        );
 
         $this->migrationContext = new MigrationContext(
             new Magento23Profile(),

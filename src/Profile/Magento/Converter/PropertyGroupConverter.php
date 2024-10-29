@@ -10,9 +10,12 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\System\Language\LanguageEntity;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -25,6 +28,14 @@ abstract class PropertyGroupConverter extends MagentoConverter
     protected string $connectionId;
 
     protected string $oldIdentifier;
+
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        private readonly LanguageLookup $languageLookup,
+    ) {
+        parent::__construct($mappingService, $loggingService);
+    }
 
     public function getSourceIdentifier(array $data): string
     {
@@ -39,8 +50,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $this->migrationContext = $migrationContext;
         $this->runId = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['id'];
-        $defaultLanguage = $this->mappingService->getDefaultLanguage($this->context);
-
+        $defaultLanguage = $this->languageLookup->getLanguageEntity($this->context);
         $connection = $migrationContext->getConnection();
         $this->connectionId = '';
         if ($connection !== null) {

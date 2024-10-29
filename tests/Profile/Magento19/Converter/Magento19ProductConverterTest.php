@@ -9,17 +9,24 @@ namespace Swag\MigrationMagento\Test\Profile\Magento19\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Shopware\Core\System\Tax\TaxEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19ProductConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\TaxLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -28,6 +35,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 #[Package('services-settings')]
 class Magento19ProductConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19ProductConverter $productConverter;
 
     private DummyLoggingService $loggingService;
@@ -63,6 +72,11 @@ class Magento19ProductConverterTest extends TestCase
             250
         );
 
+        $criteria = new Criteria();
+        $criteria->addFilter(new EqualsFilter('taxRate', 19));
+        $tax = $this->getContainer()->get('tax.repository')->search($criteria, Context::createDefaultContext())->getEntities()->first();
+        static::assertInstanceOf(TaxEntity::class, $tax);
+
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
@@ -71,7 +85,7 @@ class Magento19ProductConverterTest extends TestCase
             $context,
             null,
             null,
-            Uuid::randomHex()
+            $tax->getId()
         );
 
         $this->mappingService->getOrCreateMapping(
@@ -134,7 +148,14 @@ class Magento19ProductConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->productConverter = new Magento19ProductConverter($this->mappingService, $this->loggingService, $mediaFileService);
+        $this->productConverter = new Magento19ProductConverter(
+            $this->mappingService,
+            $this->loggingService,
+            $mediaFileService,
+            $this->getContainer()->get(MediaDefaultFolderLookup::class),
+            $this->getContainer()->get(LanguageLookup::class),
+            $this->getContainer()->get(TaxLookup::class)
+        );
     }
 
     public function testSupports(): void
@@ -186,8 +207,9 @@ class Magento19ProductConverterTest extends TestCase
             $translationData['metaDescription']
         );
         static::assertSame((int) $productData[0]['minpurchase'], $converted['minPurchase']);
-        static::assertArrayNotHasKey('keywords', $converted);
-        static::assertArrayNotHasKey('name', $converted);
+
+        static::assertArrayHasKey('keywords', $converted);
+        static::assertArrayHasKey('name', $converted);
     }
 
     public function testConvertWithSpecialPrice(): void

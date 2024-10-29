@@ -22,10 +22,15 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19OrderConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
@@ -36,6 +41,7 @@ class Magento19OrderConverterTest extends TestCase
 {
     use DatabaseTransactionBehaviour;
     use KernelTestBehaviour;
+    use LookupHelperTrait;
 
     private Magento19OrderConverter $orderConverter;
 
@@ -67,7 +73,16 @@ class Magento19OrderConverterTest extends TestCase
         $this->loggingService = new DummyLoggingService();
 
         $taxCalculator = new TaxCalculator();
-        $this->orderConverter = new Magento19OrderConverter($this->mappingService, $this->loggingService, $taxCalculator, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
+        $this->orderConverter = new Magento19OrderConverter(
+            $this->mappingService,
+            $this->loggingService,
+            $taxCalculator,
+            $this->getContainer()->get(NumberRangeValueGeneratorInterface::class),
+            $this->getContainer()->get(CountryLookup::class),
+            $this->getContainer()->get(CurrencyLookup::class),
+            $this->getContainer()->get(CountryStateLookup::class),
+            $this->getContainer()->get(StateMachineStateLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -228,7 +243,10 @@ class Magento19OrderConverterTest extends TestCase
             Uuid::randomHex()
         );
 
-        $this->countryStateMappingUuid = Uuid::randomHex();
+        $countryStateMappingUuid = $this->getCountryStateIdByCode('US-MA');
+        static::assertNotNull($countryStateMappingUuid);
+        $this->countryStateMappingUuid = $countryStateMappingUuid;
+
         $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::COUNTRY_STATE,
@@ -482,6 +500,7 @@ class Magento19OrderConverterTest extends TestCase
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $orderData = $orderData[0];
         $orderData['billingAddress']['region_id'] = '9999';
+        $orderData['billingAddress']['region_code'] = 'XY';
 
         $context = Context::createDefaultContext();
         $convertResult = $this->orderConverter->convert(
@@ -498,7 +517,7 @@ class Magento19OrderConverterTest extends TestCase
         static::assertArrayHasKey('countryState', $converted['addresses'][0]);
         static::assertArrayHasKey('id', $converted['addresses'][0]['countryState']);
         static::assertSame('Massachusetts', $converted['addresses'][0]['countryState']['name']);
-        static::assertSame('MA', $converted['addresses'][0]['countryState']['shortCode']);
+        static::assertSame('XY', $converted['addresses'][0]['countryState']['shortCode']);
     }
 
     public function testConvertNotExistingCountryStateWithoutMapping(): void

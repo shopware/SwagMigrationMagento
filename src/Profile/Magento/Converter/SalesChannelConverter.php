@@ -21,7 +21,9 @@ use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('services-settings')]
@@ -30,8 +32,6 @@ abstract class SalesChannelConverter extends MagentoConverter
     protected string $connectionId;
 
     protected Context $context;
-
-    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
     /**
      * @var list<string>
@@ -52,8 +52,13 @@ abstract class SalesChannelConverter extends MagentoConverter
 
     protected string $oldIdentifier;
 
-    public function __construct(MagentoMappingServiceInterface $mappingService, LoggingServiceInterface $loggingService)
-    {
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        protected readonly CurrencyLookup $currencyLookup,
+        protected readonly LanguageLookup $languageLookup,
+        protected readonly CountryLookup $countryLookup,
+    ) {
         parent::__construct($mappingService, $loggingService);
     }
 
@@ -167,15 +172,9 @@ abstract class SalesChannelConverter extends MagentoConverter
         /*
          * Set main language and allowed languages
          */
-        $languageUuid = $this->mappingService->getLanguageUuid(
-            $this->connectionId,
-            $data['defaultLocale'],
-            $context
-        );
-
+        $languageUuid = $this->languageLookup->get($data['defaultLocale'], $context);
         if ($languageUuid === null) {
-            $defaultLanguage = $this->mappingService->getDefaultLanguage($context);
-
+            $defaultLanguage = $this->languageLookup->getLanguageEntity($context);
             if ($defaultLanguage === null) {
                 $this->loggingService->addLogEntry(
                     new AssociationRequiredMissingLog(
@@ -230,12 +229,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         /*
          * Set main currency and allowed currencies
          */
-        $currencyUuid = $this->mappingService->getCurrencyUuid(
-            $this->connectionId,
-            $data['defaultCurrency'],
-            $context
-        );
-
+        $currencyUuid = $this->currencyLookup->get($data['defaultCurrency'], $context);
         if ($currencyUuid === null) {
             $this->loggingService->addLogEntry(
                 new FieldReassignedRunLog(
@@ -287,12 +281,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         /*
          * Set main country and allowed countries
          */
-        $countryUuid = $this->mappingService->getMagentoCountryUuid(
-            $data['defaultCountry'],
-            $this->connectionId,
-            $context
-        );
-
+        $countryUuid = $this->getCountryUuid($data['defaultCountry'], $context);
         if ($countryUuid === null) {
             $this->loggingService->addLogEntry(
                 new AssociationRequiredMissingLog(
@@ -388,12 +377,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
         if (isset($data['locales'])) {
             foreach ($data['locales'] as $locale) {
-                $uuid = $this->mappingService->getLanguageUuid(
-                    $this->connectionId,
-                    $locale,
-                    $context
-                );
-
+                $uuid = $this->languageLookup->get($locale, $context);
                 if ($uuid === null) {
                     continue;
                 }
@@ -416,12 +400,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
         if (isset($data['currencies'])) {
             foreach ($data['currencies'] as $currency) {
-                $uuid = $this->mappingService->getCurrencyUuid(
-                    $this->connectionId,
-                    $currency,
-                    $context
-                );
-
+                $uuid = $this->currencyLookup->get($currency, $context);
                 if ($uuid === null) {
                     continue;
                 }
@@ -444,11 +423,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
         if (isset($data['countries'])) {
             foreach ($data['countries'] as $country) {
-                $uuid = $this->mappingService->getMagentoCountryUuid(
-                    $country,
-                    $this->connectionId,
-                    $context
-                );
+                $uuid = $this->getCountryUuid($country, $context);
 
                 if ($uuid === null) {
                     continue;
@@ -561,7 +536,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
     protected function getSalesChannelTranslation(array &$salesChannel, array $data): void
     {
-        $language = $this->mappingService->getDefaultLanguage($this->context);
+        $language = $this->languageLookup->getLanguageEntity($this->context);
         if ($language === null) {
             return;
         }
@@ -587,11 +562,32 @@ abstract class SalesChannelConverter extends MagentoConverter
         );
         $localeTranslation['id'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
-        $languageUuid = $this->mappingService->getLanguageUuid($this->connectionId, $data['defaultLocale'], $this->context);
 
+        $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
         if ($languageUuid !== null) {
             $localeTranslation['languageId'] = $languageUuid;
             $salesChannel['translations'][$languageUuid] = $localeTranslation;
         }
+    }
+
+    private function getCountryUuid(string $iso, Context $context): ?string
+    {
+        $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $iso, $context);
+        if ($countryMapping !== null) {
+            $countryUuid = $countryMapping['entityUuid'];
+        } else {
+            $countryUuid = $this->countryLookup->getByIso2($iso, $context);
+
+            if ($countryUuid !== null) {
+                $this->mappingService->createMapping(
+                    $this->connectionId,
+                    DefaultEntities::COUNTRY,
+                    $iso,
+                    $this->checksum,
+                );
+            }
+        }
+
+        return $countryUuid;
     }
 }

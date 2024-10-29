@@ -203,11 +203,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     {
         $languageUuid = null;
         if (!empty($data['defaultLocale'])) {
-            $languageUuid = $this->mappingService->getLanguageUuid(
-                $this->connectionId,
-                $data['defaultLocale'],
-                $this->context
-            );
+            $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
         }
 
         if ($languageUuid === null) {
@@ -267,11 +263,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     {
         $currencyUuid = null;
         if (!empty($data['defaultCurrency'])) {
-            $currencyUuid = $this->mappingService->getCurrencyUuid(
-                $this->connectionId,
-                $data['defaultCurrency'],
-                $this->context
-            );
+            $currencyUuid = $this->currencyLookup->get($data['defaultCurrency'], $this->context);
         }
 
         if ($currencyUuid === null) {
@@ -338,11 +330,21 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     {
         $countryUuid = null;
         if (!empty($data['defaultCountry'])) {
-            $countryUuid = $this->mappingService->getMagentoCountryUuid(
-                $data['defaultCountry'],
-                $this->connectionId,
-                $this->context
-            );
+            $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $data['defaultCountry'], $this->context);
+            if ($countryMapping !== null) {
+                $countryUuid = $countryMapping['entityUuid'];
+            } else {
+                $countryUuid = $this->countryLookup->getByIso2($data['defaultCountry'], $this->context);
+
+                if ($countryUuid !== null) {
+                    $this->mappingService->createMapping(
+                        $this->connectionId,
+                        DefaultEntities::COUNTRY,
+                        $data['isoCode'],
+                        $this->checksum,
+                    );
+                }
+            }
         }
 
         if ($countryUuid === null) {
@@ -370,7 +372,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $countryUuid = $countryMapping['entityUuid'];
         }
         $converted['countryId'] = $countryUuid;
-        $converted['countries'] = $this->getSalesChannelCountries($countryUuid, $data, $this->context);
+        $converted['countries'] = $this->getSalesChannelCountries((string) $countryUuid, $data, $this->context);
         unset($data['countries'], $data['defaultCountry']);
 
         return $countryUuid;

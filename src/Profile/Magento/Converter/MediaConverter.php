@@ -14,6 +14,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -30,6 +31,7 @@ abstract class MediaConverter extends MagentoConverter
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         MediaFileServiceInterface $mediaFileService,
+        private readonly MediaDefaultFolderLookup $mediaFolderLookup,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -94,7 +96,7 @@ abstract class MediaConverter extends MagentoConverter
         }
         unset($data['label']);
 
-        $albumUuid = $this->mappingService->getDefaultFolderIdByEntity(DefaultEntities::PRODUCT, $migrationContext, $context);
+        $albumUuid = $this->mediaFolderLookup->get(DefaultEntities::PRODUCT, $context);
         if ($albumUuid !== null) {
             $converted['mediaFolderId'] = $albumUuid;
         }

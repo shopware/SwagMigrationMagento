@@ -35,6 +35,10 @@ use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
@@ -84,6 +88,10 @@ abstract class OrderConverter extends MagentoConverter
         LoggingServiceInterface $loggingService,
         TaxCalculator $taxCalculator,
         NumberRangeValueGeneratorInterface $numberRangeValueGenerator,
+        protected readonly CountryLookup $countryLookup,
+        protected readonly CurrencyLookup $currencyLookup,
+        protected readonly CountryStateLookup $countryStateLookup,
+        protected readonly StateMachineStateLookup $stateMachineStateLookup,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -599,14 +607,7 @@ abstract class OrderConverter extends MagentoConverter
             return [];
         }
 
-        $countryUuid = $this->mappingService->getCountryUuid(
-            $originalData['country_id'],
-            $originalData['country_iso2'],
-            $originalData['country_iso3'],
-            $this->connectionId,
-            $this->context
-        );
-
+        $countryUuid = $this->countryLookup->getByIso3($originalData['country_iso3'], $this->context);
         if ($countryUuid === null) {
             $this->loggingService->addLogEntry(
                 new UnknownEntityLog(
@@ -626,11 +627,9 @@ abstract class OrderConverter extends MagentoConverter
         if (isset($originalData['region_id'])
             && isset($originalData['region_code'])
         ) {
-            $countryStateUuid = $this->mappingService->getCountryStateUuid(
-                $originalData['region_id'],
+            $countryStateUuid = $this->countryStateLookup->get(
                 $originalData['country_iso2'],
                 $originalData['region_code'],
-                $this->connectionId,
                 $this->context
             );
 
@@ -696,7 +695,7 @@ abstract class OrderConverter extends MagentoConverter
             }
         }
 
-        $stateId = $this->mappingService->getTransactionStateUuid($stateName, $this->context);
+        $stateId = $this->stateMachineStateLookup->get($stateName, OrderTransactionStates::STATE_MACHINE, $this->context);
         if ($stateId === null) {
             return;
         }
@@ -973,11 +972,7 @@ abstract class OrderConverter extends MagentoConverter
     {
         $currencyUuid = null;
         if (isset($data['orders']['order_currency_code'])) {
-            $currencyUuid = $this->mappingService->getCurrencyUuid(
-                $this->connectionId,
-                $data['orders']['order_currency_code'],
-                $this->context
-            );
+            $currencyUuid = $this->currencyLookup->get($data['orders']['order_currency_code'], $this->context);
         }
         if ($currencyUuid === null) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(

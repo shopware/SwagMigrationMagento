@@ -20,6 +20,8 @@ use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\FieldReassignedRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
@@ -67,6 +69,8 @@ abstract class CustomerConverter extends MagentoConverter
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
         NumberRangeValueGeneratorInterface $numberRangeValueGenerator,
+        protected readonly CountryLookup $countryLookup,
+        protected readonly CountryStateLookup $countryStateLookup,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -325,14 +329,7 @@ abstract class CustomerConverter extends MagentoConverter
             $newAddress['salutationId'] = $converted['salutationId'];
             $newAddress['customerId'] = $customerUuid;
 
-            $countryUuid = $this->mappingService->getCountryUuid(
-                $address['country_id'],
-                $address['country_iso2'],
-                $address['country_iso3'],
-                $this->connectionId,
-                $this->context
-            );
-
+            $countryUuid = $this->countryLookup->getByIso3($address['country_iso3'], $this->context);
             if ($countryUuid === null) {
                 $this->loggingService->addLogEntry(
                     new UnknownEntityLog(
@@ -352,11 +349,9 @@ abstract class CustomerConverter extends MagentoConverter
             if (isset($address['region_id'])
                 && isset($address['region_code'])
             ) {
-                $countryStateUuid = $this->mappingService->getCountryStateUuid(
-                    $address['region_id'],
+                $countryStateUuid = $this->countryStateLookup->get(
                     $address['country_iso2'],
                     $address['region_code'],
-                    $this->connectionId,
                     $this->context
                 );
 

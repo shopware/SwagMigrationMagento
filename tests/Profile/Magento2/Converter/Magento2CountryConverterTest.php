@@ -14,9 +14,12 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CountryConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +27,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento2CountryConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento23CountryConverter $countryConverter;
 
     private DummyLoggingService $loggingService;
@@ -36,11 +41,18 @@ class Magento2CountryConverterTest extends TestCase
 
     private string $britainMappingUuid;
 
+    private string $expectedDefaultLanguageId;
+
     protected function setUp(): void
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->countryConverter = new Magento23CountryConverter($mappingService, $this->loggingService);
+        $this->countryConverter = new Magento23CountryConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class),
+            $this->getContainer()->get(CountryLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -69,7 +81,11 @@ class Magento2CountryConverterTest extends TestCase
             $this->britainMappingUuid
         );
 
-        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
+        $expectedDefaultLanguageId = $this->getLanguageIdByLocaleCode('de-DE');
+        static::assertIsString($expectedDefaultLanguageId);
+        $this->expectedDefaultLanguageId = $expectedDefaultLanguageId;
+
+        $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, $this->expectedDefaultLanguageId);
     }
 
     public function testSupports(): void
@@ -92,7 +108,7 @@ class Magento2CountryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($converted['id'], $this->britainMappingUuid);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->expectedDefaultLanguageId, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
@@ -106,9 +122,10 @@ class Magento2CountryConverterTest extends TestCase
         $converted = $convertResult->getConverted();
 
         static::assertNotNull($converted);
+        static::assertArrayHasKey($this->expectedDefaultLanguageId, $converted['translations']);
+
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 

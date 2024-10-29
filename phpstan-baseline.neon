@@ -36,11 +36,6 @@ parameters:
 			path: src/Profile/Magento/Converter/CategoryConverter.php
 
 		-
-			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CountryConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\CustomFieldConverter\\:\\:getConfiguredCustomFieldData\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/CustomFieldConverter.php
@@ -221,11 +216,6 @@ parameters:
 			path: src/Profile/Magento/Converter/NewsletterRecipientConverter.php
 
 		-
-			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTransactionStateUuid\\(\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/OrderConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\OrderConverter\\:\\:convertBillingAddress\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/OrderConverter.php
@@ -359,11 +349,6 @@ parameters:
 			message: "#^Strict comparison using \\!\\=\\= between mixed and null will always evaluate to true\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/OrderConverter.php
-
-		-
-			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getTaxRate\\(\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ProductConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\ProductConverter\\:\\:convertTranslationValue\\(\\) has parameter \\$newData with no value type specified in iterable type array\\.$#"
@@ -504,11 +489,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\PropertyGroupConverter\\:\\:getProperties\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/PropertyGroupConverter.php
-
-		-
-			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
-			count: 2
-			path: src/Profile/Magento/Converter/SalesChannelConverter.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\SalesChannelConverter\\:\\:getPaymentMethods\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
@@ -1536,11 +1516,6 @@ parameters:
 			path: src/Profile/Magento2/Converter/Magento2OrderConverter.php
 
 		-
-			message: "#^Call to an undefined method SwagMigrationAssistant\\\\Migration\\\\Mapping\\\\MappingServiceInterface\\:\\:getMagentoCountryUuid\\(\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2SalesChannelConverter\\:\\:setCategoryUuid\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
@@ -1859,11 +1834,6 @@ parameters:
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2LanguageReader\\:\\:\\$preselectionDictionary type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Premapping/Magento2LanguageReader.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:createListItemMapping\\(\\) has parameter \\$additionalData with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getMappings\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"

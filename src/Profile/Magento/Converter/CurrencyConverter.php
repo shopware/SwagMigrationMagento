@@ -13,6 +13,9 @@ use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\CurrencyRegistry;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -24,6 +27,15 @@ abstract class CurrencyConverter extends MagentoConverter
     protected string $connectionId;
 
     protected string $oldIdentifier;
+
+    public function __construct(
+        MagentoMappingServiceInterface $mappingService,
+        LoggingServiceInterface $loggingService,
+        private readonly CurrencyLookup $currencyLookup,
+        private readonly LanguageLookup $languageLookup,
+    ) {
+        parent::__construct($mappingService, $loggingService);
+    }
 
     public function getSourceIdentifier(array $data): string
     {
@@ -47,12 +59,8 @@ abstract class CurrencyConverter extends MagentoConverter
         }
 
         $this->generateChecksum($data);
-        $currencyUuid = $this->mappingService->getCurrencyUuid(
-            $this->connectionId,
-            $this->oldIdentifier,
-            $context
-        );
 
+        $currencyUuid = $this->currencyLookup->get($this->oldIdentifier, $context);
         if ($currencyUuid === null) {
             $this->mainMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
@@ -109,8 +117,7 @@ abstract class CurrencyConverter extends MagentoConverter
         foreach ($currencyValue['translations'] as $key => $value) {
             $languageUuid = $currencyUuid;
             if ($key !== $this->oldIdentifier) {
-                $uuid = $this->mappingService->getLanguageUuid($this->connectionId, $key, $context);
-
+                $uuid = $this->languageLookup->get($key, $context);
                 if ($uuid === null) {
                     continue;
                 }

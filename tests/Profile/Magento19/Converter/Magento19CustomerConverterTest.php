@@ -15,15 +15,19 @@ use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CustomerDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -33,6 +37,7 @@ class Magento19CustomerConverterTest extends TestCase
 {
     use DatabaseTransactionBehaviour;
     use KernelTestBehaviour;
+    use LookupHelperTrait;
 
     private Magento19CustomerConverter $customerConverter;
 
@@ -58,11 +63,23 @@ class Magento19CustomerConverterTest extends TestCase
 
     private string $countryStateMappingUuid;
 
+    private MagentoMappingServiceInterface $mappingService;
+
     protected function setUp(): void
     {
-        $mappingService = new DummyMagentoMappingService();
+        $countryStateMappingUuid = $this->getCountryStateIdByCode('US-IN');
+        static::assertIsString($countryStateMappingUuid);
+        $this->countryStateMappingUuid = $countryStateMappingUuid;
+
+        $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->customerConverter = new Magento19CustomerConverter($mappingService, $this->loggingService, $this->getContainer()->get(NumberRangeValueGeneratorInterface::class));
+        $this->customerConverter = new Magento19CustomerConverter(
+            $this->mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(NumberRangeValueGeneratorInterface::class),
+            $this->getContainer()->get(CountryLookup::class),
+            $this->getContainer()->get(CountryStateLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -82,7 +99,7 @@ class Magento19CustomerConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $this->adminSalesChannelStoreId = '3';
         $this->adminSalesChannelUuid = Uuid::randomHex();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             MagentoDefaultEntities::STORE,
             $this->adminSalesChannelStoreId,
@@ -91,7 +108,7 @@ class Magento19CustomerConverterTest extends TestCase
             null,
             $this->adminSalesChannelUuid
         );
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             AdminStoreReader::getMappingName(),
             'admin_store',
@@ -103,7 +120,7 @@ class Magento19CustomerConverterTest extends TestCase
         );
 
         $this->mrMappingUuid = Uuid::randomHex();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::SALUTATION,
             '1',
@@ -114,7 +131,7 @@ class Magento19CustomerConverterTest extends TestCase
         );
 
         $this->customerGroupUuid = Uuid::randomHex();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::CUSTOMER_GROUP,
             '2',
@@ -125,7 +142,7 @@ class Magento19CustomerConverterTest extends TestCase
         );
 
         $this->paymentMappingUuid = Uuid::randomHex();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::PAYMENT_METHOD,
             'default_payment_method',
@@ -136,7 +153,7 @@ class Magento19CustomerConverterTest extends TestCase
         );
 
         $this->countryMappingUuid = Uuid::randomHex();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::COUNTRY,
             'US',
@@ -146,8 +163,7 @@ class Magento19CustomerConverterTest extends TestCase
             $this->countryMappingUuid
         );
 
-        $this->countryStateMappingUuid = Uuid::randomHex();
-        $mappingService->getOrCreateMapping(
+        $this->mappingService->getOrCreateMapping(
             $this->connection->getId(),
             DefaultEntities::COUNTRY_STATE,
             '24',
@@ -489,8 +505,16 @@ class Magento19CustomerConverterTest extends TestCase
         $customerData = $customerData[0];
         $customerData['addresses'][0]['region_id'] = '9999';
 
+        $customerConverter = new Magento19CustomerConverter(
+            $this->mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(NumberRangeValueGeneratorInterface::class),
+            $this->getContainer()->get(CountryLookup::class),
+            $this->createMock(CountryStateLookup::class),
+        );
+
         $context = Context::createDefaultContext();
-        $convertResult = $this->customerConverter->convert(
+        $convertResult = $customerConverter->convert(
             $customerData,
             $context,
             $this->migrationContext

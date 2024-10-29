@@ -14,9 +14,12 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CountryDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19CountryConverter;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -24,6 +27,8 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 #[Package('services-settings')]
 class Magento19CountryConverterTest extends TestCase
 {
+    use LookupHelperTrait;
+
     private Magento19CountryConverter $countryConverter;
 
     private DummyLoggingService $loggingService;
@@ -36,11 +41,22 @@ class Magento19CountryConverterTest extends TestCase
 
     private string $britainMappingUuid;
 
+    private string $expectedLanguageUuid;
+
     protected function setUp(): void
     {
+        $expectedLanguageUuid = $this->getLanguageIdByLocaleCode('de-DE');
+        static::assertIsString($expectedLanguageUuid);
+        $this->expectedLanguageUuid = $expectedLanguageUuid;
+
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->countryConverter = new Magento19CountryConverter($mappingService, $this->loggingService);
+        $this->countryConverter = new Magento19CountryConverter(
+            $mappingService,
+            $this->loggingService,
+            $this->getContainer()->get(LanguageLookup::class),
+            $this->getContainer()->get(CountryLookup::class),
+        );
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
@@ -92,7 +108,7 @@ class Magento19CountryConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertSame($converted['id'], $this->britainMappingUuid);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->expectedLanguageUuid, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
@@ -108,7 +124,7 @@ class Magento19CountryConverterTest extends TestCase
         static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
-        static::assertArrayHasKey(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['translations']);
+        static::assertArrayHasKey($this->expectedLanguageUuid, $converted['translations']);
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
