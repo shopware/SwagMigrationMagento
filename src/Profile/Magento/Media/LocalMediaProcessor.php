@@ -374,9 +374,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         Context $context,
     ): array {
         // Do download requests and store the promises
-        $client = new Client([
-            'verify' => false,
-        ]);
+        $client = new Client();
         $promises = $this->doMediaDownloadRequests($media, $mappedWorkload, $client, $shopUrl);
 
         // Wait for the requests to complete, even if some of them fail
