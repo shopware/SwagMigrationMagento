@@ -756,11 +756,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/CustomerReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\EnvironmentReader has an uninitialized property \\$connection\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/EnvironmentReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\EnvironmentReader\\:\\:getAdditionalData\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/EnvironmentReader.php
@@ -856,11 +851,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\NotAssociatedMediaReader has an uninitialized property \\$sourcePath\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\NotAssociatedMediaReader\\:\\:dirToArray\\(\\) has parameter \\$result with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
@@ -906,29 +896,14 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/OrderReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectPropertyRelationReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectTextPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectTextPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildMultiSelectTextPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildMultiSelectTextPropertyRelationReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductChildPropertyRelationReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductChildPropertyRelationReader\\:\\:fetchPropertyRelations\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -991,19 +966,9 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductCustomFieldReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectPropertyRelationReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectTextPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductMultiSelectTextPropertyRelationReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductMultiSelectTextPropertyRelationReader\\:\\:fetchMultiSelectProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -1016,19 +981,9 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductOptionRelationReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductPropertyRelationReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductPropertyRelationReader\\:\\:fetchPropertyRelations\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/ProductPropertyRelationReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductReader has an uninitialized property \\$productEntityTypeId\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/ProductReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\ProductReader\\:\\:appendAssociatedData\\(\\) has parameter \\$fetchedProducts with no value type specified in iterable type array\\.$#"
@@ -1386,31 +1341,6 @@ parameters:
 			path: src/Profile/Magento/Premapping/AdminStoreReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\AdminStoreReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/AdminStoreReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\OrderDeliveryStateReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/OrderDeliveryStateReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\OrderStateReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/OrderStateReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\PaymentMethodReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/PaymentMethodReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\PaymentMethodReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/PaymentMethodReader.php
-
-		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\PaymentMethodReader\\:\\:\\$preselectionDictionary type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Premapping/PaymentMethodReader.php
@@ -1421,34 +1351,9 @@ parameters:
 			path: src/Profile/Magento/Premapping/SalutationReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\SalutationReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/SalutationReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\ShippingMethodReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/ShippingMethodReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\ShippingMethodReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/ShippingMethodReader.php
-
-		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\ShippingMethodReader\\:\\:\\$preselectionDictionary type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Premapping/ShippingMethodReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\TaxReader has an uninitialized property \\$choiceUuids\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/TaxReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\TaxReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/TaxReader.php
 
 		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\TaxReader\\:\\:\\$preselectionDictionary type has no value type specified in iterable type array\\.$#"
@@ -1791,11 +1696,6 @@ parameters:
 			path: src/Profile/Magento2/Gateway/Local/Reader/Magento2SeoUrlReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CountryReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Premapping/Magento2CountryReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CountryReader\\:\\:getMapping\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Premapping/Magento2CountryReader.php
@@ -1806,11 +1706,6 @@ parameters:
 			path: src/Profile/Magento2/Premapping/Magento2CountryReader.php
 
 		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CurrencyReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Premapping/Magento2CurrencyReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CurrencyReader\\:\\:getMapping\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Premapping/Magento2CurrencyReader.php
@@ -1819,11 +1714,6 @@ parameters:
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2CurrencyReader\\:\\:\\$preselectionDictionary type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Premapping/Magento2CurrencyReader.php
-
-		-
-			message: "#^Class Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2LanguageReader has an uninitialized property \\$preselectionDictionary\\. Give it default value or assign it in the constructor\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Premapping/Magento2LanguageReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Premapping\\\\Magento2LanguageReader\\:\\:getMapping\\(\\) return type has no value type specified in iterable type array\\.$#"
