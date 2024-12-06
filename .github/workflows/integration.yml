@@ -1,0 +1,44 @@
+name: Integration
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - trunk
+  pull_request:
+
+jobs:
+  danger:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker://ghcr.io/shyim/danger-php:latest
+        with:
+          args: ci
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PULL_REQUEST_ID: ${{ github.event.pull_request.number }}
+        if: ${{ env.ACT != 'true' }} # Don't execute on local runs, this can only fail
+
+  phpunit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        MYSQL_IMAGE: ["mysql:8.0", "mariadb:10.11"]
+        PHP_VERSION: ["8.2", "8.3"]
+    steps:
+      - name: Checkout SwagMigrationMagento
+        uses: actions/checkout@v4
+        with:
+          path: custom/plugins/${{ github.event.repository.name }}
+      - name: Setup SwagMigrationMagento
+        uses: ./custom/plugins/SwagMigrationMagento/.github/actions/setup-magento-plugin
+        with:
+          php-version: ${{ matrix.PHP_VERSION }}
+          mysql-version: ${{ matrix.MYSQL_IMAGE }}
+      - name: Run PHPUnit
+        working-directory: custom/plugins/${{ github.event.repository.name }}
+        run: |
+          composer dump-autoload --dev
+          php -d pcov.enabled=1 -d pcov.directory=${PWD}/src -d pcov.exclude='~(vendor|tests|node_modules)~' ${GITHUB_WORKSPACE}/vendor/bin/phpunit --configuration phpunit.xml.dist

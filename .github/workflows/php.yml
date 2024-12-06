@@ -1,0 +1,34 @@
+name: PHP Checks
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - trunk
+  pull_request:
+    paths:
+      - composer.json
+      - src/**/*.php
+      - tests/**/*.php
+
+jobs:
+  codestyle_php:
+    name: Codestyle PHP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: shopware/github-actions/cs-fixer@main
+        with:
+          rules: ""
+
+  phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SwagMigrationMagento
+        uses: actions/checkout@v4
+        with:
+          path: custom/plugins/${{ github.event.repository.name }}
+      - name: Setup SwagMigrationMagento
+        uses: ./custom/plugins/SwagMigrationMagento/.github/actions/setup-magento-plugin
+      - name: Run PHPStan
+        run: |
+          symfony composer -d custom/plugins/${{ github.event.repository.name }} dump-autoload --dev
+          symfony composer -d custom/plugins/${{ github.event.repository.name }} run phpstan
