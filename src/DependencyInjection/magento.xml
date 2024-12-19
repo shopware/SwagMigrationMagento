@@ -255,6 +255,7 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup"/>
@@ -263,6 +264,8 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\TaxCalculator"/>
+            <argument type="service" id="Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup"/>
@@ -283,11 +286,14 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter"
-                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true"/>
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
+        </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
@@ -299,6 +305,7 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter" abstract="true">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\TaxLookup"/>

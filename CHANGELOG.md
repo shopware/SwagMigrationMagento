@@ -17,6 +17,7 @@
     - [BREAKING] Removed method `getMagentoCountryUuid` from `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` and all implementors. Use `SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup::get()` instead.
     - [BREAKING] Removed method `getTransactionStateUuid` from `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` and all implementors. Use `SwagMigrationAssistant\Migration\Mapping\Lookup\TransactionStateLookup::get()` instead.
     - [BREAKING] Removed method `getCountryStateUuid` from `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` and all implementors. Use `SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup::get()` instead.
+- MIG-1091 - Fixed errors in the service container that occurred due to the move to Lookup Services
 
 # 8.1.0
 - MIG-1034 - Fixed country states not being migrated for both customer and order addresses
