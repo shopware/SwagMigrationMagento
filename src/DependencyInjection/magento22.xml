@@ -167,7 +167,6 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento22\Converter\Magento22CategoryConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter">
-            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <tag name="shopware.migration.converter"/>
         </service>
 
@@ -208,15 +207,11 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento22\Converter\Magento22OrderConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter">
-            <argument type="service" id="Shopware\Core\Checkout\Cart\Tax\TaxCalculator"/>
-            <argument type="service"
-                      id="Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface"/>
             <tag name="shopware.migration.converter"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento22\Converter\Magento22MediaConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter">
-            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <tag name="shopware.migration.converter"/>
         </service>
 
@@ -227,7 +222,6 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento22\Converter\Magento22NotAssociatedMediaConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter">
-            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <tag name="shopware.migration.converter"/>
         </service>
 
@@ -238,7 +232,6 @@
 
         <service id="Swag\MigrationMagento\Profile\Magento22\Converter\Magento22ProductConverter"
                  parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter">
-            <argument type="service" id="SwagMigrationAssistant\Migration\Media\MediaFileService"/>
             <tag name="shopware.migration.converter"/>
         </service>
 
