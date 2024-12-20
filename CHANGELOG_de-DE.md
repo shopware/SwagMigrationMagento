@@ -1,22 +1,7 @@
-# REPLACE_GLOBAL_WITH_NEXT_VERSION
+# 9.0.0
+- Technische Änderungen und Breaking-Changes wurden nach https://github.com/shopware/SwagMigrationMagento/blob/trunk/UPGRADE.md umgezogen
 - MIG-1039 - Die Bundesländer werden jetzt über den MigrationAssistent konvertiert
-- MIG-1039 - [BREAKING] Methode `getCountryStateUuid` aus `Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface` und ihrer Standardimplementierung `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` entfernt.
-- MIG-1071 - Move to the new Lookup service structure
-    - [BREAKING] Fügt weitere Konstruktorparameter `MediaDefaultFolderLookup $mediaFolderLookup`, `LowestRootCategoryLookup $lowestRootCategoryLookup`, `DefaultCmsPageLookup $defaultCmsPageLookup`, `LanguageLookup $languageLookup` to `Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `LanguageLookup $languageLookup`, `CountryLookup $countryLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `CurrencyLookup $currencyLookup`, `LanguageLookup $languageLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\CurrencyConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `CountryLookup $countryLookup`, `CountryStateLookup $countryStateLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `LanguageLookup $languageLookup`, `LocaleLookup $localeLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `LanguageLookup $languageLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `MediaDefaultFolderLookup $mediaFolderLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `CountryLookup $countryLookup`, `CurrencyLookup $currencyLookup`, `CountryStateLookup $countryStateLookup`, `TransactionStateLookup $magentoTransactionStateLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `MediaDefaultFolderLookup $mediaFolderLookup`, `LanguageLookup $languageLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `LanguageLookup $languageLookup` zu `Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter` hinzu.
-    - [BREAKING] Fügt weitere Konstruktorparameter `CurrencyLookup $currencyLookup`, `LanguageLookup $languageLookup`, `CountryLookup $countryLookup` zu `\Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter` hinzu.
-    - [BREAKING] Entfernt die Methode `getMagentoCountryUuid` vom `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` und allen die es implementieren. Nutze stattdessen `SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup::get()`
-    - [BREAKING] Entfernt die Methode `getTransactionStateUuid` vom `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` und allen die es implementieren. Nutze stattdessen `SwagMigrationAssistant\Migration\Mapping\Lookup\TransactionStateLookup::get()`
-    - [BREAKING] Entfernt die Methode `getCountryStateUuid` vom `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` und allen die es implementieren. Nutze stattdessen `SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup::get()`
-- MIG-1091 - Fehler im Service Container behoben, welche durch den Umzug zu Lookup Services entstanden
+- MIG-1071 - Mapping von IDs optimiert
 
 # 8.1.0
 - MIG-1034 - Für Kunden- und Bestelladressen werden jetzt auch die Bundesländer migriert
