@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CategoryReader;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2CategoryReader extends CategoryReader
 {
     public function fetchCategories(MigrationContextInterface $migrationContext): array

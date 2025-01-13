@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento19PaymentMethodReader extends PaymentMethodReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

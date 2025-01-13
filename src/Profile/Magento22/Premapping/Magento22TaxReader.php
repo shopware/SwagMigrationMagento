@@ -15,7 +15,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento22TaxReader extends TaxReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

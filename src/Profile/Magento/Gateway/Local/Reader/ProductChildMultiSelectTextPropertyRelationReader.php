@@ -14,7 +14,7 @@ use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class ProductChildMultiSelectTextPropertyRelationReader extends AbstractReader
 {
     protected int $productEntityTypeId;

@@ -20,7 +20,7 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento19CustomerGroupConverterTest extends TestCase
 {
     private Magento19CustomerGroupConverter $customerGroupConverter;

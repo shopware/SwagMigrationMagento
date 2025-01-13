@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Sha256Encoder;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento2Sha256EncoderTest extends TestCase
 {
     public function testIsPasswordValidWithValidPassword(): void

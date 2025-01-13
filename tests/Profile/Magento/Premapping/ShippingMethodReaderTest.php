@@ -29,7 +29,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\Local\ShopwareLocalGateway;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class ShippingMethodReaderTest extends TestCase
 {
     use KernelTestBehaviour;

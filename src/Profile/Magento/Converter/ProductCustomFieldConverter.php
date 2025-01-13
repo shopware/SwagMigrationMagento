@@ -10,7 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 use Shopware\Core\Framework\Log\Package;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class ProductCustomFieldConverter extends CustomFieldConverter
 {
     protected function getCustomFieldEntityName(): string

@@ -12,7 +12,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2LocalMediaProcessor extends LocalMediaProcessor
 {
     public const PUBLIC_PATH = '/pub';

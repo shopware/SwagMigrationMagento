@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LanguageReader;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2LanguageReader extends LanguageReader
 {
     public function read(MigrationContextInterface $migrationContext, array $params = []): array

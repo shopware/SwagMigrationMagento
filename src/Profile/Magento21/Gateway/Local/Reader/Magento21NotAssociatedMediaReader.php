@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento21\Gateway\Local\Magento21LocalGateway;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21NotAssociatedMediaReader extends Magento2NotAssociatedMediaReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

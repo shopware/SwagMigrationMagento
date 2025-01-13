@@ -13,7 +13,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21MediaConverter extends MediaConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

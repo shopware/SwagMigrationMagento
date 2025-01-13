@@ -24,7 +24,7 @@ use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2LocalGateway implements MagentoGatewayInterface
 {
     public const GATEWAY_NAME = 'local';

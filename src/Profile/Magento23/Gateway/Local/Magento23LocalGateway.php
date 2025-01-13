@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Magento2LocalGateway;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento23LocalGateway extends Magento2LocalGateway
 {
     public function supports(MigrationContextInterface $migrationContext): bool

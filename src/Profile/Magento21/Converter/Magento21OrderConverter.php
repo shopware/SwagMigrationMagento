@@ -13,7 +13,7 @@ use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2OrderConverter;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21OrderConverter extends Magento2OrderConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

@@ -20,7 +20,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Tax\TaxCollection;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
 {
     /**

@@ -14,7 +14,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2ProductOptionRelationReader extends ProductOptionRelationReader
 {
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct

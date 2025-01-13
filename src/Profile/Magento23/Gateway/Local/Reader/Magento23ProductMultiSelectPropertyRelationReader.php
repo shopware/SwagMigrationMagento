@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento23\Gateway\Local\Magento23LocalGateway;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento23ProductMultiSelectPropertyRelationReader extends Magento2ProductMultiSelectPropertyRelationReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

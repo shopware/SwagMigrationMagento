@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento22CurrencyReader extends CurrencyReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

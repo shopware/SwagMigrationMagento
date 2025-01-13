@@ -13,7 +13,7 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryIn
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class EnvironmentReader implements EnvironmentReaderInterface
 {
     protected ConnectionFactoryInterface $connectionFactory;

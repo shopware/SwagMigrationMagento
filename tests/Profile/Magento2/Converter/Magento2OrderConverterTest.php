@@ -36,7 +36,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento2OrderConverterTest extends TestCase
 {
     use DatabaseTransactionBehaviour;

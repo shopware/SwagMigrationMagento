@@ -27,7 +27,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\ShopwareGatewayInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class OrderStateReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'order_state';

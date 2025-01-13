@@ -32,7 +32,7 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento2ProductConverterTest extends TestCase
 {
     use LookupHelperTrait;

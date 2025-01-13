@@ -11,7 +11,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Writer\AbstractWriter;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class ProductMultiSelectTextPropertyRelationWriter extends AbstractWriter
 {
     public function supports(): string

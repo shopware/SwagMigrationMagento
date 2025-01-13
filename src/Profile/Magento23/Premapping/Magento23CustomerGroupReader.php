@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento23CustomerGroupReader extends CustomerGroupReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

@@ -15,7 +15,7 @@ use Swag\MigrationMagento\Exception\MigrationMagentoException;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class ConnectionFactory implements ConnectionFactoryInterface
 {
     public function createDatabaseConnection(MigrationContextInterface $migrationContext): ?Connection

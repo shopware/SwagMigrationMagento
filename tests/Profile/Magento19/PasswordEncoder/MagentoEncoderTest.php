@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class MagentoEncoderTest extends TestCase
 {
     public function testGetDisplayName(): void

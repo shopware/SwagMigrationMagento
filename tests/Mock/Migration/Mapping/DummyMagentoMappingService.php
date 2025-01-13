@@ -21,7 +21,7 @@ use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingCollection;
 use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingDefinition;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class DummyMagentoMappingService extends MagentoMappingService
 {
     public const DEFAULT_LANGUAGE_UUID = '20080911ffff4fffafffffff19830531';

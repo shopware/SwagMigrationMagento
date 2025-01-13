@@ -13,7 +13,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\NotAssociatedMed
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento19NotAssociatedMediaConverter extends NotAssociatedMediaConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento19AdminStoreReader extends AdminStoreReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

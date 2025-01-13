@@ -18,7 +18,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingChoiceStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class CustomerGroupReader extends AbstractPremappingReader
 {
     private const MAPPING_NAME = 'customer_group';

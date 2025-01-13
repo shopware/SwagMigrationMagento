@@ -14,7 +14,7 @@ use Shopware\Core\Framework\Log\Package;
  *
  * @template-implements MappingRegistryInterface<TMappingArray>
  */
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class AbstractMappingRegistry implements MappingRegistryInterface
 {
     /**
