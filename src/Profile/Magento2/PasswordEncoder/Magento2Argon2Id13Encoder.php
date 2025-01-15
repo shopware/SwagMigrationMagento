@@ -10,7 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento2\PasswordEncoder;
 use Shopware\Core\Checkout\Customer\Password\LegacyEncoder\LegacyEncoderInterface;
 use Shopware\Core\Framework\Log\Package;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento2Argon2Id13Encoder implements LegacyEncoderInterface
 {
     public const NAME = 'Magento2Argon2Id13';

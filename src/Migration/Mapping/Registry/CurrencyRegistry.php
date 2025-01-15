@@ -14,7 +14,7 @@ use Shopware\Core\Framework\Log\Package;
  *
  * @template-extends AbstractMappingRegistry<MappingArray>
  */
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class CurrencyRegistry extends AbstractMappingRegistry
 {
     /**

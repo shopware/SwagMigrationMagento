@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento20ShippingMethodReader extends ShippingMethodReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

@@ -25,7 +25,7 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\DataSelection\CustomerAndOrderDataSelection;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class OrderDeliveryStateReader extends AbstractPremappingReader
 {
     public const DEFAULT_OPEN_STATUS = 'default_open_order_delivery_status';

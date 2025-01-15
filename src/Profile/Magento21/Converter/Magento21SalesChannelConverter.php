@@ -13,7 +13,7 @@ use Swag\MigrationMagento\Profile\Magento2\Converter\Magento2SalesChannelConvert
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21SalesChannelConverter extends Magento2SalesChannelConverter
 {
     public function supports(MigrationContextInterface $migrationContext): bool

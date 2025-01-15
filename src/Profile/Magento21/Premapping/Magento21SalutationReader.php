@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21SalutationReader extends SalutationReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

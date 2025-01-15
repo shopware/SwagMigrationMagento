@@ -10,7 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento;
 use Shopware\Core\Framework\Log\Package;
 use SwagMigrationAssistant\Migration\Profile\ProfileInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 interface MagentoProfileInterface extends ProfileInterface
 {
 }

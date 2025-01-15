@@ -11,7 +11,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class NotAssociatedMediaReader extends AbstractReader
 {
     protected string $sourcePath;

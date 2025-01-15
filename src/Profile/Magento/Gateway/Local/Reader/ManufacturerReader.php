@@ -13,7 +13,7 @@ use Shopware\Core\Framework\Log\Package;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class ManufacturerReader extends AbstractReader
 {
     public function read(MigrationContextInterface $migrationContext, array $params = []): array

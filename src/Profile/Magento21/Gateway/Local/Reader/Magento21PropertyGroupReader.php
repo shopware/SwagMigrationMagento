@@ -14,7 +14,7 @@ use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21PropertyGroupReader extends Magento2PropertyGroupReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

@@ -16,7 +16,7 @@ use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class SeoUrlConverter extends MagentoConverter
 {
     protected const ROUTE_NAME_NAVIGATION = 'frontend.navigation.page';

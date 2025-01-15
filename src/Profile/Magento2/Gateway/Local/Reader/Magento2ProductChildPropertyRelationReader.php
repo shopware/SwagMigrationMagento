@@ -16,7 +16,7 @@ use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2ProductChildPropertyRelationReader extends ProductChildPropertyRelationReader
 {
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct

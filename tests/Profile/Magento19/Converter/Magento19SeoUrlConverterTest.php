@@ -21,7 +21,7 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Profile\Shopware\DataSelection\DataSet\SeoUrlDataSet;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento19SeoUrlConverterTest extends TestCase
 {
     private DummyMagentoMappingService $mappingService;

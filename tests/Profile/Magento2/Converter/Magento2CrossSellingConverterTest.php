@@ -22,7 +22,7 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento2CrossSellingConverterTest extends TestCase
 {
     private Magento23CrossSellingConverter $crossSellingConverter;

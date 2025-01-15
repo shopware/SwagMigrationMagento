@@ -12,7 +12,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader;
 use SwagMigrationAssistant\Exception\MigrationException;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2CustomerReader extends CustomerReader
 {
     protected function fetchAddresses(array $ids): array

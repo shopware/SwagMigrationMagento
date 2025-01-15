@@ -11,7 +11,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class DummyReader extends AbstractReader
 {
     public function supports(MigrationContextInterface $migrationContext): bool

@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryIn
 use Swag\MigrationMagento\Profile\Magento\Gateway\TableReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class LocalTableReader implements TableReaderInterface
 {
     protected ConnectionFactoryInterface $connectionFactory;

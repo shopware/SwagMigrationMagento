@@ -11,7 +11,7 @@ use Shopware\Core\Framework\HttpException;
 use Shopware\Core\Framework\Log\Package;
 use Symfony\Component\HttpFoundation\Response;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class MigrationMagentoException extends HttpException
 {
     public const INCORRECT_TABLE_PREFIX = 'SWAG_MIGRATION_MAGENTO__INCORRECT_TABLE_PREFIX';

@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2LanguageReader;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento20LanguageReader extends Magento2LanguageReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

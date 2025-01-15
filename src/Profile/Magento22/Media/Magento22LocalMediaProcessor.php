@@ -13,7 +13,7 @@ use Swag\MigrationMagento\Profile\Magento2\Media\Magento2LocalMediaProcessor;
 use Swag\MigrationMagento\Profile\Magento22\Magento22Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento22LocalMediaProcessor extends Magento2LocalMediaProcessor
 {
     public function supports(MigrationContextInterface $migrationContext): bool

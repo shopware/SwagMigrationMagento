@@ -3,7 +3,7 @@ import template from './swag-migration-profile-magento-local-credential-form.htm
 const { Component } = Shopware;
 
 /**
- * @package services-settings
+ * @sw-package fundamentals@after-sales
  */
 Component.register('swag-migration-profile-magento-local-credential-form', {
     template,

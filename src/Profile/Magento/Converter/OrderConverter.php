@@ -43,7 +43,7 @@ use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class OrderConverter extends MagentoConverter
 {
     protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;

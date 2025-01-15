@@ -26,7 +26,7 @@ use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\SalutationReader;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class CustomerConverter extends MagentoConverter
 {
     protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;

@@ -21,7 +21,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento19ProductMultiSelectPropertyRelationConverterTest extends TestCase
 {
     private MigrationContext $migrationContext;

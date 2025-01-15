@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CountryReader;
 use Swag\MigrationMagento\Profile\Magento21\Magento21Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 class Magento21CountryReader extends Magento2CountryReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool

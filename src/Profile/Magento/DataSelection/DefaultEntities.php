@@ -9,7 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\DataSelection;
 
 use Shopware\Core\Framework\Log\Package;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 final class DefaultEntities
 {
     public const CROSS_SELLING_TYPE = 'cross_sell';

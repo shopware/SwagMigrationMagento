@@ -15,7 +15,7 @@ use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Sha256Encoder
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2CustomerConverter extends CustomerConverter
 {
     private const PASSWORD_HASH_SPLIT_LIMIT = 3;

@@ -11,7 +11,7 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NotAssociatedMediaReader;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
-#[Package('services-settings')]
+#[Package('fundamentals@after-sales')]
 abstract class Magento2NotAssociatedMediaReader extends NotAssociatedMediaReader
 {
     public const NOT_ASSOCIATED_MEDIA_PATH = '/pub/media/wysiwyg/';
