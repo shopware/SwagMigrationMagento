@@ -27,6 +27,7 @@ jobs:
       matrix:
         MYSQL_IMAGE: ["mysql:8.0", "mariadb:10.11"]
         PHP_VERSION: ["8.2", "8.3"]
+        PLATFORM_BRANCH: ["v6.6.1.0", "trunk"]
     steps:
       - name: Checkout SwagMigrationMagento
         uses: actions/checkout@v4
@@ -37,6 +38,7 @@ jobs:
         with:
           php-version: ${{ matrix.PHP_VERSION }}
           mysql-version: ${{ matrix.MYSQL_IMAGE }}
+          platform-branch: ${{ matrix.PLATFORM_BRANCH }}
       - name: Run PHPUnit
         working-directory: custom/plugins/${{ github.event.repository.name }}
         run: |
