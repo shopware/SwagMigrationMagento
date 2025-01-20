@@ -6,9 +6,9 @@
  * file that was distributed with this source code.
  */
 
+use Shopware\Core\DevOps\StaticAnalyze\StaticAnalyzeKernel;
 use Shopware\Core\Framework\Adapter\Kernel\KernelFactory;
 use Shopware\Core\Framework\Plugin\KernelPluginLoader\StaticKernelPluginLoader;
-use Shopware\Core\DevOps\StaticAnalyze\StaticAnalyzeKernel;
 use Swag\MigrationMagento\SwagMigrationMagento;
 use SwagMigrationAssistant\SwagMigrationAssistant;
 use Symfony\Component\Dotenv\Dotenv;
@@ -20,7 +20,6 @@ $classLoader = require $projectRoot . '/vendor/autoload.php';
 if (file_exists($projectRoot . '/.env')) {
     (new Dotenv())->usePutEnv()->load($projectRoot . '/.env');
 }
-
 
 $magentoPluginRootPath = dirname(__DIR__);
 $magentoComposerJson = json_decode((string) file_get_contents($magentoPluginRootPath . '/composer.json'), true);
@@ -77,7 +76,7 @@ $phpStanConfig = str_replace(
     [
         str_replace($kernel->getProjectDir(), '', $kernel->getCacheDir()),
         $projectRoot . (is_dir($projectRoot . '/platform') ? '/platform' : ''),
-        str_replace('\\', '_', get_class($kernel)),
+        str_replace('\\', '_', $kernel::class),
     ],
     $phpStanConfigDist
 );

@@ -1,0 +1,53 @@
+name: Setup SwagMigrationMagento
+description: "Setup steps for SwagMigrationMagento"
+author: "shopware AG"
+branding:
+  color: "blue"
+  icon: "download"
+
+inputs:
+  php-version:
+    default: "8.2"
+    required: false
+    description: "Which PHP version should be used"
+  mysql-version:
+    default: "builtin"
+    required: false
+    description: "Which MySQL version should be used"
+  platform-branch:
+    default: "trunk"
+    required: false
+    description: "Which Shopware version should be used"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup SwagMigrationMagento
+      uses: shopware/github-actions/setup-extension@main
+      with:
+        extensionName: SwagMigrationMagento
+        install: true
+        install-admin: true
+        shopwareVersion: ${{ inputs.platform-branch }}
+        phpVersion: ${{ inputs.php-version }}
+        mysqlVersion: ${{ inputs.mysql-version }}
+        extraRepositories: |
+          {
+            "SwagMigrationAssistant": {
+              "type": "path",
+              "url": "custom/plugins/SwagMigrationAssistant",
+              "symlink": true
+            },
+            "${{ github.event.repository.name }}": {
+              "type": "path",
+              "url": "custom/plugins/${{ github.event.repository.name }}",
+              "symlink": true
+            }
+          }
+        dependencies: |
+          [
+            {
+              "name": "SwagMigrationAssistant",
+              "repo": "https://github.com/shopware/SwagMigrationAssistant.git"
+            }
+          ]
