@@ -48,13 +48,4 @@ class MigrationMagentoException extends HttpException
             \sprintf('Could not determine size of file %s', $path)
         );
     }
-
-    public static function mediaMimeTypeError(string $path): self
-    {
-        return new self(
-            Response::HTTP_INTERNAL_SERVER_ERROR,
-            self::MEDIA_MIME_TYPE_ERROR,
-            \sprintf('Could not determine mime type of file %s', $path)
-        );
-    }
 }
