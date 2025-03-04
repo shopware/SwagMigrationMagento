@@ -36,6 +36,9 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class Magento2CategoryConverterTest extends TestCase
 {

@@ -30,6 +30,9 @@ abstract class CustomerGroupReader extends AbstractPremappingReader
 
     private GatewayRegistryInterface $gatewayRegistry;
 
+    /**
+     * @internal
+     */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
     ) {

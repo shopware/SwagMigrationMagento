@@ -46,6 +46,8 @@ abstract class TaxReader extends AbstractPremappingReader
     private array $choiceUuids;
 
     /**
+     * @internal
+     *
      * @param EntityRepository<EntityCollection<TaxEntity>> $taxRepo
      */
     public function __construct(

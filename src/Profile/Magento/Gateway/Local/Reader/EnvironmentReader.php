@@ -22,6 +22,9 @@ class EnvironmentReader implements EnvironmentReaderInterface
 
     protected string $tablePrefix;
 
+    /**
+     * @internal
+     */
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
         $this->connectionFactory = $connectionFactory;
@@ -106,7 +109,7 @@ class EnvironmentReader implements EnvironmentReaderInterface
 
     protected function isMagento2(): bool
     {
-        return $this->connection->createSchemaManager()->tablesExist($this->tablePrefix . 'store_website');
+        return $this->connection->createSchemaManager()->tablesExist([$this->tablePrefix . 'store_website']);
     }
 
     protected function getAdditionalData(): array

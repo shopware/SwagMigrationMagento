@@ -37,6 +37,9 @@ abstract class AdminStoreReader extends AbstractPremappingReader
      */
     private array $choiceUuids;
 
+    /**
+     * @internal
+     */
     public function __construct(
         GatewayRegistryInterface $gatewayRegistry,
     ) {

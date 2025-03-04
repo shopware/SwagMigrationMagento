@@ -21,6 +21,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 use SwagMigrationAssistant\Test\Mock\Migration\Media\DummyMediaFileService;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class Magento19NotAssociatedMediaConverterTest extends TestCase
 {

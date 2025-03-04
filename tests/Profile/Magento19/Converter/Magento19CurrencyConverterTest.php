@@ -24,6 +24,9 @@ use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class Magento19CurrencyConverterTest extends TestCase
 {

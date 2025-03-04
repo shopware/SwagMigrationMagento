@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento2\PasswordEncoder;
 
 use Shopware\Core\Checkout\Customer\Password\LegacyEncoder\LegacyEncoderInterface;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\Framework\Util\Hasher;
 
 #[Package('fundamentals@after-sales')]
 class Magento2Sha256Encoder implements LegacyEncoderInterface
@@ -31,6 +32,6 @@ class Magento2Sha256Encoder implements LegacyEncoderInterface
             return false;
         }
 
-        return \hash_equals($sha256, \hash('sha256', $salt . $password));
+        return \hash_equals($sha256, Hasher::hash($salt . $password, 'sha256'));
     }
 }

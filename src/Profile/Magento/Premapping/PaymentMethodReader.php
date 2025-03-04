@@ -42,6 +42,8 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
     private array $choiceUuids;
 
     /**
+     * @internal
+     *
      * @param EntityRepository<EntityCollection<PaymentMethodEntity>> $paymentMethodRepo
      */
     public function __construct(

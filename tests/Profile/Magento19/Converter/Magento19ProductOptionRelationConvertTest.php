@@ -21,6 +21,9 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class Magento19ProductOptionRelationConvertTest extends TestCase
 {

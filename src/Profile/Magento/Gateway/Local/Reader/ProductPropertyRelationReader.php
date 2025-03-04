@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Shopware\Core\Framework\Log\Package;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -100,8 +101,8 @@ SQL;
             ],
             [
                 'validTypes' => ArrayParameterType::STRING,
-                'limit' => \PDO::PARAM_INT,
-                'offset' => \PDO::PARAM_INT,
+                'limit' => ParameterType::INTEGER,
+                'offset' => ParameterType::INTEGER,
             ]
         );
 

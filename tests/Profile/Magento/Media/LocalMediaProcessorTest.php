@@ -15,6 +15,7 @@ use Shopware\Core\Content\Media\MediaCollection;
 use Shopware\Core\Content\Media\MediaDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Dbal\QueryBuilder;
+use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
@@ -25,6 +26,10 @@ use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileCollection;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileDefinition;
 use SwagMigrationAssistant\Migration\MigrationContext;
 
+/**
+ * @internal
+ */
+#[Package('fundamentals@after-sales')]
 class LocalMediaProcessorTest extends TestCase
 {
     public function testCopyMediaFiles(): void

@@ -24,6 +24,9 @@ abstract class NotAssociatedMediaConverter extends MagentoConverter
 
     protected string $connectionId;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

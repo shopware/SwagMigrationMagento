@@ -26,6 +26,9 @@ abstract class CountryConverter extends MagentoConverter
 
     protected string $connectionId;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

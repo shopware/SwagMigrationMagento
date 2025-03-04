@@ -27,6 +27,9 @@ abstract class MediaConverter extends MagentoConverter
 
     protected MediaFileServiceInterface $mediaFileService;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

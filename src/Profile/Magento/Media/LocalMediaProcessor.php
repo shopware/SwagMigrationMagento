@@ -52,6 +52,8 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     protected MigrationContextInterface $migrationContext;
 
     /**
+     * @internal
+     *
      * @param EntityRepository<SwagMigrationMediaFileCollection> $migrationMediaFileRepo
      * @param EntityRepository<MediaCollection> $mediaRepo
      */

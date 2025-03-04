@@ -49,6 +49,8 @@ abstract class SalutationReader extends AbstractPremappingReader
     private array $choiceUuids;
 
     /**
+     * @internal
+     *
      * @param EntityRepository<EntityCollection<SalutationEntity>> $salutationRepo
      */
     public function __construct(

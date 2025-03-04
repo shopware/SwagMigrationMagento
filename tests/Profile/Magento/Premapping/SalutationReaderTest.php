@@ -29,6 +29,9 @@ use SwagMigrationAssistant\Migration\Premapping\PremappingEntityStruct;
 use SwagMigrationAssistant\Migration\Premapping\PremappingStruct;
 use SwagMigrationAssistant\Profile\Shopware\Gateway\Local\ShopwareLocalGateway;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class SalutationReaderTest extends TestCase
 {

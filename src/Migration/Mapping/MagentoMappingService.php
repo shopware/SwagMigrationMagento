@@ -24,6 +24,8 @@ use SwagMigrationAssistant\Migration\Mapping\MappingService;
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
 {
     /**
+     * @internal
+     *
      * @param EntityRepository<TaxCollection> $taxRepo
      */
     public function __construct(

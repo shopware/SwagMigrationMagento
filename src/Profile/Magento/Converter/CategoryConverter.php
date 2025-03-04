@@ -46,6 +46,9 @@ abstract class CategoryConverter extends MagentoConverter
 
     private string $runId;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

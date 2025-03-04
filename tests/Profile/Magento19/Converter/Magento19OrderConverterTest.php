@@ -36,6 +36,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Profile\Shopware\Premapping\OrderDeliveryStateReader;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class Magento19OrderConverterTest extends TestCase
 {

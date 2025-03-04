@@ -11,6 +11,9 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class DummyReader extends AbstractReader
 {
