@@ -13,6 +13,7 @@ return (new Config())
     ->setRules([
         '@Symfony' => true,
         '@Symfony:risky' => true,
+        'ordered_class_elements' => true,
         'linebreak_after_opening_tag' => false,
         'blank_line_after_opening_tag' => false,
         'phpdoc_summary' => false,
@@ -27,6 +28,7 @@ return (new Config())
         'php_unit_dedicate_assert_internal_type' => true,
         'php_unit_mock' => true,
         'php_unit_test_case_static_method_calls' => ['call_type' => 'static'],
+        'trailing_comma_in_multiline' => ['after_heredoc' => true, 'elements' => ['array_destructuring', 'arrays', 'match']],
         'no_useless_return' => true,
         'yoda_style' => [
             'equal' => false,

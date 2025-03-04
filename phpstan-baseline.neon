@@ -1726,11 +1726,6 @@ parameters:
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getUuidList\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getUuidsByEntity\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
