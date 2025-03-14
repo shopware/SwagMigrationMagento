@@ -1346,11 +1346,6 @@ parameters:
 			path: src/Profile/Magento/Premapping/PaymentMethodReader.php
 
 		-
-			message: "#^Call to an undefined method Shopware\\\\Core\\\\Framework\\\\DataAbstractionLayer\\\\Entity\\:\\:getId\\(\\)\\.$#"
-			count: 1
-			path: src/Profile/Magento/Premapping/SalutationReader.php
-
-		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Premapping\\\\ShippingMethodReader\\:\\:\\$preselectionDictionary type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Premapping/ShippingMethodReader.php

@@ -28,6 +28,8 @@ jobs:
           path: custom/plugins/${{ github.event.repository.name }}
       - name: Setup SwagMigrationMagento
         uses: ./custom/plugins/SwagMigrationMagento/.github/actions/setup-magento-plugin
+        with:
+          platform-branch: 6.6.x # Todo switch back to trunk (6.7) after compatibility
       - name: Run PHPStan
         run: |
           symfony composer -d custom/plugins/${{ github.event.repository.name }} dump-autoload --dev
