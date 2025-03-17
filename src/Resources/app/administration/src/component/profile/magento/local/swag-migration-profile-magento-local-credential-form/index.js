@@ -1,3 +1,4 @@
+import './swag-migration-profile-magento-local-credential-form.scss';
 import template from './swag-migration-profile-magento-local-credential-form.html.twig';
 
 const { Component } = Shopware;

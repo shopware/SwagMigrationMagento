@@ -41,6 +41,7 @@
                             "dbHostLabel": "Host",
                             "dbHostPlaceholder": "Host eintragen",
                             "dbPortLabel": "Port",
+                            "dbPortPlaceholder": "3306",
                             "dbNameLabel": "Datenbankname",
                             "dbNamePlaceholder": "Name eintragen",
                             "dbUserLabel": "Benutzername",
