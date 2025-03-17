@@ -178,6 +178,8 @@ abstract class CustomerConverter extends MagentoConverter
         $customerNumber = $this->mappingService->getValue($this->connectionId, DefaultEntities::CUSTOMER, $this->oldIdentifier, $this->context);
         if ($customerNumber === null) {
             $customerNumber = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
+
+            /** @phpstan-ignore assign.propertyType (PHPStan cannot recognize the result correctly) */
             $this->mainMapping['entityValue'] = $customerNumber;
         }
         $converted['customerNumber'] = $customerNumber;

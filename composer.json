@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "shopware/core": "~6.7.0",
+        "shopware/core": "~6.7",
         "swag/migration-assistant": "~15.0"
     },
     "extra": {

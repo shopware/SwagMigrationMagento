@@ -144,8 +144,15 @@ SQL;
 
         $defaults = $query->executeQuery()->fetchAssociative();
 
+        if (!$defaults) {
+            return [];
+        }
+
+        if (!isset($defaults['defaultAllowedCurrencies'])) {
+            $defaults['defaultAllowedCurrencies'] = '';
+        }
         if ($defaults['defaultAllowedCurrencies'] === null) {
-            $defaults['defaultAllowedCountries'] = '';
+            $defaults['defaultAllowedCurrencies'] = '';
         }
         $defaults['defaultAllowedCurrencies'] = \explode(',', $defaults['defaultAllowedCurrencies']);
 
