@@ -1,6 +1,6 @@
 name: PHP Checks
+
 on:
-  workflow_dispatch:
   push:
     branches:
       - trunk
@@ -9,17 +9,20 @@ on:
       - composer.json
       - src/**/*.php
       - tests/**/*.php
+  workflow_dispatch:
 
 jobs:
   codestyle_php:
     name: Codestyle PHP
     runs-on: ubuntu-latest
     steps:
-      - uses: shopware/github-actions/cs-fixer@main
+      - name: Run PHP CS Fixer
+        uses: shopware/github-actions/cs-fixer@main
         with:
           rules: ""
 
   phpstan:
+    name: PHPStan Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout SwagMigrationMagento
@@ -29,7 +32,7 @@ jobs:
       - name: Setup SwagMigrationMagento
         uses: ./custom/plugins/SwagMigrationMagento/.github/actions/setup-magento-plugin
         with:
-          platform-branch: 6.6.x # Todo switch back to trunk (6.7) after compatibility
+          platform-branch: trunk
       - name: Run PHPStan
         run: |
           symfony composer -d custom/plugins/${{ github.event.repository.name }} dump-autoload --dev
