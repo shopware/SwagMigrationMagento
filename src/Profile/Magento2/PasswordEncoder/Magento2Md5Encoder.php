@@ -32,6 +32,6 @@ class Magento2Md5Encoder implements LegacyEncoderInterface
             return false;
         }
 
-        return \hash_equals($md5, Hasher::hash($salt . $password));
+        return \hash_equals($md5, Hasher::hash($salt . $password, 'md5'));
     }
 }
