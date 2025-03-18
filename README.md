@@ -3,7 +3,7 @@
 A migration profile for [Shopware 6](https://github.com/shopware/platform) [Migration Assistant](https://github.com/shopware/SwagMigrationAssistant)
 
 > [!IMPORTANT]  
-> This plugin requires the current master branch and is not compatible with the EA2 version of Shopware 6 or the Migration Assistant. Please use the current master branches of Shopware Platform and Migration Assistant.
+> This plugin requires the current trunk branch and is not compatible with the EA2 version of Shopware 6 or the Migration Assistant. Please use the current trunk branches of Shopware Platform and Migration Assistant.
 
 ## Features
 

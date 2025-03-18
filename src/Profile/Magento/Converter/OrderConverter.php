@@ -145,7 +145,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->connectionId = $connection->getId();
         }
 
-        if ($this->oldIdentifier === null) {
+        if (!$this->oldIdentifier) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::ORDER,
