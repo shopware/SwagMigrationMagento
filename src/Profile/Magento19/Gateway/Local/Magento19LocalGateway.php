@@ -99,7 +99,9 @@ class Magento19LocalGateway implements MagentoGatewayInterface
             );
         }
 
-        if (!$connection->isConnected()) {
+        try {
+            $connection->executeQuery('SELECT 1');
+        } catch (\Throwable) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
                 $profile->getVersion(),
@@ -110,6 +112,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
             );
         }
 
+        $connection->close();
         $environmentData = $this->localEnvironmentReader->read($migrationContext);
 
         /** @var CurrencyEntity $targetSystemCurrency */

@@ -92,7 +92,9 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
             );
         }
 
-        if (!$connection->isConnected()) {
+        try {
+            $connection->executeQuery('SELECT 1');
+        } catch (\Throwable) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
                 $profile->getVersion(),
@@ -103,6 +105,7 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
             );
         }
 
+        $connection->close();
         $environmentData = $this->localEnvironmentReader->read($migrationContext);
 
         if (!$environmentData['isMagento2']) {
