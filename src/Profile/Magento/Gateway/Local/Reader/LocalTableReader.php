@@ -17,6 +17,9 @@ class LocalTableReader implements TableReaderInterface
 {
     protected ConnectionFactoryInterface $connectionFactory;
 
+    /**
+     * @internal
+     */
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
         $this->connectionFactory = $connectionFactory;

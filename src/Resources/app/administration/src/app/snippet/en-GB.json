@@ -41,6 +41,7 @@
                             "dbHostLabel": "Host",
                             "dbHostPlaceholder": "Enter host",
                             "dbPortLabel": "Port",
+                            "dbPortPlaceholder": "3306",
                             "dbNameLabel": "Database name",
                             "dbNamePlaceholder": "Enter name",
                             "dbUserLabel": "User",

@@ -55,6 +55,8 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
     private array $choiceUuids;
 
     /**
+     * @internal
+     *
      * @param EntityRepository<EntityCollection<StateMachineEntity>> $stateMachineRepo
      * @param EntityRepository<EntityCollection<StateMachineStateEntity>> $stateMachineStateRepo
      */
@@ -120,6 +122,11 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
         foreach ($states as $state) {
             $id = $state->getId();
             $this->preselectionDictionary[$state->getTechnicalName()] = $id;
+
+            if ($state->getName() === null) {
+                continue;
+            }
+
             $choices[] = new PremappingChoiceStruct($id, $state->getName());
             $this->choiceUuids[$id] = $id;
         }

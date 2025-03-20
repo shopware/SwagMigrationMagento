@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento19\PasswordEncoder;
 
 use Shopware\Core\Checkout\Customer\Password\LegacyEncoder\LegacyEncoderInterface;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\Framework\Util\Hasher;
 
 #[Package('fundamentals@after-sales')]
 class MagentoEncoder implements LegacyEncoderInterface
@@ -25,9 +26,9 @@ class MagentoEncoder implements LegacyEncoderInterface
             $password = $salt . $password;
         }
 
-        return \hash_equals($hash, \md5($password))
-            || \hash_equals($hash, \hash('sha256', $password))
-            || \hash_equals($hash, \hash('sha512', $password))
+        return \hash_equals($hash, Hasher::hash($password, 'md5'))
+            || \hash_equals($hash, Hasher::hash($password, 'sha256'))
+            || \hash_equals($hash, Hasher::hash($password, 'sha512'))
             || \password_verify($password, $hash);
     }
 }

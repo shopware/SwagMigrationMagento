@@ -1,3 +1,7 @@
+# 10.0.0
+- MIG-1094 - Compatibility with Shopware 6.7.
+- MIG-1094 - Increased the minimum required Shopware version to ~6.7.0.
+
 # 9.0.0
 - Moved technical and breaking changes to https://github.com/shopware/SwagMigrationMagento/blob/trunk/UPGRADE.md
 - MIG-1039 - Updated country state conversion to use new methods provided by the migration assistant

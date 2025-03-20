@@ -1,7 +1,7 @@
 {
     "name": "swag/migration-magento",
     "description": "Magento 1 & 2 profiles for Shopware Migration Assistant",
-    "version": "9.1.0",
+    "version": "10.0.0",
     "type": "shopware-platform-plugin",
     "license": "MIT",
     "authors": [
@@ -10,11 +10,12 @@
         }
     ],
     "require": {
-        "shopware/core": "~6.6.0",
-        "swag/migration-assistant": "~14.1"
+        "shopware/core": "~6.7",
+        "swag/migration-assistant": "~15.0"
     },
     "extra": {
         "shopware-plugin-class": "Swag\\MigrationMagento\\SwagMigrationMagento",
+        "plugin-icon": "src/Resources/config/plugin.png",
         "copyright": "(c) by shopware AG",
         "label": {
             "de-DE": "Magento 1 & 2 Profile für den Migrations-Assistenten",
@@ -25,12 +26,12 @@
             "en-GB": "Making the switch from Magento? This plugin works together with the free Migration Assistant to effortlessly transfer numerous datasets from your Magento shop to Shopware 6."
         },
         "manufacturerLink": {
-            "de-DE": "https://store.shopware.com/shopware-ag.html",
-            "en-GB": "https://store.shopware.com/en/shopware-ag.html"
+            "de-DE": "https://store.shopware.com/de/extension-partners/shopware-ag",
+            "en-GB": "https://store.shopware.com/en/extension-partners/shopware-ag"
         },
         "supportLink": {
-            "de-DE": "https://issues.shopware.com/",
-            "en-GB": "https://issues.shopware.com/"
+            "de-DE": "https://docs.shopware.com/de",
+            "en-GB": "https://docs.shopware.com/en"
         }
     },
     "scripts": {

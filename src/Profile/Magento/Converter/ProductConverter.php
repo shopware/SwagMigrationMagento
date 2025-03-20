@@ -47,6 +47,9 @@ abstract class ProductConverter extends MagentoConverter
 
     private bool $priceIsGross;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

@@ -28,6 +28,9 @@ abstract class CurrencyConverter extends MagentoConverter
 
     protected string $oldIdentifier;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

@@ -43,6 +43,8 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     private TableReaderInterface $localTableReader;
 
     /**
+     * @internal
+     *
      * @param EntityRepository<EntityCollection<CurrencyEntity>> $currencyRepository
      */
     public function __construct(
@@ -85,6 +87,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
         $profile = $migrationContext->getProfile();
+
         if ($connection === null) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
@@ -97,8 +100,8 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         }
 
         try {
-            $connection->connect();
-        } catch (\Exception $e) {
+            $connection->executeQuery('SELECT 1');
+        } catch (\Throwable) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
                 $profile->getVersion(),
@@ -108,11 +111,13 @@ class Magento19LocalGateway implements MagentoGatewayInterface
                 new RequestStatusStruct('500', 'No database connection')
             );
         }
+
         $connection->close();
         $environmentData = $this->localEnvironmentReader->read($migrationContext);
 
         /** @var CurrencyEntity $targetSystemCurrency */
         $targetSystemCurrency = $this->currencyRepository->search(new Criteria([Defaults::CURRENCY]), $context)->get(Defaults::CURRENCY);
+
         if (!isset($environmentData['defaultCurrency'])) {
             $environmentData['defaultCurrency'] = $targetSystemCurrency->getIsoCode();
         }

@@ -19,6 +19,7 @@ use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\Framework\Util\Hasher;
 use Shopware\Core\System\NumberRange\ValueGenerator\NumberRangeValueGeneratorInterface;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -83,6 +84,9 @@ abstract class OrderConverter extends MagentoConverter
         'customer_lastname',
     ];
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,
@@ -141,7 +145,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->connectionId = $connection->getId();
         }
 
-        if ($this->oldIdentifier === null) {
+        if (!$this->oldIdentifier) {
             $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::ORDER,
@@ -245,7 +249,7 @@ abstract class OrderConverter extends MagentoConverter
         }
         unset($data['shippingAddress'], $data['items'], $data['billingAddress'], $data['shipments']);
 
-        $converted['deepLinkCode'] = \md5($converted['id']);
+        $converted['deepLinkCode'] = Hasher::hash($converted['id'], 'md5');
         unset($data['orders'], $data['identifier']);
 
         $resultData = $data;
@@ -943,31 +947,6 @@ abstract class OrderConverter extends MagentoConverter
         }
     }
 
-    private function setSalesChannelIdViaAdminStore(array &$converted): void
-    {
-        $adminStore = $this->mappingService->getMapping(
-            $this->connectionId,
-            AdminStoreReader::getMappingName(),
-            'admin_store',
-            $this->context
-        );
-
-        if ($adminStore !== null && isset($adminStore['entityValue'])) {
-            $adminStoreId = $adminStore['entityValue'];
-            $salesChannelMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                MagentoDefaultEntities::STORE,
-                $adminStoreId,
-                $this->context
-            );
-
-            if ($salesChannelMapping !== null) {
-                $this->mappingIds[] = $salesChannelMapping['id'];
-                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
-            }
-        }
-    }
-
     protected function convertCurrency(array &$converted, array &$data): bool
     {
         $currencyUuid = null;
@@ -1090,6 +1069,31 @@ abstract class OrderConverter extends MagentoConverter
         $converted['addresses'][] = $billingAddress;
 
         return true;
+    }
+
+    private function setSalesChannelIdViaAdminStore(array &$converted): void
+    {
+        $adminStore = $this->mappingService->getMapping(
+            $this->connectionId,
+            AdminStoreReader::getMappingName(),
+            'admin_store',
+            $this->context
+        );
+
+        if ($adminStore !== null && isset($adminStore['entityValue'])) {
+            $adminStoreId = $adminStore['entityValue'];
+            $salesChannelMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                MagentoDefaultEntities::STORE,
+                $adminStoreId,
+                $this->context
+            );
+
+            if ($salesChannelMapping !== null) {
+                $this->mappingIds[] = $salesChannelMapping['id'];
+                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+            }
+        }
     }
 
     private function getShippingCosts(float $amount): CalculatedPrice

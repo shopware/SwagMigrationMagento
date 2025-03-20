@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\ParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\Struct\StockConfigurationStruct;
@@ -129,8 +130,8 @@ SQL;
             ],
             [
                 ArrayParameterType::STRING,
-                \PDO::PARAM_INT,
-                \PDO::PARAM_INT,
+                ParameterType::INTEGER,
+                ParameterType::INTEGER,
             ]
         )->fetchAllAssociative();
     }

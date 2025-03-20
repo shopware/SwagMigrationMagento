@@ -34,6 +34,11 @@ abstract class NotAssociatedMediaReader extends AbstractReader
     protected function dirToArray(string $dir, array &$result): void
     {
         $cdir = \scandir($dir, 1);
+
+        if (!$cdir) {
+            return;
+        }
+
         foreach ($cdir as $value) {
             if (!\in_array($value, ['.', '..'], true)) {
                 if (\is_dir($dir . \DIRECTORY_SEPARATOR . $value)) {

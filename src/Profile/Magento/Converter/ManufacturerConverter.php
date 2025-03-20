@@ -27,6 +27,9 @@ abstract class ManufacturerConverter extends MagentoConverter
 
     protected Context $context;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

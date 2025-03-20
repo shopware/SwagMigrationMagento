@@ -13,6 +13,9 @@ use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Symfony\Component\Finder\Finder;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class ServiceCorrectArgumentsTest extends TestCase
 {

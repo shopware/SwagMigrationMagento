@@ -1,3 +1,35 @@
+# 10.0.0
+- MIG-1094 - Compatibility with Shopware 6.7.
+    - [BREAKING] Increased the minimum required Shopware version to ~6.7.0.
+    - [BREAKING] Removed method `mediaMimeTypeError` from `Swag\MigrationMagento\Exception\MigrationMagentoException` without replacement.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\CurrencyConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\MagentoConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\NotAccociatedMediaConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LocalTableReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader` as internal.
+    - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\Magento19LocalGateway` as internal.
+    - [BREAKING] Marked classes `Swag\MigrationMagento\Test\**\*` as internal.
+  
 # 9.0.0
 - MIG-1039 - Updated country state conversion to use new methods provided by the migration assistant
     - [BREAKING] Removed method `getCountryStateUuid` from `Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface` and its default implementation `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService`

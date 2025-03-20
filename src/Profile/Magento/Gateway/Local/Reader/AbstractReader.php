@@ -27,6 +27,9 @@ abstract class AbstractReader implements ReaderInterface
 
     protected string $tablePrefix;
 
+    /**
+     * @internal
+     */
     public function __construct(ConnectionFactoryInterface $connectionFactory)
     {
         $this->connectionFactory = $connectionFactory;

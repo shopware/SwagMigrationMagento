@@ -31,6 +31,9 @@ abstract class MagentoConverter extends Converter
 
     protected array $originalData;
 
+    /**
+     * @internal
+     */
     public function __construct(
         MagentoMappingServiceInterface $mappingService,
         LoggingServiceInterface $loggingService,

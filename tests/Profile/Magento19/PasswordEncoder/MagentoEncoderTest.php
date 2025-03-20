@@ -11,6 +11,9 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class MagentoEncoderTest extends TestCase
 {

@@ -131,11 +131,6 @@ parameters:
 			path: src/Profile/Magento/Converter/CustomerConverter.php
 
 		-
-			message: "#^Property SwagMigrationAssistant\\\\Migration\\\\Converter\\\\Converter\\:\\:\\$mainMapping \\(array\\{id\\: string, connectionId\\: string, oldIdentifier\\: string\\|null, entityUuid\\: string\\|null, entityValue\\: string\\|null, checksum\\: string\\|null, additionalData\\: array\\|null\\}\\|null\\) does not accept array\\{entityValue\\: string\\}\\|array\\{id\\: string, connectionId\\: string, oldIdentifier\\: string\\|null, entityUuid\\: string\\|null, entityValue\\: string, checksum\\: string\\|null, additionalData\\: array\\|null\\}\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomerConverter.php
-
-		-
 			message: "#^Setter method cannot return anything, only set value$#"
 			count: 1
 			path: src/Profile/Magento/Converter/CustomerConverter.php
@@ -846,11 +841,6 @@ parameters:
 			path: src/Profile/Magento/Gateway/Local/Reader/NewsletterRecipientReader.php
 
 		-
-			message: "#^Argument of an invalid type array\\<int, string\\>\\|false supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\NotAssociatedMediaReader\\:\\:dirToArray\\(\\) has parameter \\$result with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/NotAssociatedMediaReader.php
@@ -1169,11 +1159,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\PropertyGroupReader\\:\\:read\\(\\) has parameter \\$params with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Gateway/Local/Reader/PropertyGroupReader.php
-
-		-
-			message: "#^Cannot access offset 'defaultAllowedCurre…' on array\\<string, mixed\\>\\|false\\.$#"
-			count: 1
-			path: src/Profile/Magento/Gateway/Local/Reader/SalesChannelReader.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Gateway\\\\Local\\\\Reader\\\\SalesChannelReader\\:\\:fetchCarriers\\(\\) return type has no value type specified in iterable type array\\.$#"
@@ -1722,11 +1707,6 @@ parameters:
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getMappings\\(\\) has parameter \\$ids with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Mock\\\\Migration\\\\Mapping\\\\DummyMagentoMappingService\\:\\:getUuidList\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Mock/Migration/Mapping/DummyMagentoMappingService.php
 

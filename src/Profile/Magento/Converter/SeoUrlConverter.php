@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\Framework\Util\Hasher;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -165,7 +166,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         }
 
         $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
-        $hash = \hash('sha256', $converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical);
+        $hash = Hasher::hash($converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical, 'sha256');
         $uniqueUrlMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::SEO_URL,

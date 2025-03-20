@@ -21,6 +21,9 @@ use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingCollection;
 use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingDefinition;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class DummyMagentoMappingService extends MagentoMappingService
 {
@@ -69,13 +72,6 @@ class DummyMagentoMappingService extends MagentoMappingService
 
     public function writeMapping(): void
     {
-    }
-
-    protected function saveMapping(array $mapping): void
-    {
-        $entity = $mapping['entity'];
-        $oldIdentifier = $mapping['oldIdentifier'];
-        $this->mappings[\md5($entity . $oldIdentifier)] = $mapping;
     }
 
     public function getMapping(string $connectionId, string $entityName, string $oldIdentifier, Context $context): ?array
@@ -304,5 +300,12 @@ class DummyMagentoMappingService extends MagentoMappingService
         }
 
         return null;
+    }
+
+    protected function saveMapping(array $mapping): void
+    {
+        $entity = $mapping['entity'];
+        $oldIdentifier = $mapping['oldIdentifier'];
+        $this->mappings[\md5($entity . $oldIdentifier)] = $mapping;
     }
 }

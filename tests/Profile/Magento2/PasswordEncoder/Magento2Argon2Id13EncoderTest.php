@@ -11,6 +11,9 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Argon2Id13Encoder;
 
+/**
+ * @internal
+ */
 #[Package('fundamentals@after-sales')]
 class Magento2Argon2Id13EncoderTest extends TestCase
 {

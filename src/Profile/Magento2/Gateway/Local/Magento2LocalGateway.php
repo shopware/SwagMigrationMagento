@@ -80,6 +80,7 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
         $profile = $migrationContext->getProfile();
+
         if ($connection === null) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
@@ -92,8 +93,8 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
         }
 
         try {
-            $connection->connect();
-        } catch (\Exception $e) {
+            $connection->executeQuery('SELECT 1');
+        } catch (\Throwable) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
                 $profile->getVersion(),
@@ -103,8 +104,8 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
                 new RequestStatusStruct('SWAG_MIGRATION__DATABASE_CONNECTION_ERROR', 'No database connection')
             );
         }
-        $connection->close();
 
+        $connection->close();
         $environmentData = $this->localEnvironmentReader->read($migrationContext);
 
         if (!$environmentData['isMagento2']) {
