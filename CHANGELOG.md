@@ -1,6 +1,3 @@
-# 9.1.0
-- NTR - Support for migration assistant ~14.1
-
 # 9.0.0
 - Moved technical and breaking changes to https://github.com/shopware/SwagMigrationMagento/blob/trunk/UPGRADE.md
 - MIG-1039 - Updated country state conversion to use new methods provided by the migration assistant
