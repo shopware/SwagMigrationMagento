@@ -1,3 +1,6 @@
+# 9.1.0
+- NTR - Unterstützung der Abhängigkeit Migration-Assistant ~14.1
+
 # 9.0.0
 - Technische Änderungen und Breaking-Changes wurden nach https://github.com/shopware/SwagMigrationMagento/blob/trunk/UPGRADE.md umgezogen
 - MIG-1039 - Die Bundesländer werden jetzt über den MigrationAssistent konvertiert
