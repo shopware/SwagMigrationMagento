@@ -48,6 +48,7 @@ runs:
           [
             {
               "name": "SwagMigrationAssistant",
-              "repo": "https://github.com/shopware/SwagMigrationAssistant.git"
+              "repo": "https://github.com/shopware/SwagMigrationAssistant.git",
+              "branch": "6.6.x"
             }
           ]
