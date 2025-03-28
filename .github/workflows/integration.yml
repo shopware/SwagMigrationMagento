@@ -27,7 +27,7 @@ jobs:
       matrix:
         MYSQL_IMAGE: ["mysql:8.0", "mariadb:10.11"]
         PHP_VERSION: ["8.2", "8.3"]
-        PLATFORM_BRANCH: ["v6.6.1.0", "6.6.x"] # Todo switch back to trunk (6.7) after compatibility
+        PLATFORM_BRANCH: ["v6.6.1.0", "6.6.x"]
     steps:
       - name: Checkout SwagMigrationMagento
         uses: actions/checkout@v4
