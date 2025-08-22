@@ -71,10 +71,11 @@ class Magento2PropertyGroupConverterTest extends TestCase
         );
 
         $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
             $this->connection,
-            $this->runId,
+            new Magento23Profile(),
+            null,
             new PropertyGroupDataSet(),
+            $this->runId,
             0,
             250
         );

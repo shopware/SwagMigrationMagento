@@ -20,6 +20,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
@@ -97,11 +98,7 @@ abstract class ProductConverter extends MagentoConverter
         unset($data['entity_id']);
         $converted = [];
 
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         /*
          * Set manufacturer
@@ -116,12 +113,9 @@ abstract class ProductConverter extends MagentoConverter
          */
         if (!isset($data['tax_class_id'])) {
             $this->loggingService->addLogEntry(
-                new EmptyNecessaryFieldRunLog(
-                    $this->runUuid,
-                    DefaultEntities::PRODUCT,
-                    $this->oldIdentifier,
-                    'tax class'
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName('tax class')
+                    ->build(EmptyNecessaryFieldRunLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
@@ -132,13 +126,8 @@ abstract class ProductConverter extends MagentoConverter
          */
         if (!$this->setTax($data['tax_class_id'], $converted)) {
             $this->loggingService->addLogEntry(
-                new UnknownEntityLog(
-                    $this->runUuid,
-                    DefaultEntities::TAX,
-                    $data['tax_class_id'],
-                    DefaultEntities::PRODUCT,
-                    $this->oldIdentifier
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(UnknownEntityLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
@@ -147,12 +136,8 @@ abstract class ProductConverter extends MagentoConverter
 
         if (!isset($data['price'])) {
             $this->loggingService->addLogEntry(
-                new EmptyNecessaryFieldRunLog(
-                    $this->runUuid,
-                    DefaultEntities::PRODUCT,
-                    $this->oldIdentifier,
-                    'price'
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(EmptyNecessaryFieldRunLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
@@ -162,12 +147,10 @@ abstract class ProductConverter extends MagentoConverter
         $converted['price'] = $this->getPrice($data, $converted);
 
         if (empty($converted['price'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runUuid,
-                DefaultEntities::PRODUCT,
-                $this->oldIdentifier,
-                'currency'
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(EmptyNecessaryFieldRunLog::class)
+            );
 
             return new ConvertStruct(null, $this->originalData);
         }

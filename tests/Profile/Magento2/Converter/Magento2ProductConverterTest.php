@@ -67,10 +67,11 @@ class Magento2ProductConverterTest extends TestCase
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
             $this->connection,
-            $this->runId,
+            new Magento23Profile(),
+            null,
             new ProductDataSet(),
+            $this->runId,
             0,
             250
         );

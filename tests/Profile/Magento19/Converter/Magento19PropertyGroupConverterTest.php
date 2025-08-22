@@ -71,10 +71,11 @@ class Magento19PropertyGroupConverterTest extends TestCase
         );
 
         $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
             $this->connection,
-            $this->runId,
+            new Magento19Profile(),
+            null,
             new PropertyGroupDataSet(),
+            $this->runId,
             0,
             250
         );

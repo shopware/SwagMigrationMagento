@@ -51,10 +51,11 @@ class Magento19ProductPropertyRelationConvertTest extends TestCase
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
             $this->connection,
-            $this->runId,
+            new Magento19Profile(),
+            null,
             new ProductPropertyRelationDataSet(),
+            $this->runId,
             0,
             250
         );

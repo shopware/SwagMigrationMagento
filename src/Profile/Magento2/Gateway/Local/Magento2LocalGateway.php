@@ -320,12 +320,8 @@ SQL;
     protected function getTablePrefixFromCredentials(MigrationContextInterface $migrationContext): string
     {
         $tablePrefix = '';
-        $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return $tablePrefix;
-        }
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
 
-        $credentials = $connection->getCredentialFields();
         if (isset($credentials['tablePrefix'])) {
             $tablePrefix = $credentials['tablePrefix'];
         }

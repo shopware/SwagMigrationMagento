@@ -68,10 +68,11 @@ class Magento19CountryConverterTest extends TestCase
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
             $this->connection,
-            $this->runId,
+            new Magento19Profile(),
+            null,
             new CountryDataSet(),
+            $this->runId,
             0,
             250
         );

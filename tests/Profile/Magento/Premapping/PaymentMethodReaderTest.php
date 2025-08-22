@@ -97,8 +97,8 @@ class PaymentMethodReaderTest extends TestCase
         $gatewayRegistryMock->method('getGateway')->willReturn($gatewayMock);
 
         $this->migrationContext = new MigrationContext(
+            $connection,
             new Magento19Profile(),
-            $connection
         );
 
         $this->reader = new Magento19PaymentMethodReader($gatewayRegistryMock, $mock);

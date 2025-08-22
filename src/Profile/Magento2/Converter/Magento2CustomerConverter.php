@@ -12,7 +12,7 @@ use Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Argon2Id13Encoder;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Md5Encoder;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Sha256Encoder;
-use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 
 #[Package('fundamentals@after-sales')]
@@ -34,13 +34,13 @@ abstract class Magento2CustomerConverter extends CustomerConverter
             $converted['legacyEncoder'] = Magento2Argon2Id13Encoder::NAME;
 
             if (!\defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !\extension_loaded('sodium')) {
+                $exception = new \Exception('Password algorithm is not available, please install and activate sodium php extension.');
+
                 $this->loggingService->addLogEntry(
-                    new ExceptionRunLog(
-                        $this->runId,
-                        DefaultEntities::CUSTOMER,
-                        new \Exception('Password algorithm is not available, please install and activate sodium php extension.'),
-                        $this->oldIdentifier
-                    )
+                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withExceptionMessage($exception->getMessage())
+                        ->withExceptionTrace($exception->getTrace())
+                        ->build(ExceptionRunLog::class)
                 );
 
                 return false;

@@ -13,6 +13,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -39,11 +40,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         $this->oldIdentifier = $data['link_id'];
         $this->context = $context;
 
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
@@ -64,12 +61,10 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($sourceProductMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
-                $this->runId,
-                DefaultEntities::PRODUCT,
-                $data['sourceProductId'],
-                $data['type']
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->build(AssociationRequiredMissingLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }
@@ -83,12 +78,10 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($relatedProductMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
-                $this->runId,
-                DefaultEntities::PRODUCT,
-                $data['linked_product_id'],
-                $data['type']
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->build(AssociationRequiredMissingLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }

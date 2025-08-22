@@ -65,10 +65,11 @@ class Magento2CurrencyConverterTest extends TestCase
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
             $this->connection,
-            $this->runId,
+            new Magento23Profile(),
+            null,
             new CurrencyDataSet(),
+            $this->runId,
             0,
             250
         );

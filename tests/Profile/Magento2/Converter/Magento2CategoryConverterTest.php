@@ -144,34 +144,38 @@ class Magento2CategoryConverterTest extends TestCase
         );
 
         $this->migrationContext20 = new MigrationContext(
-            new Magento20Profile(),
             $this->connection20,
-            $this->runId,
+            new Magento20Profile(),
+            null,
             new CategoryDataSet(),
+            $this->runId,
             0,
             250
         );
         $this->migrationContext21 = new MigrationContext(
-            new Magento21Profile(),
             $this->connection21,
-            $this->runId,
+            new Magento21Profile(),
+            null,
             new CategoryDataSet(),
+            $this->runId,
             0,
             250
         );
         $this->migrationContext22 = new MigrationContext(
-            new Magento22Profile(),
             $this->connection22,
-            $this->runId,
+            new Magento22Profile(),
+            null,
             new CategoryDataSet(),
+            $this->runId,
             0,
             250
         );
         $this->migrationContext23 = new MigrationContext(
-            new Magento23Profile(),
             $this->connection23,
-            $this->runId,
+            new Magento23Profile(),
+            null,
             new CategoryDataSet(),
+            $this->runId,
             0,
             250
         );

@@ -29,12 +29,7 @@ abstract class CustomerGroupConverter extends MagentoConverter
     {
         $this->generateChecksum($data);
         $this->context = $context;
-
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,

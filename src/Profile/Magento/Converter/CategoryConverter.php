@@ -15,6 +15,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
@@ -85,12 +86,7 @@ abstract class CategoryConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->context = $context;
-
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         // Ignore the magento root category
         if (isset($data['parent_id']) && $data['parent_id'] === '0') {
@@ -108,12 +104,10 @@ abstract class CategoryConverter extends MagentoConverter
 
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $migrationContext->getRunUuid(),
-                DefaultEntities::CATEGORY,
-                $data['entity_id'],
-                \implode(',', $fields)
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->build(EmptyNecessaryFieldRunLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }

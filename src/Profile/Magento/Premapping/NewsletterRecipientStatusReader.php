@@ -47,7 +47,6 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
     protected function getMapping(MigrationContextInterface $migrationContext): array
     {
         $mapping = [];
-        $connection = $migrationContext->getConnection();
         $choices = [
             '1' => 'Subscribed',
             '2' => 'Not active',
@@ -56,11 +55,8 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
             'default_newsletter_recipient_status' => 'Standard newsletter status',
         ];
 
-        if ($connection === null) {
-            return $mapping;
-        }
+        $connectionPremapping = $migrationContext->getConnection()->getPremapping();
 
-        $connectionPremapping = $connection->getPremapping();
         if ($connectionPremapping === null) {
             foreach ($choices as $key => $choice) {
                 $mapping[] = new PremappingEntityStruct((string) $key, $choice, '');
@@ -83,6 +79,7 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
         foreach ($choices as $key => $choice) {
             $mapping[] = new PremappingEntityStruct((string) $key, $choice, '');
         }
+
         \usort($mapping, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });

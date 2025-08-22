@@ -92,10 +92,11 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
         $this->newsletterRecipientConverter = new Magento19NewsletterRecipientConverter($this->mappingService, $this->loggingService);
 
         $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
             $this->connection,
-            $this->runId,
+            new Magento19Profile(),
+            null,
             new NewsletterRecipientDataSet(),
+            $this->runId,
             0,
             250
         );

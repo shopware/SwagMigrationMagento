@@ -9,11 +9,13 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\System\SalesChannel\SalesChannelDefinition;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19NewsletterRecipientStatusReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -39,12 +41,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         $this->context = $context;
         $this->runId = $migrationContext->getRunUuid();
         $this->originalData = $data;
-
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $converted = [];
         $languageMapping = $this->mappingService->getMapping(
@@ -55,12 +52,11 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
-                $migrationContext->getRunUuid(),
-                DefaultEntities::LANGUAGE,
-                $data['store_id'],
-                DefaultEntities::NEWSLETTER_RECIPIENT
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(DefaultEntities::NEWSLETTER_RECIPIENT)
+                    ->build(AssociationRequiredMissingLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }
@@ -129,12 +125,11 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         );
 
         if ($salesChannelMapping === null) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::NEWSLETTER_RECIPIENT,
-                $data['subscriber_id'],
-                'salesChannel'
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
+                    ->build(EmptyNecessaryFieldRunLog::class)
+            );
         }
 
         return $salesChannelMapping;
@@ -159,12 +154,11 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         }
 
         if ($status === null) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::NEWSLETTER_RECIPIENT,
-                $data['subscriber_id'],
-                'status'
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->withEntityName('status')
+                    ->build(EmptyNecessaryFieldRunLog::class)
+            );
         }
 
         return $status;

@@ -78,10 +78,11 @@ class Magento19CategoryConverterTest extends TestCase
         );
 
         $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
             $this->connection,
-            $this->runId,
+            new Magento19Profile(),
+            null,
             new CategoryDataSet(),
+            $this->runId,
             0,
             250
         );

@@ -24,12 +24,7 @@ abstract class ProductPropertyRelationConverter extends MagentoConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
-
-        $connection = $migrationContext->getConnection();
-        $connectionId = '';
-        if ($connection !== null) {
-            $connectionId = $connection->getId();
-        }
+        $connectionId = $migrationContext->getConnection()->getId();
 
         $productMapping = $this->mappingService->getMapping(
             $connectionId,

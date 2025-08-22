@@ -24,12 +24,7 @@ abstract class ProductMultiSelectPropertyRelationConverter extends MagentoConver
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $this->generateChecksum($data);
-
-        $connection = $migrationContext->getConnection();
-        $connectionId = '';
-        if ($connection !== null) {
-            $connectionId = $connection->getId();
-        }
+        $connectionId = $migrationContext->getConnection()->getId();
 
         $productMapping = $this->mappingService->getMapping(
             $connectionId,

@@ -13,6 +13,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -34,11 +35,7 @@ abstract class ProductReviewConverter extends MagentoConverter
         $this->oldIdentifier = $data['review_id'];
         unset($data['review_id']);
 
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -59,12 +56,8 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         if ($mapping === null) {
             $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::PRODUCT,
-                    $data['productId'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(AssociationRequiredMissingLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
@@ -97,12 +90,8 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         if ($mapping === null) {
             $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::SALES_CHANNEL,
-                    $data['store_id'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(AssociationRequiredMissingLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
@@ -119,12 +108,8 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         if ($languageMapping === null) {
             $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    MagentoDefaultEntities::STORE_LANGUAGE,
-                    $data['store_id'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(AssociationRequiredMissingLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);

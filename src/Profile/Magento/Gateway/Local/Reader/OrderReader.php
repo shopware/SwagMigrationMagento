@@ -167,6 +167,7 @@ SQL;
     protected function fetchShipments(array $ids): array
     {
         $connection = $this->connection;
+
         if ($connection === null) {
             throw MigrationException::databaseConnectionError();
         }

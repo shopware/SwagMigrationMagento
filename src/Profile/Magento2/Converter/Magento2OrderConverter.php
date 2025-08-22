@@ -13,6 +13,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 
 #[Package('fundamentals@after-sales')]
@@ -75,12 +76,10 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($mapping === null || !isset($mapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'salutation'
-                ));
+                $this->loggingService->addLogEntry(
+                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->build(EmptyNecessaryFieldRunLog::class)
+                );
 
                 return false;
             }
@@ -102,12 +101,10 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerGroupMapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'customer_group_id'
-                ));
+                $this->loggingService->addLogEntry(
+                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->build(EmptyNecessaryFieldRunLog::class)
+                );
 
                 return false;
             }
@@ -119,24 +116,20 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
             if ($languageMapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'language'
-                ));
+                $this->loggingService->addLogEntry(
+                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->build(EmptyNecessaryFieldRunLog::class)
+                );
 
                 return false;
             }
 
             $paymentMethodUuid = $this->getPaymentMethod($data);
             if ($paymentMethodUuid === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'payment_method'
-                ));
+                $this->loggingService->addLogEntry(
+                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->build(EmptyNecessaryFieldRunLog::class)
+                );
 
                 return false;
             }
@@ -151,12 +144,10 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             if (empty($billingAddress)) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'billingAddress'
-                ));
+                $this->loggingService->addLogEntry(
+                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->build(EmptyNecessaryFieldRunLog::class)
+                );
 
                 return false;
             }

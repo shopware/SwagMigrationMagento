@@ -55,10 +55,11 @@ class Magento2ManufacturerConverterTest extends TestCase
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
             $this->connection,
-            $this->runId,
+            new Magento23Profile(),
+            null,
             new ManufacturerDataSet(),
+            $this->runId,
             0,
             250
         );

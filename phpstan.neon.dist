@@ -34,3 +34,13 @@ parameters:
 
         - # Ignore undefined function calls on MappingServiceInterface because PHPStan dont get the inheritance
             message: '#Call to an undefined method SwagMigrationAssistant\\Migration\\Mapping\\MappingServiceInterface::createListItemMapping|getUuidList\(\)#'
+
+        - # TODO remove this for 6.8 compatibility
+            message: '#Access to constant on deprecated class Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\DebitPayment:#'
+            paths:
+                - tests/**/*Test.php
+
+        - # TODO remove this for 6.8 compatibility
+            message: '#Call to deprecated method __construct\(\) of class Shopware\\Core\\Framework\\DataAbstractionLayer\\EntityDefinition:#'
+            paths:
+                - tests/**/*Test.php

@@ -22,6 +22,7 @@ use SwagMigrationAssistant\Migration\EnvironmentInformation;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\Profile\ProfileInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
 
 #[Package('fundamentals@after-sales')]
@@ -71,9 +72,9 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         return 'swag-migration.wizard.pages.connectionCreate.gateways.magentoLocal';
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
+    public function supports(ProfileInterface $profile): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile;
+        return $profile instanceof Magento19Profile;
     }
 
     public function read(MigrationContextInterface $migrationContext): array
@@ -275,12 +276,8 @@ SQL;
     protected function getTablePrefixFromCredentials(MigrationContextInterface $migrationContext): string
     {
         $tablePrefix = '';
-        $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return $tablePrefix;
-        }
 
-        $credentials = $connection->getCredentialFields();
+        $credentials = $migrationContext->getConnection()->getCredentialFields();
         if (isset($credentials['tablePrefix'])) {
             $tablePrefix = $credentials['tablePrefix'];
         }

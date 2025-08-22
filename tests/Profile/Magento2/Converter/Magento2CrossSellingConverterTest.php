@@ -85,10 +85,11 @@ class Magento2CrossSellingConverterTest extends TestCase
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
             $this->connection,
-            $this->runId,
+            new Magento23Profile(),
+            null,
             new CrossSellingDataSet(),
+            $this->runId,
             0,
             250
         );

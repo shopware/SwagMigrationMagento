@@ -8,17 +8,14 @@
 namespace Swag\MigrationMagento\Migration\Logging;
 
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Migration\Logging\Log\BaseRunLogEntry;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\AbstractSwagMigrationLogEntry;
 
 #[Package('fundamentals@after-sales')]
-class FileHandleErrorLog extends BaseRunLogEntry
+readonly class FileHandleErrorLog extends AbstractSwagMigrationLogEntry
 {
-    public function __construct(
-        string $runId,
-        string $entity,
-        ?string $sourceId = null,
-    ) {
-        parent::__construct($runId, $entity, $sourceId);
+    public function isUserFixable(): bool
+    {
+        return false;
     }
 
     public function getLevel(): string
@@ -29,25 +26,5 @@ class FileHandleErrorLog extends BaseRunLogEntry
     public function getCode(): string
     {
         return 'SWAG_MIGRATION_MAGENTO__COULD_NOT_OPEN_FILE';
-    }
-
-    public function getTitle(): string
-    {
-        return 'An exception occurred';
-    }
-
-    public function getParameters(): array
-    {
-        return [
-            'entity' => $this->getEntity(),
-            'sourceId' => $this->getSourceId(),
-            'exceptionCode' => $this->getCode(),
-            'description' => 'Could not open file to read or write',
-        ];
-    }
-
-    public function getDescription(): string
-    {
-        return $this->getParameters()['description'];
     }
 }

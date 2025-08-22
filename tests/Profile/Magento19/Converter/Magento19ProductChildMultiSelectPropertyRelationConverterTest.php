@@ -51,10 +51,11 @@ class Magento19ProductChildMultiSelectPropertyRelationConverterTest extends Test
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
             $this->connection,
-            $this->runId,
+            new Magento19Profile(),
+            null,
             new ProductChildMultiSelectPropertyRelationDataSet(),
+            $this->runId,
             0,
             250
         );

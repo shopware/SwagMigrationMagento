@@ -13,6 +13,7 @@ use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -46,11 +47,7 @@ abstract class CustomFieldConverter extends Converter
         $this->migrationContext = $migrationContext;
         $type = $this->validateType($data);
 
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $entityName = $this->getDataSetEntity($migrationContext);
 
@@ -67,12 +64,9 @@ abstract class CustomFieldConverter extends Converter
 
         if ($defaultLocale === null) {
             $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::LOCALE,
-                    'global_default',
-                    DefaultEntities::CUSTOM_FIELD_SET
-                )
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(DefaultEntities::CUSTOM_FIELD_SET)
+                    ->build(AssociationRequiredMissingLog::class)
             );
 
             return new ConvertStruct(null, $data);

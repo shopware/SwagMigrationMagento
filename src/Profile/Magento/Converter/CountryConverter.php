@@ -51,11 +51,7 @@ abstract class CountryConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
 
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $this->generateChecksum($data);
         $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $data['isoCode'], $context);

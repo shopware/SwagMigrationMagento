@@ -13,6 +13,7 @@ use Shopware\Core\System\Language\LanguageEntity;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\SwagMigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
@@ -54,19 +55,13 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $this->runId = $migrationContext->getRunUuid();
         $this->oldIdentifier = $data['id'];
         $defaultLanguage = $this->languageLookup->getLanguageEntity($this->context);
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         if (!isset($data['name'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::PROPERTY_GROUP,
-                $this->oldIdentifier,
-                'group name'
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(EmptyNecessaryFieldRunLog::class)
+            );
 
             return new ConvertStruct(null, $this->originalData);
         }
@@ -85,12 +80,10 @@ abstract class PropertyGroupConverter extends MagentoConverter
         ];
 
         if (!isset($data['options'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::PROPERTY_GROUP,
-                $this->oldIdentifier,
-                'options'
-            ));
+            $this->loggingService->addLogEntry(
+                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->build(EmptyNecessaryFieldRunLog::class)
+            );
 
             return new ConvertStruct(null, $this->originalData);
         }

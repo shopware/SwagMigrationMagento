@@ -55,11 +55,7 @@ abstract class CurrencyConverter extends MagentoConverter
         }
         unset($data['isoCode']);
 
-        $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $migrationContext->getConnection()->getId();
 
         $this->generateChecksum($data);
 

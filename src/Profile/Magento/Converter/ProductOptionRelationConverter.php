@@ -25,11 +25,7 @@ abstract class ProductOptionRelationConverter extends MagentoConverter
     {
         $this->generateChecksum($data);
 
-        $connection = $migrationContext->getConnection();
-        $connectionId = '';
-        if ($connection !== null) {
-            $connectionId = $connection->getId();
-        }
+        $connectionId = $migrationContext->getConnection()->getId();
 
         $productMapping = $this->mappingService->getMapping(
             $connectionId,
