@@ -48,6 +48,7 @@ runs:
           [
             {
               "name": "SwagMigrationAssistant",
+              "branch": "feature/migration-logging-refactor",
               "repo": "https://github.com/shopware/SwagMigrationAssistant.git"
             }
           ]
