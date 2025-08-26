@@ -312,9 +312,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertArrayNotHasKey('deliveries', $convertResult->getConverted());
 
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION_SHIPPING_METHOD_ENTITY_UNKNOWN', $logs[0]['code']);
-        static::assertSame($orderData[0]['orders']['shipping_method'], $logs[0]['parameters']['sourceId']);
-        static::assertSame($orderData[0]['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_UNKNOWN', $logs[0]['code']);
     }
 
     public function testConvertWithoutOpenDeliveryStatusMapping(): void
@@ -383,9 +381,7 @@ class Magento2OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame('SWAG_MIGRATION_SALUTATION_ENTITY_UNKNOWN', $logs[0]['code']);
-        static::assertSame($order['orders']['customer_salutation'], $logs[0]['parameters']['sourceId']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_UNKNOWN', $logs[0]['code']);
 
         $this->loggingService->resetLogging();
         unset($order['orders']['customer_salutation']);
@@ -397,9 +393,7 @@ class Magento2OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER', $logs[0]['code']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('salutation', $logs[0]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertWithInvalidBillingAddress(): void
@@ -423,13 +417,8 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($convertResult->getConverted());
 
-        static::assertSame('SWAG_MIGRATION_COUNTRY_ENTITY_UNKNOWN', $logs[0]['code']);
-        static::assertSame($order['billingAddress']['country_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
-
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER', $logs[1]['code']);
-        static::assertSame($order['orders']['entity_id'], $logs[1]['parameters']['sourceId']);
-        static::assertSame('billingAddress', $logs[1]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_UNKNOWN', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
     }
 
     public function testConvertAsGuestCustomer(): void
@@ -481,13 +470,8 @@ class Magento2OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(2, $logs);
 
-        static::assertSame('SWAG_MIGRATION_COUNTRY_ENTITY_UNKNOWN', $logs[0]['code']);
-        static::assertSame($order['shippingAddress']['country_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
-
-        static::assertSame('SWAG_MIGRATION_COUNTRY_ENTITY_UNKNOWN', $logs[1]['code']);
-        static::assertSame($order['shippingAddress']['country_id'], $logs[1]['parameters']['sourceId']);
-        static::assertSame($order['orders']['entity_id'], $logs[1]['parameters']['requiredForSourceId']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_UNKNOWN', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_UNKNOWN', $logs[1]['code']);
 
         static::assertNull($convertResult->getUnmapped());
         static::assertNotNull($convertResult->getConverted());
@@ -525,13 +509,8 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($convertResult->getConverted());
 
-        static::assertSame('SWAG_MIGRATION_COUNTRY_ENTITY_UNKNOWN', $logs[0]['code']);
-        static::assertSame($order['billingAddress']['country_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
-
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER', $logs[1]['code']);
-        static::assertSame($order['orders']['entity_id'], $logs[1]['parameters']['sourceId']);
-        static::assertSame('billingAddress', $logs[1]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_UNKNOWN', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
     }
 
     public function testConvertAsGuestCustomerWithoutPaymentMethod(): void
@@ -553,9 +532,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($convertResult->getConverted());
 
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER', $logs[0]['code']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('payment_method', $logs[0]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertAsGuestCustomerWithWithInvalidLanguage(): void
@@ -577,9 +554,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($convertResult->getConverted());
 
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER', $logs[0]['code']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('language', $logs[0]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertAsGuestCustomerWithWithInvalidCustomerGroup(): void
@@ -601,9 +576,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($convertResult->getConverted());
 
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER', $logs[0]['code']);
-        static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('customer_group_id', $logs[0]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertWithoutSalutation(): void
@@ -638,9 +611,7 @@ class Magento2OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'currency');
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
     }
 
     public function testConvertWithInvalidOrderState(): void
@@ -658,8 +629,7 @@ class Magento2OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ORDER_STATE_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['status']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ENTITY_UNKNOWN');
     }
 
     public static function requiredProperties(): array
@@ -690,12 +660,6 @@ class Magento2OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
-
-        if ($property === 'orders') {
-            static::assertSame($logs[0]['parameters']['emptyField'], 'orders,entity_id');
-        } else {
-            static::assertSame($logs[0]['parameters']['emptyField'], $property);
-        }
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
     }
 }

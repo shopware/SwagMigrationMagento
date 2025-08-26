@@ -59,7 +59,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
 
         if (!isset($data['name'])) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
 

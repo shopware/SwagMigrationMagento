@@ -294,8 +294,7 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER');
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertCustomerWithoutNumber(): void
@@ -341,9 +340,7 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'address data');
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertCustomerWithoutValidAddresses(): void
@@ -365,13 +362,8 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(2, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][0]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'firstname');
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER');
-        static::assertSame($logs[1]['parameters']['sourceId'], $customerData['entity_id']);
-        static::assertSame($logs[1]['parameters']['emptyField'], 'address data');
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
     }
 
     /**
@@ -427,13 +419,9 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(2, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][0]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
 
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
-        static::assertSame($logs[1]['parameters']['emptyField'], 'default billing address');
-        static::assertSame($logs[1]['parameters']['replacementField'], 'default shipping address');
+        static::assertSame('SWAG_MIGRATION_ENTITY_FIELD_REASSIGNED', $logs[1]['code']);
     }
 
     #[DataProvider('requiredAddressProperties')]
@@ -464,13 +452,8 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(2, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][1]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
-        static::assertSame($logs[1]['parameters']['emptyField'], 'default shipping address');
-        static::assertSame($logs[1]['parameters']['replacementField'], 'default billing address');
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_FIELD_REASSIGNED', $logs[1]['code']);
     }
 
     #[DataProvider('requiredAddressProperties')]
@@ -502,16 +485,8 @@ class Magento2CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(3, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][0]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[1]['parameters']['sourceId'], $customerData['addresses'][1]['entity_id']);
-        static::assertSame($logs[1]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[2]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
-        static::assertSame($logs[2]['parameters']['emptyField'], 'default billing and shipping address');
-        static::assertSame($logs[2]['parameters']['replacementField'], 'first address');
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_FIELD_REASSIGNED', $logs[2]['code']);
     }
 }

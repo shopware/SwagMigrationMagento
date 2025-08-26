@@ -121,7 +121,7 @@ abstract class OrderConverter extends MagentoConverter
 
         if (!empty($fields)) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
 

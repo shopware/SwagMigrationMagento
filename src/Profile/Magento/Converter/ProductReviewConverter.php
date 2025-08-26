@@ -56,7 +56,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         if ($mapping === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
 
@@ -90,7 +90,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         if ($mapping === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
 
@@ -108,7 +108,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         if ($languageMapping === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
 

@@ -56,7 +56,7 @@ abstract class SeoUrlConverter extends MagentoConverter
 
         if ($mapping === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
 
@@ -74,7 +74,7 @@ abstract class SeoUrlConverter extends MagentoConverter
 
         if ($languageMapping === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
 
@@ -100,7 +100,7 @@ abstract class SeoUrlConverter extends MagentoConverter
 
             if ($mapping === null) {
                 $this->loggingService->addLogEntry( // TODO: add optional fields
-                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
 
@@ -120,7 +120,7 @@ abstract class SeoUrlConverter extends MagentoConverter
 
             if ($mapping === null) {
                 $this->loggingService->addLogEntry( // TODO: add optional fields
-                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
 
@@ -134,7 +134,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             $this->mappingIds[] = $mapping['id'];
         } else {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
 

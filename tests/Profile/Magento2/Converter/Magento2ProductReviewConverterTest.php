@@ -141,8 +141,7 @@ class Magento2ProductReviewConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['productId']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING');
     }
 
     public function testConvertWithoutCustomerMapping(): void
@@ -175,8 +174,7 @@ class Magento2ProductReviewConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SALES_CHANNEL');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['store_id']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING');
     }
 
     public function testConvertWithoutLanguageMapping(): void
@@ -194,7 +192,6 @@ class Magento2ProductReviewConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_STORE_LANGUAGE');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['store_id']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING');
     }
 }

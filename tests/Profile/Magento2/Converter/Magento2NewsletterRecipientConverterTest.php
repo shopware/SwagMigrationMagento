@@ -139,8 +139,7 @@ class Magento2NewsletterRecipientConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_LANGUAGE');
-        static::assertSame($newsletterRecipientData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING');
     }
 
     public function testConvertWithInvalidSalesChannel(): void
@@ -166,8 +165,6 @@ class Magento2NewsletterRecipientConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_NEWSLETTER_RECIPIENT');
-        static::assertSame($newsletterRecipientData[0]['subscriber_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('salesChannel', $logs[0]['parameters']['emptyField']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
     }
 }

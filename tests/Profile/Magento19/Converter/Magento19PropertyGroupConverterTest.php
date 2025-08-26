@@ -150,8 +150,6 @@ class Magento19PropertyGroupConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PROPERTY_GROUP');
-        static::assertSame($logs[0]['parameters']['sourceId'], $propertyGroupData[0]['id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'group name');
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
     }
 }

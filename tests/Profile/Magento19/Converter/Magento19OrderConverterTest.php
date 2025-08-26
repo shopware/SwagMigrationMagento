@@ -344,9 +344,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_SALUTATION_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['customer_salutation']);
-        static::assertSame($logs[0]['parameters']['requiredForSourceId'], $order['orders']['entity_id']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ENTITY_UNKNOWN');
     }
 
     public function testConvertWithoutSalutation(): void
@@ -381,9 +379,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'currency');
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
     }
 
     public function testConvertWithInvalidOrderState(): void
@@ -401,8 +397,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ORDER_STATE_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['status']);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ENTITY_UNKNOWN');
     }
 
     public static function requiredProperties(): array
@@ -433,13 +428,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
-
-        if ($property === 'orders') {
-            static::assertSame($logs[0]['parameters']['emptyField'], 'orders,entity_id');
-        } else {
-            static::assertSame($logs[0]['parameters']['emptyField'], $property);
-        }
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
     }
 
     public function testConvertWithRepeatedGuestMigration(): void
@@ -550,10 +539,6 @@ class Magento19OrderConverterTest extends TestCase
 
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_COUNTRY_STATE_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], '9999');
-        static::assertSame($logs[0]['parameters']['entity'], DefaultEntities::COUNTRY_STATE);
-        static::assertSame($logs[0]['parameters']['requiredForSourceId'], $orderData['identifier']);
-        static::assertSame($logs[0]['parameters']['requiredForEntity'], DefaultEntities::ORDER);
+        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ENTITY_UNKNOWN');
     }
 }

@@ -165,8 +165,7 @@ class Magento19CrossSellingConverterTest extends TestCase
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
-        static::assertSame('99', $logs[0]['parameters']['sourceId']);
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING', $logs[0]['code']);
 
         $this->loggingService->resetLogging();
         $data[0]['linked_product_id'] = '80';
@@ -177,8 +176,7 @@ class Magento19CrossSellingConverterTest extends TestCase
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
-        static::assertSame('80', $logs[0]['parameters']['sourceId']);
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING', $logs[0]['code']);
     }
 
     private function createMapping(array $identifiers): void

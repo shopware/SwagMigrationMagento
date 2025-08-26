@@ -72,10 +72,12 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         $converted['languageId'] = $languageMapping['entityUuid'];
         $converted['hash'] = $data['subscriber_confirm_code'];
 
-        $salesChannelMapping = $this->getSalesChannelMapping($data);
+        $salesChannelMapping = $this->getSalesChannelMapping($data, $migrationContext);
+
         if ($salesChannelMapping === null) {
             return new ConvertStruct(null, $this->originalData);
         }
+
         $this->mappingIds[] = $salesChannelMapping['id'];
         $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
 
@@ -90,12 +92,14 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         if (isset($data['title'])) {
             $this->convertValue($converted, 'title', $data, 'title');
         }
-        $status = $this->getStatus($data);
+
+        $status = $this->getStatus($data, $migrationContext);
+
         if ($status === null) {
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['status'] = $status;
 
+        $converted['status'] = $status;
         $this->updateMainMapping($migrationContext, $context);
 
         unset(
@@ -115,7 +119,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
     }
 
-    private function getSalesChannelMapping(array $data): ?array
+    private function getSalesChannelMapping(array $data, MigrationContextInterface $migrationContext): ?array
     {
         $salesChannelMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -126,7 +130,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
 
         if ($salesChannelMapping === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
@@ -135,7 +139,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         return $salesChannelMapping;
     }
 
-    private function getStatus(array $data): ?string
+    private function getStatus(array $data, MigrationContextInterface $migrationContext): ?string
     {
         $status = $this->mappingService->getValue(
             $this->connectionId,
@@ -155,7 +159,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
 
         if ($status === null) {
             $this->loggingService->addLogEntry( // TODO: add optional fields
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName('status')
                     ->build(EmptyNecessaryFieldRunLog::class)
             );

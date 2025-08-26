@@ -101,8 +101,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SALES_CHANNEL', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING', $logs[0]['code']);
     }
 
     public function testConvertWithInvalidLanguage(): void
@@ -116,8 +115,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_STORE_LANGUAGE', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING', $logs[0]['code']);
     }
 
     public function testConvertWithInvalidProduct(): void
@@ -131,8 +129,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['product_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING', $logs[0]['code']);
     }
 
     public function testConvertWithInvalidCategory(): void
@@ -146,8 +143,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CATEGORY', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['category_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING', $logs[0]['code']);
     }
 
     public function testConvertWithoutProductOrCategory(): void
@@ -161,9 +157,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_SEO_URL', $logs[0]['code']);
-        static::assertSame($seoUrlData[2]['url_rewrite_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('category_id, product_id', $logs[0]['parameters']['emptyField']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
     }
 
     public function testConvertProductAndCategorySeoUrl(): void
