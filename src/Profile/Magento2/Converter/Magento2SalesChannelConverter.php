@@ -42,7 +42,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
@@ -82,7 +82,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         }
 
         if (!isset($converted['customerGroupId'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
@@ -206,7 +206,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($languageMapping === null || !isset($languageMapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
@@ -262,7 +262,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($currencyMapping === null || !isset($currencyMapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
@@ -290,7 +290,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         );
 
         if ($categoryMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
@@ -335,7 +335,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($countryMapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
@@ -365,7 +365,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($paymentMethodMapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
@@ -394,7 +394,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($shippingMethodMapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );

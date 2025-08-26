@@ -52,7 +52,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(DefaultEntities::NEWSLETTER_RECIPIENT)
                     ->build(AssociationRequiredMissingLog::class)
@@ -125,7 +125,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         );
 
         if ($salesChannelMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
                     ->build(EmptyNecessaryFieldRunLog::class)
@@ -154,7 +154,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         }
 
         if ($status === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName('status')
                     ->build(EmptyNecessaryFieldRunLog::class)

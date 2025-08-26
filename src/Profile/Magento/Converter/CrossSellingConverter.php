@@ -61,7 +61,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($sourceProductMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
@@ -78,7 +78,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($relatedProductMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );

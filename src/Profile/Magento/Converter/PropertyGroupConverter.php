@@ -58,7 +58,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $this->connectionId = $migrationContext->getConnection()->getId();
 
         if (!isset($data['name'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
@@ -80,7 +80,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         ];
 
         if (!isset($data['options'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );

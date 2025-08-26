@@ -55,7 +55,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
@@ -73,7 +73,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(AssociationRequiredMissingLog::class)
             );
@@ -99,7 +99,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             );
 
             if ($mapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
@@ -119,7 +119,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             );
 
             if ($mapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(AssociationRequiredMissingLog::class)
                 );
@@ -133,7 +133,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             $converted['pathInfo'] = '/navigation/' . $mapping['entityUuid'];
             $this->mappingIds[] = $mapping['id'];
         } else {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );

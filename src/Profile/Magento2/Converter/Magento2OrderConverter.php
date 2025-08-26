@@ -76,7 +76,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($mapping === null || !isset($mapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
@@ -101,7 +101,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerGroupMapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
@@ -116,7 +116,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
             if ($languageMapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
@@ -126,7 +126,7 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             $paymentMethodUuid = $this->getPaymentMethod($data);
             if ($paymentMethodUuid === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
@@ -144,7 +144,7 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             if (empty($billingAddress)) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );

@@ -101,7 +101,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             if ($shopUrl === '') {
                 $exception = MigrationMagentoException::mediaPathNotReachable($installationRoot);
 
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->withExceptionMessage($exception->getMessage())
                         ->withExceptionTrace($exception->getTrace())
@@ -243,7 +243,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             if ($filePath === false) {
                 $failureUuids[] = (string) $mediaId;
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(TemporaryFileErrorLog::class)
                 );
@@ -272,7 +272,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 } catch (\Exception $e) {
                     $failureUuids[] = $mediaId;
                     $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                    $this->loggingService->addLogEntry(
+                    $this->loggingService->addLogEntry( // TODO: add optional fields
                         SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withExceptionMessage($e->getMessage())
                             ->withExceptionTrace($e->getTrace())
@@ -283,7 +283,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 \unlink($filePath);
             } else {
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(CannotGetFileRunLog::class)
                 );
@@ -315,7 +315,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         if ($mimeType === false) {
             $failedMedia[] = $mediaId;
             $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(MimeTypeErrorLog::class)
             );
@@ -400,7 +400,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 if ($mappedWorkload[$uuid]->getErrorCount() > ProcessMediaHandler::MEDIA_ERROR_THRESHOLD) {
                     $failureUuids[] = $uuid;
                     $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                    $this->loggingService->addLogEntry(
+                    $this->loggingService->addLogEntry( // TODO: add optional fields
                         SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->build(CannotGetFileRunLog::class)
                     );
@@ -416,7 +416,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             if ($filePath === false) {
                 $failureUuids[] = $uuid;
                 $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->build(TemporaryFileErrorLog::class)
                 );
@@ -436,7 +436,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 $failureUuids[] = $uuid;
                 $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
 
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(DefaultEntities::MEDIA)
                         ->build(FileHandleErrorLog::class)
@@ -465,7 +465,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                 } catch (\Exception $e) {
                     $failureUuids[] = $uuid;
                     $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                    $this->loggingService->addLogEntry(
+                    $this->loggingService->addLogEntry( // TODO: add optional fields
                         SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withExceptionMessage($e->getMessage())
                             ->withExceptionTrace($e->getTrace())

@@ -63,7 +63,7 @@ abstract class CustomFieldConverter extends Converter
         );
 
         if ($defaultLocale === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(DefaultEntities::CUSTOM_FIELD_SET)
                     ->build(AssociationRequiredMissingLog::class)

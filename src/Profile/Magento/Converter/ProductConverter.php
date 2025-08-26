@@ -112,7 +112,7 @@ abstract class ProductConverter extends MagentoConverter
          * Throw error if no tax class is found
          */
         if (!isset($data['tax_class_id'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName('tax class')
                     ->build(EmptyNecessaryFieldRunLog::class)
@@ -125,7 +125,7 @@ abstract class ProductConverter extends MagentoConverter
          * Set tax
          */
         if (!$this->setTax($data['tax_class_id'], $converted)) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(UnknownEntityLog::class)
             );
@@ -135,7 +135,7 @@ abstract class ProductConverter extends MagentoConverter
         unset($data['tax_class_id']);
 
         if (!isset($data['price'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
@@ -147,7 +147,7 @@ abstract class ProductConverter extends MagentoConverter
         $converted['price'] = $this->getPrice($data, $converted);
 
         if (empty($converted['price'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->addLogEntry( // TODO: add optional fields
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );

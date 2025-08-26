@@ -36,7 +36,7 @@ abstract class Magento2CustomerConverter extends CustomerConverter
             if (!\defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !\extension_loaded('sodium')) {
                 $exception = new \Exception('Password algorithm is not available, please install and activate sodium php extension.');
 
-                $this->loggingService->addLogEntry(
+                $this->loggingService->addLogEntry( // TODO: add optional fields
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->withExceptionMessage($exception->getMessage())
                         ->withExceptionTrace($exception->getTrace())
