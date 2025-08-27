@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Product\Aggregate\ProductReview\ProductReviewDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -55,13 +56,19 @@ abstract class ProductReviewConverter extends MagentoConverter
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry( // TODO: add optional fields
+            $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductReviewDefinition::ENTITY_NAME)
+                    ->withFieldName('productId')
+                    ->withFieldSourcePath('productId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
                     ->build(AssociationRequiredMissingLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
         }
+
         $converted['productId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
         unset($data['productId']);
@@ -89,13 +96,19 @@ abstract class ProductReviewConverter extends MagentoConverter
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry( // TODO: add optional fields
+            $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductReviewDefinition::ENTITY_NAME)
+                    ->withFieldName('salesChannelId')
+                    ->withFieldSourcePath('store_id')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
                     ->build(AssociationRequiredMissingLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
         }
+
         $converted['salesChannelId'] = $mapping['entityUuid'];
         $this->mappingIds[] = $mapping['id'];
 
@@ -107,8 +120,13 @@ abstract class ProductReviewConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry( // TODO: add optional fields
+            $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductReviewDefinition::ENTITY_NAME)
+                    ->withFieldName('languageId')
+                    ->withFieldSourcePath('store_id')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
                     ->build(AssociationRequiredMissingLog::class)
             );
 

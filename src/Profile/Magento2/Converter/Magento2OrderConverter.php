@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 
+use Shopware\Core\Checkout\Order\OrderDefinition;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -76,8 +77,14 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($mapping === null || !isset($mapping['entityUuid'])) {
-                $this->loggingService->addLogEntry( // TODO: add optional fields
+                $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withFieldName('salutation')
+                        ->withFieldSourcePath('default_salutation')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
+                        ->withUsedMapping($mapping)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
@@ -101,8 +108,13 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerGroupMapping === null) {
-                $this->loggingService->addLogEntry( // TODO: add optional fields
+                $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withFieldName('customerGroupId')
+                        ->withFieldSourcePath('order.customer_group_id')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
@@ -116,8 +128,13 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
             if ($languageMapping === null) {
-                $this->loggingService->addLogEntry( // TODO: add optional fields
+                $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withFieldName('salesChannelId')
+                        ->withFieldSourcePath('order.store_id')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
@@ -125,9 +142,15 @@ abstract class Magento2OrderConverter extends OrderConverter
             }
 
             $paymentMethodUuid = $this->getPaymentMethod($data);
+
             if ($paymentMethodUuid === null) {
-                $this->loggingService->addLogEntry( // TODO: add optional fields
+                $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withFieldName('paymentMethodId')
+                        ->withFieldSourcePath('order.payment.method')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
@@ -143,14 +166,21 @@ abstract class Magento2OrderConverter extends OrderConverter
             $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
             $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+
             if (empty($billingAddress)) {
-                $this->loggingService->addLogEntry( // TODO: add optional fields
+                $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withFieldName('defaultBillingAddressId')
+                        ->withFieldSourcePath('billingAddress')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
                 return false;
             }
+
             $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
             $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
             $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
