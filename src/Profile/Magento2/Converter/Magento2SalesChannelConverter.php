@@ -223,7 +223,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                         ->withFieldSourcePath('default_language')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
-                        ->withUsedMapping($languageMapping)
+                        ->withUsedMapping($languageMapping ?? [])
                         ->build(AssociationRequiredMissingLog::class)
                 );
 
@@ -285,7 +285,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                         ->withFieldSourcePath('default_currency')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
-                        ->withUsedMapping($currencyMapping)
+                        ->withUsedMapping($currencyMapping ?? [])
                         ->build(AssociationRequiredMissingLog::class)
                 );
 

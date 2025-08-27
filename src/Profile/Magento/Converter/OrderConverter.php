@@ -423,7 +423,7 @@ abstract class OrderConverter extends MagentoConverter
                         ->withFieldName('id')
                         ->withFieldSourcePath('identifier')
                         ->withSourceData($lineItem)
-                        ->withUsedMapping($mapping)
+                        ->withUsedMapping($mapping ?? [])
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
@@ -876,7 +876,7 @@ abstract class OrderConverter extends MagentoConverter
                         ->withFieldSourcePath('default_salutation')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
-                        ->withUsedMapping($mapping)
+                        ->withUsedMapping($mapping ?? [])
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 

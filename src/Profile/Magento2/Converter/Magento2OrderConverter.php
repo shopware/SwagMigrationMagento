@@ -84,7 +84,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                         ->withFieldSourcePath('default_salutation')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
-                        ->withUsedMapping($mapping)
+                        ->withUsedMapping($mapping ?? [])
                         ->build(EmptyNecessaryFieldRunLog::class)
                 );
 
