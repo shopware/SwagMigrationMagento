@@ -62,6 +62,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(PropertyGroupDefinition::ENTITY_NAME)
+                    ->withFieldName('name')
                     ->withFieldSourcePath('name')
                     ->withSourceData($data)
                     ->build(EmptyNecessaryFieldRunLog::class)
@@ -87,6 +88,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(PropertyGroupDefinition::ENTITY_NAME)
+                    ->withFieldName('options')
                     ->withFieldSourcePath('options')
                     ->withSourceData($data)
                     ->withConvertedData($converted)

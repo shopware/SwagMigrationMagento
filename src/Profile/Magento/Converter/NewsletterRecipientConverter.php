@@ -55,8 +55,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(NewsletterRecipientDefinition::ENTITY_NAME)
-                    ->withFieldName('salesChannelId')
-                    ->withFieldSourcePath('store_id')
+                    ->withFieldName('languageId')
                     ->withSourceData($data)
                     ->build(AssociationRequiredMissingLog::class)
             );

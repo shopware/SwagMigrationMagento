@@ -331,7 +331,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
-                        ->withFieldName('paymentMethodId')
+                        ->withFieldName('paymentMethods')
                         ->withFieldSourcePath('default_payment_method')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -529,8 +529,8 @@ abstract class SalesChannelConverter extends MagentoConverter
                     $this->loggingService->addLogEntry(
                         SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
-                            ->withFieldName('shippingMethods')
-                            ->withFieldSourcePath('carrier_id')
+                            ->withFieldName('shippingMethodsId')
+                            ->withFieldSourcePath('carriers.carrier_id')
                             ->withSourceData($data)
                             ->build(AssociationRequiredMissingLog::class)
                     );

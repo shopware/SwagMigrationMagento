@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressDefinition;
 use Shopware\Core\Checkout\Customer\CustomerDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
@@ -205,6 +206,7 @@ abstract class CustomerConverter extends MagentoConverter
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                        ->withFieldName('salutationId')
                         ->withFieldSourcePath('default_salutation')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -350,7 +352,7 @@ abstract class CustomerConverter extends MagentoConverter
             if ($countryUuid === null) {
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                        ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                         ->withFieldName('countryId')
                         ->withFieldSourcePath('country_iso3')
                         ->withSourceData($addresses)
@@ -389,9 +391,9 @@ abstract class CustomerConverter extends MagentoConverter
                 } else {
                     $this->loggingService->addLogEntry(
                         SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                            ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                            ->withFieldName('country')
-                            ->withFieldSourcePath('addresses.countryState')
+                            ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
+                            ->withFieldName('countryState')
+                            ->withFieldSourcePath('region')
                             ->withSourceData($originalData)
                             ->withConvertedData($converted)
                             ->build(UnknownEntityLog::class)
@@ -507,7 +509,7 @@ abstract class CustomerConverter extends MagentoConverter
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->withEntityName(CustomerDefinition::ENTITY_NAME)
                         ->withFieldName('salutationId')
-                        ->withFieldSourcePath('default_salutation')
+                        ->withFieldSourcePath('gender')
                         ->withSourceData([
                             'gender' => $gender,
                         ])

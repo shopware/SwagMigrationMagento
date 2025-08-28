@@ -132,6 +132,7 @@ abstract class ProductConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(ProductDefinition::ENTITY_NAME)
+                    ->withFieldName('taxId')
                     ->withFieldSourcePath('tax_class_id')
                     ->withSourceData($data)
                     ->withConvertedData($converted)

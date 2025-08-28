@@ -7,7 +7,8 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 
-use Shopware\Core\Checkout\Order\OrderDefinition;
+use Shopware\Core\Checkout\Customer\CustomerDefinition;
+use Shopware\Core\Checkout\Order\Aggregate\OrderCustomer\OrderCustomerDefinition;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -79,8 +80,8 @@ abstract class Magento2OrderConverter extends OrderConverter
             if ($mapping === null || !isset($mapping['entityUuid'])) {
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
-                        ->withFieldName('salutation')
+                        ->withEntityName(OrderCustomerDefinition::ENTITY_NAME)
+                        ->withFieldName('salutationId')
                         ->withFieldSourcePath('default_salutation')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -110,9 +111,9 @@ abstract class Magento2OrderConverter extends OrderConverter
             if ($customerGroupMapping === null) {
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
                         ->withFieldName('customerGroupId')
-                        ->withFieldSourcePath('order.customer_group_id')
+                        ->withFieldSourcePath('orders.customer_group_id')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
                         ->build(EmptyNecessaryFieldRunLog::class)
@@ -127,11 +128,12 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $data['orders']['store_id'],
                 $this->context
             );
+
             if ($languageMapping === null) {
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
-                        ->withFieldName('salesChannelId')
+                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                        ->withFieldName('languageId')
                         ->withFieldSourcePath('order.store_id')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -141,13 +143,13 @@ abstract class Magento2OrderConverter extends OrderConverter
                 return false;
             }
 
-            $paymentMethodUuid = $this->getPaymentMethod($data);
+            $paymentMethodUuid = $this->getPaymentMethod($data, OrderCustomerDefinition::ENTITY_NAME);
 
             if ($paymentMethodUuid === null) {
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
-                        ->withFieldName('paymentMethodId')
+                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                        ->withFieldName('defaultPaymentMethodId')
                         ->withFieldSourcePath('order.payment.method')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -170,7 +172,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             if (empty($billingAddress)) {
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
+                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
                         ->withFieldName('defaultBillingAddressId')
                         ->withFieldSourcePath('billingAddress')
                         ->withSourceData($data)

@@ -113,7 +113,7 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
-                        ->withFieldName('productId')
+                        ->withFieldName('foreignKey')
                         ->withFieldSourcePath('product_id')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -138,7 +138,7 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
-                        ->withFieldName('categoryId')
+                        ->withFieldName('foreignKey')
                         ->withFieldSourcePath('category_id')
                         ->withSourceData($data)
                         ->withConvertedData($converted)
@@ -157,6 +157,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                    ->withFieldName('foreignKey')
                     ->withSourceData($data)
                     ->withConvertedData($converted)
                     ->build(EmptyNecessaryFieldRunLog::class)

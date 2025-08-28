@@ -93,6 +93,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
                     ->withFieldName('customerGroupId')
+                    ->withFieldSourcePath('default_customer_group')
                     ->withSourceData($data)
                     ->withConvertedData($converted)
                     ->build(AssociationRequiredMissingLog::class)

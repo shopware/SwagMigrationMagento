@@ -65,6 +65,7 @@ abstract class CrossSellingConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
+                    ->withFieldName('productId')
                     ->withFieldSourcePath('sourceProductId')
                     ->withSourceData($data)
                     ->withConvertedData($converted)
@@ -86,6 +87,7 @@ abstract class CrossSellingConverter extends MagentoConverter
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
+                    ->withFieldName('productId')
                     ->withFieldSourcePath('linked_product_id')
                     ->withSourceData($data)
                     ->withConvertedData($converted)
