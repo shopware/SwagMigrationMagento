@@ -328,9 +328,10 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(MediaDefinition::ENTITY_NAME)
+                    ->withFieldSourcePath('file_path')
                     ->withSourceData([
                         'file_name' => $fileName,
-                        'file_extension' => $fileExtension,
+                        'file_path' => $filePath,
                         'media' => $mappedWorkload[$mediaId],
                     ])
                     ->build(MimeTypeErrorLog::class)

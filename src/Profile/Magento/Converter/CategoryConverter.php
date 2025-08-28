@@ -106,10 +106,11 @@ abstract class CategoryConverter extends MagentoConverter
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
 
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+            $this->loggingService->addLogForEach(
+                $fields,
+                fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CategoryDefinition::ENTITY_NAME)
-                    ->withFieldSourcePath(implode(', ', $fields))
+                    ->withFieldSourcePath($key)
                     ->withSourceData($data)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );

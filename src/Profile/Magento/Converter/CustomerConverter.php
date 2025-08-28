@@ -92,10 +92,11 @@ abstract class CustomerConverter extends MagentoConverter
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
 
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+            $this->loggingService->addLogForEach(
+                $fields,
+                fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                    ->withFieldSourcePath(implode(', ', $fields))
+                    ->withFieldSourcePath($key)
                     ->withSourceData($data)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
@@ -257,10 +258,11 @@ abstract class CustomerConverter extends MagentoConverter
         if (!isset($converted['defaultBillingAddressId'], $converted['defaultShippingAddressId'])) {
             $this->mappingService->deleteMapping($converted['id'], $this->connectionId, $this->context);
 
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+            $this->loggingService->addLogForEach(
+                ['default_billing_address_id', 'default_shipping_address_id'],
+                fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                    ->withFieldName('default_billing_address_id, default_shipping_address_id')
+                    ->withFieldName($key)
                     ->withSourceData($data)
                     ->withConvertedData($converted)
                     ->build(EmptyNecessaryFieldRunLog::class)
@@ -308,10 +310,11 @@ abstract class CustomerConverter extends MagentoConverter
             $fields = $this->checkForEmptyRequiredDataFields($address, self::$requiredAddressDataFieldKeys);
 
             if (!empty($fields)) {
-                $this->loggingService->addLogEntry(
-                    SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                $this->loggingService->addLogForEach(
+                    $fields,
+                    fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                         ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                        ->withFieldSourcePath(implode(', ', $fields))
+                        ->withFieldSourcePath($key)
                         ->withSourceData($address)
                         ->withConvertedData($converted)
                         ->build(EmptyNecessaryFieldRunLog::class)
@@ -430,11 +433,15 @@ abstract class CustomerConverter extends MagentoConverter
             $converted['defaultShippingAddressId'] = $addresses[0]['id'];
             unset($originalData['default_billing_address_id'], $originalData['default_shipping_address_id']);
 
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+            $this->loggingService->addLogForEach(
+                [
+                    'defaultBillingAddressId' => 'default_billing_address_id',
+                    'defaultShippingAddressId' => 'default_shipping_address_id',
+                ],
+                fn (string $key, string $value) => SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                    ->withFieldName('defaultBillingAddressId, defaultShippingAddressId')
-                    ->withFieldSourcePath('default_billing_address_id, default_shipping_address_id')
+                    ->withFieldName($key)
+                    ->withFieldSourcePath($value)
                     ->withSourceData($originalData)
                     ->withConvertedData($converted)
                     ->build(FieldReassignedRunLog::class)

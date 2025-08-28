@@ -121,10 +121,11 @@ abstract class OrderConverter extends MagentoConverter
         }
 
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+            $this->loggingService->addLogForEach(
+                $fields,
+                fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldSourcePath(\implode(', ', $fields))
+                    ->withFieldSourcePath($key)
                     ->withSourceData($data)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
@@ -797,10 +798,11 @@ abstract class OrderConverter extends MagentoConverter
         $fields = $this->checkForEmptyRequiredDataFields($data['orders'], self::$requiredCustomerDataFieldKeys);
 
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+            $this->loggingService->addLogForEach(
+                $fields,
+                fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldSourcePath(\implode(', ', $fields))
+                    ->withFieldSourcePath($key)
                     ->withSourceData($data)
                     ->withConvertedData($converted)
                     ->build(EmptyNecessaryFieldRunLog::class)

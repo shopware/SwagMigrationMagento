@@ -45,10 +45,11 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
 
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(
-                SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+            $this->loggingService->addLogForEach(
+                $fields,
+                fn (string $key) => SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
-                    ->withFieldSourcePath(implode(', ', $fields))
+                    ->withFieldSourcePath($key)
                     ->withSourceData($data)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
