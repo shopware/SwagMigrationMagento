@@ -635,19 +635,19 @@ class Magento2OrderConverterTest extends TestCase
     public static function requiredProperties(): array
     {
         return [
-            ['orders', null],
-            ['orders', ''],
-            ['billingAddress', null],
-            ['billingAddress', ''],
-            ['shippingAddress', null],
-            ['shippingAddress', ''],
-            ['items', null],
-            ['items', ''],
+            ['orders', 2, null],
+            ['orders', 2, ''],
+            ['billingAddress', 1, null],
+            ['billingAddress', 1, ''],
+            ['shippingAddress', 1, null],
+            ['shippingAddress', 1, ''],
+            ['items', 1, null],
+            ['items', 1, ''],
         ];
     }
 
     #[DataProvider('requiredProperties')]
-    public function testConvertWithoutRequiredProperties(string $property, ?string $value): void
+    public function testConvertWithoutRequiredProperties(string $property, int $expected, ?string $value): void
     {
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $orderData = $orderData[0];
@@ -658,8 +658,6 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD');
+        static::assertCount($expected, $logs);
     }
 }

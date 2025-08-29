@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 
+use Shopware\Core\Checkout\Customer\CustomerDefinition;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Argon2Id13Encoder;
@@ -36,8 +37,13 @@ abstract class Magento2CustomerConverter extends CustomerConverter
             if (!\defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !\extension_loaded('sodium')) {
                 $exception = new \Exception('Password algorithm is not available, please install and activate sodium php extension.');
 
-                $this->loggingService->addLogEntry( // TODO: add optional fields
+                $this->loggingService->addLogEntry(
                     SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                        ->withFieldName('password_hash')
+                        ->withFieldSourcePath('password_hash')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
                         ->withExceptionMessage($exception->getMessage())
                         ->withExceptionTrace($exception->getTrace())
                         ->build(ExceptionRunLog::class)

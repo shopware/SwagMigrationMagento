@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Property\PropertyGroupDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\System\Language\LanguageEntity;
@@ -58,8 +59,12 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $this->connectionId = $migrationContext->getConnection()->getId();
 
         if (!isset($data['name'])) {
-            $this->loggingService->addLogEntry( // TODO: add optional fields
+            $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(PropertyGroupDefinition::ENTITY_NAME)
+                    ->withFieldName('name')
+                    ->withFieldSourcePath('name')
+                    ->withSourceData($data)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
 
@@ -80,8 +85,13 @@ abstract class PropertyGroupConverter extends MagentoConverter
         ];
 
         if (!isset($data['options'])) {
-            $this->loggingService->addLogEntry( // TODO: add optional fields
+            $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->withEntityName(PropertyGroupDefinition::ENTITY_NAME)
+                    ->withFieldName('options')
+                    ->withFieldSourcePath('options')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
                     ->build(EmptyNecessaryFieldRunLog::class)
             );
 

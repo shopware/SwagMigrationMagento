@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\System\CustomField\CustomFieldDefinition;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -63,9 +64,12 @@ abstract class CustomFieldConverter extends Converter
         );
 
         if ($defaultLocale === null) {
-            $this->loggingService->addLogEntry( // TODO: add optional fields
+            $this->loggingService->addLogEntry(
                 SwagMigrationLogBuilder::fromMigrationContext($migrationContext)
-                    ->withEntityName(DefaultEntities::CUSTOM_FIELD_SET)
+                    ->withEntityName(CustomFieldDefinition::ENTITY_NAME)
+                    ->withFieldName('locale')
+                    ->withFieldSourcePath('global_default')
+                    ->withSourceData($data)
                     ->build(AssociationRequiredMissingLog::class)
             );
 

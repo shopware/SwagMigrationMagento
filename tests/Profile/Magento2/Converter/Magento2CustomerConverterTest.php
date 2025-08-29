@@ -338,9 +338,10 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
+        static::assertCount(2, $logs);
 
         static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
     }
 
     public function testConvertCustomerWithoutValidAddresses(): void
@@ -360,10 +361,11 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(2, $logs);
+        static::assertCount(3, $logs);
 
         static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
         static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
+        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[2]['code']);
     }
 
     /**
@@ -483,10 +485,11 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertSame($converted['addresses'][0]['id'], $converted['defaultShippingAddressId']);
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(3, $logs);
+        static::assertCount(4, $logs);
 
         static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[0]['code']);
         static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD', $logs[1]['code']);
         static::assertSame('SWAG_MIGRATION_ENTITY_FIELD_REASSIGNED', $logs[2]['code']);
+        static::assertSame('SWAG_MIGRATION_ENTITY_FIELD_REASSIGNED', $logs[3]['code']);
     }
 }
