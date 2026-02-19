@@ -83,7 +83,7 @@ abstract class CustomFieldConverter extends Converter
         );
 
         $converted = [];
-        $converted['id'] = $mapping['entityUuid'];
+        $converted['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $converted['name'] = 'migration_set_' . $data['setId'];
@@ -103,7 +103,7 @@ abstract class CustomFieldConverter extends Converter
 
         $converted['relations'] = [
             [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
                 'entityName' => $this->getCustomFieldEntityName(),
             ],
         ];
@@ -117,7 +117,7 @@ abstract class CustomFieldConverter extends Converter
         );
         $converted['customFields'] = [
             [
-                'id' => $this->mainMapping['entityUuid'],
+                'id' => $this->mainMapping['entityId'],
                 'name' => 'migration_attribute_' . $data['setId'] . '_' . $data['attribute_code'] . '_' . $data['attribute_id'],
                 'type' => $type,
                 'config' => $this->getConfiguredCustomFieldData($data, $defaultLocale),

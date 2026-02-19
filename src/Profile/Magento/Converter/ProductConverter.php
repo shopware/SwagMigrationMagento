@@ -180,7 +180,7 @@ abstract class ProductConverter extends MagentoConverter
             $context,
             $this->checksum
         );
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         if (isset($data['prices'])) {
             $converted['prices'] = $this->getPrices($data['prices'], $converted);
@@ -261,7 +261,7 @@ abstract class ProductConverter extends MagentoConverter
             if ($mapping !== null) {
                 $converted['customFieldSetSelectionActive'] = true;
                 $converted['customFieldSets'] = [
-                    ['id' => $mapping['entityUuid']],
+                    ['id' => $mapping['entityId']],
                 ];
                 $this->mappingIds[] = $mapping['id'];
             }
@@ -405,7 +405,7 @@ abstract class ProductConverter extends MagentoConverter
             if ($mapping === null) {
                 continue;
             }
-            $categoryMapping[] = ['id' => $mapping['entityUuid']];
+            $categoryMapping[] = ['id' => $mapping['entityId']];
             $this->mappingIds[] = $mapping['id'];
         }
 
@@ -428,7 +428,7 @@ abstract class ProductConverter extends MagentoConverter
             throw MigrationException::parentEntityForChildNotFound(DefaultEntities::PRODUCT, $this->oldIdentifier);
         }
 
-        $converted['parentId'] = $parentMapping['entityUuid'];
+        $converted['parentId'] = $parentMapping['entityId'];
         $this->mappingIds[] = $parentMapping['id'];
     }
 
@@ -445,7 +445,7 @@ abstract class ProductConverter extends MagentoConverter
             return;
         }
 
-        $converted['manufacturerId'] = $mapping['entityUuid'];
+        $converted['manufacturerId'] = $mapping['entityId'];
     }
 
     protected function setTax(string $taxClassId, array &$converted): bool
@@ -459,7 +459,7 @@ abstract class ProductConverter extends MagentoConverter
             );
 
             $converted['tax'] = [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
                 'taxRate' => 0,
                 'name' => '0%',
             ];
@@ -477,7 +477,7 @@ abstract class ProductConverter extends MagentoConverter
 
         if ($mapping !== null) {
             $this->mappingIds[] = $mapping['id'];
-            $converted['taxId'] = $mapping['entityUuid'];
+            $converted['taxId'] = $mapping['entityId'];
 
             return true;
         }
@@ -505,7 +505,7 @@ abstract class ProductConverter extends MagentoConverter
         if (!isset($currencyMapping)) {
             return [];
         }
-        $currencyUuid = $currencyMapping['entityUuid'];
+        $currencyUuid = $currencyMapping['entityId'];
         $this->mappingIds[] = $currencyMapping['id'];
 
         if ($this->priceIsGross === true) {
@@ -578,7 +578,7 @@ abstract class ProductConverter extends MagentoConverter
             if ($customerGroupMapping === null || !isset($price['price'])) {
                 continue;
             }
-            $customerGroupUuid = $customerGroupMapping['entityUuid'];
+            $customerGroupUuid = $customerGroupMapping['entityId'];
             $this->mappingIds[] = $customerGroupMapping['id'];
 
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -587,7 +587,7 @@ abstract class ProductConverter extends MagentoConverter
                 'customerGroupRule_productPriceRule_' . $price['entity_id'] . '_' . $price['customer_group_id'],
                 $this->context
             );
-            $productPriceRuleUuid = $mapping['entityUuid'];
+            $productPriceRuleUuid = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -596,7 +596,7 @@ abstract class ProductConverter extends MagentoConverter
                 'customerGroupRule_' . $price['customer_group_id'],
                 $this->context
             );
-            $priceRuleUuid = $mapping['entityUuid'];
+            $priceRuleUuid = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -605,7 +605,7 @@ abstract class ProductConverter extends MagentoConverter
                 'customerGroupRule_orContainer_' . $price['customer_group_id'],
                 $this->context
             );
-            $orContainerUuid = $mapping['entityUuid'];
+            $orContainerUuid = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -614,7 +614,7 @@ abstract class ProductConverter extends MagentoConverter
                 'customerGroupRule_andContainer_' . $price['customer_group_id'],
                 $this->context
             );
-            $andContainerUuid = $mapping['entityUuid'];
+            $andContainerUuid = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
             $mapping = $this->mappingService->getOrCreateMapping(
@@ -623,7 +623,7 @@ abstract class ProductConverter extends MagentoConverter
                 'customerGroupRule_condition_' . $price['customer_group_id'],
                 $this->context
             );
-            $conditionUuid = $mapping['entityUuid'];
+            $conditionUuid = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
             $priceArray = $this->getPrice($price, $converted);
@@ -709,9 +709,9 @@ abstract class ProductConverter extends MagentoConverter
             $this->mappingIds[] = $optionMapping['id'];
 
             $optionElement = [
-                'id' => $configuratorSettingMapping['entityUuid'],
+                'id' => $configuratorSettingMapping['entityId'],
                 'productId' => $converted['id'],
-                'optionId' => $optionMapping['entityUuid'],
+                'optionId' => $optionMapping['entityId'],
             ];
 
             $options[] = $optionElement;
@@ -732,7 +732,7 @@ abstract class ProductConverter extends MagentoConverter
                 $this->oldIdentifier . '_' . $mediaData['image'],
                 $this->context
             );
-            $newProductMedia['id'] = $mapping['entityUuid'];
+            $newProductMedia['id'] = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
             $newProductMedia['productId'] = $converted['id'];
             $this->convertValue($newProductMedia, 'position', $mediaData, 'position', self::TYPE_INTEGER);
@@ -744,7 +744,7 @@ abstract class ProductConverter extends MagentoConverter
                 $mediaData['image'],
                 $this->context
             );
-            $newMedia['id'] = $mapping['entityUuid'];
+            $newMedia['id'] = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
             if (!isset($mediaData['description']) || empty($mediaData['description'])) {
@@ -838,7 +838,7 @@ abstract class ProductConverter extends MagentoConverter
             $this->mappingIds[] = $mapping['id'];
 
             $visibilities[$uuid] = [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
                 'productId' => $productId,
                 'salesChannelId' => $uuid,
                 'visibility' => ProductVisibilityDefinition::VISIBILITY_ALL,
@@ -856,7 +856,7 @@ abstract class ProductConverter extends MagentoConverter
         );
 
         if ($mapping !== null) {
-            $salesChannelUuid = $mapping['entityUuid'];
+            $salesChannelUuid = $mapping['entityId'];
             if ($status !== 1) {
                 unset($visibilities[$salesChannelUuid]);
 
@@ -876,7 +876,7 @@ abstract class ProductConverter extends MagentoConverter
             );
             $this->mappingIds[] = $mapping['id'];
             $visibilities[$salesChannelUuid] = [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
                 'productId' => $productId,
                 'salesChannelId' => $salesChannelUuid,
                 'visibility' => ProductVisibilityDefinition::VISIBILITY_ALL,

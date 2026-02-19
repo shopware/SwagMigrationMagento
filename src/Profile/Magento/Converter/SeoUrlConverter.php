@@ -49,7 +49,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             $context,
             $this->checksum
         );
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -70,7 +70,7 @@ abstract class SeoUrlConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['salesChannelId'] = $mapping['entityUuid'];
+        $converted['salesChannelId'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $languageMapping = $this->mappingService->getMapping(
@@ -92,7 +92,7 @@ abstract class SeoUrlConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['languageId'] = $languageMapping['entityUuid'];
+        $converted['languageId'] = $languageMapping['entityId'];
         $this->mappingIds[] = $languageMapping['id'];
         unset($data['store_id']);
 
@@ -122,9 +122,9 @@ abstract class SeoUrlConverter extends MagentoConverter
 
                 return new ConvertStruct(null, $this->originalData);
             }
-            $converted['foreignKey'] = $mapping['entityUuid'];
+            $converted['foreignKey'] = $mapping['entityId'];
             $converted['routeName'] = self::ROUTE_NAME_PRODUCT;
-            $converted['pathInfo'] = '/detail/' . $mapping['entityUuid'];
+            $converted['pathInfo'] = '/detail/' . $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
         } elseif (isset($data['category_id'])) {
             $mapping = $this->mappingService->getMapping(
@@ -148,9 +148,9 @@ abstract class SeoUrlConverter extends MagentoConverter
             }
             $converted['isCanonical'] = true;
             $converted['isModified'] = true;
-            $converted['foreignKey'] = $mapping['entityUuid'];
+            $converted['foreignKey'] = $mapping['entityId'];
             $converted['routeName'] = self::ROUTE_NAME_NAVIGATION;
-            $converted['pathInfo'] = '/navigation/' . $mapping['entityUuid'];
+            $converted['pathInfo'] = '/navigation/' . $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
         } else {
             $this->loggingService->log(
@@ -185,7 +185,7 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $converted['id']
             );
         } else {
-            if ($uniqueUrlMapping['entityUuid'] !== $converted['id']) {
+            if ($uniqueUrlMapping['entityId'] !== $converted['id']) {
                 return new ConvertStruct(null, $this->originalData);
             }
         }

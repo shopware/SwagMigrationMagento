@@ -148,7 +148,7 @@ abstract class CategoryConverter extends MagentoConverter
             }
 
             $this->mappingIds[] = $parentMapping['id'];
-            $converted['parentId'] = $parentMapping['entityUuid'];
+            $converted['parentId'] = $parentMapping['entityId'];
         } elseif (!isset($data['previousSiblingId'])) {
             $previousSiblingUuid = $this->lowestRootCategoryLookup->get($context);
             if ($previousSiblingUuid !== null) {
@@ -169,7 +169,7 @@ abstract class CategoryConverter extends MagentoConverter
             );
 
             if ($previousSiblingMapping !== null) {
-                $converted['afterCategoryId'] = $previousSiblingMapping['entityUuid'];
+                $converted['afterCategoryId'] = $previousSiblingMapping['entityId'];
                 $this->mappingIds[] = $previousSiblingMapping['id'];
             }
             unset($previousSiblingMapping);
@@ -187,7 +187,7 @@ abstract class CategoryConverter extends MagentoConverter
             $this->checksum
         );
 
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['entity_id']);
 
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
@@ -337,7 +337,7 @@ abstract class CategoryConverter extends MagentoConverter
             $this->entity_id . ':' . $data['defaultLocale'],
             $this->context
         );
-        $localeTranslation['id'] = $mapping['entityUuid'];
+        $localeTranslation['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         if (isset($converted['customFields'])) {
@@ -378,7 +378,7 @@ abstract class CategoryConverter extends MagentoConverter
         );
 
         $categoryMedia = [];
-        $categoryMedia['id'] = $mapping['entityUuid'];
+        $categoryMedia['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $albumUuid = $this->mediaFolderLookup->get(DefaultEntities::CATEGORY, $this->context);

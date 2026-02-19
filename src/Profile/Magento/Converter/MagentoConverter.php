@@ -157,7 +157,7 @@ abstract class MagentoConverter extends Converter
                 continue;
             }
             $this->mappingIds[] = $languageMapping['id'];
-            $languageId = $languageMapping['entityUuid'];
+            $languageId = $languageMapping['entityId'];
 
             foreach ($translationValues as $attributeCode => $attributeData) {
                 if (!isset($attributeData['attribute_id'], $attributeData['value'])) {

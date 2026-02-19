@@ -40,7 +40,7 @@ abstract class ProductMultiSelectPropertyRelationConverter extends MagentoConver
         }
 
         $converted = [];
-        $converted['id'] = $productMapping['entityUuid'];
+        $converted['id'] = $productMapping['entityId'];
         $this->mappingIds[] = $productMapping['id'];
 
         $propertyMapping = $this->mappingService->getMapping(
@@ -54,7 +54,7 @@ abstract class ProductMultiSelectPropertyRelationConverter extends MagentoConver
             return new ConvertStruct(null, $data);
         }
 
-        $converted['properties'][] = ['id' => $propertyMapping['entityUuid']];
+        $converted['properties'][] = ['id' => $propertyMapping['entityId']];
 
         unset(
             $data['entity_id'],

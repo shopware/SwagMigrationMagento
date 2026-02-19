@@ -93,7 +93,7 @@ abstract class LanguageConverter extends MagentoConverter
             $this->context,
             $this->checksum
         );
-        $languageUuid = $this->mainMapping['entityUuid'];
+        $languageUuid = $this->mainMapping['entityId'];
 
         foreach ($data['stores'] as $storeId) {
             $languageMapping = $this->mappingService->getOrCreateMapping(

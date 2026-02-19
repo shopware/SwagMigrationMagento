@@ -110,7 +110,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $context
             );
             if ($mapping !== null) {
-                $converted['customerGroupId'] = $mapping['entityUuid'];
+                $converted['customerGroupId'] = $mapping['entityId'];
             }
         }
 
@@ -138,7 +138,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             $this->checksum
         );
 
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['group_id']);
 
         /*
@@ -273,7 +273,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $categoryUuid = $categoryMapping['entityUuid'];
+        $categoryUuid = $categoryMapping['entityId'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
         unset($data['root_category_id']);
@@ -321,7 +321,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 return new ConvertStruct(null, $this->originalData);
             }
             $this->mappingIds[] = $defaultPaymentMethod['id'];
-            $converted['paymentMethods'][0]['id'] = $defaultPaymentMethod['entityUuid'];
+            $converted['paymentMethods'][0]['id'] = $defaultPaymentMethod['entityId'];
         }
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
         unset($data['payments']);
@@ -460,7 +460,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
                     continue;
                 }
-                $uuid = $mapping['entityUuid'];
+                $uuid = $mapping['entityId'];
                 $payments[$uuid] = [
                     'id' => $uuid,
                 ];
@@ -475,8 +475,8 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $context
             );
 
-            if (isset($mapping['entityUuid'])) {
-                $uuid = $mapping['entityUuid'];
+            if (isset($mapping['entityId'])) {
+                $uuid = $mapping['entityId'];
                 $payments[$uuid] = [
                     'id' => $uuid,
                 ];
@@ -508,7 +508,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
                     continue;
                 }
-                $uuid = $mapping['entityUuid'];
+                $uuid = $mapping['entityId'];
                 $carriers[$uuid] = [
                     'id' => $uuid,
                 ];
@@ -523,8 +523,8 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $context
             );
 
-            if (isset($mapping['entityUuid'])) {
-                $uuid = $mapping['entityUuid'];
+            if (isset($mapping['entityId'])) {
+                $uuid = $mapping['entityId'];
                 $carriers[$uuid] = [
                     'id' => $uuid,
                 ];
@@ -560,7 +560,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             $this->oldIdentifier . ':' . $data['defaultLocale'],
             $this->context
         );
-        $localeTranslation['id'] = $mapping['entityUuid'];
+        $localeTranslation['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
@@ -574,7 +574,7 @@ abstract class SalesChannelConverter extends MagentoConverter
     {
         $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $iso, $context);
         if ($countryMapping !== null) {
-            $countryUuid = $countryMapping['entityUuid'];
+            $countryUuid = $countryMapping['entityId'];
         } else {
             $countryUuid = $this->countryLookup->getByIso2($iso, $context);
 

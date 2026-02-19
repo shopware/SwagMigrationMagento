@@ -68,7 +68,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
                 'connectionId' => $connectionId,
                 'entity' => $entityName,
                 'oldIdentifier' => $oldIdentifier,
-                'entityUuid' => $uuid,
+                'entityId' => $uuid,
                 'entityValue' => null,
                 'checksum' => null,
                 'additionalData' => $additionalData,
@@ -93,7 +93,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         $uuidList = [];
         if ($result->getTotal() > 0) {
             foreach ($result->getEntities() as $entity) {
-                $uuidList[] = $entity->getEntityUuid();
+                $uuidList[] = $entity->getEntityId();
             }
         }
 
@@ -109,7 +109,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
                 $item['connectionId'] === $connectionId
                 && $item['entity'] === $entityName
                 && $item['oldIdentifier'] === $id
-                && $item['entityUuid'] === $uuid
+                && $item['entityId'] === $uuid
             ) {
                 return true;
             }
@@ -119,7 +119,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         $criteria->addFilter(new EqualsFilter('connectionId', $connectionId));
         $criteria->addFilter(new EqualsFilter('entity', $entityName));
         $criteria->addFilter(new EqualsFilter('oldIdentifier', $id));
-        $criteria->addFilter(new EqualsFilter('entityUuid', $uuid));
+        $criteria->addFilter(new EqualsFilter('entityId', $uuid));
 
         $result = $this->migrationMappingRepo->searchIds($criteria, $context);
 

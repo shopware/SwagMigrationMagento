@@ -66,7 +66,7 @@ abstract class NotAssociatedMediaConverter extends MagentoConverter
             $context,
             $this->checksum
         );
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         $fileMatches = [];
         \preg_match('/^\/*(.+\/)*(.+)\..+$/', $data['path'], $fileMatches);

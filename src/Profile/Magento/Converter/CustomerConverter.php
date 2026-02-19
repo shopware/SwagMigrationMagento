@@ -131,12 +131,12 @@ abstract class CustomerConverter extends MagentoConverter
             $this->context,
             null,
             null,
-            $this->mainMapping['entityUuid']
+            $this->mainMapping['entityId']
         );
         $this->mappingIds[] = $mapping['id'];
 
         $converted = [];
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         /*
          * Set sales channel
@@ -206,7 +206,7 @@ abstract class CustomerConverter extends MagentoConverter
                 return new ConvertStruct(null, $data);
             }
             $this->mappingIds[] = $mapping['id'];
-            $salutationUuid = $mapping['entityUuid'];
+            $salutationUuid = $mapping['entityId'];
         }
 
         if ($salutationUuid === null) {
@@ -224,7 +224,7 @@ abstract class CustomerConverter extends MagentoConverter
         if ($mapping === null) {
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['groupId'] = $mapping['entityUuid'];
+        $converted['groupId'] = $mapping['entityId'];
         unset($data['group_id']);
 
         /*
@@ -239,8 +239,8 @@ abstract class CustomerConverter extends MagentoConverter
         /*
          * Set addresses
          */
-        if (isset($data['addresses'], $this->mainMapping['entityUuid']) && !empty($data['addresses'])) {
-            $this->getAddresses($data, $converted, $this->mainMapping['entityUuid']);
+        if (isset($data['addresses'], $this->mainMapping['entityId']) && !empty($data['addresses'])) {
+            $this->getAddresses($data, $converted, $this->mainMapping['entityId']);
             unset($data['addresses']);
         }
 
@@ -315,7 +315,7 @@ abstract class CustomerConverter extends MagentoConverter
                 $address['entity_id'],
                 $this->context
             );
-            $newAddress['id'] = $addressMapping['entityUuid'];
+            $newAddress['id'] = $addressMapping['entityId'];
             $this->mappingIds[] = $addressMapping['id'];
 
             if (isset($originalData['default_billing']) && $address['entity_id'] === $originalData['default_billing']) {
@@ -367,7 +367,7 @@ abstract class CustomerConverter extends MagentoConverter
                     );
 
                     $newAddress['countryState'] = [
-                        'id' => $mapping['entityUuid'],
+                        'id' => $mapping['entityId'],
                         'name' => $address['region_name'],
                         'shortCode' => $address['region_code'],
                         'countryId' => $countryUuid,
@@ -492,7 +492,7 @@ abstract class CustomerConverter extends MagentoConverter
         }
         $this->mappingIds[] = $mapping['id'];
 
-        return $mapping['entityUuid'];
+        return $mapping['entityId'];
     }
 
     protected function getDefaultPaymentMethod(): ?string
@@ -517,7 +517,7 @@ abstract class CustomerConverter extends MagentoConverter
         }
         $this->mappingIds[] = $paymentMethodMapping['id'];
 
-        return $paymentMethodMapping['entityUuid'];
+        return $paymentMethodMapping['entityId'];
     }
 
     protected function setPassword(array &$data, array &$converted): bool
@@ -542,7 +542,7 @@ abstract class CustomerConverter extends MagentoConverter
 
         if ($salesChannelMapping !== null) {
             $this->mappingIds[] = $salesChannelMapping['id'];
-            $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+            $converted['salesChannelId'] = $salesChannelMapping['entityId'];
         }
     }
 
@@ -557,7 +557,7 @@ abstract class CustomerConverter extends MagentoConverter
 
         if ($languageMapping !== null) {
             $this->mappingIds[] = $languageMapping['id'];
-            $converted['languageId'] = $languageMapping['entityUuid'];
+            $converted['languageId'] = $languageMapping['entityId'];
         }
     }
 
@@ -581,7 +581,7 @@ abstract class CustomerConverter extends MagentoConverter
 
             if ($salesChannelMapping !== null) {
                 $this->mappingIds[] = $salesChannelMapping['id'];
-                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+                $converted['salesChannelId'] = $salesChannelMapping['entityId'];
             }
         }
     }

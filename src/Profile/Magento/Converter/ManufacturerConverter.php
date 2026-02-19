@@ -63,7 +63,7 @@ abstract class ManufacturerConverter extends MagentoConverter
         );
 
         $converted = [];
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['option_id']);
 
         if (isset($data['translations'])) {

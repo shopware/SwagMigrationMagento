@@ -45,7 +45,7 @@ abstract class ProductReviewConverter extends MagentoConverter
             $context,
             $this->checksum
         );
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -66,7 +66,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['productId'] = $mapping['entityUuid'];
+        $converted['productId'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
         unset($data['productId']);
 
@@ -79,7 +79,7 @@ abstract class ProductReviewConverter extends MagentoConverter
             );
 
             if ($mapping !== null) {
-                $converted['customerId'] = $mapping['entityUuid'];
+                $converted['customerId'] = $mapping['entityId'];
                 $this->mappingIds[] = $mapping['id'];
             }
             unset($data['customer_id']);
@@ -104,7 +104,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['salesChannelId'] = $mapping['entityUuid'];
+        $converted['salesChannelId'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $languageMapping = $this->mappingService->getMapping(
@@ -126,7 +126,7 @@ abstract class ProductReviewConverter extends MagentoConverter
 
             return new ConvertStruct(null, $this->originalData);
         }
-        $converted['languageId'] = $languageMapping['entityUuid'];
+        $converted['languageId'] = $languageMapping['entityId'];
         $this->mappingIds[] = $languageMapping['id'];
         unset($data['store_id']);
 

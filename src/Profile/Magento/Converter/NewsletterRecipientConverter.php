@@ -69,8 +69,8 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
             $context,
             $this->checksum
         );
-        $converted['id'] = $this->mainMapping['entityUuid'];
-        $converted['languageId'] = $languageMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
+        $converted['languageId'] = $languageMapping['entityId'];
         $converted['hash'] = $data['subscriber_confirm_code'];
 
         $salesChannelMapping = $this->getSalesChannelMapping($data);
@@ -78,7 +78,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
             return new ConvertStruct(null, $this->originalData);
         }
         $this->mappingIds[] = $salesChannelMapping['id'];
-        $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+        $converted['salesChannelId'] = $salesChannelMapping['entityId'];
 
         $this->convertValue($converted, 'email', $data, 'subscriber_email');
 

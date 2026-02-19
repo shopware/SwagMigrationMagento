@@ -164,10 +164,10 @@ abstract class OrderConverter extends MagentoConverter
             $this->checksum
         );
 
-        \assert(isset($this->mainMapping['entityUuid']));
+        \assert(isset($this->mainMapping['entityId']));
 
         $converted = [];
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['orders']['entity_id']);
         $this->uuid = $converted['id'];
 
@@ -289,7 +289,7 @@ abstract class OrderConverter extends MagentoConverter
         }
         $this->mappingIds[] = $salutationMapping['id'];
 
-        return $salutationMapping['entityUuid'];
+        return $salutationMapping['entityId'];
     }
 
     protected function getTaxRules(array $originalData): TaxRuleCollection
@@ -339,7 +339,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->mappingIds[] = $mapping['id'];
 
             $lineItem = [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
             ];
 
             $this->convertValue($lineItem, 'identifier', $originalLineItem, 'sku', self::TYPE_STRING, false);
@@ -353,9 +353,9 @@ abstract class OrderConverter extends MagentoConverter
                 );
 
                 if ($mapping !== null) {
-                    $lineItem['referencedId'] = $mapping['entityUuid'];
-                    $lineItem['productId'] = $mapping['entityUuid'];
-                    $lineItem['identifier'] = $mapping['entityUuid'];
+                    $lineItem['referencedId'] = $mapping['entityId'];
+                    $lineItem['productId'] = $mapping['entityId'];
+                    $lineItem['identifier'] = $mapping['entityId'];
                     $lineItem['payload']['productNumber'] = $originalLineItem['sku'] ?? '';
                 }
 
@@ -438,7 +438,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->mappingIds[] = $mapping['id'];
 
             $delivery = [];
-            $delivery['id'] = $mapping['entityUuid'];
+            $delivery['id'] = $mapping['entityId'];
 
             $deliveryStateMapping = $this->mappingService->getMapping(
                 $this->connectionId,

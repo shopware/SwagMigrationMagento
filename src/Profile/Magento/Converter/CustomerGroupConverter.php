@@ -42,7 +42,7 @@ abstract class CustomerGroupConverter extends MagentoConverter
         );
 
         $converted = [];
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['customer_group_id'], $data['tax_class_id']);
 
         $this->convertValue($converted, 'name', $data, 'customer_group_code');

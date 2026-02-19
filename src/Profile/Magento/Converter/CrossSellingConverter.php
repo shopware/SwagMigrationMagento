@@ -51,7 +51,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         $converted = [];
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         $sourceProductMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -109,12 +109,12 @@ abstract class CrossSellingConverter extends MagentoConverter
 
         $converted['type'] = 'productList';
         $converted['active'] = true;
-        $converted['productId'] = $sourceProductMapping['entityUuid'];
+        $converted['productId'] = $sourceProductMapping['entityId'];
         $converted['assignedProducts'] = [
             [
-                'id' => $relationMapping['entityUuid'],
+                'id' => $relationMapping['entityId'],
                 'position' => $data['position'],
-                'productId' => $relatedProductMapping['entityUuid'],
+                'productId' => $relatedProductMapping['entityId'],
             ],
         ];
 
