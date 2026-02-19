@@ -20,8 +20,6 @@ class MigrationMagentoException extends HttpException
 
     public const MEDIA_FILE_SIZE_ERROR = 'SWAG_MIGRATION_MAGENTO__MEDIA_FILE_SIZE_ERROR';
 
-    public const MEDIA_MIME_TYPE_ERROR = 'SWAG_MIGRATION_MAGENTO__MEDIA_MIME_TYPE_ERROR';
-
     public static function incorrectTablePrefix(string $prefix): self
     {
         return new self(

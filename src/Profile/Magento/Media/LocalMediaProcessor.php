@@ -15,6 +15,7 @@ use GuzzleHttp\Psr7\Response;
 use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Content\Media\File\MediaFile;
 use Shopware\Core\Content\Media\MediaCollection;
+use Shopware\Core\Content\Media\MediaDefinition;
 use Shopware\Core\Content\Media\MediaException;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -25,8 +26,10 @@ use Swag\MigrationMagento\Migration\Logging\FileHandleErrorLog;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\CannotGetFileRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
+use SwagMigrationAssistant\Migration\Logging\Log\MediaTemporaryFileFailedLog;
 use SwagMigrationAssistant\Migration\Logging\Log\MimeTypeErrorLog;
 use SwagMigrationAssistant\Migration\Logging\Log\TemporaryFileErrorLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
@@ -445,11 +448,18 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
             if ($fileHandle === false) {
                 $failureUuids[] = $uuid;
                 $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
-                $this->loggingService->addLogEntry(new FileHandleErrorLog(
-                    $mappedWorkload[$uuid]->getRunId(),
-                    DefaultEntities::MEDIA,
-                    $uuid
-                ));
+
+                $this->loggingService->log(
+                    MigrationLogBuilder::fromMigrationContext($migrationContext)
+                        ->withEntityName(MediaDefinition::ENTITY_NAME)
+                        ->withSourceData([
+                            'media_id' => $uuid,
+                            'source_path' => $filePath,
+                            'media' => $media,
+                        ])
+                        ->withEntityId($uuid)
+                        ->build(MediaTemporaryFileFailedLog::class)
+                );
 
                 continue;
             }
