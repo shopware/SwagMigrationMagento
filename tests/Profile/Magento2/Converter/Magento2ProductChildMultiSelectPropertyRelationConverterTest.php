@@ -113,6 +113,7 @@ class Magento2ProductChildMultiSelectPropertyRelationConverterTest extends TestC
     {
         $data = require __DIR__ . '/../../../_fixtures/product_property_data.php';
 
+        $returnData = [];
         $returnData[] = [
             $data[0],
             true,

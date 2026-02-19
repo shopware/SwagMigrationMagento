@@ -24,7 +24,7 @@ use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
-use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
@@ -315,8 +315,9 @@ class Magento19OrderConverterTest extends TestCase
         $order['orders']['customer_id'] = '5';
 
         $context = Context::createDefaultContext();
-        $this->expectException(AssociationEntityRequiredMissingException::class);
-        $this->expectExceptionMessage('Mapping of "customer" is missing, but it is a required association for "order". Import "customer" first.');
+
+        static::expectExceptionObject(MigrationException::associationEntityRequiredMissing('order', 'customer'));
+
         $this->orderConverter->convert($order, $context, $this->migrationContext);
     }
 

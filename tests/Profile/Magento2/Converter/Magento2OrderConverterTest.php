@@ -379,7 +379,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertSame($order['orders']['customer_salutation'], $logs[0]['parameters']['sourceId']);
         static::assertSame($order['orders']['entity_id'], $logs[0]['parameters']['requiredForSourceId']);
 
-        $this->loggingService->resetLogging();
+        $this->loggingService->reset();
         unset($order['orders']['customer_salutation']);
         $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
 

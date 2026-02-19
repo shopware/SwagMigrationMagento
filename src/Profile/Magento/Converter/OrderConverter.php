@@ -29,7 +29,6 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
-use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -530,7 +529,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->mappingIds[] = $shippingMethodMapping['id'];
         }
 
-        return $shippingMethodMapping['entityId'];
+        return $shippingMethodMapping['entityId'] ?? null;
     }
 
     protected function getAddress(array $originalData, string $entityName = DefaultEntities::ORDER_ADDRESS): array
@@ -710,9 +709,6 @@ abstract class OrderConverter extends MagentoConverter
         return $paymentMethodMapping['entityId'];
     }
 
-    /**
-     * @throws AssociationEntityRequiredMissingException
-     */
     protected function convertOrderCustomer(array &$converted, array &$data): bool
     {
         $guestOrder = false;

@@ -170,6 +170,8 @@ abstract class CustomerConverter extends MagentoConverter
         /*
          * Set salutation
          */
+        $salutationUuid = null;
+
         if (isset($data['gender'])) {
             $salutationUuid = $this->getSalutation($data['gender'], $migrationContext);
         } else {

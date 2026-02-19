@@ -60,6 +60,8 @@ abstract class PropertyGroupReader extends AbstractReader
             $groups[] = $group;
         }
 
+        unset($group);
+
         $optionTranslations = $this->fetchOptionTranslations($optionIds);
 
         foreach ($groups as &$group) {
@@ -77,7 +79,11 @@ abstract class PropertyGroupReader extends AbstractReader
                     }
                 }
             }
+
+            unset($option);
         }
+
+        unset($group);
 
         return $this->utf8ize($groups);
     }

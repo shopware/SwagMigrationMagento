@@ -84,12 +84,16 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function addTableSelection(QueryBuilder $query, string $table, string $tableAlias): void
     {
-        $columns = $this->connection->createSchemaManager()->listTableColumns($table);
+        if ($table === '') {
+            return;
+        }
 
-        foreach ($columns as $column) {
+        $table = $this->connection->createSchemaManager()->introspectTableByUnquotedName($table);
+
+        foreach ($table->getColumns() as $column) {
             $selection = \str_replace(
                 ['#tableAlias#', '#column#'],
-                [$tableAlias, $column->getName()],
+                [$tableAlias, $column->getObjectName()->toString()],
                 '`#tableAlias#`.`#column#` AS `#tableAlias#.#column#`'
             );
 

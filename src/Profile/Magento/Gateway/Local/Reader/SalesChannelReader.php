@@ -139,23 +139,9 @@ SQL;
             return [];
         }
 
-        if (!isset($defaults['defaultAllowedCurrencies'])) {
-            $defaults['defaultAllowedCurrencies'] = '';
-        }
-        if ($defaults['defaultAllowedCurrencies'] === null) {
-            $defaults['defaultAllowedCurrencies'] = '';
-        }
-        $defaults['defaultAllowedCurrencies'] = \explode(',', $defaults['defaultAllowedCurrencies']);
-
-        if ($defaults['defaultAllowedCountries'] === null) {
-            $defaults['defaultAllowedCountries'] = '';
-        }
-        $defaults['defaultAllowedCountries'] = \explode(',', $defaults['defaultAllowedCountries']);
-
-        if ($defaults['defaultLocale'] === null) {
-            $defaults['defaultLocale'] = '';
-        }
-        $defaults['defaultLocale'] = \str_replace('_', '-', $defaults['defaultLocale']);
+        $defaults['defaultAllowedCurrencies'] = \explode(',', (string) ($defaults['defaultAllowedCurrencies'] ?? ''));
+        $defaults['defaultAllowedCountries'] = \explode(',', (string) ($defaults['defaultAllowedCountries'] ?? ''));
+        $defaults['defaultLocale'] = \str_replace('_', '-', (string) ($defaults['defaultLocale'] ?? ''));
 
         return $defaults;
     }

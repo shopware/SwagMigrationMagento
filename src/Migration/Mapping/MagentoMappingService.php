@@ -19,6 +19,8 @@ use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Tax\TaxCollection;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
+use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingCollection;
+use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingEntity;
 
 #[Package('fundamentals@after-sales')]
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
@@ -27,6 +29,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
      * @internal
      *
      * @param EntityRepository<TaxCollection> $taxRepo
+     * @param EntityRepository<SwagMigrationMappingCollection> $migrationMappingRepo
      */
     public function __construct(
         protected EntityRepository $migrationMappingRepo,
@@ -76,6 +79,9 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         );
     }
 
+    /**
+     * @return list<string>
+     */
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array
     {
         $cacheKey = $entityName . $identifier;
@@ -88,13 +94,21 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         $criteria->addFilter(new EqualsFilter('entity', $entityName));
         $criteria->addFilter(new EqualsFilter('oldIdentifier', $identifier));
 
-        $result = $this->migrationMappingRepo->search($criteria, $context);
-
+        $result = $this->migrationMappingRepo->search($criteria, $context)->getElements();
         $uuidList = [];
-        if ($result->getTotal() > 0) {
-            foreach ($result->getEntities() as $entity) {
-                $uuidList[] = $entity->getEntityId();
+
+        foreach ($result as $entity) {
+            if (!$entity instanceof SwagMigrationMappingEntity) {
+                continue;
             }
+
+            $entityId = $entity->getEntityId();
+
+            if ($entityId === null) {
+                continue;
+            }
+
+            $uuidList[] = $entityId;
         }
 
         $this->mappings[$cacheKey] = $uuidList;

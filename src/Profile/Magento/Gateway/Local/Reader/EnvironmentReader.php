@@ -27,6 +27,9 @@ class EnvironmentReader extends AbstractReader implements EnvironmentReaderInter
             );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);

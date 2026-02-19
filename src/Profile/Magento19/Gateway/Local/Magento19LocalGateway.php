@@ -112,7 +112,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
             $environmentData['defaultCurrency'] = $targetSystemCurrency->getIsoCode();
         }
 
-        $totals = $this->readTotals($migrationContext, $context);
+        $totals = $this->readTotals($migrationContext);
 
         return new EnvironmentInformation(
             $profile->getSourceSystemName(),

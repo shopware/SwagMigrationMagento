@@ -15,13 +15,21 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
 abstract class SeoUrlConverter extends MagentoConverter
 {
+    /**
+     * @phpstan-ignore shopware.storefrontRouteUsage
+     */
     protected const ROUTE_NAME_NAVIGATION = 'frontend.navigation.page';
+
+    /**
+     * @phpstan-ignore shopware.storefrontRouteUsage
+     */
     protected const ROUTE_NAME_PRODUCT = 'frontend.detail.page';
 
     protected string $connectionId;
@@ -37,10 +45,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         $this->originalData = $data;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -121,6 +126,18 @@ abstract class SeoUrlConverter extends MagentoConverter
                     ->withSourceData($data)
                     ->withConvertedData($converted)
                     ->build(ConvertObjectTypeUnsupportedLog::class)
+            );
+
+            return new ConvertStruct(null, $this->originalData);
+        }
+
+        if (!isset($converted['languageId'], $converted['salesChannelId'], $converted['foreignKey'], $converted['routeName'])) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertEntityUnknownLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);

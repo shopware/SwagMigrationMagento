@@ -27,7 +27,6 @@ use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\TaxLookup;
-use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -43,8 +42,6 @@ abstract class ProductConverter extends MagentoConverter
     protected string $runUuid;
 
     protected string $oldIdentifier;
-
-    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
 
     private bool $priceIsGross;
 
@@ -113,7 +110,7 @@ abstract class ProductConverter extends MagentoConverter
         /*
          * Set tax
          */
-        if (!$this->setTax($data['tax_class_id'], $converted)) {
+        if (isset($data['tax_class_id']) && !$this->setTax($data['tax_class_id'], $converted)) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(ProductDefinition::ENTITY_NAME)
@@ -131,7 +128,10 @@ abstract class ProductConverter extends MagentoConverter
 
         $this->priceIsGross = $data['priceIsGross'];
         unset($data['priceIsGross']);
-        $converted['price'] = $this->getPrice($data, $converted);
+
+        if (isset($data['price'])) {
+            $converted['price'] = $this->getPrice($data, $converted);
+        }
 
         if (empty($converted['price'])) {
             $this->loggingService->log(
@@ -425,9 +425,9 @@ abstract class ProductConverter extends MagentoConverter
         $converted['manufacturerId'] = $mapping['entityId'];
     }
 
-    protected function setTax(string $taxClassId, array &$converted): bool
+    protected function setTax(?string $taxClassId, array &$converted): bool
     {
-        if (!isset($data['tax_class_id'])) {
+        if ($taxClassId === null) {
             return false;
         }
 
@@ -468,16 +468,13 @@ abstract class ProductConverter extends MagentoConverter
 
     protected function getPrice(array $priceData, array $converted): array
     {
-        if (!isset($data['price'])) {
-            return [];
-        }
+        $taxRate = 0.0;
 
-        $taxRate = 0;
         if (isset($converted['taxId'])) {
             $taxRate = $this->taxLookup->getTaxRate(
                 $converted['taxId'],
                 $this->context
-            );
+            ) ?? 0.0;
         }
 
         $currencyMapping = $this->mappingService->getMapping(
@@ -493,7 +490,7 @@ abstract class ProductConverter extends MagentoConverter
         $currencyUuid = $currencyMapping['entityId'];
         $this->mappingIds[] = $currencyMapping['id'];
 
-        if ($this->priceIsGross === true) {
+        if ($this->priceIsGross) {
             $netPrice = \round((float) $priceData['price'] / (1 + $taxRate / 100), $this->context->getRounding()->getDecimals());
             $grossPrice = (float) $priceData['price'];
         } else {
@@ -518,7 +515,8 @@ abstract class ProductConverter extends MagentoConverter
 
         if (isset($priceData['special_price']) && ((float) $priceData['special_price']) > 0) {
             $specialPrice = (float) $priceData['special_price'];
-            if ($this->priceIsGross === true) {
+
+            if ($this->priceIsGross) {
                 $specialPriceNet = \round($specialPrice / (1 + $taxRate / 100), $this->context->getRounding()->getDecimals());
                 $specialPriceGross = $specialPrice;
             } else {
@@ -550,6 +548,8 @@ abstract class ProductConverter extends MagentoConverter
                 $price['toQty'] = ((int) $prices[$key + 1]['qty']) - 1;
             }
         }
+
+        unset($price);
 
         $newData = [];
         foreach ($prices as $price) {

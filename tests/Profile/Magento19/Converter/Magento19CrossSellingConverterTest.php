@@ -160,7 +160,7 @@ class Magento19CrossSellingConverterTest extends TestCase
         static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
         static::assertSame('99', $logs[0]['parameters']['sourceId']);
 
-        $this->loggingService->resetLogging();
+        $this->loggingService->reset();
         $data[0]['linked_product_id'] = '80';
         $convertResult = $this->crossSellingConverter->convert($data[0], $context, $this->migrationContext);
 
