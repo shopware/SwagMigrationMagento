@@ -130,7 +130,7 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
         );
     }
 
-    public function readTotals(MigrationContextInterface $migrationContext, Context $context): array
+    public function readTotals(MigrationContextInterface $migrationContext): array
     {
         $readers = $this->readerRegistry->getReaderForTotal($migrationContext);
 

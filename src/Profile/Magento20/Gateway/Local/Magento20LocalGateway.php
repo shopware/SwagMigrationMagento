@@ -10,13 +10,13 @@ namespace Swag\MigrationMagento\Profile\Magento20\Gateway\Local;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Magento2LocalGateway;
 use Swag\MigrationMagento\Profile\Magento20\Magento20Profile;
-use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\Profile\ProfileInterface;
 
 #[Package('fundamentals@after-sales')]
 class Magento20LocalGateway extends Magento2LocalGateway
 {
-    public function supports(MigrationContextInterface $migrationContext): bool
+    public function supports(ProfileInterface $profile): bool
     {
-        return $migrationContext->getProfile() instanceof Magento20Profile;
+        return $profile instanceof Magento20Profile;
     }
 }
