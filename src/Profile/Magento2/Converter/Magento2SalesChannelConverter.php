@@ -62,10 +62,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
         $connection = $migrationContext->getConnection();
         $converted = [];
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $defaultCustomerGroupId = $this->mappingService->getValue(
             $this->connectionId,

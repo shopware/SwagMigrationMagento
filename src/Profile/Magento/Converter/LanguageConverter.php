@@ -57,10 +57,7 @@ abstract class LanguageConverter extends MagentoConverter
         $this->context = $context;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $languageUuid = $this->languageLookup->get($this->oldIdentifier, $context);
         if ($languageUuid !== null) {

@@ -143,9 +143,6 @@ abstract class MagentoConverter extends Converter
     protected function getTranslations(array $translations, array $defaultEntities, Context $context, ?int $attributeSetId = null): array
     {
         $connection = $this->migrationContext->getConnection();
-        if ($connection === null) {
-            return [];
-        }
 
         $localeTranslation = [];
         foreach ($translations as $store => $translationValues) {

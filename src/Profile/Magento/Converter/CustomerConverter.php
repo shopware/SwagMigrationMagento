@@ -111,10 +111,7 @@ abstract class CustomerConverter extends MagentoConverter
         unset($data['entity_id']);
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         /*
          * Set main mapping

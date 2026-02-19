@@ -28,9 +28,6 @@ class LocalTableReader implements TableReaderInterface
     public function read(MigrationContextInterface $migrationContext, string $tableName, array $filter = []): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($connection === null) {
-            return [];
-        }
 
         $query = $connection->createQueryBuilder();
         $query->select('*');

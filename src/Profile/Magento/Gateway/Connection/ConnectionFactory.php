@@ -21,11 +21,6 @@ class ConnectionFactory implements ConnectionFactoryInterface
     public function createDatabaseConnection(MigrationContextInterface $migrationContext): ?Connection
     {
         $connection = $migrationContext->getConnection();
-
-        if ($connection === null) {
-            return null;
-        }
-
         $credentials = $connection->getCredentialFields();
 
         if ($credentials === null) {

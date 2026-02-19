@@ -187,9 +187,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     protected function getInstallationRoot(MigrationContextInterface $migrationContext): string
     {
         $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return '';
-        }
 
         $credentials = $connection->getCredentialFields();
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
@@ -402,9 +399,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
     private function getShopUrl(MigrationContextInterface $migrationContext): string
     {
         $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return '';
-        }
 
         $credentials = $connection->getCredentialFields();
         if (!isset($credentials['shopUrl'])) {

@@ -50,11 +50,8 @@ class EnvironmentReader implements EnvironmentReaderInterface
     protected function setConnection(MigrationContextInterface $migrationContext): void
     {
         $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return;
-        }
-
         $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+
         if ($dbConnection === null) {
             return;
         }

@@ -87,10 +87,7 @@ abstract class CategoryConverter extends MagentoConverter
         $this->context = $context;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         // Ignore the magento root category
         if (isset($data['parent_id']) && $data['parent_id'] === '0') {

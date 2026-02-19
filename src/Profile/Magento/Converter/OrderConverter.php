@@ -140,10 +140,7 @@ abstract class OrderConverter extends MagentoConverter
         $this->oldIdentifier = $data['orders']['entity_id'];
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         if (!$this->oldIdentifier) {
             $this->loggingService->log(new EmptyNecessaryFieldRunLog(

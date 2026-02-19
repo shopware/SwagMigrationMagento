@@ -55,10 +55,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $this->oldIdentifier = $data['id'];
         $defaultLanguage = $this->languageLookup->getLanguageEntity($this->context);
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         if (!isset($data['name'])) {
             $this->loggingService->log(new EmptyNecessaryFieldRunLog(

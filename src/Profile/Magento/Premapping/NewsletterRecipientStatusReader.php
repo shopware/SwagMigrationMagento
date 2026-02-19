@@ -56,11 +56,8 @@ abstract class NewsletterRecipientStatusReader extends AbstractPremappingReader
             'default_newsletter_recipient_status' => 'Standard newsletter status',
         ];
 
-        if ($connection === null) {
-            return $mapping;
-        }
-
         $connectionPremapping = $connection->getPremapping();
+
         if ($connectionPremapping === null) {
             foreach ($choices as $key => $choice) {
                 $mapping[] = new PremappingEntityStruct((string) $key, $choice, '');

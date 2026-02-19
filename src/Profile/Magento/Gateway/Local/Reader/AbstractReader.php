@@ -53,17 +53,15 @@ abstract class AbstractReader implements ReaderInterface
         }
 
         $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return;
-        }
-
         $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+
         if ($dbConnection === null) {
             return;
         }
 
         $this->connection = $dbConnection;
         $credentials = $connection->getCredentialFields();
+
         if (isset($credentials['tablePrefix'])) {
             $this->tablePrefix = (string) $credentials['tablePrefix'];
         }

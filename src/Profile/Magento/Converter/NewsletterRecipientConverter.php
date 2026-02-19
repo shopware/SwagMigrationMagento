@@ -41,10 +41,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         $this->originalData = $data;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $converted = [];
         $languageMapping = $this->mappingService->getMapping(

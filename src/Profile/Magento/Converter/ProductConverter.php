@@ -98,10 +98,7 @@ abstract class ProductConverter extends MagentoConverter
         $converted = [];
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         /*
          * Set manufacturer
