@@ -66,7 +66,7 @@ abstract class CustomFieldConverter extends Converter
         );
 
         if ($defaultLocale === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
                     DefaultEntities::LOCALE,

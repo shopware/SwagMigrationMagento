@@ -115,7 +115,7 @@ abstract class ProductConverter extends MagentoConverter
          * Throw error if no tax class is found
          */
         if (!isset($data['tax_class_id'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new EmptyNecessaryFieldRunLog(
                     $this->runUuid,
                     DefaultEntities::PRODUCT,
@@ -131,7 +131,7 @@ abstract class ProductConverter extends MagentoConverter
          * Set tax
          */
         if (!$this->setTax($data['tax_class_id'], $converted)) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new UnknownEntityLog(
                     $this->runUuid,
                     DefaultEntities::TAX,
@@ -146,7 +146,7 @@ abstract class ProductConverter extends MagentoConverter
         unset($data['tax_class_id']);
 
         if (!isset($data['price'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new EmptyNecessaryFieldRunLog(
                     $this->runUuid,
                     DefaultEntities::PRODUCT,
@@ -162,7 +162,7 @@ abstract class ProductConverter extends MagentoConverter
         $converted['price'] = $this->getPrice($data, $converted);
 
         if (empty($converted['price'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $this->runUuid,
                 DefaultEntities::PRODUCT,
                 $this->oldIdentifier,

@@ -59,7 +59,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
                     DefaultEntities::SALES_CHANNEL,
@@ -81,7 +81,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
                     MagentoDefaultEntities::STORE_LANGUAGE,
@@ -111,7 +111,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             );
 
             if ($mapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new AssociationRequiredMissingLog(
                         $migrationContext->getRunUuid(),
                         DefaultEntities::PRODUCT,
@@ -135,7 +135,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             );
 
             if ($mapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new AssociationRequiredMissingLog(
                         $migrationContext->getRunUuid(),
                         DefaultEntities::CATEGORY,
@@ -153,7 +153,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             $converted['pathInfo'] = '/navigation/' . $mapping['entityUuid'];
             $this->mappingIds[] = $mapping['id'];
         } else {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new EmptyNecessaryFieldRunLog(
                     $migrationContext->getRunUuid(),
                     DefaultEntities::SEO_URL,

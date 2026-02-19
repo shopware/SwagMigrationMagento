@@ -41,7 +41,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::SALES_CHANNEL,
                 $data['group_id'],
@@ -87,7 +87,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         }
 
         if (!isset($converted['customerGroupId'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::CUSTOMER_GROUP,
@@ -215,7 +215,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($languageMapping === null || !isset($languageMapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new AssociationRequiredMissingLog(
                         $this->runId,
                         DefaultEntities::LANGUAGE,
@@ -275,7 +275,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($currencyMapping === null || !isset($currencyMapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new AssociationRequiredMissingLog(
                         $this->runId,
                         DefaultEntities::CURRENCY,
@@ -307,7 +307,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         );
 
         if ($categoryMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::CATEGORY,
@@ -356,7 +356,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($countryMapping === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new AssociationRequiredMissingLog(
                         $this->runId,
                         DefaultEntities::COUNTRY,
@@ -390,7 +390,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($paymentMethodMapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::SALES_CHANNEL,
                     $this->oldIdentifier,
@@ -421,7 +421,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($shippingMethodMapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::SALES_CHANNEL,
                     $this->oldIdentifier,

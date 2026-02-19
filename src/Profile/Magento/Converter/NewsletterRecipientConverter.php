@@ -55,7 +55,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+            $this->loggingService->log(new AssociationRequiredMissingLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::LANGUAGE,
                 $data['store_id'],
@@ -129,7 +129,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         );
 
         if ($salesChannelMapping === null) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $this->runId,
                 DefaultEntities::NEWSLETTER_RECIPIENT,
                 $data['subscriber_id'],
@@ -159,7 +159,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         }
 
         if ($status === null) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $this->runId,
                 DefaultEntities::NEWSLETTER_RECIPIENT,
                 $data['subscriber_id'],

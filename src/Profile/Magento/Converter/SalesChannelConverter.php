@@ -74,7 +74,7 @@ abstract class SalesChannelConverter extends MagentoConverter
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::SALES_CHANNEL,
                 $data['group_id'],
@@ -118,7 +118,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         }
 
         if (!isset($converted['customerGroupId'])) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::CUSTOMER_GROUP,
@@ -179,7 +179,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         if ($languageUuid === null) {
             $defaultLanguage = $this->languageLookup->getLanguageEntity($context);
             if ($defaultLanguage === null) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new AssociationRequiredMissingLog(
                         $this->runId,
                         DefaultEntities::LANGUAGE,
@@ -191,7 +191,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 return new ConvertStruct(null, $this->originalData);
             }
 
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new FieldReassignedRunLog(
                     $this->runId,
                     DefaultEntities::SALES_CHANNEL,
@@ -234,7 +234,7 @@ abstract class SalesChannelConverter extends MagentoConverter
          */
         $currencyUuid = $this->currencyLookup->get($data['defaultCurrency'], $context);
         if ($currencyUuid === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new FieldReassignedRunLog(
                     $this->runId,
                     DefaultEntities::SALES_CHANNEL,
@@ -265,7 +265,7 @@ abstract class SalesChannelConverter extends MagentoConverter
         }
 
         if ($categoryMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::CATEGORY,
@@ -286,7 +286,7 @@ abstract class SalesChannelConverter extends MagentoConverter
          */
         $countryUuid = $this->getCountryUuid($data['defaultCountry'], $context);
         if ($countryUuid === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $this->runId,
                     DefaultEntities::COUNTRY,
@@ -314,7 +314,7 @@ abstract class SalesChannelConverter extends MagentoConverter
             );
 
             if (empty($defaultPaymentMethod)) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::SALES_CHANNEL,
                     $this->oldIdentifier,
@@ -334,7 +334,7 @@ abstract class SalesChannelConverter extends MagentoConverter
          */
         $converted['shippingMethods'] = $this->getShippingMethods($data, $context);
         if (empty($converted['shippingMethods'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $this->runId,
                 DefaultEntities::SALES_CHANNEL,
                 $this->oldIdentifier,
@@ -454,7 +454,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 );
 
                 if ($mapping === null) {
-                    $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                    $this->loggingService->log(new AssociationRequiredMissingLog(
                         $this->runId,
                         PaymentMethodReader::getMappingName(),
                         $payment['payment_id'],
@@ -502,7 +502,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 );
 
                 if ($mapping === null) {
-                    $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+                    $this->loggingService->log(new AssociationRequiredMissingLog(
                         $this->runId,
                         ShippingMethodReader::getMappingName(),
                         $payment['carrier_id'],

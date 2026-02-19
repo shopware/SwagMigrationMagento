@@ -64,7 +64,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($sourceProductMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+            $this->loggingService->log(new AssociationRequiredMissingLog(
                 $this->runId,
                 DefaultEntities::PRODUCT,
                 $data['sourceProductId'],
@@ -83,7 +83,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($relatedProductMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
+            $this->loggingService->log(new AssociationRequiredMissingLog(
                 $this->runId,
                 DefaultEntities::PRODUCT,
                 $data['linked_product_id'],

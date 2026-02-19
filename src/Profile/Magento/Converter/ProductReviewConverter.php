@@ -58,7 +58,7 @@ abstract class ProductReviewConverter extends MagentoConverter
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
                     DefaultEntities::PRODUCT,
@@ -96,7 +96,7 @@ abstract class ProductReviewConverter extends MagentoConverter
         );
 
         if ($mapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
                     DefaultEntities::SALES_CHANNEL,
@@ -118,7 +118,7 @@ abstract class ProductReviewConverter extends MagentoConverter
         );
 
         if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(
+            $this->loggingService->log(
                 new AssociationRequiredMissingLog(
                     $migrationContext->getRunUuid(),
                     MagentoDefaultEntities::STORE_LANGUAGE,

@@ -34,7 +34,7 @@ abstract class Magento2CustomerConverter extends CustomerConverter
             $converted['legacyEncoder'] = Magento2Argon2Id13Encoder::NAME;
 
             if (!\defined('SODIUM_CRYPTO_PWHASH_ALG_ARGON2ID13') || !\extension_loaded('sodium')) {
-                $this->loggingService->addLogEntry(
+                $this->loggingService->log(
                     new ExceptionRunLog(
                         $this->runId,
                         DefaultEntities::CUSTOMER,

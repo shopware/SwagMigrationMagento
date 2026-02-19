@@ -61,7 +61,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         }
 
         if (!isset($data['name'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $this->runId,
                 DefaultEntities::PROPERTY_GROUP,
                 $this->oldIdentifier,
@@ -85,7 +85,7 @@ abstract class PropertyGroupConverter extends MagentoConverter
         ];
 
         if (!isset($data['options'])) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $this->runId,
                 DefaultEntities::PROPERTY_GROUP,
                 $this->oldIdentifier,

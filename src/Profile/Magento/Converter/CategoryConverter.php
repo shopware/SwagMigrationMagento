@@ -108,7 +108,7 @@ abstract class CategoryConverter extends MagentoConverter
 
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                 $migrationContext->getRunUuid(),
                 DefaultEntities::CATEGORY,
                 $data['entity_id'],

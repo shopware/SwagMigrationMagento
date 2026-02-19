@@ -75,7 +75,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($mapping === null || !isset($mapping['entityUuid'])) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,
                     $this->oldIdentifier,
@@ -102,7 +102,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerGroupMapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,
                     $this->oldIdentifier,
@@ -119,7 +119,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
             if ($languageMapping === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,
                     $this->oldIdentifier,
@@ -131,7 +131,7 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             $paymentMethodUuid = $this->getPaymentMethod($data);
             if ($paymentMethodUuid === null) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,
                     $this->oldIdentifier,
@@ -151,7 +151,7 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             if (empty($billingAddress)) {
-                $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
+                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
                     $this->runId,
                     DefaultEntities::ORDER,
                     $this->oldIdentifier,
