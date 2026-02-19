@@ -130,7 +130,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertCount(5, $converted['shippingMethods']);
         static::assertNotNull($convertResult->getMappingUuid());
         static::assertNotNull($salesChannelMapping);
-        static::assertSame($salesChannelMapping['entityUuid'], $converted['id']);
+        static::assertSame($salesChannelMapping['entityId'], $converted['id']);
     }
 
     public function testConvertWithoutDefaultLanguage(): void

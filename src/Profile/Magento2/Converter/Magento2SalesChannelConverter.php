@@ -71,7 +71,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $context
             );
             if ($mapping !== null) {
-                $converted['customerGroupId'] = $mapping['entityUuid'];
+                $converted['customerGroupId'] = $mapping['entityId'];
             }
         }
 
@@ -86,7 +86,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $this->checksum
         );
 
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['group_id']);
 
         $this->setStores($data, $converted);
@@ -190,12 +190,12 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $this->context
             );
 
-            if ($languageMapping === null || !isset($languageMapping['entityUuid'])) {
+            if ($languageMapping === null || !isset($languageMapping['entityId'])) {
                 return null;
             }
 
             $this->mappingIds[] = $languageMapping['id'];
-            $languageUuid = $languageMapping['entityUuid'];
+            $languageUuid = $languageMapping['entityId'];
         }
 
         $this->mappingService->getOrCreateMapping(
@@ -241,12 +241,12 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $this->context
             );
 
-            if ($currencyMapping === null || !isset($currencyMapping['entityUuid'])) {
+            if ($currencyMapping === null || !isset($currencyMapping['entityId'])) {
                 return null;
             }
 
             $this->mappingIds[] = $currencyMapping['id'];
-            $currencyUuid = $currencyMapping['entityUuid'];
+            $currencyUuid = $currencyMapping['entityId'];
         }
 
         $converted['currencyId'] = $currencyUuid;
@@ -269,7 +269,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             return null;
         }
 
-        $categoryUuid = $categoryMapping['entityUuid'];
+        $categoryUuid = $categoryMapping['entityId'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
         unset($data['root_category_id']);
@@ -283,7 +283,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         if (!empty($data['defaultCountry'])) {
             $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $data['defaultCountry'], $this->context);
             if ($countryMapping !== null) {
-                $countryUuid = $countryMapping['entityUuid'];
+                $countryUuid = $countryMapping['entityId'];
             } else {
                 $countryUuid = $this->countryLookup->getByIso2($data['defaultCountry'], $this->context);
 
@@ -311,7 +311,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             }
 
             $this->mappingIds[] = $countryMapping['id'];
-            $countryUuid = $countryMapping['entityUuid'];
+            $countryUuid = $countryMapping['entityId'];
         }
 
         $converted['countryId'] = $countryUuid;
@@ -337,7 +337,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             }
 
             $this->mappingIds[] = $paymentMethodMapping['id'];
-            $converted['paymentMethods'][0]['id'] = $paymentMethodMapping['entityUuid'];
+            $converted['paymentMethods'][0]['id'] = $paymentMethodMapping['entityId'];
         }
 
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
@@ -362,7 +362,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             }
 
             $this->mappingIds[] = $shippingMethodMapping['id'];
-            $converted['shippingMethods'][0]['id'] = $shippingMethodMapping['entityUuid'];
+            $converted['shippingMethods'][0]['id'] = $shippingMethodMapping['entityId'];
         }
 
         $converted['shippingMethodId'] = $converted['shippingMethods'][0]['id'];

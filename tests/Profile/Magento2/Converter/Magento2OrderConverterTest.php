@@ -282,7 +282,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertInstanceOf(CartPrice::class, $price);
         static::assertSame(\round((float) $orderData[0]['orders']['subtotal'] + (float) $orderData[0]['orders']['shipping_amount'], 2), $price->getNetPrice());
         static::assertSame(\round((float) $orderData[0]['orders']['grand_total'], 2), $price->getTotalPrice());
-        static::assertSame($deliveryStateMapping['entityUuid'], $converted['deliveries'][0]['stateId']);
+        static::assertSame($deliveryStateMapping['entityId'], $converted['deliveries'][0]['stateId']);
         static::assertSame($this->shippingMethod, $converted['deliveries'][0]['shippingMethodId']);
         static::assertNotNull($converted['itemRounding']);
         static::assertNotNull($converted['totalRounding']);
@@ -330,7 +330,7 @@ class Magento2OrderConverterTest extends TestCase
 
         static::assertNotNull($convertResult->getConverted());
         static::assertNull($convertResult->getUnmapped());
-        static::assertSame($this->shippedDeliveryState['entityUuid'], $convertResult->getConverted()['deliveries'][0]['stateId']);
+        static::assertSame($this->shippedDeliveryState['entityId'], $convertResult->getConverted()['deliveries'][0]['stateId']);
         static::assertSame($this->shippingMethod, $convertResult->getConverted()['deliveries'][0]['shippingMethodId']);
     }
 
@@ -338,7 +338,7 @@ class Magento2OrderConverterTest extends TestCase
     {
         $context = Context::createDefaultContext();
 
-        $this->mappingService->deleteMapping($this->shippedDeliveryState['entityUuid'], $this->connection->getId(), $context);
+        $this->mappingService->deleteMapping($this->shippedDeliveryState['entityId'], $this->connection->getId(), $context);
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
         $convertResult = $this->orderConverter->convert($orderData[1], $context, $this->migrationContext);
 

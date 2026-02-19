@@ -39,7 +39,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                 );
             }
             $converted['orderCustomer'] = [
-                'customerId' => $customerMapping['entityUuid'],
+                'customerId' => $customerMapping['entityId'],
             ];
             $this->mappingIds[] = $customerMapping['id'];
             unset($customerMapping);
@@ -71,9 +71,9 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
 
-            if ($mapping !== null && isset($mapping['entityUuid'])) {
+            if ($mapping !== null && isset($mapping['entityId'])) {
                 $this->mappingIds[] = $mapping['id'];
-                $this->salutationUuid = $mapping['entityUuid'];
+                $this->salutationUuid = $mapping['entityId'];
                 $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
             }
         }
@@ -91,7 +91,7 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             if ($customerGroupMapping !== null) {
                 $this->mappingIds[] = $customerGroupMapping['id'];
-                $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityUuid'];
+                $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityId'];
             }
 
             $languageMapping = $this->mappingService->getMapping(
@@ -103,7 +103,7 @@ abstract class Magento2OrderConverter extends OrderConverter
 
             if ($languageMapping !== null) {
                 $this->mappingIds[] = $languageMapping['id'];
-                $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityUuid'];
+                $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityId'];
             }
 
             $paymentMethodUuid = $this->getPaymentMethod($data);

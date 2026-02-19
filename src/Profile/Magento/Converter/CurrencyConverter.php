@@ -80,7 +80,7 @@ abstract class CurrencyConverter extends MagentoConverter
                 $currencyUuid
             );
         }
-        $currencyUuid = $this->mainMapping['entityUuid'];
+        $currencyUuid = $this->mainMapping['entityId'];
 
         $defaultCurrencyMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,

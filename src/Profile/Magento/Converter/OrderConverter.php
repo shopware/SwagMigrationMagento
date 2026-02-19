@@ -433,7 +433,7 @@ abstract class OrderConverter extends MagentoConverter
             }
 
             $this->mappingIds[] = $deliveryStateMapping['id'];
-            $delivery['stateId'] = $deliveryStateMapping['entityUuid'];
+            $delivery['stateId'] = $deliveryStateMapping['entityId'];
 
             $delivery['shippingDateEarliest'] = $converted['orderDateTime'];
             $delivery['shippingDateLatest'] = $converted['orderDateTime'];
@@ -487,8 +487,8 @@ abstract class OrderConverter extends MagentoConverter
                     $calculatedTax = $this->taxCalculator->calculateGrossTaxes($totalPrice, $taxRules);
 
                     $positions[] = [
-                        'id' => $mapping['entityUuid'],
-                        'orderLineItemId' => $lineItemMapping['entityUuid'],
+                        'id' => $mapping['entityId'],
+                        'orderLineItemId' => $lineItemMapping['entityId'],
                         'price' => new CalculatedPrice(
                             (float) $item['price'],
                             $totalPrice,
@@ -530,7 +530,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->mappingIds[] = $shippingMethodMapping['id'];
         }
 
-        return $shippingMethodMapping['entityUuid'];
+        return $shippingMethodMapping['entityId'];
     }
 
     protected function getAddress(array $originalData, string $entityName = DefaultEntities::ORDER_ADDRESS): array
@@ -548,7 +548,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->context
         );
         $this->mappingIds[] = $mapping['id'];
-        $address['id'] = $mapping['entityUuid'];
+        $address['id'] = $mapping['entityId'];
 
         if (!isset($originalData['country_id']) || !isset($originalData['country_iso2']) || !isset($originalData['country_iso3'])) {
             return [];
@@ -590,7 +590,7 @@ abstract class OrderConverter extends MagentoConverter
                 );
 
                 $address['countryState'] = [
-                    'id' => $mapping['entityUuid'],
+                    'id' => $mapping['entityId'],
                     'name' => $originalData['region'],
                     'shortCode' => $originalData['region_code'],
                     'countryId' => $countryUuid,
@@ -659,7 +659,7 @@ abstract class OrderConverter extends MagentoConverter
             $this->oldIdentifier,
             $this->context
         );
-        $id = $mapping['entityUuid'];
+        $id = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $transactions = [
@@ -707,7 +707,7 @@ abstract class OrderConverter extends MagentoConverter
 
         $this->mappingIds[] = $paymentMethodMapping['id'];
 
-        return $paymentMethodMapping['entityUuid'];
+        return $paymentMethodMapping['entityId'];
     }
 
     /**
@@ -737,7 +737,7 @@ abstract class OrderConverter extends MagentoConverter
                 );
             }
             $converted['orderCustomer'] = [
-                'customerId' => $customerMapping['entityUuid'],
+                'customerId' => $customerMapping['entityId'],
             ];
             $this->mappingIds[] = $customerMapping['id'];
             unset($customerMapping);
@@ -750,9 +750,9 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
             $converted['orderCustomer'] = [
-                'customerId' => $guestCustomerMapping['entityUuid'],
+                'customerId' => $guestCustomerMapping['entityId'],
                 'customer' => [
-                    'id' => $guestCustomerMapping['entityUuid'],
+                    'id' => $guestCustomerMapping['entityId'],
                 ],
             ];
             $this->convertValue($converted['orderCustomer']['customer'], 'email', $data['orders'], 'customer_email', self::TYPE_STRING, false);
@@ -781,9 +781,9 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($mapping !== null && isset($mapping['entityUuid'], $mapping['id'])) {
+            if ($mapping !== null && isset($mapping['entityId'], $mapping['id'])) {
                 $this->mappingIds[] = $mapping['id'];
-                $this->salutationUuid = $mapping['entityUuid'];
+                $this->salutationUuid = $mapping['entityId'];
             }
         }
 
@@ -805,7 +805,7 @@ abstract class OrderConverter extends MagentoConverter
 
             if ($customerGroupMapping !== null) {
                 $this->mappingIds[] = $customerGroupMapping['id'];
-                $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityUuid'];
+                $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityId'];
             }
 
             $languageMapping = $this->mappingService->getMapping(
@@ -826,7 +826,7 @@ abstract class OrderConverter extends MagentoConverter
 
             $this->mappingIds[] = $languageMapping['id'];
             $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
-            $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityUuid'];
+            $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityId'];
             $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
             $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
@@ -865,7 +865,7 @@ abstract class OrderConverter extends MagentoConverter
 
         if ($salesChannelMapping !== null) {
             $this->mappingIds[] = $salesChannelMapping['id'];
-            $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+            $converted['salesChannelId'] = $salesChannelMapping['entityId'];
         }
     }
 
@@ -909,7 +909,7 @@ abstract class OrderConverter extends MagentoConverter
             return false;
         }
 
-        $converted['stateId'] = $stateMapping['entityUuid'];
+        $converted['stateId'] = $stateMapping['entityId'];
         $this->mappingIds[] = $stateMapping['id'];
 
         return true;
@@ -939,11 +939,11 @@ abstract class OrderConverter extends MagentoConverter
             $taxRule = new TaxRuleCollection([new TaxRule(0.0)]);
 
             $converted['lineItems'][] = [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
                 'type' => LineItem::CREDIT_LINE_ITEM_TYPE,
                 'quantity' => 1,
                 'label' => $label,
-                'identifier' => $mapping['entityUuid'],
+                'identifier' => $mapping['entityId'],
                 'price' => new CalculatedPrice(
                     $discount,
                     $discount,
@@ -1007,7 +1007,7 @@ abstract class OrderConverter extends MagentoConverter
 
             if ($salesChannelMapping !== null) {
                 $this->mappingIds[] = $salesChannelMapping['id'];
-                $converted['salesChannelId'] = $salesChannelMapping['entityUuid'];
+                $converted['salesChannelId'] = $salesChannelMapping['entityId'];
             }
         }
     }
@@ -1061,7 +1061,7 @@ abstract class OrderConverter extends MagentoConverter
         $shippingAmount = (float) ($data['orders']['shipping_amount'] ?? 0.0);
         $converted['deliveries'] = [
             [
-                'id' => $deliveryMapping['entityUuid'],
+                'id' => $deliveryMapping['entityId'],
                 'shippingMethodId' => $shippingMethodId,
                 'shippingOrderAddress' => $shippingOrderAddress,
                 'shippingCosts' => new CalculatedPrice(
@@ -1070,7 +1070,7 @@ abstract class OrderConverter extends MagentoConverter
                     new CalculatedTaxCollection(),
                     new TaxRuleCollection()
                 ),
-                'stateId' => $deliveryStateMapping['entityUuid'],
+                'stateId' => $deliveryStateMapping['entityId'],
                 'shippingDateEarliest' => $converted['orderDateTime'],
                 'shippingDateLatest' => $converted['orderDateTime'],
             ],
