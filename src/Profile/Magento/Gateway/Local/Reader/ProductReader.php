@@ -12,7 +12,6 @@ use Doctrine\DBAL\ParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\Struct\StockConfigurationStruct;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -40,10 +39,6 @@ abstract class ProductReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $this->productEntityTypeId = $this->readProductEntityTypeId();
         $priceIsGross = $this->getPriceConfiguration();
         $stockConfiguration = $this->getStockConfiguration();
@@ -68,10 +63,6 @@ abstract class ProductReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}catalog_product_entity
@@ -88,10 +79,6 @@ SQL;
 
     protected function fetchProducts(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     product.*,
@@ -138,10 +125,6 @@ SQL;
 
     protected function fetchProductAttributes(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     product.entity_id,
@@ -331,10 +314,6 @@ SQL;
 
     protected function fetchProductCategories(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     productCategory.product_id,
@@ -356,10 +335,6 @@ SQL;
 
     protected function fetchProductMedia(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     mediaGallery.entity_id AS productId,
@@ -387,10 +362,6 @@ SQL;
 
     protected function fetchProductPrices(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     price.entity_id,
@@ -413,10 +384,6 @@ SQL;
 
     protected function fetchConfiguratorSettings(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->select('DISTINCT product.entity_id AS identifier');
@@ -445,10 +412,6 @@ SQL;
 
     protected function fetchVisibility(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->select('product_int.entity_id, product_int.store_id, product_int.value');
@@ -468,10 +431,6 @@ SQL;
 
     protected function fetchLocales(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('scope_id AS store_id');
@@ -490,10 +449,6 @@ SQL;
 
     protected function getPriceConfiguration(): bool
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
         $query->addSelect('value');
         $query->from($this->tablePrefix . 'core_config_data');
@@ -504,10 +459,6 @@ SQL;
 
     protected function getStockConfiguration(): StockConfigurationStruct
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $minPurchase = 1;
         $maxPurchase = 10000;
 
@@ -534,10 +485,6 @@ SQL;
 
     private function readProductEntityTypeId(): int
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT entity_type_id FROM {$this->tablePrefix}eav_entity_type WHERE entity_type_code = 'catalog_product';
 SQL;
@@ -547,10 +494,6 @@ SQL;
 
     private function fetchCombinedProductIdsForPropertyFetching(array $ids): void
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
         $query->select('relation.child_id');
         $query->from($this->tablePrefix . 'catalog_product_entity', 'product');

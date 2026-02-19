@@ -11,7 +11,6 @@ use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SalesChannelReader;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -22,10 +21,6 @@ abstract class Magento2SalesChannelReader extends SalesChannelReader
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
-
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
 
         $sql = <<<SQL
 SELECT COUNT(*)
@@ -39,10 +34,6 @@ SQL;
 
     protected function fetchStoreGroups(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'store_group', 'storeGroup');
@@ -57,10 +48,6 @@ SQL;
 
     protected function fetchStoreViews(array $groupIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'store', 'storeView');

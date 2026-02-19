@@ -12,7 +12,6 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
-use Shopware\Core\Checkout\Customer\Aggregate\CustomerAddress\CustomerAddressDefinition;
 use Shopware\Core\Content\Media\File\FileSaver;
 use Shopware\Core\Content\Media\File\MediaFile;
 use Shopware\Core\Content\Media\MediaCollection;
@@ -23,20 +22,13 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
-use Swag\MigrationMagento\Migration\Logging\FileHandleErrorLog;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
-use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
-use SwagMigrationAssistant\Migration\Logging\Log\CannotGetFileRunLog;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertFieldReassignedLog;
-use SwagMigrationAssistant\Migration\Logging\Log\ExceptionRunLog;
 use SwagMigrationAssistant\Migration\Logging\Log\MediaFileMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\MediaMimeTypeUnknownLog;
 use SwagMigrationAssistant\Migration\Logging\Log\MediaTemporaryFileFailedLog;
-use SwagMigrationAssistant\Migration\Logging\Log\MimeTypeErrorLog;
 use SwagMigrationAssistant\Migration\Logging\Log\RunExceptionLog;
-use SwagMigrationAssistant\Migration\Logging\Log\TemporaryFileErrorLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaFileProcessorInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
@@ -296,7 +288,8 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                             ->withEntityName(MediaDefinition::ENTITY_NAME)
                             ->withExceptionMessage($e->getMessage())
                             ->withExceptionTrace($e->getTrace())
-                            ->withConvertedData([
+                            ->withConvertedData(
+                                [
                                     'file_path' => $filePath,
                                     'source_path' => $sourcePath,
                                     'media' => $media,

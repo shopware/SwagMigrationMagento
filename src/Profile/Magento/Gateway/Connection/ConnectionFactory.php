@@ -18,13 +18,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('fundamentals@after-sales')]
 class ConnectionFactory implements ConnectionFactoryInterface
 {
-    public function createDatabaseConnection(MigrationContextInterface $migrationContext): ?Connection
+    public function createDatabaseConnection(MigrationContextInterface $migrationContext): Connection
     {
         $connection = $migrationContext->getConnection();
         $credentials = $connection->getCredentialFields();
 
         if ($credentials === null) {
-            return null;
+            throw MigrationMagentoException::databaseConnectionError();
         }
 
         $connectionParams = [
@@ -43,7 +43,12 @@ class ConnectionFactory implements ConnectionFactoryInterface
             $connectionParams['port'] = (int) $credentials['dbPort'];
         }
 
-        $connection = DriverManager::getConnection($connectionParams);
+        try {
+            $connection = DriverManager::getConnection($connectionParams);
+        } catch (\Throwable) {
+            throw MigrationMagentoException::databaseConnectionError();
+        }
+
         $this->ensureConnectionAttributes($connection);
 
         if (!isset($credentials['tablePrefix']) || $credentials['tablePrefix'] === '') {

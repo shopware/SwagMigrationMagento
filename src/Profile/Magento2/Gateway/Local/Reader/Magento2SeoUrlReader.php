@@ -11,7 +11,6 @@ use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SeoUrlReader;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -46,10 +45,6 @@ abstract class Magento2SeoUrlReader extends SeoUrlReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}url_rewrite seo
@@ -63,10 +58,6 @@ SQL;
 
     protected function fetchSeoUrls(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'url_rewrite', 'seo');

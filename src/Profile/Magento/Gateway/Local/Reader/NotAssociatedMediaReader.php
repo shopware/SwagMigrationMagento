@@ -54,7 +54,7 @@ abstract class NotAssociatedMediaReader extends AbstractReader
     {
         $connection = $migrationContext->getConnection();
         $credentials = $connection->getCredentialFields();
-        
+
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
             return '';
         }

@@ -7,30 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
 use Shopware\Core\Framework\Log\Package;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
-class EnvironmentReader implements EnvironmentReaderInterface
+class EnvironmentReader extends AbstractReader implements EnvironmentReaderInterface
 {
-    protected ConnectionFactoryInterface $connectionFactory;
-
-    protected Connection $connection;
-
-    protected string $tablePrefix;
-
-    /**
-     * @internal
-     */
-    public function __construct(ConnectionFactoryInterface $connectionFactory)
-    {
-        $this->connectionFactory = $connectionFactory;
-        $this->tablePrefix = '';
-    }
-
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -45,22 +28,6 @@ class EnvironmentReader implements EnvironmentReaderInterface
         ];
 
         return $resultSet;
-    }
-
-    protected function setConnection(MigrationContextInterface $migrationContext): void
-    {
-        $connection = $migrationContext->getConnection();
-        $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-
-        if ($dbConnection === null) {
-            return;
-        }
-
-        $this->connection = $dbConnection;
-        $credentials = $connection->getCredentialFields();
-        if (isset($credentials['tablePrefix'])) {
-            $this->tablePrefix = (string) $credentials['tablePrefix'];
-        }
     }
 
     protected function getHost(): string

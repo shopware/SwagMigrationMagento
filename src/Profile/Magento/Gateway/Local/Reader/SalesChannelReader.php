@@ -10,7 +10,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -82,10 +81,6 @@ abstract class SalesChannelReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}core_store_group
@@ -98,10 +93,6 @@ SQL;
 
     protected function fetchDefaults(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'defaultCurrency');
@@ -171,10 +162,6 @@ SQL;
 
     protected function fetchStoreGroups(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_store_group', 'storeGroup');
@@ -189,10 +176,6 @@ SQL;
 
     protected function fetchStoreViews(array $groupIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_store', 'storeView');
@@ -207,10 +190,6 @@ SQL;
 
     protected function fetchCarriers(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT carrier_active.*
 FROM (
@@ -258,10 +237,6 @@ SQL;
 
     protected function fetchPayments(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT payment_active.*
 FROM (
@@ -309,10 +284,6 @@ SQL;
 
     protected function fetchWebsiteConfig(array $websiteIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'config');
@@ -375,10 +346,6 @@ SQL;
 
     protected function fetchStoreCurrencies(array $storeIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'currency');
@@ -403,10 +370,6 @@ SQL;
 
     protected function fetchStoreCountryConfig(array $storeIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'currency');
@@ -439,10 +402,6 @@ SQL;
 
     protected function fetchLocales(array $storeIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_config_data', 'locales');

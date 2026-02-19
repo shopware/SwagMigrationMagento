@@ -14,11 +14,22 @@ use Symfony\Component\HttpFoundation\Response;
 #[Package('fundamentals@after-sales')]
 class MigrationMagentoException extends HttpException
 {
+    public const DATABASE_CONNECTION_ERROR = 'SWAG_MIGRATION_MAGENTO__DATABASE_CONNECTION_ERROR';
+
     public const INCORRECT_TABLE_PREFIX = 'SWAG_MIGRATION_MAGENTO__INCORRECT_TABLE_PREFIX';
 
     public const MEDIA_PATH_NOT_REACHABLE = 'SWAG_MIGRATION_MAGENTO__MEDIA_PATH_NOT_REACHABLE';
 
     public const MEDIA_FILE_SIZE_ERROR = 'SWAG_MIGRATION_MAGENTO__MEDIA_FILE_SIZE_ERROR';
+
+    public static function databaseConnectionError(): self
+    {
+        return new self(
+            Response::HTTP_INTERNAL_SERVER_ERROR,
+            self::DATABASE_CONNECTION_ERROR,
+            'Could not establish database connection.'
+        );
+    }
 
     public static function incorrectTablePrefix(string $prefix): self
     {

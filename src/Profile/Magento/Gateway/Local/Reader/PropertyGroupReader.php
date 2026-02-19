@@ -10,7 +10,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -87,10 +86,6 @@ abstract class PropertyGroupReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}eav_attribute AS eav
@@ -106,10 +101,6 @@ SQL;
 
     public function fetchPropertyGroups(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('eav.attribute_id AS identifier');
@@ -134,10 +125,6 @@ SQL;
 
     protected function fetchOptionTranslations(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('optionValue.option_id');
@@ -158,10 +145,6 @@ SQL;
 
     protected function fetchGroupTranslations(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('attributeLabel.attribute_id AS identifier');
@@ -180,10 +163,6 @@ SQL;
 
     protected function fetchOptions(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('options.attribute_id AS identifier');

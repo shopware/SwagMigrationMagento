@@ -13,7 +13,6 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -23,7 +22,7 @@ abstract class AbstractReader implements ReaderInterface
 {
     protected ConnectionFactoryInterface $connectionFactory;
 
-    protected ?Connection $connection = null;
+    protected Connection $connection;
 
     protected string $tablePrefix;
 
@@ -48,18 +47,13 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function setConnection(MigrationContextInterface $migrationContext): void
     {
-        if ($this->connection instanceof Connection && $this->connection->isConnected()) {
+        if (isset($this->connection) && $this->connection->isConnected()) {
             return;
         }
 
         $connection = $migrationContext->getConnection();
-        $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
+        $this->connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
 
-        if ($dbConnection === null) {
-            return;
-        }
-
-        $this->connection = $dbConnection;
         $credentials = $connection->getCredentialFields();
 
         if (isset($credentials['tablePrefix'])) {
@@ -69,10 +63,6 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function fetchDefaultLocale(): string
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('locale.value AS locale');
@@ -94,10 +84,6 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function addTableSelection(QueryBuilder $query, string $table, string $tableAlias): void
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $columns = $this->connection->createSchemaManager()->listTableColumns($table);
 
         foreach ($columns as $column) {
@@ -150,10 +136,6 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function fetchIdentifiers(string $table, string $identifier = 'id', int $offset = 0, int $limit = 250, bool $distinct = false): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->select($identifier);
@@ -173,10 +155,6 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function fetchIdentifiersByRelation(string $table, string $identifier, string $relationKey, array $relationIds): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
         $query->select($identifier)
             ->from($table)
@@ -210,10 +188,6 @@ abstract class AbstractReader implements ReaderInterface
 
     protected function fetchAttributes(array $ids, string $entity, array $customAttributes = []): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     {$entity}.entity_id,

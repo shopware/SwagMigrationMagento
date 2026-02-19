@@ -10,7 +10,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -50,10 +49,6 @@ abstract class OrderReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}sales_flat_order;
@@ -65,10 +60,6 @@ SQL;
 
     protected function fetchOrders(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'sales_flat_order', 'orders');
@@ -142,10 +133,6 @@ SQL;
 
     protected function fetchDetails(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'sales_flat_order_item', 'items');
@@ -167,9 +154,6 @@ SQL;
     protected function fetchShipments(array $ids): array
     {
         $connection = $this->connection;
-        if ($connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
 
         $query = $connection->createQueryBuilder();
 
