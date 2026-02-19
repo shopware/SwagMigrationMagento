@@ -12,7 +12,6 @@ use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -54,21 +53,11 @@ abstract class ProductReviewConverter extends MagentoConverter
             $context
         );
 
-        if ($mapping === null) {
-            $this->loggingService->log(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::PRODUCT,
-                    $data['productId'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
+        if ($mapping !== null) {
+            $converted['productId'] = $mapping['entityId'];
+            $this->mappingIds[] = $mapping['id'];
+            unset($data['productId']);
         }
-        $converted['productId'] = $mapping['entityId'];
-        $this->mappingIds[] = $mapping['id'];
-        unset($data['productId']);
 
         if (isset($data['customer_id'])) {
             $mapping = $this->mappingService->getMapping(
@@ -92,20 +81,10 @@ abstract class ProductReviewConverter extends MagentoConverter
             $context
         );
 
-        if ($mapping === null) {
-            $this->loggingService->log(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::SALES_CHANNEL,
-                    $data['store_id'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
+        if ($mapping !== null) {
+            $converted['salesChannelId'] = $mapping['entityId'];
+            $this->mappingIds[] = $mapping['id'];
         }
-        $converted['salesChannelId'] = $mapping['entityId'];
-        $this->mappingIds[] = $mapping['id'];
 
         $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -114,21 +93,11 @@ abstract class ProductReviewConverter extends MagentoConverter
             $context
         );
 
-        if ($languageMapping === null) {
-            $this->loggingService->log(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    MagentoDefaultEntities::STORE_LANGUAGE,
-                    $data['store_id'],
-                    DefaultEntities::PRODUCT_REVIEW
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
+        if ($languageMapping !== null) {
+            $converted['languageId'] = $languageMapping['entityId'];
+            $this->mappingIds[] = $languageMapping['id'];
+            unset($data['store_id']);
         }
-        $converted['languageId'] = $languageMapping['entityId'];
-        $this->mappingIds[] = $languageMapping['id'];
-        unset($data['store_id']);
 
         if (isset($data['created_at'])) {
             $this->convertValue($converted, 'createdAt', $data, 'created_at', self::TYPE_DATETIME);

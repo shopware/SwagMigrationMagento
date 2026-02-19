@@ -13,7 +13,6 @@ use Shopware\Core\System\Language\LanguageEntity;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -57,16 +56,6 @@ abstract class PropertyGroupConverter extends MagentoConverter
         $connection = $migrationContext->getConnection();
         $this->connectionId = $connection->getId();
 
-        if (!isset($data['name'])) {
-            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::PROPERTY_GROUP,
-                $this->oldIdentifier,
-                'group name'
-            ));
-
-            return new ConvertStruct(null, $this->originalData);
-        }
         unset($data['id']);
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -81,19 +70,10 @@ abstract class PropertyGroupConverter extends MagentoConverter
             'id' => $this->mainMapping['entityId'],
         ];
 
-        if (!isset($data['options'])) {
-            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                $this->runId,
-                DefaultEntities::PROPERTY_GROUP,
-                $this->oldIdentifier,
-                'options'
-            ));
-
-            return new ConvertStruct(null, $this->originalData);
+        if (isset($data['options'])) {
+            $this->getProperties($data, $converted, $defaultLanguage);
+            unset($data['options']);
         }
-
-        $this->getProperties($data, $converted, $defaultLanguage);
-        unset($data['options']);
 
         if (isset($data['translations'])) {
             $converted['translations'] = $this->getTranslations($data['translations'], ['name' => 'name'], $this->context);

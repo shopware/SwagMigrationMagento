@@ -20,8 +20,6 @@ use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CurrencyReader;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2LanguageReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -40,14 +38,8 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-        if (!empty($fields)) {
-            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                $migrationContext->getRunUuid(),
-                DefaultEntities::SALES_CHANNEL,
-                $data['group_id'],
-                \implode(',', $fields)
-            ));
 
+        if (!empty($fields)) {
             return new ConvertStruct(null, $data);
         }
 
@@ -81,19 +73,6 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             if ($mapping !== null) {
                 $converted['customerGroupId'] = $mapping['entityUuid'];
             }
-        }
-
-        if (!isset($converted['customerGroupId'])) {
-            $this->loggingService->log(
-                new AssociationRequiredMissingLog(
-                    $this->runId,
-                    DefaultEntities::CUSTOMER_GROUP,
-                    'default_customer_group',
-                    DefaultEntities::SALES_CHANNEL
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
         }
 
         /*
@@ -212,15 +191,6 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($languageMapping === null || !isset($languageMapping['entityUuid'])) {
-                $this->loggingService->log(
-                    new AssociationRequiredMissingLog(
-                        $this->runId,
-                        DefaultEntities::LANGUAGE,
-                        'default_locale',
-                        DefaultEntities::SALES_CHANNEL
-                    )
-                );
-
                 return null;
             }
 
@@ -272,21 +242,13 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($currencyMapping === null || !isset($currencyMapping['entityUuid'])) {
-                $this->loggingService->log(
-                    new AssociationRequiredMissingLog(
-                        $this->runId,
-                        DefaultEntities::CURRENCY,
-                        'default_currency',
-                        DefaultEntities::SALES_CHANNEL
-                    )
-                );
-
                 return null;
             }
 
             $this->mappingIds[] = $currencyMapping['id'];
             $currencyUuid = $currencyMapping['entityUuid'];
         }
+
         $converted['currencyId'] = $currencyUuid;
         $converted['currencies'] = $this->getSalesChannelCurrencies($currencyUuid, $data, $this->context);
         unset($data['currencies'], $data['defaultCurrency']);
@@ -304,17 +266,9 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         );
 
         if ($categoryMapping === null) {
-            $this->loggingService->log(
-                new AssociationRequiredMissingLog(
-                    $this->runId,
-                    DefaultEntities::CATEGORY,
-                    $data['root_category_id'],
-                    DefaultEntities::SALES_CHANNEL
-                )
-            );
-
             return null;
         }
+
         $categoryUuid = $categoryMapping['entityUuid'];
         $this->mappingIds[] = $categoryMapping['id'];
         $converted['navigationCategoryId'] = $categoryUuid;
@@ -353,21 +307,13 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($countryMapping === null) {
-                $this->loggingService->log(
-                    new AssociationRequiredMissingLog(
-                        $this->runId,
-                        DefaultEntities::COUNTRY,
-                        'default_country',
-                        DefaultEntities::SALES_CHANNEL
-                    )
-                );
-
                 return null;
             }
 
             $this->mappingIds[] = $countryMapping['id'];
             $countryUuid = $countryMapping['entityUuid'];
         }
+
         $converted['countryId'] = $countryUuid;
         $converted['countries'] = $this->getSalesChannelCountries((string) $countryUuid, $data, $this->context);
         unset($data['countries'], $data['defaultCountry']);
@@ -387,19 +333,13 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($paymentMethodMapping === null) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::SALES_CHANNEL,
-                    $this->oldIdentifier,
-                    'payment methods'
-                ));
-
                 return null;
             }
 
             $this->mappingIds[] = $paymentMethodMapping['id'];
             $converted['paymentMethods'][0]['id'] = $paymentMethodMapping['entityUuid'];
         }
+
         $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
         unset($data['payments']);
 
@@ -418,19 +358,13 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             );
 
             if ($shippingMethodMapping === null) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::SALES_CHANNEL,
-                    $this->oldIdentifier,
-                    'shipping methods'
-                ));
-
                 return null;
             }
 
             $this->mappingIds[] = $shippingMethodMapping['id'];
             $converted['shippingMethods'][0]['id'] = $shippingMethodMapping['entityUuid'];
         }
+
         $converted['shippingMethodId'] = $converted['shippingMethods'][0]['id'];
         unset($data['carriers']);
 

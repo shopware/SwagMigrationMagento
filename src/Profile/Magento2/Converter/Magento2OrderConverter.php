@@ -10,10 +10,8 @@ namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
 
 #[Package('fundamentals@after-sales')]
 abstract class Magento2OrderConverter extends OrderConverter
@@ -23,9 +21,6 @@ abstract class Magento2OrderConverter extends OrderConverter
      */
     protected array $billingAddress = [];
 
-    /**
-     * @throws AssociationEntityRequiredMissingException
-     */
     protected function convertOrderCustomer(array &$converted, array &$data): bool
     {
         $guestOrder = false;
@@ -61,10 +56,12 @@ abstract class Magento2OrderConverter extends OrderConverter
          * Set salutation
          */
         if (isset($data['orders']['customer_salutation'])) {
-            $salutationUuid = $this->getSalutation($data['orders']['customer_salutation']);
+            $salutationUuid = $this->getSalutation($data['orders']['customer_salutation'], $this->migrationContext);
+
             if ($salutationUuid === null) {
                 return false;
             }
+
             $this->salutationUuid = $salutationUuid;
         } else {
             $mapping = $this->mappingService->getMapping(
@@ -74,20 +71,11 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
 
-            if ($mapping === null || !isset($mapping['entityUuid'])) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'salutation'
-                ));
-
-                return false;
+            if ($mapping !== null && isset($mapping['entityUuid'])) {
+                $this->mappingIds[] = $mapping['id'];
+                $this->salutationUuid = $mapping['entityUuid'];
+                $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
             }
-            $this->mappingIds[] = $mapping['id'];
-            $this->salutationUuid = $mapping['entityUuid'];
-
-            $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
         }
 
         if ($guestOrder === true) {
@@ -101,15 +89,9 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $this->context
             );
 
-            if ($customerGroupMapping === null) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'customer_group_id'
-                ));
-
-                return false;
+            if ($customerGroupMapping !== null) {
+                $this->mappingIds[] = $customerGroupMapping['id'];
+                $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityUuid'];
             }
 
             $languageMapping = $this->mappingService->getMapping(
@@ -118,54 +100,36 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $data['orders']['store_id'],
                 $this->context
             );
-            if ($languageMapping === null) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'language'
-                ));
 
-                return false;
+            if ($languageMapping !== null) {
+                $this->mappingIds[] = $languageMapping['id'];
+                $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityUuid'];
             }
 
             $paymentMethodUuid = $this->getPaymentMethod($data);
-            if ($paymentMethodUuid === null) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'payment_method'
-                ));
 
-                return false;
+            if ($paymentMethodUuid !== null) {
+                $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
             }
 
-            $this->mappingIds[] = $languageMapping['id'];
-            $this->mappingIds[] = $customerGroupMapping['id'];
-            $converted['orderCustomer']['customer']['groupId'] = $customerGroupMapping['entityUuid'];
             $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
-            $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityUuid'];
-            $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
             $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
             $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
-            if (empty($billingAddress)) {
-                $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                    $this->runId,
-                    DefaultEntities::ORDER,
-                    $this->oldIdentifier,
-                    'billingAddress'
-                ));
 
+            if (empty($billingAddress)) {
                 return false;
             }
+
             $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
             $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
+
             $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+
             if (empty($shippingAddress)) {
                 $shippingAddress = $billingAddress;
             }
+
             $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
 
             $this->convertValue($converted['orderCustomer']['customer'], 'email', $data['orders'], 'customer_email', self::TYPE_STRING, false);

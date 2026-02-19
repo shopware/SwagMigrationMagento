@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Content\Product\Aggregate\ProductVisibility\ProductVisibilityDefinition;
+use Shopware\Core\Content\Product\ProductDefinition;
 use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
@@ -20,8 +21,8 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
-use SwagMigrationAssistant\Migration\Logging\Log\UnknownEntityLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
@@ -106,65 +107,41 @@ abstract class ProductConverter extends MagentoConverter
         if (isset($data['manufacturer'])) {
             $this->setManufacturerId($data['manufacturer'], $converted);
         }
+
         unset($data['manufacturer']);
-
-        /*
-         * Throw error if no tax class is found
-         */
-        if (!isset($data['tax_class_id'])) {
-            $this->loggingService->log(
-                new EmptyNecessaryFieldRunLog(
-                    $this->runUuid,
-                    DefaultEntities::PRODUCT,
-                    $this->oldIdentifier,
-                    'tax class'
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
-        }
 
         /*
          * Set tax
          */
         if (!$this->setTax($data['tax_class_id'], $converted)) {
             $this->loggingService->log(
-                new UnknownEntityLog(
-                    $this->runUuid,
-                    DefaultEntities::TAX,
-                    $data['tax_class_id'],
-                    DefaultEntities::PRODUCT,
-                    $this->oldIdentifier
-                )
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductDefinition::ENTITY_NAME)
+                    ->withFieldName('taxId')
+                    ->withFieldSourcePath('tax_class_id')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
         }
+
         unset($data['tax_class_id']);
 
-        if (!isset($data['price'])) {
-            $this->loggingService->log(
-                new EmptyNecessaryFieldRunLog(
-                    $this->runUuid,
-                    DefaultEntities::PRODUCT,
-                    $this->oldIdentifier,
-                    'price'
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
-        }
         $this->priceIsGross = $data['priceIsGross'];
         unset($data['priceIsGross']);
         $converted['price'] = $this->getPrice($data, $converted);
 
         if (empty($converted['price'])) {
-            $this->loggingService->log(new EmptyNecessaryFieldRunLog(
-                $this->runUuid,
-                DefaultEntities::PRODUCT,
-                $this->oldIdentifier,
-                'currency'
-            ));
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductDefinition::ENTITY_NAME)
+                    ->withFieldName('price')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
 
             return new ConvertStruct(null, $this->originalData);
         }
@@ -450,6 +427,10 @@ abstract class ProductConverter extends MagentoConverter
 
     protected function setTax(string $taxClassId, array &$converted): bool
     {
+        if (!isset($data['tax_class_id'])) {
+            return false;
+        }
+
         if ($taxClassId === '0') {
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
@@ -487,6 +468,10 @@ abstract class ProductConverter extends MagentoConverter
 
     protected function getPrice(array $priceData, array $converted): array
     {
+        if (!isset($data['price'])) {
+            return [];
+        }
+
         $taxRate = 0;
         if (isset($converted['taxId'])) {
             $taxRate = $this->taxLookup->getTaxRate(
