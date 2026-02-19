@@ -50,14 +50,7 @@ class Magento2ProductChildPropertyRelationTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new ProductChildPropertyRelationDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new ProductChildPropertyRelationDataSet(), $this->runId, 0, 250);
 
         $this->converter = new Magento23ProductChildPropertyRelationConverter($this->mappingService, $this->loggingService);
     }

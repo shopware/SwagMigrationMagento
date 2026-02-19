@@ -73,14 +73,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new SalesChannelDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new SalesChannelDataSet(), $this->runId, 0, 250);
 
         $this->defaultPaymentMethodId = Uuid::randomHex();
         $this->defaultShippingMethodId = Uuid::randomHex();

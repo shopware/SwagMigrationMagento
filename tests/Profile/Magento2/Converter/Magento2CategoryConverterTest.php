@@ -143,38 +143,10 @@ class Magento2CategoryConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->migrationContext20 = new MigrationContext(
-            new Magento20Profile(),
-            $this->connection20,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
-        $this->migrationContext21 = new MigrationContext(
-            new Magento21Profile(),
-            $this->connection21,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
-        $this->migrationContext22 = new MigrationContext(
-            new Magento22Profile(),
-            $this->connection22,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
-        $this->migrationContext23 = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection23,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext20 = new MigrationContext($this->connection20, new Magento20Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
+        $this->migrationContext21 = new MigrationContext($this->connection21, new Magento21Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
+        $this->migrationContext22 = new MigrationContext($this->connection22, new Magento22Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
+        $this->migrationContext23 = new MigrationContext($this->connection23, new Magento23Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection20->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);

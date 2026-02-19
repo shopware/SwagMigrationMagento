@@ -69,14 +69,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new SalesChannelDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new SalesChannelDataSet(), $this->runId, 0, 250);
 
         $this->defaultPaymentMethodId = Uuid::randomHex();
         $this->defaultShippingMethodId = Uuid::randomHex();

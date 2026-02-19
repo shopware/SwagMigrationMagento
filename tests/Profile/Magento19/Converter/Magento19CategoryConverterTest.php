@@ -77,14 +77,7 @@ class Magento19CategoryConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);

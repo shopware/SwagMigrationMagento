@@ -48,14 +48,7 @@ class Magento19CustomerGroupConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new CustomerGroupDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new CustomerGroupDataSet(), $this->runId, 0, 250);
     }
 
     public function testSupports(): void

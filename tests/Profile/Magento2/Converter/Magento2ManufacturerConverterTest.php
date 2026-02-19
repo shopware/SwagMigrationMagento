@@ -54,14 +54,7 @@ class Magento2ManufacturerConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new ManufacturerDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new ManufacturerDataSet(), $this->runId, 0, 250);
 
         $this->languageUuid = Uuid::randomHex();
         $mappingService->createMapping(

@@ -84,14 +84,7 @@ class Magento2CrossSellingConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new CrossSellingDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new CrossSellingDataSet(), $this->runId, 0, 250);
 
         $this->createMapping(['417', '807', '875', '877', '879', '882', '892', '895']);
     }

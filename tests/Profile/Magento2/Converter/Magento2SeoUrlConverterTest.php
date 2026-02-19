@@ -61,14 +61,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new SeoUrlDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new SeoUrlDataSet(), $this->runId, 0, 250);
 
         $this->context = Context::createDefaultContext();
 

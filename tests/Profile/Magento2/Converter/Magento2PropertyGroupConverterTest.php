@@ -70,14 +70,7 @@ class Magento2PropertyGroupConverterTest extends TestCase
             $this->getContainer()->get(LanguageLookup::class)
         );
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new PropertyGroupDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new PropertyGroupDataSet(), $this->runId, 0, 250);
     }
 
     public function testSupports(): void

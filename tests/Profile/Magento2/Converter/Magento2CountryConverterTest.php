@@ -63,14 +63,7 @@ class Magento2CountryConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new CountryDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new CountryDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $this->britainMappingUuid = Uuid::randomHex();
