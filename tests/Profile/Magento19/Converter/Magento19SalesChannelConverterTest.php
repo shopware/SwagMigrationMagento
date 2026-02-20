@@ -8,7 +8,6 @@
 namespace Swag\MigrationMagento\Test\Profile\Magento19\Converter;
 
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -20,6 +19,7 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertFieldReassignedLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
@@ -142,22 +142,8 @@ class Magento19SalesChannelConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
 
-        $this->expectException(MigrationException::class);
-        $this->expectExceptionMessage('Locale with code: "N/A" for language lookup not found.');
-        $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
-        $converted = $convertResult->getConverted();
-
-        static::assertNull($convertResult->getUnmapped());
-        static::assertNotNull($converted);
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame('SWAG_MIGRATION_SALES_CHANNEL_ENTITY_FIELD_REASSIGNED', $logs[0]['code']);
-        static::assertSame($salesChannelData[0]['group_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('defaultLocale', $logs[0]['parameters']['emptyField']);
-        static::assertSame('system default language', $logs[0]['parameters']['replacementField']);
-        static::assertSame(DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID, $converted['languageId']);
+        static::expectExceptionObject(MigrationException::localeNotFound('N/A'));
+        $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
     }
 
     public function testConvertWithoutDefaultCurrency(): void
@@ -176,11 +162,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame('SWAG_MIGRATION_SALES_CHANNEL_ENTITY_FIELD_REASSIGNED', $logs[0]['code']);
-        static::assertSame($salesChannelData[0]['group_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('defaultCurrency', $logs[0]['parameters']['emptyField']);
-        static::assertSame('system default currency', $logs[0]['parameters']['replacementField']);
-        static::assertSame(Defaults::CURRENCY, $converted['currencyId']);
+        static::assertSame(ConvertFieldReassignedLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithoutDefaultCategory(): void
@@ -193,13 +175,10 @@ class Magento19SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
 
         static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CATEGORY');
-        static::assertSame($logs[0]['parameters']['sourceId'], $salesChannelData[0]['root_category_id']);
+        static::assertCount(0, $logs);
     }
 
     public function testConvertMissingPaymentMethod(): void
@@ -220,10 +199,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PAYMENT_METHOD');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'cashondelivery');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertMissingShippingMethod(): void
@@ -244,10 +220,7 @@ class Magento19SalesChannelConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'ups');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertMissingWithoutPaymentMethods(): void
@@ -302,11 +275,9 @@ class Magento19SalesChannelConverterTest extends TestCase
         $this->mappingService->deleteDummyMapping(DefaultEntities::CUSTOMER_GROUP, 'default_customer_group');
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
         $converted = $convertResult->getConverted();
-        static::assertNull($converted);
+        static::assertNotNull($converted);
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CUSTOMER_GROUP');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'default_customer_group');
+        static::assertCount(0, $logs);
     }
 }

@@ -20,6 +20,7 @@ use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertFieldReassignedLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
@@ -74,6 +75,14 @@ abstract class SalesChannelConverter extends MagentoConverter
     {
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
         if (!empty($fields)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
+                    ->withFieldName(\implode(', ', $fields))
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
             return new ConvertStruct(null, $data);
         }
 

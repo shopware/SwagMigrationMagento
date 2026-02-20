@@ -35,6 +35,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
@@ -119,6 +120,14 @@ abstract class OrderConverter extends MagentoConverter
         }
 
         if (!empty($fields)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(OrderDefinition::ENTITY_NAME)
+                    ->withFieldName(\implode(', ', $fields))
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
             return new ConvertStruct(null, $data);
         }
 
@@ -606,7 +615,10 @@ abstract class OrderConverter extends MagentoConverter
             }
         }
 
-        $address['salutationId'] = $this->salutationUuid;
+        if (isset($this->salutationUuid)) {
+            $address['salutationId'] = $this->salutationUuid;
+        }
+
         $this->convertValue($address, 'firstName', $originalData, 'firstname');
         $this->convertValue($address, 'lastName', $originalData, 'lastname');
         $this->convertValue($address, 'zipcode', $originalData, 'postcode');
@@ -715,6 +727,15 @@ abstract class OrderConverter extends MagentoConverter
         $fields = $this->checkForEmptyRequiredDataFields($data['orders'], self::$requiredCustomerDataFieldKeys);
 
         if (!empty($fields)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                    ->withEntityName(OrderDefinition::ENTITY_NAME)
+                    ->withFieldName(\implode(', ', $fields))
+                    ->withFieldSourcePath('orders')
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
             return false;
         }
 

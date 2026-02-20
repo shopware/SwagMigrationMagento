@@ -21,6 +21,7 @@ use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertFieldReassignedLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
@@ -55,11 +56,6 @@ abstract class CustomerConverter extends MagentoConverter
      */
     protected static array $requiredAddressDataFieldKeys = [
         'entity_id',
-        'firstname',
-        'lastname',
-        'postcode',
-        'city',
-        'street',
         'country_id',
         'country_iso2',
         'country_iso3',
@@ -92,6 +88,14 @@ abstract class CustomerConverter extends MagentoConverter
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
 
         if (!empty($fields)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                    ->withFieldName(\implode(', ', $fields))
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
             return new ConvertStruct(null, $data);
         }
 
@@ -224,9 +228,8 @@ abstract class CustomerConverter extends MagentoConverter
         if (isset($data['addresses'], $this->mainMapping['entityId']) && !empty($data['addresses'])) {
             $this->getAddresses($data, $converted, $this->mainMapping['entityId'], $migrationContext);
             unset($data['addresses']);
+            unset($data['default_billing'], $data['default_shipping']);
         }
-
-        unset($data['default_billing'], $data['default_shipping']);
 
         $this->updateMainMapping($migrationContext, $context);
 
@@ -267,6 +270,14 @@ abstract class CustomerConverter extends MagentoConverter
             $fields = $this->checkForEmptyRequiredDataFields($address, self::$requiredAddressDataFieldKeys);
 
             if (!empty($fields)) {
+                $this->loggingService->log(
+                    MigrationLogBuilder::fromMigrationContext($migrationContext)
+                        ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
+                        ->withFieldName(\implode(', ', $fields))
+                        ->withSourceData($address)
+                        ->build(ConvertSourceDataIncompleteLog::class)
+                );
+
                 continue;
             }
 

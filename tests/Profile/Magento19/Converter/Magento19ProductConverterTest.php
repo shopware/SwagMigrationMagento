@@ -24,6 +24,7 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\TaxLookup;
@@ -282,15 +283,11 @@ class Magento19ProductConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $convertResult = $this->productConverter->convert($product, $context, $this->migrationContext);
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PRODUCT');
-        static::assertSame($logs[0]['parameters']['sourceId'], $product['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'tax class');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertWithInvalidTax(): void
@@ -308,8 +305,7 @@ class Magento19ProductConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_TAX_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], $product['tax_class_id']);
+        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithoutPrice(): void
@@ -327,9 +323,7 @@ class Magento19ProductConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PRODUCT');
-        static::assertSame($logs[0]['parameters']['sourceId'], $product['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'price');
+        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithoutDefaultCurrency(): void
@@ -348,9 +342,7 @@ class Magento19ProductConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PRODUCT');
-        static::assertSame($logs[0]['parameters']['sourceId'], $product['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'currency');
+        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithZeroMinPurchase(): void

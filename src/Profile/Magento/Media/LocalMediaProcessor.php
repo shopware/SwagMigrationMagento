@@ -229,6 +229,8 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         MigrationContextInterface $migrationContext,
         Context $context,
     ): array {
+        $this->migrationContext = $migrationContext;
+
         $processedMedia = [];
         $failureUuids = [];
 

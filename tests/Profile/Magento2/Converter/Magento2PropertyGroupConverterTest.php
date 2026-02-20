@@ -114,14 +114,10 @@ class Magento2PropertyGroupConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $convertResult = $this->propertyGroupConverter->convert($propertyGroupData[0], $context, $this->migrationContext);
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_PROPERTY_GROUP');
-        static::assertSame($logs[0]['parameters']['sourceId'], $propertyGroupData[0]['id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'group name');
+        static::assertCount(0, $logs);
     }
 }

@@ -11,6 +11,7 @@ use Shopware\Core\Defaults;
 use Shopware\Core\Framework\Api\Util\AccessKeyHelper;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\System\SalesChannel\SalesChannelDefinition;
 use Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
@@ -20,6 +21,8 @@ use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2CurrencyReader;
 use Swag\MigrationMagento\Profile\Magento2\Premapping\Magento2LanguageReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -40,6 +43,14 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
 
         if (!empty($fields)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
+                    ->withFieldName(\implode(', ', $fields))
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
             return new ConvertStruct(null, $data);
         }
 
@@ -91,35 +102,12 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
         $this->setStores($data, $converted);
 
-        $languageUuid = $this->setLanguageUuid($data, $converted, $context);
-        if ($languageUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-
-        $currencyUuid = $this->setCurrencyUuid($data, $converted);
-        if ($currencyUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-
-        $categoryUuid = $this->setCategoryUuid($data, $converted);
-        if ($categoryUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-
-        $countryUuid = $this->setCountryUuid($data, $converted);
-        if ($countryUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-
-        $paymentMethodUuid = $this->setPaymentMethodUuid($data, $converted);
-        if ($paymentMethodUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-
-        $shippingMethodUuid = $this->setShippingMethodUuid($data, $converted);
-        if ($shippingMethodUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
+        $this->setLanguageUuid($data, $converted, $context);
+        $this->setCurrencyUuid($data, $converted);
+        $this->setCategoryUuid($data, $converted);
+        $this->setCountryUuid($data, $converted);
+        $this->setPaymentMethodUuid($data, $converted);
+        $this->setShippingMethodUuid($data, $converted);
 
         /*
          * Set translations

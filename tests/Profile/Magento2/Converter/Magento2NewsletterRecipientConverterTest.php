@@ -18,6 +18,7 @@ use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23NewsletterRecipientStatusReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -131,8 +132,7 @@ class Magento2NewsletterRecipientConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_LANGUAGE');
-        static::assertSame($newsletterRecipientData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithInvalidSalesChannel(): void
@@ -152,14 +152,12 @@ class Magento2NewsletterRecipientConverterTest extends TestCase
 
         $convertResult = $this->newsletterRecipientConverter->convert($newsletterRecipientData[0], $context, $this->migrationContext);
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
+        static::assertCount(0, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_NEWSLETTER_RECIPIENT');
-        static::assertSame($newsletterRecipientData[0]['subscriber_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('salesChannel', $logs[0]['parameters']['emptyField']);
+        static::assertArrayNotHasKey('salesChannelId', $convertResult->getConverted());
     }
 }

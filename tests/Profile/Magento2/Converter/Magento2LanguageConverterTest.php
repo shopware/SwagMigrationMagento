@@ -129,8 +129,7 @@ class Magento2LanguageConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
 
-        $this->expectException(MigrationException::class);
-        $this->expectExceptionMessage('Locale with code: "lo-LO" for language lookup not found.');
+        static::expectExceptionObject(MigrationException::localeNotFound('lo-LO'));
         $this->languageConverter->convert($languageData[2], $context, $this->migrationContext);
     }
 }

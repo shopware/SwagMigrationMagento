@@ -7,11 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Product\Aggregate\ProductReview\ProductReviewDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -53,11 +56,23 @@ abstract class ProductReviewConverter extends MagentoConverter
             $context
         );
 
-        if ($mapping !== null) {
-            $converted['productId'] = $mapping['entityId'];
-            $this->mappingIds[] = $mapping['id'];
-            unset($data['productId']);
+        if ($mapping === null) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductReviewDefinition::ENTITY_NAME)
+                    ->withFieldName('productId')
+                    ->withFieldSourcePath('productId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
+
+            return new ConvertStruct(null, $data, $this->mainMapping['id'] ?? null);
         }
+
+        $converted['productId'] = $mapping['entityId'];
+        $this->mappingIds[] = $mapping['id'];
+        unset($data['productId']);
 
         if (isset($data['customer_id'])) {
             $mapping = $this->mappingService->getMapping(

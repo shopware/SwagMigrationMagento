@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Category\CategoryDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
@@ -15,6 +16,8 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
@@ -105,6 +108,14 @@ abstract class CategoryConverter extends MagentoConverter
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
 
         if (!empty($fields)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(CategoryDefinition::ENTITY_NAME)
+                    ->withFieldName(implode(', ', $fields))
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
             return new ConvertStruct(null, $data);
         }
 
