@@ -1,4 +1,7 @@
+# 11.0.0
+
 # 10.0.0
+
 - MIG-1094 - Compatibility with Shopware 6.7.
     - [BREAKING] Increased the minimum required Shopware version to ~6.7.0.
     - [BREAKING] Removed method `mediaMimeTypeError` from `Swag\MigrationMagento\Exception\MigrationMagentoException` without replacement.
@@ -29,8 +32,9 @@
     - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader` as internal.
     - [BREAKING] Marked `__construct` of class `Swag\MigrationMagento\Profile\Magento\Premapping\Magento19LocalGateway` as internal.
     - [BREAKING] Marked classes `Swag\MigrationMagento\Test\**\*` as internal.
-  
+
 # 9.0.0
+
 - MIG-1039 - Updated country state conversion to use new methods provided by the migration assistant
     - [BREAKING] Removed method `getCountryStateUuid` from `Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface` and its default implementation `Swag\MigrationMagento\Migration\Mapping\MagentoMappingService`
 - MIG-1071 - Move to the new Lookup service structure
