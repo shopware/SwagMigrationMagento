@@ -28,25 +28,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('fundamentals@after-sales')]
 abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 {
-    /**
-     * @var list<string>
-     */
-    protected static array $requiredDataFieldKeys = [
-        'website_id',
-        'name',
-        'group_id',
-        'root_category_id',
-    ];
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-
-        if (!empty($fields)) {
+        if (empty($data['group_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
-                    ->withFieldName(\implode(', ', $fields))
+                    ->withFieldName('group_id')
                     ->withSourceData($data)
                     ->build(ConvertSourceDataIncompleteLog::class)
             );
@@ -246,6 +234,10 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
     protected function setCategoryUuid(array &$data, array &$converted): ?string
     {
+        if (!isset($data['root_category_id'])) {
+            return null;
+        }
+
         $categoryMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,

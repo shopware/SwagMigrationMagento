@@ -29,7 +29,6 @@ use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
@@ -67,25 +66,6 @@ abstract class OrderConverter extends MagentoConverter
     protected NumberRangeValueGeneratorInterface $numberRangeValueGenerator;
 
     /**
-     * @var list<string>
-     */
-    protected static array $requiredDataFieldKeys = [
-        'orders',
-        'billingAddress',
-        'shippingAddress',
-        'items',
-    ];
-
-    /**
-     * @var list<string>
-     */
-    protected static array $requiredCustomerDataFieldKeys = [
-        'customer_email',
-        'customer_firstname',
-        'customer_lastname',
-    ];
-
-    /**
      * @internal
      */
     public function __construct(
@@ -111,19 +91,11 @@ abstract class OrderConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        /*
-         * Checking required fields and logging missing ones
-         */
-        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-        if (!isset($data['orders']['entity_id'])) {
-            $fields[] = 'entity_id';
-        }
-
-        if (!empty($fields)) {
+        if (!isset($data['orders']) || !isset($data['orders']['entity_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldName(\implode(', ', $fields))
+                    ->withFieldName('orders.entity_id')
                     ->withSourceData($data)
                     ->build(ConvertSourceDataIncompleteLog::class)
             );
@@ -143,19 +115,6 @@ abstract class OrderConverter extends MagentoConverter
 
         $connection = $migrationContext->getConnection();
         $this->connectionId = $connection->getId();
-
-        if (!$this->oldIdentifier) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($migrationContext)
-                    ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldName('id')
-                    ->withFieldSourcePath('identifier')
-                    ->withSourceData($data)
-                    ->build(ConvertEntityUnknownLog::class)
-            );
-
-            return new ConvertStruct(null, $data);
-        }
 
         /*
          * Set main mapping
@@ -186,17 +145,13 @@ abstract class OrderConverter extends MagentoConverter
             $this->setSalesChannelIdViaAdminStore($converted);
         }
 
-        if (!$this->convertOrderCustomer($converted, $data)) {
-            return new ConvertStruct(null, $this->originalData);
-        }
+        $this->convertOrderCustomer($converted, $data);
 
         $this->convertValue($converted, 'orderNumber', $data['orders'], 'increment_id');
         $this->convertValue($converted, 'currencyFactor', $data['orders'], 'store_to_order_rate', self::TYPE_FLOAT);
         $this->convertValue($converted, 'orderDateTime', $data['orders'], 'created_at', self::TYPE_DATETIME);
 
-        if (!$this->convertCurrency($converted, $data)) {
-            return new ConvertStruct(null, $this->originalData);
-        }
+        $this->convertCurrency($converted, $data);
 
         $converted['itemRounding'] = [
             'decimals' => $context->getRounding()->getDecimals(),
@@ -205,9 +160,7 @@ abstract class OrderConverter extends MagentoConverter
         ];
         $converted['totalRounding'] = $converted['itemRounding'];
 
-        if (!$this->convertOrderStatus($converted, $data)) {
-            return new ConvertStruct(null, $this->originalData);
-        }
+        $this->convertOrderStatus($converted, $data);
 
         /*
          * Set line items, shipping costs and transactions
@@ -216,8 +169,8 @@ abstract class OrderConverter extends MagentoConverter
             $this->convertOrderItems($converted, $data);
         }
 
-        if (!$this->convertBillingAddress($converted, $data)) {
-            return new ConvertStruct(null, $this->originalData);
+        if (isset($data['billingAddress'])) {
+            $this->convertBillingAddress($converted, $data);
         }
 
         /*
@@ -281,15 +234,19 @@ abstract class OrderConverter extends MagentoConverter
     protected function getTaxRules(array $originalData): TaxRuleCollection
     {
         $taxRates = [];
-        foreach ($originalData['items'] as $item) {
-            if (!isset($item['parentItem']['tax_percent'])) {
-                $taxRates[] = $item['tax_percent'];
 
-                continue;
+        if (isset($originalData['items'])) {
+            foreach ($originalData['items'] as $item) {
+                if (!isset($item['parentItem']['tax_percent'])) {
+                    $taxRates[] = $item['tax_percent'];
+
+                    continue;
+                }
+
+                $taxRates[] = $item['parentItem']['tax_percent'];
             }
-
-            $taxRates[] = $item['parentItem']['tax_percent'];
         }
+
         $taxRates = \array_unique($taxRates);
 
         $taxRules = [];
@@ -300,7 +257,7 @@ abstract class OrderConverter extends MagentoConverter
         return new TaxRuleCollection($taxRules);
     }
 
-    protected function getLineItems(array $originalData, Context $context, CalculatedTaxCollection $taxCollection): array
+    protected function getLineItems(array $originalData, CalculatedTaxCollection $taxCollection): array
     {
         $lineItems = [];
 
@@ -314,7 +271,7 @@ abstract class OrderConverter extends MagentoConverter
                 new TaxRule($taxPercent),
             ]);
 
-            $isProduct = (bool) $originalLineItem['is_virtual'] === true || (isset($originalLineItem['product_id']) && $originalLineItem['product_id'] !== null);
+            $isProduct = (bool) $originalLineItem['is_virtual'] === true || isset($originalLineItem['product_id']);
 
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
@@ -450,11 +407,11 @@ abstract class OrderConverter extends MagentoConverter
                 $delivery['shippingMethodId'] = $this->getShippingMethod($data['orders']['shipping_method']);
             }
 
-            if (isset($data['shippingaddress']['id'])) {
+            if (isset($data['shippingAddress'])) {
                 $delivery['shippingOrderAddress'] = $this->getAddress($data['shippingAddress']);
             }
 
-            if (!isset($delivery['shippingOrderAddress'])) {
+            if (!isset($delivery['shippingOrderAddress']) && isset($data['billingAddress'])) {
                 $delivery['shippingOrderAddress'] = $this->getAddress($data['billingAddress']);
             }
 
@@ -543,6 +500,10 @@ abstract class OrderConverter extends MagentoConverter
 
     protected function getAddress(array $originalData, string $entityName = DefaultEntities::ORDER_ADDRESS): array
     {
+        if (!isset($originalData['entity_id'])) {
+            return [];
+        }
+
         $identifier = $originalData['entity_id'];
         if ($entityName === DefaultEntities::CUSTOMER_ADDRESS) {
             $identifier .= '_guest'; // If the address is for a guest order
@@ -558,23 +519,9 @@ abstract class OrderConverter extends MagentoConverter
         $this->mappingIds[] = $mapping['id'];
         $address['id'] = $mapping['entityId'];
 
-        if (!isset($originalData['country_id']) || !isset($originalData['country_iso2']) || !isset($originalData['country_iso3'])) {
-            return [];
-        }
-
-        $countryUuid = $this->countryLookup->getByIso3($originalData['country_iso3'], $this->context);
-
-        if ($countryUuid === null) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                    ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldName('addresses.countryId')
-                    ->withFieldSourcePath('country_iso3')
-                    ->withSourceData($originalData)
-                    ->build(ConvertObjectTypeUnsupportedLog::class)
-            );
-
-            return [];
+        $countryUuid = null;
+        if (isset($originalData['country_id']) && isset($originalData['country_iso2']) && isset($originalData['country_iso3'])) {
+            $countryUuid = $this->countryLookup->getByIso3($originalData['country_iso3'], $this->context);
         }
 
         $address['countryId'] = $countryUuid;
@@ -603,15 +550,6 @@ abstract class OrderConverter extends MagentoConverter
                     'shortCode' => $originalData['region_code'],
                     'countryId' => $countryUuid,
                 ];
-            } else {
-                $this->loggingService->log(
-                    MigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
-                        ->withFieldName('addresses.countryStateId')
-                        ->withFieldSourcePath('region_code')
-                        ->withSourceData($originalData)
-                        ->build(ConvertObjectTypeUnsupportedLog::class)
-                );
             }
         }
 
@@ -721,23 +659,9 @@ abstract class OrderConverter extends MagentoConverter
         return $paymentMethodMapping['entityId'];
     }
 
-    protected function convertOrderCustomer(array &$converted, array &$data): bool
+    protected function convertOrderCustomer(array &$converted, array &$data): void
     {
         $guestOrder = false;
-        $fields = $this->checkForEmptyRequiredDataFields($data['orders'], self::$requiredCustomerDataFieldKeys);
-
-        if (!empty($fields)) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                    ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldName(\implode(', ', $fields))
-                    ->withFieldSourcePath('orders')
-                    ->withSourceData($data)
-                    ->build(ConvertSourceDataIncompleteLog::class)
-            );
-
-            return false;
-        }
 
         if (isset($data['orders']['customer_id']) && $data['orders']['customer_is_guest'] === '0') {
             $customerMapping = $this->mappingService->getMapping(
@@ -747,18 +671,15 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($customerMapping === null) {
-                throw MigrationException::associationEntityRequiredMissing(
-                    DefaultEntities::ORDER,
-                    DefaultEntities::CUSTOMER
-                );
+            if ($customerMapping !== null) {
+                $converted['orderCustomer'] = [
+                    'customerId' => $customerMapping['entityId'],
+                ];
+                $this->mappingIds[] = $customerMapping['id'];
             }
-            $converted['orderCustomer'] = [
-                'customerId' => $customerMapping['entityId'],
-            ];
-            $this->mappingIds[] = $customerMapping['id'];
+
             unset($customerMapping);
-        } else {
+        } elseif (isset($data['orders']['customer_email'])) {
             $guestOrder = true;
             $guestCustomerMapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
@@ -804,11 +725,9 @@ abstract class OrderConverter extends MagentoConverter
             }
         }
 
-        if (!isset($this->salutationUuid)) {
-            return false;
+        if (isset($this->salutationUuid)) {
+            $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
         }
-
-        $converted['orderCustomer']['salutationId'] = $this->salutationUuid;
 
         if ($guestOrder === true) {
             $converted['orderCustomer']['customer']['salutationId'] = $this->salutationUuid;
@@ -832,43 +751,50 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($languageMapping === null) {
-                return false;
+            if ($languageMapping !== null) {
+                $this->mappingIds[] = $languageMapping['id'];
+                $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityId'];
             }
 
             $paymentMethodUuid = $this->getPaymentMethod($data);
-            if ($paymentMethodUuid === null) {
-                return false;
+            if ($paymentMethodUuid !== null) {
+                $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
             }
 
-            $this->mappingIds[] = $languageMapping['id'];
             $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
-            $converted['orderCustomer']['customer']['languageId'] = $languageMapping['entityId'];
-            $converted['orderCustomer']['customer']['defaultPaymentMethodId'] = $paymentMethodUuid;
             $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
-            $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+            if (isset($data['billingAddress'])) {
+                $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
 
-            if (empty($billingAddress)) {
-                return false;
+                if (!empty($billingAddress)) {
+                    $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
+                }
+
+                if (isset($billingAddress['id'])) {
+                    $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
+                }
             }
 
-            $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
-            $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
-            $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+            $shippingAddress = [];
+            if (isset($data['shippingAddress'])) {
+                $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+            }
 
-            if (empty($shippingAddress)) {
-                $shippingAddress = $billingAddress;
-            } else {
+            if (!empty($shippingAddress)) {
                 $converted['orderCustomer']['customer']['addresses'][] = $shippingAddress;
             }
 
-            $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
+            if (isset($shippingAddress['id'])) {
+                $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
+            }
+
+            if (empty($shippingAddress) && isset($billingAddress['id'])) {
+                $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $billingAddress['id'];
+            }
         }
 
         unset($data['customerSalutation']);
-
-        return true;
     }
 
     protected function convertSalesChannel(array &$converted, array $data): void
@@ -886,7 +812,7 @@ abstract class OrderConverter extends MagentoConverter
         }
     }
 
-    protected function convertCurrency(array &$converted, array &$data): bool
+    protected function convertCurrency(array &$converted, array &$data): void
     {
         $currencyUuid = null;
 
@@ -894,16 +820,10 @@ abstract class OrderConverter extends MagentoConverter
             $currencyUuid = $this->currencyLookup->get($data['orders']['order_currency_code'], $this->context);
         }
 
-        if ($currencyUuid === null) {
-            return false;
-        }
-
         $converted['currencyId'] = $currencyUuid;
-
-        return true;
     }
 
-    protected function convertOrderStatus(array &$converted, array &$data): bool
+    protected function convertOrderStatus(array &$converted, array &$data): void
     {
         $stateMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -912,24 +832,10 @@ abstract class OrderConverter extends MagentoConverter
             $this->context
         );
 
-        if ($stateMapping === null) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($this->migrationContext)
-                    ->withEntityName(OrderDefinition::ENTITY_NAME)
-                    ->withFieldName('stateId')
-                    ->withFieldSourcePath('orders.status')
-                    ->withSourceData($data)
-                    ->withConvertedData($converted)
-                    ->build(ConvertObjectTypeUnsupportedLog::class)
-            );
-
-            return false;
+        if ($stateMapping !== null) {
+            $converted['stateId'] = $stateMapping['entityId'];
+            $this->mappingIds[] = $stateMapping['id'];
         }
-
-        $converted['stateId'] = $stateMapping['entityId'];
-        $this->mappingIds[] = $stateMapping['id'];
-
-        return true;
     }
 
     protected function convertOrderItems(array &$converted, array &$data): void
@@ -938,7 +844,7 @@ abstract class OrderConverter extends MagentoConverter
         $taxRules = $this->getTaxRules($data);
         $taxCollection = new CalculatedTaxCollection([]);
 
-        $converted['lineItems'] = $this->getLineItems($data['items'], $this->context, $taxCollection);
+        $converted['lineItems'] = $this->getLineItems($data['items'], $taxCollection);
 
         $discount = 0.0;
         if (isset($data['orders']['discount_amount']) && (float) $data['orders']['discount_amount'] < 0) {
@@ -990,18 +896,17 @@ abstract class OrderConverter extends MagentoConverter
         unset($data['orders']['payment']);
     }
 
-    protected function convertBillingAddress(array &$converted, array &$data): bool
+    protected function convertBillingAddress(array &$converted, array &$data): void
     {
         $billingAddress = $this->getAddress($data['billingAddress']);
 
-        if (empty($billingAddress)) {
-            return false;
+        if (!empty($billingAddress)) {
+            $converted['addresses'][] = $billingAddress;
         }
 
-        $converted['billingAddressId'] = $billingAddress['id'];
-        $converted['addresses'][] = $billingAddress;
-
-        return true;
+        if (isset($billingAddress['id'])) {
+            $converted['billingAddressId'] = $billingAddress['id'];
+        }
     }
 
     private function setSalesChannelIdViaAdminStore(array &$converted): void
@@ -1054,7 +959,7 @@ abstract class OrderConverter extends MagentoConverter
             $shippingOrderAddress = $this->getAddress($data['shippingAddress']);
         }
 
-        if ($shippingOrderAddress === null) {
+        if ($shippingOrderAddress === null && isset($data['billingAddress'])) {
             $shippingOrderAddress = $this->getAddress($data['billingAddress']);
         }
 

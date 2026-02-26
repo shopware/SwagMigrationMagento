@@ -53,7 +53,7 @@ abstract class CustomFieldConverter extends Converter
 
         $entityName = $this->getDataSetEntity($migrationContext);
 
-        if ($type === null || $entityName === null) {
+        if ($entityName === null) {
             return new ConvertStruct(null, $data);
         }
 

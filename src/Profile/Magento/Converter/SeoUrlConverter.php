@@ -15,7 +15,6 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -96,12 +95,23 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $context
             );
 
-            if ($mapping !== null) {
-                $converted['foreignKey'] = $mapping['entityId'];
-                $converted['routeName'] = self::ROUTE_NAME_PRODUCT;
-                $converted['pathInfo'] = '/detail/' . $mapping['entityId'];
-                $this->mappingIds[] = $mapping['id'];
+            if ($mapping === null) {
+                $this->loggingService->log(
+                    MigrationLogBuilder::fromMigrationContext($migrationContext)
+                        ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                        ->withFieldName('routeName,foreignKey,pathInfo')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
+                        ->build(ConvertObjectTypeUnsupportedLog::class)
+                );
+
+                return new ConvertStruct(null, $this->originalData);
             }
+
+            $converted['foreignKey'] = $mapping['entityId'];
+            $converted['routeName'] = self::ROUTE_NAME_PRODUCT;
+            $converted['pathInfo'] = '/detail/' . $mapping['entityId'];
+            $this->mappingIds[] = $mapping['id'];
         } elseif (isset($data['category_id'])) {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -110,14 +120,25 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $context
             );
 
-            if ($mapping !== null) {
-                $converted['isCanonical'] = true;
-                $converted['isModified'] = true;
-                $converted['foreignKey'] = $mapping['entityId'];
-                $converted['routeName'] = self::ROUTE_NAME_NAVIGATION;
-                $converted['pathInfo'] = '/navigation/' . $mapping['entityId'];
-                $this->mappingIds[] = $mapping['id'];
+            if ($mapping === null) {
+                $this->loggingService->log(
+                    MigrationLogBuilder::fromMigrationContext($migrationContext)
+                        ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                        ->withFieldName('routeName,foreignKey,pathInfo')
+                        ->withSourceData($data)
+                        ->withConvertedData($converted)
+                        ->build(ConvertObjectTypeUnsupportedLog::class)
+                );
+
+                return new ConvertStruct(null, $this->originalData);
             }
+
+            $converted['isCanonical'] = true;
+            $converted['isModified'] = true;
+            $converted['foreignKey'] = $mapping['entityId'];
+            $converted['routeName'] = self::ROUTE_NAME_NAVIGATION;
+            $converted['pathInfo'] = '/navigation/' . $mapping['entityId'];
+            $this->mappingIds[] = $mapping['id'];
         } else {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
@@ -131,40 +152,31 @@ abstract class SeoUrlConverter extends MagentoConverter
             return new ConvertStruct(null, $this->originalData);
         }
 
-        if (!isset($converted['languageId'], $converted['salesChannelId'], $converted['foreignKey'], $converted['routeName'])) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($migrationContext)
-                    ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
-                    ->withSourceData($data)
-                    ->withConvertedData($converted)
-                    ->build(ConvertEntityUnknownLog::class)
-            );
+        if (isset($converted['languageId'], $converted['salesChannelId'], $converted['foreignKey'], $converted['routeName'])) {
+            $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
+            $hash = Hasher::hash($converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical, 'sha256');
 
-            return new ConvertStruct(null, $this->originalData);
-        }
-
-        $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
-        $hash = Hasher::hash($converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical, 'sha256');
-        $uniqueUrlMapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::SEO_URL,
-            $hash,
-            $context
-        );
-
-        if ($uniqueUrlMapping === null) {
-            $this->mappingService->getOrCreateMapping(
+            $uniqueUrlMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 DefaultEntities::SEO_URL,
                 $hash,
-                $context,
-                null,
-                null,
-                $converted['id']
+                $context
             );
-        } else {
-            if ($uniqueUrlMapping['entityId'] !== $converted['id']) {
-                return new ConvertStruct(null, $this->originalData);
+
+            if ($uniqueUrlMapping === null) {
+                $this->mappingService->getOrCreateMapping(
+                    $this->connectionId,
+                    DefaultEntities::SEO_URL,
+                    $hash,
+                    $context,
+                    null,
+                    null,
+                    $converted['id']
+                );
+            } else {
+                if ($uniqueUrlMapping['entityId'] !== $converted['id']) {
+                    return new ConvertStruct(null, $this->originalData);
+                }
             }
         }
 

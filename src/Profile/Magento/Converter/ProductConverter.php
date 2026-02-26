@@ -18,11 +18,10 @@ use Shopware\Core\System\Language\LanguageEntity;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\MediaDefaultFolderLookup;
@@ -86,6 +85,18 @@ abstract class ProductConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
+        if (empty($data['group_id'])) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductDefinition::ENTITY_NAME)
+                    ->withFieldName('entity_id')
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
+
+            return new ConvertStruct(null, $data);
+        }
+
         $this->generateChecksum($data);
         $this->originalData = $data;
         $this->context = $context;
@@ -110,18 +121,8 @@ abstract class ProductConverter extends MagentoConverter
         /*
          * Set tax
          */
-        if (isset($data['tax_class_id']) && !$this->setTax($data['tax_class_id'], $converted)) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($migrationContext)
-                    ->withEntityName(ProductDefinition::ENTITY_NAME)
-                    ->withFieldName('taxId')
-                    ->withFieldSourcePath('tax_class_id')
-                    ->withSourceData($data)
-                    ->withConvertedData($converted)
-                    ->build(ConvertAssociationMissingLog::class)
-            );
-
-            return new ConvertStruct(null, $this->originalData);
+        if (isset($data['tax_class_id'])) {
+            $this->setTax($data['tax_class_id'], $converted);
         }
 
         unset($data['tax_class_id']);
@@ -133,18 +134,6 @@ abstract class ProductConverter extends MagentoConverter
             $converted['price'] = $this->getPrice($data, $converted);
         }
 
-        if (empty($converted['price'])) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($migrationContext)
-                    ->withEntityName(ProductDefinition::ENTITY_NAME)
-                    ->withFieldName('price')
-                    ->withSourceData($data)
-                    ->withConvertedData($converted)
-                    ->build(ConvertAssociationMissingLog::class)
-            );
-
-            return new ConvertStruct(null, $this->originalData);
-        }
         unset($data['price']);
 
         /*
@@ -389,9 +378,6 @@ abstract class ProductConverter extends MagentoConverter
         $converted['categories'] = $categoryMapping;
     }
 
-    /**
-     * @throws MigrationException
-     */
     protected function setParent(array &$converted, array &$data): void
     {
         $parentMapping = $this->mappingService->getMapping(
@@ -401,12 +387,10 @@ abstract class ProductConverter extends MagentoConverter
             $this->context
         );
 
-        if ($parentMapping === null) {
-            throw MigrationException::parentEntityForChildNotFound(DefaultEntities::PRODUCT, $this->oldIdentifier);
+        if ($parentMapping !== null) {
+            $converted['parentId'] = $parentMapping['entityId'];
+            $this->mappingIds[] = $parentMapping['id'];
         }
-
-        $converted['parentId'] = $parentMapping['entityId'];
-        $this->mappingIds[] = $parentMapping['id'];
     }
 
     protected function setManufacturerId(string $manufacturer, array &$converted): void
@@ -425,12 +409,8 @@ abstract class ProductConverter extends MagentoConverter
         $converted['manufacturerId'] = $mapping['entityId'];
     }
 
-    protected function setTax(?string $taxClassId, array &$converted): bool
+    protected function setTax(string $taxClassId, array &$converted): void
     {
-        if ($taxClassId === null) {
-            return false;
-        }
-
         if ($taxClassId === '0') {
             $mapping = $this->mappingService->getOrCreateMapping(
                 $this->connectionId,
@@ -445,8 +425,6 @@ abstract class ProductConverter extends MagentoConverter
                 'name' => '0%',
             ];
             $this->mappingIds[] = $mapping['id'];
-
-            return true;
         }
 
         $mapping = $this->mappingService->getMapping(
@@ -459,11 +437,7 @@ abstract class ProductConverter extends MagentoConverter
         if ($mapping !== null) {
             $this->mappingIds[] = $mapping['id'];
             $converted['taxId'] = $mapping['entityId'];
-
-            return true;
         }
-
-        return false;
     }
 
     protected function getPrice(array $priceData, array $converted): array

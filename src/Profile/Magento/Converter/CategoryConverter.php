@@ -7,17 +7,13 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
-use Shopware\Core\Content\Category\CategoryDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaults;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
@@ -34,15 +30,6 @@ abstract class CategoryConverter extends MagentoConverter
     protected Context $context;
 
     protected string $entity_id;
-
-    /**
-     * @var list<string>
-     */
-    protected static array $requiredDataFieldKeys = [
-        'entity_id',
-        'name',
-        'defaultLocale',
-    ];
 
     private MediaFileServiceInterface $mediaFileService;
 
@@ -105,20 +92,6 @@ abstract class CategoryConverter extends MagentoConverter
         }
         $rootCategoryMapping = $this->mappingService->getMapping($this->connectionId, MagentoDefaults::ROOT_CATEGORY, $data['parent_id'], $context);
 
-        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-
-        if (!empty($fields)) {
-            $this->loggingService->log(
-                MigrationLogBuilder::fromMigrationContext($migrationContext)
-                    ->withEntityName(CategoryDefinition::ENTITY_NAME)
-                    ->withFieldName(implode(', ', $fields))
-                    ->withSourceData($data)
-                    ->build(ConvertSourceDataIncompleteLog::class)
-            );
-
-            return new ConvertStruct(null, $data);
-        }
-
         /*
          * Set main data
          */
@@ -147,12 +120,10 @@ abstract class CategoryConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($parentMapping === null) {
-                throw MigrationException::parentEntityForChildNotFound(DefaultEntities::CATEGORY, $this->entity_id);
+            if ($parentMapping !== null) {
+                $this->mappingIds[] = $parentMapping['id'];
+                $converted['parentId'] = $parentMapping['entityId'];
             }
-
-            $this->mappingIds[] = $parentMapping['id'];
-            $converted['parentId'] = $parentMapping['entityId'];
         } elseif (!isset($data['previousSiblingId'])) {
             $previousSiblingUuid = $this->lowestRootCategoryLookup->get($context);
             if ($previousSiblingUuid !== null) {
@@ -296,6 +267,10 @@ abstract class CategoryConverter extends MagentoConverter
 
         if (isset($converted['translations'][$language->getId()]['name'])) {
             unset($converted['name']);
+        }
+
+        if (!isset($data['defaultLocale'])) {
+            return;
         }
 
         if ($locale->getCode() === $data['defaultLocale']) {
