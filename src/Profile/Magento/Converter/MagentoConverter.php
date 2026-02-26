@@ -25,7 +25,7 @@ abstract class MagentoConverter extends Converter
     protected const TYPE_FLOAT = 'float';
     protected const TYPE_DATETIME = 'datetime';
 
-    protected MappingServiceInterface|MagentoMappingServiceInterface $mappingService;
+    protected MappingServiceInterface $mappingService;
 
     protected MigrationContextInterface $migrationContext;
 
@@ -86,7 +86,7 @@ abstract class MagentoConverter extends Converter
             new \DateTime($value);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }
@@ -143,9 +143,6 @@ abstract class MagentoConverter extends Converter
     protected function getTranslations(array $translations, array $defaultEntities, Context $context, ?int $attributeSetId = null): array
     {
         $connection = $this->migrationContext->getConnection();
-        if ($connection === null) {
-            return [];
-        }
 
         $localeTranslation = [];
         foreach ($translations as $store => $translationValues) {
@@ -160,7 +157,7 @@ abstract class MagentoConverter extends Converter
                 continue;
             }
             $this->mappingIds[] = $languageMapping['id'];
-            $languageId = $languageMapping['entityUuid'];
+            $languageId = $languageMapping['entityId'];
 
             foreach ($translationValues as $attributeCode => $attributeData) {
                 if (!isset($attributeData['attribute_id'], $attributeData['value'])) {

@@ -18,6 +18,7 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -84,14 +85,7 @@ class Magento19CrossSellingConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new CrossSellingDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new CrossSellingDataSet(), $this->runId, 0, 250);
 
         $this->createMapping(['417', '807', '875', '877', '879', '882', '892', '895']);
     }
@@ -164,10 +158,9 @@ class Magento19CrossSellingConverterTest extends TestCase
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
-        static::assertSame('99', $logs[0]['parameters']['sourceId']);
+        static::assertSame(ConvertAssociationMissingLog::getCode(), $logs[0]['code']);
 
-        $this->loggingService->resetLogging();
+        $this->loggingService->reset();
         $data[0]['linked_product_id'] = '80';
         $convertResult = $this->crossSellingConverter->convert($data[0], $context, $this->migrationContext);
 
@@ -176,8 +169,7 @@ class Magento19CrossSellingConverterTest extends TestCase
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
-        static::assertSame('80', $logs[0]['parameters']['sourceId']);
+        static::assertSame(ConvertAssociationMissingLog::getCode(), $logs[0]['code']);
     }
 
     private function createMapping(array $identifiers): void
@@ -196,9 +188,9 @@ class Magento19CrossSellingConverterTest extends TestCase
 
         $this->compareProduct['id'] = $converted['id'];
         $this->compareProduct['name'] = $type;
-        $this->compareProduct['productId'] = $this->products[$fromIndex]['entityUuid'];
+        $this->compareProduct['productId'] = $this->products[$fromIndex]['entityId'];
         $this->compareProduct['assignedProducts']['0']['id'] = $converted['assignedProducts']['0']['id'];
-        $this->compareProduct['assignedProducts']['0']['productId'] = $this->products[$toIndex]['entityUuid'];
+        $this->compareProduct['assignedProducts']['0']['productId'] = $this->products[$toIndex]['entityId'];
         $this->compareProduct['assignedProducts']['0']['position'] = $position;
 
         static::assertNull($convertStruct->getUnmapped());

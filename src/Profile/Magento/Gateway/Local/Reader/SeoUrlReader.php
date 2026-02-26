@@ -9,7 +9,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -39,10 +38,6 @@ abstract class SeoUrlReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}core_url_rewrite seo
@@ -57,10 +52,6 @@ SQL;
 
     protected function fetchSeoUrls(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'core_url_rewrite', 'seo');

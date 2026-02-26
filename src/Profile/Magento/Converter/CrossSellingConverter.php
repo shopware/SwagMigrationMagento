@@ -7,12 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Product\Aggregate\ProductCrossSelling\ProductCrossSellingDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -40,10 +42,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         $this->context = $context;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
@@ -54,7 +53,7 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         $converted = [];
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         $sourceProductMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -64,12 +63,15 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($sourceProductMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
-                $this->runId,
-                DefaultEntities::PRODUCT,
-                $data['sourceProductId'],
-                $data['type']
-            ));
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
+                    ->withFieldName('productId')
+                    ->withFieldSourcePath('sourceProductId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }
@@ -83,12 +85,15 @@ abstract class CrossSellingConverter extends MagentoConverter
         );
 
         if ($relatedProductMapping === null) {
-            $this->loggingService->addLogEntry(new AssociationRequiredMissingLog(
-                $this->runId,
-                DefaultEntities::PRODUCT,
-                $data['linked_product_id'],
-                $data['type']
-            ));
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
+                    ->withFieldName('linked_product_id')
+                    ->withFieldSourcePath('crossSellingAssignedProducts.productId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }
@@ -112,12 +117,12 @@ abstract class CrossSellingConverter extends MagentoConverter
 
         $converted['type'] = 'productList';
         $converted['active'] = true;
-        $converted['productId'] = $sourceProductMapping['entityUuid'];
+        $converted['productId'] = $sourceProductMapping['entityId'];
         $converted['assignedProducts'] = [
             [
-                'id' => $relationMapping['entityUuid'],
+                'id' => $relationMapping['entityId'],
                 'position' => $data['position'],
-                'productId' => $relatedProductMapping['entityUuid'],
+                'productId' => $relatedProductMapping['entityId'],
             ],
         ];
 

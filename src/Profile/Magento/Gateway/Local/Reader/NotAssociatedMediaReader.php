@@ -53,11 +53,8 @@ abstract class NotAssociatedMediaReader extends AbstractReader
     private function getInstallationRoot(MigrationContextInterface $migrationContext): string
     {
         $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return '';
-        }
-
         $credentials = $connection->getCredentialFields();
+
         if (!isset($credentials['installationRoot']) || $credentials['installationRoot'] === '') {
             return '';
         }

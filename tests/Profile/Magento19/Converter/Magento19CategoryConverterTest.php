@@ -22,6 +22,7 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup;
@@ -77,14 +78,7 @@ class Magento19CategoryConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
@@ -216,8 +210,8 @@ class Magento19CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        $title = 'The category entity has one or more empty necessary fields';
-        static::assertSame($title, $logs[0]['title']);
+
         static::assertCount(1, $logs);
+        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
     }
 }

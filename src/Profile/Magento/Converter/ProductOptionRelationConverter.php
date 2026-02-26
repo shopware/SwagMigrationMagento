@@ -26,10 +26,7 @@ abstract class ProductOptionRelationConverter extends MagentoConverter
         $this->generateChecksum($data);
 
         $connection = $migrationContext->getConnection();
-        $connectionId = '';
-        if ($connection !== null) {
-            $connectionId = $connection->getId();
-        }
+        $connectionId = $connection->getId();
 
         $productMapping = $this->mappingService->getMapping(
             $connectionId,
@@ -43,7 +40,7 @@ abstract class ProductOptionRelationConverter extends MagentoConverter
         }
 
         $converted = [];
-        $converted['id'] = $productMapping['entityUuid'];
+        $converted['id'] = $productMapping['entityId'];
         $this->mappingIds[] = $productMapping['id'];
 
         $optionMapping = $this->mappingService->getMapping(
@@ -57,7 +54,7 @@ abstract class ProductOptionRelationConverter extends MagentoConverter
             return new ConvertStruct(null, $data);
         }
 
-        $converted['options'][] = ['id' => $optionMapping['entityUuid']];
+        $converted['options'][] = ['id' => $optionMapping['entityId']];
 
         unset(
             $data['entity_id'],

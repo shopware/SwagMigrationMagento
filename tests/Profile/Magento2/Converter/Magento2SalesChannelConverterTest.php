@@ -69,14 +69,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new SalesChannelDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new SalesChannelDataSet(), $this->runId, 0, 250);
 
         $this->defaultPaymentMethodId = Uuid::randomHex();
         $this->defaultShippingMethodId = Uuid::randomHex();
@@ -134,13 +127,10 @@ class Magento2SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
 
         static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_LANGUAGE');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'default_locale');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertWithoutDefaultCurrency(): void
@@ -152,13 +142,10 @@ class Magento2SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
 
         static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CURRENCY');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'default_currency');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertWithoutDefaultCategory(): void
@@ -171,13 +158,10 @@ class Magento2SalesChannelConverterTest extends TestCase
         $convertResult = $this->salesChannelConverter->convert($salesChannelData[0], $context, $this->migrationContext);
 
         static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CATEGORY');
-        static::assertSame($logs[0]['parameters']['sourceId'], $salesChannelData[0]['root_category_id']);
+        static::assertCount(0, $logs);
     }
 
     public function testConvertMissingPaymentMethod(): void
@@ -198,10 +182,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PAYMENT_METHOD');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'cashondelivery');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertMissingShippingMethod(): void
@@ -222,10 +203,7 @@ class Magento2SalesChannelConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SHIPPING_METHOD');
-        static::assertSame($logs[0]['parameters']['sourceId'], 'ups');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertMissingWithoutPaymentMethods(): void

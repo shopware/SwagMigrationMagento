@@ -20,6 +20,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
 use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileCollection;
@@ -52,10 +53,11 @@ class LocalMediaProcessorTest extends TestCase
         }
 
         $migrationContext = new MigrationContext(
+            new SwagMigrationConnectionEntity(),
             new Magento19Profile(),
             null,
-            Uuid::randomHex(),
             null,
+            Uuid::randomHex(),
             0,
             100
         );
@@ -69,7 +71,7 @@ class LocalMediaProcessorTest extends TestCase
 
         foreach ($result as $workload) {
             static::assertInstanceOf(MediaProcessWorkloadStruct::class, $workload);
-            static::assertEquals(MediaProcessWorkloadStruct::FINISH_STATE, $workload->getState());
+            static::assertSame(MediaProcessWorkloadStruct::FINISH_STATE, $workload->getState());
         }
     }
 
@@ -100,14 +102,14 @@ class LocalMediaProcessorTest extends TestCase
 
         $fileSaverMock = $this->createMock(FileSaver::class);
         // TestCase: Check that the filename starts with "/tmp/", the file exists and the size is correct
-        $fileSaverMock->expects(static::exactly(2))
+        $fileSaverMock->expects($this->exactly(2))
             ->method('persistFileToMedia')
             ->willReturnCallback(function ($mediaFile, $destination, $mediaId): void {
                 static::assertInstanceOf(MediaFile::class, $mediaFile);
                 static::assertStringStartsWith('/tmp/', $mediaFile->getFileName());
                 static::assertFileExists($mediaFile->getFileName());
                 static::assertSame($mediaFile->getFileSize(), \filesize($mediaFile->getFileName()));
-                static::assertEquals('jpg', $mediaFile->getFileExtension());
+                static::assertSame('jpg', $mediaFile->getFileExtension());
 
                 static::assertIsString($destination);
                 static::assertStringStartsWith('test', $destination);

@@ -26,6 +26,9 @@ use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertFieldReassignedLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
@@ -90,14 +93,7 @@ class Magento19CustomerConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new CustomerDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new CustomerDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $this->adminSalesChannelStoreId = '3';
@@ -263,8 +259,7 @@ class Magento19CustomerConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER');
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
+        static::assertSame($logs[0]['code'], ConvertSourceDataIncompleteLog::getCode());
     }
 
     public function testConvertCustomerWithoutNumber(): void
@@ -305,14 +300,10 @@ class Magento19CustomerConverterTest extends TestCase
             $this->migrationContext
         );
 
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'address data');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertCustomerWithoutValidAddresses(): void
@@ -329,33 +320,17 @@ class Magento19CustomerConverterTest extends TestCase
             $this->migrationContext
         );
 
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(2, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][0]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'firstname');
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER');
-        static::assertSame($logs[1]['parameters']['sourceId'], $customerData['entity_id']);
-        static::assertSame($logs[1]['parameters']['emptyField'], 'address data');
+        static::assertCount(0, $logs);
     }
 
     public static function requiredAddressProperties(): array
     {
         return [
-            ['firstname', null],
-            ['firstname', ''],
-            ['lastname', null],
-            ['lastname', ''],
-            ['postcode', null],
-            ['postcode', ''],
-            ['city', null],
-            ['city', ''],
-            ['street', null],
-            ['street', ''],
+            ['entity_id', null],
+            ['entity_id', ''],
             ['country_id', null],
             ['country_id', ''],
             ['country_iso2', null],
@@ -391,15 +366,14 @@ class Magento19CustomerConverterTest extends TestCase
         static::assertSame($converted['addresses'][0]['id'], $converted['defaultShippingAddressId']);
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(2, $logs);
+        static::assertCount(3, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][0]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
-        static::assertSame($logs[1]['parameters']['emptyField'], 'default billing address');
-        static::assertSame($logs[1]['parameters']['replacementField'], 'default shipping address');
+        $codes = \array_column($logs, 'code');
+        static::assertSame([
+            ConvertSourceDataIncompleteLog::getCode(),
+            ConvertFieldReassignedLog::getCode(),
+            ConvertFieldReassignedLog::getCode(),
+        ], $codes);
     }
 
     #[DataProvider('requiredAddressProperties')]
@@ -428,15 +402,14 @@ class Magento19CustomerConverterTest extends TestCase
         static::assertSame($converted['addresses'][0]['id'], $converted['defaultShippingAddressId']);
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(2, $logs);
+        static::assertCount(3, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][1]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
-        static::assertSame($logs[1]['parameters']['emptyField'], 'default shipping address');
-        static::assertSame($logs[1]['parameters']['replacementField'], 'default billing address');
+        $codes = \array_column($logs, 'code');
+        static::assertSame([
+            ConvertSourceDataIncompleteLog::getCode(),
+            ConvertFieldReassignedLog::getCode(),
+            ConvertFieldReassignedLog::getCode(),
+        ], $codes);
     }
 
     #[DataProvider('requiredAddressProperties')]
@@ -466,19 +439,15 @@ class Magento19CustomerConverterTest extends TestCase
         static::assertSame($converted['addresses'][0]['id'], $converted['defaultShippingAddressId']);
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(3, $logs);
+        static::assertCount(4, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[0]['parameters']['sourceId'], $customerData['addresses'][0]['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[1]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_CUSTOMER_ADDRESS');
-        static::assertSame($logs[1]['parameters']['sourceId'], $customerData['addresses'][1]['entity_id']);
-        static::assertSame($logs[1]['parameters']['emptyField'], $property);
-
-        static::assertSame($logs[2]['code'], 'SWAG_MIGRATION_CUSTOMER_ENTITY_FIELD_REASSIGNED');
-        static::assertSame($logs[2]['parameters']['emptyField'], 'default billing and shipping address');
-        static::assertSame($logs[2]['parameters']['replacementField'], 'first address');
+        $codes = \array_column($logs, 'code');
+        static::assertSame([
+            ConvertSourceDataIncompleteLog::getCode(),
+            ConvertSourceDataIncompleteLog::getCode(),
+            ConvertFieldReassignedLog::getCode(),
+            ConvertFieldReassignedLog::getCode(),
+        ], $codes);
     }
 
     public function testConvertCountryStateWithMapping(): void
@@ -560,10 +529,6 @@ class Magento19CustomerConverterTest extends TestCase
 
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_COUNTRY_STATE_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], '9999');
-        static::assertSame($logs[0]['parameters']['entity'], DefaultEntities::COUNTRY_STATE);
-        static::assertSame($logs[0]['parameters']['requiredForSourceId'], $customerData['entity_id']);
-        static::assertSame($logs[0]['parameters']['requiredForEntity'], DefaultEntities::CUSTOMER);
+        static::assertSame($logs[0]['code'], ConvertObjectTypeUnsupportedLog::getCode());
     }
 }

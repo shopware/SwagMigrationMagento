@@ -8,7 +8,6 @@
 namespace Swag\MigrationMagento\Profile\Magento\Premapping;
 
 use Shopware\Core\Checkout\Payment\PaymentMethodEntity;
-use Shopware\Core\Checkout\Shipping\ShippingMethodEntity;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
@@ -124,7 +123,6 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
      */
     private function getChoices(Context $context): array
     {
-        /** @var ShippingMethodEntity[] $shippingMethods */
         $shippingMethods = $this->paymentMethodRepo->search(new Criteria(), $context)->getElements();
 
         $choices = [];

@@ -59,14 +59,7 @@ class Magento2MediaConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new MediaDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new MediaDataSet(), $this->runId, 0, 250);
     }
 
     public function testSupports(): void

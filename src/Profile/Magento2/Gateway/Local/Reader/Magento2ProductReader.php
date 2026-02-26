@@ -11,17 +11,12 @@ use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
-use SwagMigrationAssistant\Exception\MigrationException;
 
 #[Package('fundamentals@after-sales')]
 abstract class Magento2ProductReader extends ProductReader
 {
     protected function fetchProductMedia(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT
     mediaGalleryValue.entity_id AS productId,
@@ -44,10 +39,6 @@ SQL;
 
     protected function fetchConfiguratorSettings(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->select('DISTINCT product.entity_id AS identifier');

@@ -7,30 +7,29 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
-use Doctrine\DBAL\Connection;
 use Shopware\Core\Framework\Log\Package;
-use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface;
+use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
+use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
+use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Magento2LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
-class EnvironmentReader implements EnvironmentReaderInterface
+class EnvironmentReader extends AbstractReader implements EnvironmentReaderInterface
 {
-    protected ConnectionFactoryInterface $connectionFactory;
-
-    protected Connection $connection;
-
-    protected string $tablePrefix;
-
-    /**
-     * @internal
-     */
-    public function __construct(ConnectionFactoryInterface $connectionFactory)
+    public function supports(MigrationContextInterface $migrationContext): bool
     {
-        $this->connectionFactory = $connectionFactory;
-        $this->tablePrefix = '';
+        return $migrationContext->getProfile() instanceof MagentoProfileInterface
+            && \in_array(
+                $migrationContext->getGateway()->getName(),
+                [Magento19LocalGateway::GATEWAY_NAME, Magento2LocalGateway::GATEWAY_NAME],
+                true
+            );
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $this->setConnection($migrationContext);
@@ -45,25 +44,6 @@ class EnvironmentReader implements EnvironmentReaderInterface
         ];
 
         return $resultSet;
-    }
-
-    protected function setConnection(MigrationContextInterface $migrationContext): void
-    {
-        $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return;
-        }
-
-        $dbConnection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($dbConnection === null) {
-            return;
-        }
-
-        $this->connection = $dbConnection;
-        $credentials = $connection->getCredentialFields();
-        if (isset($credentials['tablePrefix'])) {
-            $this->tablePrefix = (string) $credentials['tablePrefix'];
-        }
     }
 
     protected function getHost(): string

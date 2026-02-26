@@ -50,14 +50,7 @@ class Magento19ProductMultiSelectPropertyRelationConvertTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new ProductMultiSelectPropertyRelationDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new ProductMultiSelectPropertyRelationDataSet(), $this->runId, 0, 250);
 
         $this->converter = new Magento19ProductMultiSelectPropertyRelationConverter($this->mappingService, $this->loggingService);
     }
@@ -81,8 +74,8 @@ class Magento19ProductMultiSelectPropertyRelationConvertTest extends TestCase
 
         static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
-        static::assertSame($productUuid['entityUuid'], $converted['id']);
-        static::assertSame($relationUuid['entityUuid'], $converted['properties'][0]['id']);
+        static::assertSame($productUuid['entityId'], $converted['id']);
+        static::assertSame($relationUuid['entityId'], $converted['properties'][0]['id']);
     }
 
     public static function getNormalDataProvider(): array
@@ -120,6 +113,7 @@ class Magento19ProductMultiSelectPropertyRelationConvertTest extends TestCase
     {
         $data = require __DIR__ . '/../../../_fixtures/product_property_data.php';
 
+        $returnData = [];
         $returnData[] = [
             $data[0],
             true,

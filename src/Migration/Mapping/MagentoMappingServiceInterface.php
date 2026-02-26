@@ -26,5 +26,8 @@ interface MagentoMappingServiceInterface extends MappingServiceInterface
         ?string $newUuid = null,
     ): void;
 
+    /**
+     * @return list<string>
+     */
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array;
 }

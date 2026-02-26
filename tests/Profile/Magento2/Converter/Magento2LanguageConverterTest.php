@@ -64,14 +64,7 @@ class Magento2LanguageConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new LanguageDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new LanguageDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $this->localeFrMappingUuid = Uuid::randomHex();
@@ -136,8 +129,7 @@ class Magento2LanguageConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
 
-        $this->expectException(MigrationException::class);
-        $this->expectExceptionMessage('Locale with code: "lo-LO" for language lookup not found.');
+        static::expectExceptionObject(MigrationException::localeNotFound('lo-LO'));
         $this->languageConverter->convert($languageData[2], $context, $this->migrationContext);
     }
 }

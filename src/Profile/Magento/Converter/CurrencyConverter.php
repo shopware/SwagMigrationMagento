@@ -56,10 +56,7 @@ abstract class CurrencyConverter extends MagentoConverter
         unset($data['isoCode']);
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $this->generateChecksum($data);
 
@@ -83,7 +80,7 @@ abstract class CurrencyConverter extends MagentoConverter
                 $currencyUuid
             );
         }
-        $currencyUuid = $this->mainMapping['entityUuid'];
+        $currencyUuid = $this->mainMapping['entityId'];
 
         $defaultCurrencyMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,

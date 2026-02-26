@@ -10,17 +10,12 @@ namespace Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader;
-use SwagMigrationAssistant\Exception\MigrationException;
 
 #[Package('fundamentals@after-sales')]
 abstract class Magento2CustomerReader extends CustomerReader
 {
     protected function fetchAddresses(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
             SELECT
                 customer_address.*,

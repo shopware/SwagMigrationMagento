@@ -29,8 +29,17 @@ parameters:
 
     ignoreErrors:
         - message: '#^Namespace must start with Shopware#'
-
         - message: '#^Service ".*" is private.$#'
 
-        - # Ignore undefined function calls on MappingServiceInterface because PHPStan dont get the inheritance
-            message: '#Call to an undefined method SwagMigrationAssistant\\Migration\\Mapping\\MappingServiceInterface::createListItemMapping|getUuidList\(\)#'
+        # TODO: XML config format will be migrated step by step, so we ignore errors for now, see https://github.com/shopware/shopware/issues/13072
+        - message: '#deprecated class Symfony\\Component\\DependencyInjection\\Loader\\XmlFileLoader#'
+
+        # TODO: MagentoMappingServiceInterface extends MappingServiceInterface with additional methods, but parent Converter class types $mappingService as MappingServiceInterface
+        - message: '#Call to an undefined method SwagMigrationAssistant\\Migration\\Mapping\\MappingServiceInterface::(createListItemMapping|getUuidList)\(\)#'
+
+        # TODO remove this for 6.8 compatibility
+        - message: '#Access to constant on deprecated class Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\DebitPayment#'
+          paths:
+              - tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
+        - message: '#Call to deprecated method __construct\(\) of class Shopware\\Core\\Framework\\DataAbstractionLayer\\EntityDefinition#'
+

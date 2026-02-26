@@ -9,10 +9,12 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Shopware\Core\System\CustomField\CustomFieldDefinition;
 use SwagMigrationAssistant\Migration\Converter\Converter;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -47,10 +49,7 @@ abstract class CustomFieldConverter extends Converter
         $type = $this->validateType($data);
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $entityName = $this->getDataSetEntity($migrationContext);
 
@@ -66,13 +65,13 @@ abstract class CustomFieldConverter extends Converter
         );
 
         if ($defaultLocale === null) {
-            $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::LOCALE,
-                    'global_default',
-                    DefaultEntities::CUSTOM_FIELD_SET
-                )
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(CustomFieldDefinition::ENTITY_NAME)
+                    ->withFieldName('locale')
+                    ->withFieldSourcePath('global_default')
+                    ->withSourceData($data)
+                    ->build(ConvertObjectTypeUnsupportedLog::class)
             );
 
             return new ConvertStruct(null, $data);
@@ -86,7 +85,7 @@ abstract class CustomFieldConverter extends Converter
         );
 
         $converted = [];
-        $converted['id'] = $mapping['entityUuid'];
+        $converted['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $converted['name'] = 'migration_set_' . $data['setId'];
@@ -106,7 +105,7 @@ abstract class CustomFieldConverter extends Converter
 
         $converted['relations'] = [
             [
-                'id' => $mapping['entityUuid'],
+                'id' => $mapping['entityId'],
                 'entityName' => $this->getCustomFieldEntityName(),
             ],
         ];
@@ -120,7 +119,7 @@ abstract class CustomFieldConverter extends Converter
         );
         $converted['customFields'] = [
             [
-                'id' => $this->mainMapping['entityUuid'],
+                'id' => $this->mainMapping['entityId'],
                 'name' => 'migration_attribute_' . $data['setId'] . '_' . $data['attribute_code'] . '_' . $data['attribute_id'],
                 'type' => $type,
                 'config' => $this->getConfiguredCustomFieldData($data, $defaultLocale),

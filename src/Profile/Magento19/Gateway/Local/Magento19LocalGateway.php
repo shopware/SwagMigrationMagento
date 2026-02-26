@@ -22,6 +22,7 @@ use SwagMigrationAssistant\Migration\EnvironmentInformation;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
+use SwagMigrationAssistant\Migration\Profile\ProfileInterface;
 use SwagMigrationAssistant\Migration\RequestStatusStruct;
 
 #[Package('fundamentals@after-sales')]
@@ -71,9 +72,9 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         return 'swag-migration.wizard.pages.connectionCreate.gateways.magentoLocal';
     }
 
-    public function supports(MigrationContextInterface $migrationContext): bool
+    public function supports(ProfileInterface $profile): bool
     {
-        return $migrationContext->getProfile() instanceof Magento19Profile;
+        return $profile instanceof Magento19Profile;
     }
 
     public function read(MigrationContextInterface $migrationContext): array
@@ -85,22 +86,12 @@ class Magento19LocalGateway implements MagentoGatewayInterface
 
     public function readEnvironmentInformation(MigrationContextInterface $migrationContext, Context $context): EnvironmentInformation
     {
-        $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
         $profile = $migrationContext->getProfile();
 
-        if ($connection === null) {
-            return new EnvironmentInformation(
-                $profile->getSourceSystemName(),
-                $profile->getVersion(),
-                '-',
-                [],
-                [],
-                new RequestStatusStruct('500', 'No database connection')
-            );
-        }
-
         try {
+            $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
             $connection->executeQuery('SELECT 1');
+            $connection->close();
         } catch (\Throwable) {
             return new EnvironmentInformation(
                 $profile->getSourceSystemName(),
@@ -112,7 +103,6 @@ class Magento19LocalGateway implements MagentoGatewayInterface
             );
         }
 
-        $connection->close();
         $environmentData = $this->localEnvironmentReader->read($migrationContext);
 
         /** @var CurrencyEntity $targetSystemCurrency */
@@ -122,7 +112,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
             $environmentData['defaultCurrency'] = $targetSystemCurrency->getIsoCode();
         }
 
-        $totals = $this->readTotals($migrationContext, $context);
+        $totals = $this->readTotals($migrationContext);
 
         return new EnvironmentInformation(
             $profile->getSourceSystemName(),
@@ -138,7 +128,7 @@ class Magento19LocalGateway implements MagentoGatewayInterface
         );
     }
 
-    public function readTotals(MigrationContextInterface $migrationContext, Context $context): array
+    public function readTotals(MigrationContextInterface $migrationContext): array
     {
         $readers = $this->readerRegistry->getReaderForTotal($migrationContext);
 
@@ -166,9 +156,6 @@ class Magento19LocalGateway implements MagentoGatewayInterface
     public function readPayments(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($connection === null) {
-            return [];
-        }
 
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
 
@@ -187,9 +174,6 @@ SQL;
     public function readCustomerGroups(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($connection === null) {
-            return [];
-        }
 
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
 
@@ -204,9 +188,6 @@ SQL;
     public function readCarriers(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($connection === null) {
-            return [];
-        }
 
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
         $sql = <<<SQL
@@ -235,9 +216,6 @@ SQL;
     public function readGenders(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($connection === null) {
-            return [];
-        }
 
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
         $query = $connection->createQueryBuilder();
@@ -257,9 +235,6 @@ SQL;
     public function readStores(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);
-        if ($connection === null) {
-            return [];
-        }
 
         $tablePrefix = $this->getTablePrefixFromCredentials($migrationContext);
         $query = $connection->createQueryBuilder();
@@ -275,12 +250,10 @@ SQL;
     protected function getTablePrefixFromCredentials(MigrationContextInterface $migrationContext): string
     {
         $tablePrefix = '';
-        $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return $tablePrefix;
-        }
 
+        $connection = $migrationContext->getConnection();
         $credentials = $connection->getCredentialFields();
+
         if (isset($credentials['tablePrefix'])) {
             $tablePrefix = $credentials['tablePrefix'];
         }

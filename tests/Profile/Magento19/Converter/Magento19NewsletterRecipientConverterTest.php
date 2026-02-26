@@ -18,6 +18,7 @@ use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19NewsletterRecipientStatusReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -91,14 +92,7 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
 
         $this->newsletterRecipientConverter = new Magento19NewsletterRecipientConverter($this->mappingService, $this->loggingService);
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new NewsletterRecipientDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new NewsletterRecipientDataSet(), $this->runId, 0, 250);
     }
 
     public function testSupports(): void
@@ -138,8 +132,7 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_LANGUAGE');
-        static::assertSame($newsletterRecipientData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithInvalidSalesChannel(): void
@@ -159,14 +152,10 @@ class Magento19NewsletterRecipientConverterTest extends TestCase
 
         $convertResult = $this->newsletterRecipientConverter->convert($newsletterRecipientData[0], $context, $this->migrationContext);
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_NEWSLETTER_RECIPIENT');
-        static::assertSame($newsletterRecipientData[0]['subscriber_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('salesChannel', $logs[0]['parameters']['emptyField']);
+        static::assertCount(0, $logs);
     }
 }

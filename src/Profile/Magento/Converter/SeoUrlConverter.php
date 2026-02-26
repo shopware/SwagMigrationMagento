@@ -7,20 +7,29 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Seo\SeoUrl\SeoUrlDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Util\Hasher;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\AssociationRequiredMissingLog;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
 abstract class SeoUrlConverter extends MagentoConverter
 {
+    /**
+     * @phpstan-ignore shopware.storefrontRouteUsage
+     */
     protected const ROUTE_NAME_NAVIGATION = 'frontend.navigation.page';
+
+    /**
+     * @phpstan-ignore shopware.storefrontRouteUsage
+     */
     protected const ROUTE_NAME_PRODUCT = 'frontend.detail.page';
 
     protected string $connectionId;
@@ -36,10 +45,7 @@ abstract class SeoUrlConverter extends MagentoConverter
         $this->originalData = $data;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $converted = [];
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
@@ -49,7 +55,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             $context,
             $this->checksum
         );
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
 
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -58,20 +64,10 @@ abstract class SeoUrlConverter extends MagentoConverter
             $context
         );
 
-        if ($mapping === null) {
-            $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::SALES_CHANNEL,
-                    $data['store_id'],
-                    DefaultEntities::SEO_URL
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
+        if ($mapping !== null) {
+            $converted['salesChannelId'] = $mapping['entityId'];
+            $this->mappingIds[] = $mapping['id'];
         }
-        $converted['salesChannelId'] = $mapping['entityUuid'];
-        $this->mappingIds[] = $mapping['id'];
 
         $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -80,21 +76,11 @@ abstract class SeoUrlConverter extends MagentoConverter
             $context
         );
 
-        if ($languageMapping === null) {
-            $this->loggingService->addLogEntry(
-                new AssociationRequiredMissingLog(
-                    $migrationContext->getRunUuid(),
-                    MagentoDefaultEntities::STORE_LANGUAGE,
-                    $data['store_id'],
-                    DefaultEntities::SEO_URL
-                )
-            );
-
-            return new ConvertStruct(null, $this->originalData);
+        if ($languageMapping !== null) {
+            $converted['languageId'] = $languageMapping['entityId'];
+            $this->mappingIds[] = $languageMapping['id'];
+            unset($data['store_id']);
         }
-        $converted['languageId'] = $languageMapping['entityUuid'];
-        $this->mappingIds[] = $languageMapping['id'];
-        unset($data['store_id']);
 
         if (isset($data['product_id'])) {
             $converted['isModified'] = false;
@@ -110,22 +96,12 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $context
             );
 
-            if ($mapping === null) {
-                $this->loggingService->addLogEntry(
-                    new AssociationRequiredMissingLog(
-                        $migrationContext->getRunUuid(),
-                        DefaultEntities::PRODUCT,
-                        $data['product_id'],
-                        DefaultEntities::SEO_URL
-                    )
-                );
-
-                return new ConvertStruct(null, $this->originalData);
+            if ($mapping !== null) {
+                $converted['foreignKey'] = $mapping['entityId'];
+                $converted['routeName'] = self::ROUTE_NAME_PRODUCT;
+                $converted['pathInfo'] = '/detail/' . $mapping['entityId'];
+                $this->mappingIds[] = $mapping['id'];
             }
-            $converted['foreignKey'] = $mapping['entityUuid'];
-            $converted['routeName'] = self::ROUTE_NAME_PRODUCT;
-            $converted['pathInfo'] = '/detail/' . $mapping['entityUuid'];
-            $this->mappingIds[] = $mapping['id'];
         } elseif (isset($data['category_id'])) {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -134,32 +110,34 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $context
             );
 
-            if ($mapping === null) {
-                $this->loggingService->addLogEntry(
-                    new AssociationRequiredMissingLog(
-                        $migrationContext->getRunUuid(),
-                        DefaultEntities::CATEGORY,
-                        $data['category_id'],
-                        DefaultEntities::SEO_URL
-                    )
-                );
-
-                return new ConvertStruct(null, $this->originalData);
+            if ($mapping !== null) {
+                $converted['isCanonical'] = true;
+                $converted['isModified'] = true;
+                $converted['foreignKey'] = $mapping['entityId'];
+                $converted['routeName'] = self::ROUTE_NAME_NAVIGATION;
+                $converted['pathInfo'] = '/navigation/' . $mapping['entityId'];
+                $this->mappingIds[] = $mapping['id'];
             }
-            $converted['isCanonical'] = true;
-            $converted['isModified'] = true;
-            $converted['foreignKey'] = $mapping['entityUuid'];
-            $converted['routeName'] = self::ROUTE_NAME_NAVIGATION;
-            $converted['pathInfo'] = '/navigation/' . $mapping['entityUuid'];
-            $this->mappingIds[] = $mapping['id'];
         } else {
-            $this->loggingService->addLogEntry(
-                new EmptyNecessaryFieldRunLog(
-                    $migrationContext->getRunUuid(),
-                    DefaultEntities::SEO_URL,
-                    $this->originalData['url_rewrite_id'],
-                    'category_id, product_id'
-                )
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                    ->withFieldName('routeName')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertObjectTypeUnsupportedLog::class)
+            );
+
+            return new ConvertStruct(null, $this->originalData);
+        }
+
+        if (!isset($converted['languageId'], $converted['salesChannelId'], $converted['foreignKey'], $converted['routeName'])) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertEntityUnknownLog::class)
             );
 
             return new ConvertStruct(null, $this->originalData);
@@ -185,7 +163,7 @@ abstract class SeoUrlConverter extends MagentoConverter
                 $converted['id']
             );
         } else {
-            if ($uniqueUrlMapping['entityUuid'] !== $converted['id']) {
+            if ($uniqueUrlMapping['entityId'] !== $converted['id']) {
                 return new ConvertStruct(null, $this->originalData);
             }
         }

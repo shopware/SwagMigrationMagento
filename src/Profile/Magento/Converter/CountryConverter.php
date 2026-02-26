@@ -52,15 +52,12 @@ abstract class CountryConverter extends MagentoConverter
         }
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         $this->generateChecksum($data);
         $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $data['isoCode'], $context);
         if ($countryMapping !== null) {
-            $countryUuid = $countryMapping['entityUuid'];
+            $countryUuid = $countryMapping['entityId'];
         } else {
             $countryUuid = $this->countryLookup->getByIso2($data['isoCode'], $context);
 
@@ -93,7 +90,7 @@ abstract class CountryConverter extends MagentoConverter
                 $countryUuid
             );
         }
-        $countryUuid = $this->mainMapping['entityUuid'];
+        $countryUuid = $this->mainMapping['entityId'];
 
         $converted = [];
         $converted['id'] = $countryUuid;

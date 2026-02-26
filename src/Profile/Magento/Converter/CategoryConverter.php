@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Category\CategoryDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
@@ -15,7 +16,8 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\EmptyNecessaryFieldRunLog;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
@@ -87,10 +89,7 @@ abstract class CategoryConverter extends MagentoConverter
         $this->context = $context;
 
         $connection = $migrationContext->getConnection();
-        $this->connectionId = '';
-        if ($connection !== null) {
-            $this->connectionId = $connection->getId();
-        }
+        $this->connectionId = $connection->getId();
 
         // Ignore the magento root category
         if (isset($data['parent_id']) && $data['parent_id'] === '0') {
@@ -107,13 +106,15 @@ abstract class CategoryConverter extends MagentoConverter
         $rootCategoryMapping = $this->mappingService->getMapping($this->connectionId, MagentoDefaults::ROOT_CATEGORY, $data['parent_id'], $context);
 
         $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
+
         if (!empty($fields)) {
-            $this->loggingService->addLogEntry(new EmptyNecessaryFieldRunLog(
-                $migrationContext->getRunUuid(),
-                DefaultEntities::CATEGORY,
-                $data['entity_id'],
-                \implode(',', $fields)
-            ));
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(CategoryDefinition::ENTITY_NAME)
+                    ->withFieldName(implode(', ', $fields))
+                    ->withSourceData($data)
+                    ->build(ConvertSourceDataIncompleteLog::class)
+            );
 
             return new ConvertStruct(null, $data);
         }
@@ -151,7 +152,7 @@ abstract class CategoryConverter extends MagentoConverter
             }
 
             $this->mappingIds[] = $parentMapping['id'];
-            $converted['parentId'] = $parentMapping['entityUuid'];
+            $converted['parentId'] = $parentMapping['entityId'];
         } elseif (!isset($data['previousSiblingId'])) {
             $previousSiblingUuid = $this->lowestRootCategoryLookup->get($context);
             if ($previousSiblingUuid !== null) {
@@ -172,7 +173,7 @@ abstract class CategoryConverter extends MagentoConverter
             );
 
             if ($previousSiblingMapping !== null) {
-                $converted['afterCategoryId'] = $previousSiblingMapping['entityUuid'];
+                $converted['afterCategoryId'] = $previousSiblingMapping['entityId'];
                 $this->mappingIds[] = $previousSiblingMapping['id'];
             }
             unset($previousSiblingMapping);
@@ -190,7 +191,7 @@ abstract class CategoryConverter extends MagentoConverter
             $this->checksum
         );
 
-        $converted['id'] = $this->mainMapping['entityUuid'];
+        $converted['id'] = $this->mainMapping['entityId'];
         unset($data['entity_id']);
 
         $this->convertValue($converted, 'level', $data, 'level', self::TYPE_INTEGER);
@@ -340,7 +341,7 @@ abstract class CategoryConverter extends MagentoConverter
             $this->entity_id . ':' . $data['defaultLocale'],
             $this->context
         );
-        $localeTranslation['id'] = $mapping['entityUuid'];
+        $localeTranslation['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         if (isset($converted['customFields'])) {
@@ -381,7 +382,7 @@ abstract class CategoryConverter extends MagentoConverter
         );
 
         $categoryMedia = [];
-        $categoryMedia['id'] = $mapping['entityUuid'];
+        $categoryMedia['id'] = $mapping['entityId'];
         $this->mappingIds[] = $mapping['id'];
 
         $albumUuid = $this->mediaFolderLookup->get(DefaultEntities::CATEGORY, $this->context);

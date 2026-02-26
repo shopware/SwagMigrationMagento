@@ -50,14 +50,7 @@ class Magento2ProductChildMultiSelectPropertyRelationConverterTest extends TestC
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new ProductChildMultiSelectPropertyRelationDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new ProductChildMultiSelectPropertyRelationDataSet(), $this->runId, 0, 250);
 
         $this->converter = new Magento23ProductChildMultiSelectPropertyRelationConverter($this->mappingService, $this->loggingService);
     }
@@ -81,8 +74,8 @@ class Magento2ProductChildMultiSelectPropertyRelationConverterTest extends TestC
 
         static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
-        static::assertSame($productUuid['entityUuid'], $converted['id']);
-        static::assertSame($relationUuid['entityUuid'], $converted['properties'][0]['id']);
+        static::assertSame($productUuid['entityId'], $converted['id']);
+        static::assertSame($relationUuid['entityId'], $converted['properties'][0]['id']);
     }
 
     public static function getNormalDataProvider(): array
@@ -120,6 +113,7 @@ class Magento2ProductChildMultiSelectPropertyRelationConverterTest extends TestC
     {
         $data = require __DIR__ . '/../../../_fixtures/product_property_data.php';
 
+        $returnData = [];
         $returnData[] = [
             $data[0],
             true,

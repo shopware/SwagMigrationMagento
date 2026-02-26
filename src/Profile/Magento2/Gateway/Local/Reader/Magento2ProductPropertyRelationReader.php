@@ -12,7 +12,6 @@ use Doctrine\DBAL\ParameterType;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -23,10 +22,6 @@ abstract class Magento2ProductPropertyRelationReader extends ProductPropertyRela
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
     {
         $this->setConnection($migrationContext);
-
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
 
         $query = <<<SQL
 SELECT COUNT(entity_int.entity_id)
@@ -55,10 +50,6 @@ SQL;
 
     protected function fetchPropertyRelations(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT DISTINCT product.entity_id, option_value.option_id
 FROM {$this->tablePrefix}catalog_product_entity AS product

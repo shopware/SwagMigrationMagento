@@ -26,6 +26,7 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup;
@@ -143,38 +144,10 @@ class Magento2CategoryConverterTest extends TestCase
             $this->languageUuid
         );
 
-        $this->migrationContext20 = new MigrationContext(
-            new Magento20Profile(),
-            $this->connection20,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
-        $this->migrationContext21 = new MigrationContext(
-            new Magento21Profile(),
-            $this->connection21,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
-        $this->migrationContext22 = new MigrationContext(
-            new Magento22Profile(),
-            $this->connection22,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
-        $this->migrationContext23 = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection23,
-            $this->runId,
-            new CategoryDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext20 = new MigrationContext($this->connection20, new Magento20Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
+        $this->migrationContext21 = new MigrationContext($this->connection21, new Magento21Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
+        $this->migrationContext22 = new MigrationContext($this->connection22, new Magento22Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
+        $this->migrationContext23 = new MigrationContext($this->connection23, new Magento23Profile(), null, new CategoryDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $mappingService->getOrCreateMapping($this->connection20->getId(), DefaultEntities::LANGUAGE, 'de-DE', $context, null, null, DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID);
@@ -513,9 +486,9 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        $title = 'The category entity has one or more empty necessary fields';
-        static::assertSame($title, $logs[0]['title']);
+
         static::assertCount(1, $logs);
+        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithoutLocale21(): void
@@ -529,9 +502,9 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        $title = 'The category entity has one or more empty necessary fields';
-        static::assertSame($title, $logs[0]['title']);
+
         static::assertCount(1, $logs);
+        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithoutLocale22(): void
@@ -545,9 +518,9 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        $title = 'The category entity has one or more empty necessary fields';
-        static::assertSame($title, $logs[0]['title']);
+
         static::assertCount(1, $logs);
+        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithoutLocale23(): void
@@ -561,8 +534,8 @@ class Magento2CategoryConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        $title = 'The category entity has one or more empty necessary fields';
-        static::assertSame($title, $logs[0]['title']);
+
         static::assertCount(1, $logs);
+        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
     }
 }

@@ -24,9 +24,11 @@ use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
 use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
-use SwagMigrationAssistant\Exception\AssociationEntityRequiredMissingException;
+use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
@@ -93,14 +95,7 @@ class Magento19OrderConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new OrderDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new OrderDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping(
@@ -322,8 +317,9 @@ class Magento19OrderConverterTest extends TestCase
         $order['orders']['customer_id'] = '5';
 
         $context = Context::createDefaultContext();
-        $this->expectException(AssociationEntityRequiredMissingException::class);
-        $this->expectExceptionMessage('Mapping of "customer" is missing, but it is a required association for "order". Import "customer" first.');
+
+        static::expectExceptionObject(MigrationException::associationEntityRequiredMissing('order', 'customer'));
+
         $this->orderConverter->convert($order, $context, $this->migrationContext);
     }
 
@@ -343,9 +339,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_SALUTATION_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['customer_salutation']);
-        static::assertSame($logs[0]['parameters']['requiredForSourceId'], $order['orders']['entity_id']);
+        static::assertSame($logs[0]['code'], ConvertObjectTypeUnsupportedLog::getCode());
     }
 
     public function testConvertWithoutSalutation(): void
@@ -378,11 +372,7 @@ class Magento19OrderConverterTest extends TestCase
         static::assertNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['entity_id']);
-        static::assertSame($logs[0]['parameters']['emptyField'], 'currency');
+        static::assertCount(0, $logs);
     }
 
     public function testConvertWithInvalidOrderState(): void
@@ -400,8 +390,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_ORDER_STATE_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], $order['orders']['status']);
+        static::assertSame($logs[0]['code'], ConvertObjectTypeUnsupportedLog::getCode());
     }
 
     public static function requiredProperties(): array
@@ -432,13 +421,7 @@ class Magento19OrderConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_ORDER');
-
-        if ($property === 'orders') {
-            static::assertSame($logs[0]['parameters']['emptyField'], 'orders,entity_id');
-        } else {
-            static::assertSame($logs[0]['parameters']['emptyField'], $property);
-        }
+        static::assertSame($logs[0]['code'], ConvertSourceDataIncompleteLog::getCode());
     }
 
     public function testConvertWithRepeatedGuestMigration(): void
@@ -546,13 +529,8 @@ class Magento19OrderConverterTest extends TestCase
         static::assertArrayNotHasKey('countryStateId', $converted['addresses'][0]);
 
         $logs = $this->loggingService->getLoggingArray();
-
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION_COUNTRY_STATE_ENTITY_UNKNOWN');
-        static::assertSame($logs[0]['parameters']['sourceId'], '9999');
-        static::assertSame($logs[0]['parameters']['entity'], DefaultEntities::COUNTRY_STATE);
-        static::assertSame($logs[0]['parameters']['requiredForSourceId'], $orderData['identifier']);
-        static::assertSame($logs[0]['parameters']['requiredForEntity'], DefaultEntities::ORDER);
+        static::assertSame($logs[0]['code'], ConvertObjectTypeUnsupportedLog::getCode());
     }
 }

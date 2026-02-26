@@ -51,7 +51,7 @@ class DummyMagentoMappingService extends MagentoMappingService
                     $item['connectionId'] === $connectionId
                     && $item['entity'] === $entityName
                     && $item['oldIdentifier'] === $oldIdentifier
-                    && $item['entityUuid'] === $newUuid
+                    && $item['entityId'] === $newUuid
                 ) {
                     return;
                 }
@@ -64,7 +64,7 @@ class DummyMagentoMappingService extends MagentoMappingService
                 'connectionId' => $connectionId,
                 'entity' => $entityName,
                 'oldIdentifier' => $oldIdentifier,
-                'entityUuid' => $uuid,
+                'entityId' => $uuid,
                 'additionalData' => $additionalData,
             ]
         );
@@ -109,7 +109,7 @@ class DummyMagentoMappingService extends MagentoMappingService
     public function getUuidList(string $connectionId, string $entityName, string $identifier, Context $context): array
     {
         return isset($this->mappings[\md5($entityName . $identifier)])
-            ? \array_column($this->mappings[\md5($entityName . $identifier)], 'entityUuid')
+            ? \array_column($this->mappings[\md5($entityName . $identifier)], 'entityId')
             : [];
     }
 
@@ -129,7 +129,7 @@ class DummyMagentoMappingService extends MagentoMappingService
                 $oldIdentifier,
                 $updateData['checksum'] ?? null,
                 $updateData['additionalData'] ?? null,
-                $updateData['entityUuid'] ?? null,
+                $updateData['entityId'] ?? null,
                 $updateData['entityValue'] ?? null,
             );
         }
@@ -140,13 +140,13 @@ class DummyMagentoMappingService extends MagentoMappingService
         return $mapping;
     }
 
-    public function deleteMapping(string $entityUuid, string $connectionId, Context $context): void
+    public function deleteMapping(string $entityId, string $connectionId, Context $context): void
     {
         foreach ($this->writeArray as $writeMapping) {
             if (
-                isset($writeMapping['entityUuid'])
+                isset($writeMapping['entityId'])
                 && $writeMapping['connectionId'] === $connectionId
-                && $writeMapping['entityUuid'] === $entityUuid
+                && $writeMapping['entityId'] === $entityId
             ) {
                 unset($writeMapping);
 
@@ -155,7 +155,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         }
 
         foreach ($this->mappings as $hash => $mapping) {
-            if (isset($mapping['entityUuid']) && $mapping['entityUuid'] === $entityUuid) {
+            if (isset($mapping['entityId']) && $mapping['entityId'] === $entityId) {
                 unset($this->mappings[$hash]);
             }
         }
@@ -166,7 +166,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         $languageMapping = $this->getMapping($connectionId, DefaultEntities::LANGUAGE, $localeCode, $context);
 
         if ($languageMapping !== null) {
-            return $languageMapping['entityUuid'];
+            return $languageMapping['entityId'];
         }
 
         return null;
@@ -176,8 +176,8 @@ class DummyMagentoMappingService extends MagentoMappingService
     {
         $localeMapping = $this->getMapping($connectionId, DefaultEntities::LOCALE, $localeCode, $context);
 
-        if ($localeMapping !== null && isset($localeMapping['entityUuid'])) {
-            return $localeMapping['entityUuid'];
+        if ($localeMapping !== null && isset($localeMapping['entityId'])) {
+            return $localeMapping['entityId'];
         }
 
         throw MigrationException::localeNotFound($localeCode);
@@ -193,7 +193,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         $countryMapping = $this->getMapping($connectionId, DefaultEntities::COUNTRY, $oldIdentifier, $context);
 
         if ($countryMapping !== null) {
-            return $countryMapping['entityUuid'];
+            return $countryMapping['entityId'];
         }
 
         return null;
@@ -204,7 +204,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         $currencyUuid = $this->getMapping($connectionId, DefaultEntities::CURRENCY, $oldIsoCode, $context);
 
         if ($currencyUuid !== null) {
-            return $currencyUuid['entityUuid'];
+            return $currencyUuid['entityId'];
         }
 
         return null;
@@ -275,7 +275,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         $countryUuid = $this->getMapping($connectionId, DefaultEntities::COUNTRY, $iso, $context);
 
         if ($countryUuid !== null) {
-            return $countryUuid['entityUuid'];
+            return $countryUuid['entityId'];
         }
 
         return null;
@@ -296,7 +296,7 @@ class DummyMagentoMappingService extends MagentoMappingService
         $mapping = $this->getMapping($connectionId, DefaultEntities::COUNTRY_STATE, $oldIdentifier, $context);
 
         if ($mapping !== null) {
-            return $mapping['entityUuid'];
+            return $mapping['entityId'];
         }
 
         return null;

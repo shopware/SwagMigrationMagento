@@ -17,6 +17,8 @@ use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Profile\Shopware\DataSelection\DataSet\SeoUrlDataSet;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -61,14 +63,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new SeoUrlDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new SeoUrlDataSet(), $this->runId, 0, 250);
 
         $this->context = Context::createDefaultContext();
 
@@ -100,8 +95,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SALES_CHANNEL', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame(ConvertEntityUnknownLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithInvalidLanguage(): void
@@ -115,8 +109,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_STORE_LANGUAGE', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['store_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame(ConvertEntityUnknownLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithInvalidProduct(): void
@@ -130,8 +123,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['product_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame(ConvertEntityUnknownLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithInvalidCategory(): void
@@ -145,8 +137,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_CATEGORY', $logs[0]['code']);
-        static::assertSame($seoUrlData[0]['category_id'], $logs[0]['parameters']['sourceId']);
+        static::assertSame(ConvertEntityUnknownLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithoutProductOrCategory(): void
@@ -160,9 +151,7 @@ class Magento2SeoUrlConverterTest extends TestCase
         static::assertNotNull($convertResult->getUnmapped());
         static::assertNull($converted);
         static::assertCount(1, $logs);
-        static::assertSame('SWAG_MIGRATION_EMPTY_NECESSARY_FIELD_SEO_URL', $logs[0]['code']);
-        static::assertSame($seoUrlData[2]['url_rewrite_id'], $logs[0]['parameters']['sourceId']);
-        static::assertSame('category_id, product_id', $logs[0]['parameters']['emptyField']);
+        static::assertSame(ConvertObjectTypeUnsupportedLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertProductAndCategorySeoUrl(): void

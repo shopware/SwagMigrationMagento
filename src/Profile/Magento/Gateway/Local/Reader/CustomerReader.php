@@ -9,7 +9,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -52,10 +51,6 @@ abstract class CustomerReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}customer_entity;
@@ -67,10 +62,6 @@ SQL;
 
     protected function fetchCustomers(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT customer.*
 FROM {$this->tablePrefix}customer_entity customer
@@ -83,10 +74,6 @@ SQL;
 
     protected function fetchAddresses(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
             SELECT
                 customer_address.*,

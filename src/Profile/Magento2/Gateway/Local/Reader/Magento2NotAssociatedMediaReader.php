@@ -19,11 +19,8 @@ abstract class Magento2NotAssociatedMediaReader extends NotAssociatedMediaReader
     public function read(MigrationContextInterface $migrationContext, array $params = []): array
     {
         $connection = $migrationContext->getConnection();
-        if ($connection === null) {
-            return [];
-        }
-
         $credentialFields = $connection->getCredentialFields();
+
         if ($credentialFields === null) {
             return [];
         }

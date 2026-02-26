@@ -65,7 +65,8 @@
     "autoload-dev": {
         "psr-4": {
             "Swag\\MigrationMagento\\Test\\": "tests/",
-            "SwagMigrationAssistant\\": "../SwagMigrationAssistant"
+            "SwagMigrationAssistant\\": "../SwagMigrationAssistant/src",
+            "SwagMigrationAssistant\\Test\\": "../SwagMigrationAssistant/tests"
         }
     },
     "suggest": {

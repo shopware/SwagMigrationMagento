@@ -10,7 +10,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 use Doctrine\DBAL\ArrayParameterType;
 use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\FetchModeHelper;
 use Shopware\Core\Framework\Log\Package;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\TotalStruct;
@@ -96,10 +95,6 @@ abstract class ProductCustomFieldReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT COUNT(*)
 FROM {$this->tablePrefix}eav_attribute eav
@@ -117,10 +112,6 @@ SQL;
 
     protected function fetchCustomFields(MigrationContextInterface $migrationContext): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->from($this->tablePrefix . 'eav_attribute', 'eav');
@@ -149,10 +140,6 @@ SQL;
 
     protected function fetchSelectOptions(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $sql = <<<SQL
 SELECT DISTINCT
     attribute.attribute_id,
@@ -171,10 +158,6 @@ SQL;
 
     protected function fetchAttributeOptionTranslations(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('optionValue.option_id');
@@ -195,10 +178,6 @@ SQL;
 
     protected function fetchAttributeTranslations(array $ids): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('attributeLabel.attribute_id AS identifier');
@@ -217,10 +196,6 @@ SQL;
 
     protected function fetchLocales(): array
     {
-        if ($this->connection === null) {
-            throw MigrationException::databaseConnectionError();
-        }
-
         $query = $this->connection->createQueryBuilder();
 
         $query->addSelect('scope_id AS store_id');

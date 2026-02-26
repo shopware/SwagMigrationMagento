@@ -120,7 +120,6 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
      */
     private function getChoices(Context $context): array
     {
-        /** @var PaymentMethodEntity[] $paymentMethods */
         $paymentMethods = $this->paymentMethodRepo->search(new Criteria(), $context)->getElements();
 
         $choices = [];

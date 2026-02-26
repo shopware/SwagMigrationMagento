@@ -54,14 +54,7 @@ class Magento19ManufacturerConverterTest extends TestCase
         $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento19Profile(),
-            $this->connection,
-            $this->runId,
-            new ManufacturerDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new ManufacturerDataSet(), $this->runId, 0, 250);
 
         $this->languageUuid = DummyMagentoMappingService::DEFAULT_LANGUAGE_UUID;
         $mappingService->createMapping(

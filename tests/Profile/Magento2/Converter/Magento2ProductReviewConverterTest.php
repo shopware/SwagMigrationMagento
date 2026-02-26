@@ -18,6 +18,7 @@ use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
@@ -52,14 +53,7 @@ class Magento2ProductReviewConverterTest extends TestCase
         $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext(
-            new Magento23Profile(),
-            $this->connection,
-            $this->runId,
-            new ProductReviewDataSet(),
-            0,
-            250
-        );
+        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new ProductReviewDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping(
@@ -140,8 +134,7 @@ class Magento2ProductReviewConverterTest extends TestCase
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(1, $logs);
 
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_PRODUCT');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['productId']);
+        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithoutCustomerMapping(): void
@@ -168,14 +161,11 @@ class Magento2ProductReviewConverterTest extends TestCase
         $context = Context::createDefaultContext();
         $convertResult = $this->productReviewConverter->convert($productReviewData[0], $context, $this->migrationContext);
 
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNull($convertResult->getUnmapped());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_SALES_CHANNEL');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['store_id']);
+        static::assertCount(0, $logs);
     }
 
     public function testConvertWithoutLanguageMapping(): void
@@ -188,12 +178,9 @@ class Magento2ProductReviewConverterTest extends TestCase
         $convertResult = $this->productReviewConverter->convert($productReviewData[0], $context, $this->migrationContext);
 
         static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
+        static::assertNotNull($convertResult->getConverted());
 
         $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], 'SWAG_MIGRATION__SHOPWARE_ASSOCIATION_REQUIRED_MISSING_STORE_LANGUAGE');
-        static::assertSame($logs[0]['parameters']['sourceId'], $productReviewData[0]['store_id']);
+        static::assertCount(0, $logs);
     }
 }
