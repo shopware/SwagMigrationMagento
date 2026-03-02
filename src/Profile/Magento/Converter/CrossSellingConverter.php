@@ -7,11 +7,14 @@
 
 namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
+use Shopware\Core\Content\Product\Aggregate\ProductCrossSelling\ProductCrossSellingDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
+use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -59,9 +62,21 @@ abstract class CrossSellingConverter extends MagentoConverter
             $this->context
         );
 
-        if ($sourceProductMapping !== null) {
-            $this->mappingIds[] = $sourceProductMapping['id'];
+        if ($sourceProductMapping === null) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
+                    ->withFieldName('productId')
+                    ->withFieldSourcePath('sourceProductId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
+
+            return new ConvertStruct(null, $data);
         }
+
+        $this->mappingIds[] = $sourceProductMapping['id'];
 
         $relatedProductMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -70,9 +85,21 @@ abstract class CrossSellingConverter extends MagentoConverter
             $this->context
         );
 
-        if ($relatedProductMapping !== null) {
-            $this->mappingIds[] = $relatedProductMapping['id'];
+        if ($relatedProductMapping === null) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
+                    ->withFieldName('assignedProducts.productId')
+                    ->withFieldSourcePath('linked_product_id')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
+
+            return new ConvertStruct(null, $data);
         }
+
+        $this->mappingIds[] = $relatedProductMapping['id'];
 
         $converted['name'] = 'Related products';
         if ($data['type'] === MagentoDefaultEntities::CROSS_SELLING_TYPE) {
@@ -92,12 +119,12 @@ abstract class CrossSellingConverter extends MagentoConverter
 
         $converted['type'] = 'productList';
         $converted['active'] = true;
-        $converted['productId'] = $sourceProductMapping['entityId'] ?? null;
+        $converted['productId'] = $sourceProductMapping['entityId'];
         $converted['assignedProducts'] = [
             [
                 'id' => $relationMapping['entityId'],
                 'position' => $data['position'],
-                'productId' => $relatedProductMapping['entityId'] ?? null,
+                'productId' => $relatedProductMapping['entityId'],
             ],
         ];
 

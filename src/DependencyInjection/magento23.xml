@@ -341,6 +341,13 @@
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23OrderDeliveryStateReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader">
+            <argument type="service" id="state_machine.repository"/>
+            <argument type="service" id="state_machine_state.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
         <!-- Media processor -->
         <service id="Swag\MigrationMagento\Profile\Magento23\Media\Magento23LocalMediaProcessor">
             <argument type="service" id="swag_migration_media_file.repository"/>

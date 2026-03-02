@@ -16,8 +16,10 @@ use Shopware\Core\Checkout\Cart\Tax\Struct\CalculatedTaxCollection;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRule;
 use Shopware\Core\Checkout\Cart\Tax\Struct\TaxRuleCollection;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
+use Shopware\Core\Checkout\Customer\CustomerDefinition;
 use Shopware\Core\Checkout\Order\Aggregate\OrderTransaction\OrderTransactionStates;
 use Shopware\Core\Checkout\Order\OrderDefinition;
+use Shopware\Core\Content\Product\ProductDefinition;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Util\Hasher;
@@ -32,6 +34,7 @@ use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
@@ -39,6 +42,7 @@ use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\MappingServiceInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -77,6 +81,7 @@ abstract class OrderConverter extends MagentoConverter
         protected readonly CurrencyLookup $currencyLookup,
         protected readonly CountryStateLookup $countryStateLookup,
         protected readonly StateMachineStateLookup $stateMachineStateLookup,
+        protected readonly LanguageLookup $languageLookup,
     ) {
         parent::__construct($mappingService, $loggingService);
 
@@ -145,7 +150,23 @@ abstract class OrderConverter extends MagentoConverter
             $this->setSalesChannelIdViaAdminStore($converted);
         }
 
-        $this->convertOrderCustomer($converted, $data);
+        $language = $this->languageLookup->getLanguageEntity($this->context);
+        if ($language !== null) {
+            $converted['languageId'] = $language->getId();
+        }
+
+        if (!$this->convertOrderCustomer($converted, $data)) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(CustomerDefinition::ENTITY_NAME)
+                    ->withFieldName('customerId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
+
+            return new ConvertStruct(null, $this->originalData);
+        }
 
         $this->convertValue($converted, 'orderNumber', $data['orders'], 'increment_id');
         $this->convertValue($converted, 'currencyFactor', $data['orders'], 'store_to_order_rate', self::TYPE_FLOAT);
@@ -166,7 +187,7 @@ abstract class OrderConverter extends MagentoConverter
          * Set line items, shipping costs and transactions
          */
         if (isset($data['items'])) {
-            $this->convertOrderItems($converted, $data);
+            $this->convertOrderItems($converted, $data, $migrationContext);
         }
 
         if (isset($data['billingAddress'])) {
@@ -177,7 +198,7 @@ abstract class OrderConverter extends MagentoConverter
          * Set deliveries
          */
         if (isset($data['shipments'])) {
-            $converted['deliveries'] = $this->getDeliveries($data, $converted, $this->migrationContext);
+            $converted['deliveries'] = $this->getDeliveries($data, $converted);
         } else {
             $this->getDefaultDelivery($data, $converted);
         }
@@ -257,8 +278,11 @@ abstract class OrderConverter extends MagentoConverter
         return new TaxRuleCollection($taxRules);
     }
 
-    protected function getLineItems(array $originalData, CalculatedTaxCollection $taxCollection): array
-    {
+    protected function getLineItems(
+        array $originalData,
+        CalculatedTaxCollection $taxCollection,
+        MigrationContextInterface $migrationContext
+    ): array {
         $lineItems = [];
 
         foreach ($originalData as $originalLineItem) {
@@ -295,13 +319,23 @@ abstract class OrderConverter extends MagentoConverter
                     $this->context
                 );
 
-                if ($mapping !== null) {
-                    $lineItem['referencedId'] = $mapping['entityId'];
-                    $lineItem['productId'] = $mapping['entityId'];
-                    $lineItem['identifier'] = $mapping['entityId'];
-                    $lineItem['payload']['productNumber'] = $originalLineItem['sku'] ?? '';
+                if ($mapping === null) {
+                    $this->loggingService->log(
+                        MigrationLogBuilder::fromMigrationContext($migrationContext)
+                            ->withEntityName(ProductDefinition::ENTITY_NAME)
+                            ->withFieldName('lineItems.productId')
+                            ->withSourceData($originalData)
+                            ->withConvertedData($lineItem)
+                            ->build(ConvertAssociationMissingLog::class)
+                    );
+
+                    continue;
                 }
 
+                $lineItem['referencedId'] = $mapping['entityId'];
+                $lineItem['productId'] = $mapping['entityId'];
+                $lineItem['identifier'] = $mapping['entityId'];
+                $lineItem['payload']['productNumber'] = $originalLineItem['sku'] ?? '';
                 $lineItem['payload']['options'] = [];
                 $lineItem['type'] = LineItem::PRODUCT_LINE_ITEM_TYPE;
             } else {
@@ -358,7 +392,7 @@ abstract class OrderConverter extends MagentoConverter
         return $lineItems;
     }
 
-    protected function getDeliveries(array $data, array $converted, MigrationContextInterface $migrationContext): array
+    protected function getDeliveries(array $data, array $converted): array
     {
         $taxRules = $this->getTaxRules($data);
         $shippingCosts = $this->getShippingCosts((float) $data['orders']['shipping_amount']);
@@ -383,22 +417,10 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($deliveryStateMapping === null) {
-                $this->loggingService->log(
-                    MigrationLogBuilder::fromMigrationContext($migrationContext)
-                        ->withEntityName(OrderDefinition::ENTITY_NAME)
-                        ->withFieldName('deliveries.stateId')
-                        ->withFieldSourcePath('shipments.entity_id')
-                        ->withSourceData($data)
-                        ->withConvertedData($converted)
-                        ->build(ConvertEntityUnknownLog::class)
-                );
-
-                continue;
+            if ($deliveryStateMapping !== null) {
+                $this->mappingIds[] = $deliveryStateMapping['id'];
+                $delivery['stateId'] = $deliveryStateMapping['entityId'];
             }
-
-            $this->mappingIds[] = $deliveryStateMapping['id'];
-            $delivery['stateId'] = $deliveryStateMapping['entityId'];
 
             $delivery['shippingDateEarliest'] = $converted['orderDateTime'];
             $delivery['shippingDateLatest'] = $converted['orderDateTime'];
@@ -659,7 +681,7 @@ abstract class OrderConverter extends MagentoConverter
         return $paymentMethodMapping['entityId'];
     }
 
-    protected function convertOrderCustomer(array &$converted, array &$data): void
+    protected function convertOrderCustomer(array &$converted, array &$data): bool
     {
         $guestOrder = false;
 
@@ -672,11 +694,13 @@ abstract class OrderConverter extends MagentoConverter
             );
 
             if ($customerMapping !== null) {
-                $converted['orderCustomer'] = [
-                    'customerId' => $customerMapping['entityId'],
-                ];
-                $this->mappingIds[] = $customerMapping['id'];
+                return false;
             }
+
+            $converted['orderCustomer'] = [
+                'customerId' => $customerMapping['entityId'],
+            ];
+            $this->mappingIds[] = $customerMapping['id'];
 
             unset($customerMapping);
         } elseif (isset($data['orders']['customer_email'])) {
@@ -795,6 +819,8 @@ abstract class OrderConverter extends MagentoConverter
         }
 
         unset($data['customerSalutation']);
+
+        return true;
     }
 
     protected function convertSalesChannel(array &$converted, array $data): void
@@ -838,13 +864,16 @@ abstract class OrderConverter extends MagentoConverter
         }
     }
 
-    protected function convertOrderItems(array &$converted, array &$data): void
-    {
+    protected function convertOrderItems(
+        array &$converted,
+        array &$data,
+        MigrationContextInterface $migrationContext
+    ): void {
         $shippingCosts = $this->getShippingCosts((float) $data['orders']['shipping_amount']);
         $taxRules = $this->getTaxRules($data);
         $taxCollection = new CalculatedTaxCollection([]);
 
-        $converted['lineItems'] = $this->getLineItems($data['items'], $taxCollection);
+        $converted['lineItems'] = $this->getLineItems($data['items'], $taxCollection, $migrationContext);
 
         $discount = 0.0;
         if (isset($data['orders']['discount_amount']) && (float) $data['orders']['discount_amount'] < 0) {

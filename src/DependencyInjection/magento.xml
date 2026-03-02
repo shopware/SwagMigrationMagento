@@ -270,6 +270,7 @@
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup"/>
             <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup"/>
         </service>
 
         <service id="Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter"

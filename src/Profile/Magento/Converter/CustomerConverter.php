@@ -241,7 +241,7 @@ abstract class CustomerConverter extends MagentoConverter
         foreach ($originalData['addresses'] as $address) {
             $newAddress = [];
 
-            if (!isset($data['entity_id'])) {
+            if (!isset($address['entity_id'])) {
                 $this->loggingService->log(
                     MigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)

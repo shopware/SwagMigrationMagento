@@ -21,6 +21,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
@@ -85,7 +86,7 @@ abstract class ProductConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (empty($data['group_id'])) {
+        if (empty($data['entity_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(ProductDefinition::ENTITY_NAME)
@@ -178,7 +179,27 @@ abstract class ProductConverter extends MagentoConverter
          * Set parent
          */
         if (isset($data['parentId'])) {
-            $this->setParent($converted, $data);
+            $parentMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::PRODUCT,
+                $data['parentId'],
+                $this->context
+            );
+
+            if ($parentMapping === null) {
+                $this->loggingService->log(
+                    MigrationLogBuilder::fromMigrationContext($migrationContext)
+                        ->withEntityName(ProductDefinition::ENTITY_NAME)
+                        ->withFieldName('parentId')
+                        ->withSourceData($data)
+                        ->build(ConvertAssociationMissingLog::class)
+                );
+
+                return new ConvertStruct(null, $data, $this->mainMapping['id'] ?? null);
+            }
+
+            $converted['parentId'] = $parentMapping['entityId'];
+            $this->mappingIds[] = $parentMapping['id'];
         }
         unset($data['parentId']);
 
@@ -376,21 +397,6 @@ abstract class ProductConverter extends MagentoConverter
         }
 
         $converted['categories'] = $categoryMapping;
-    }
-
-    protected function setParent(array &$converted, array &$data): void
-    {
-        $parentMapping = $this->mappingService->getMapping(
-            $this->connectionId,
-            DefaultEntities::PRODUCT,
-            $data['parentId'],
-            $this->context
-        );
-
-        if ($parentMapping !== null) {
-            $converted['parentId'] = $parentMapping['entityId'];
-            $this->mappingIds[] = $parentMapping['id'];
-        }
     }
 
     protected function setManufacturerId(string $manufacturer, array &$converted): void

@@ -335,6 +335,13 @@
             <tag name="shopware.migration.pre_mapping_reader"/>
         </service>
 
+        <service id="Swag\MigrationMagento\Profile\Magento20\Premapping\Magento20OrderDeliveryStateReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader">
+            <argument type="service" id="state_machine.repository"/>
+            <argument type="service" id="state_machine_state.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
         <service id="Swag\MigrationMagento\Profile\Magento20\Premapping\Magento20TaxReader"
                  parent="Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader">
             <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>

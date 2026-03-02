@@ -10,7 +10,6 @@ namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 
 #[Package('fundamentals@after-sales')]
@@ -21,7 +20,7 @@ abstract class Magento2OrderConverter extends OrderConverter
      */
     protected array $billingAddress = [];
 
-    protected function convertOrderCustomer(array &$converted, array &$data): void
+    protected function convertOrderCustomer(array &$converted, array &$data): bool
     {
         $guestOrder = false;
         if (isset($data['orders']['customer_id']) && $data['orders']['customer_is_guest'] === '0') {
@@ -33,15 +32,14 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerMapping === null) {
-                throw MigrationException::associationEntityRequiredMissing(
-                    DefaultEntities::ORDER,
-                    DefaultEntities::CUSTOMER
-                );
+                return false;
             }
+
             $converted['orderCustomer'] = [
                 'customerId' => $customerMapping['entityId'],
             ];
             $this->mappingIds[] = $customerMapping['id'];
+
             unset($customerMapping);
 
             $this->convertValue($converted['orderCustomer'], 'email', $data['orders'], 'customer_email');
@@ -150,6 +148,9 @@ abstract class Magento2OrderConverter extends OrderConverter
             $this->convertValue($converted['orderCustomer'], 'firstName', $billingAddress, 'firstName', self::TYPE_STRING, false);
             $this->convertValue($converted['orderCustomer'], 'lastName', $billingAddress, 'lastName', self::TYPE_STRING, false);
         }
+
         unset($data['customerSalutation']);
+
+        return true;
     }
 }
