@@ -6,9 +6,9 @@
 
     <services>
         <!-- Magento 1.9 Profile -->
-        <service id="Swag\MigrationMagento\Profile\Magento19\Magento19Profile">
-            <tag name="shopware.migration.profile"/>
-        </service>
+<!--        <service id="Swag\MigrationMagento\Profile\Magento19\Magento19Profile">-->
+<!--            <tag name="shopware.migration.profile"/>-->
+<!--        </service>-->
 
         <!-- Magento ConnectionFactory -->
         <service id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>

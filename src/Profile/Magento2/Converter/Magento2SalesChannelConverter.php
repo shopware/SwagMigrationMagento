@@ -153,25 +153,37 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
     protected function setLanguageUuid(array &$data, array &$converted, Context $context): ?string
     {
-        $languageUuid = null;
-        if (!empty($data['defaultLocale'])) {
-            $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
-        }
+        $languageMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            Magento2LanguageReader::getMappingName(),
+            $data['defaultLocale'],
+            $this->context
+        );
 
-        if ($languageUuid === null) {
-            $languageMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                Magento2LanguageReader::getMappingName(),
-                'default_language',
-                $this->context
-            );
-
-            if ($languageMapping === null || !isset($languageMapping['entityId'])) {
-                return null;
+        if ($languageMapping !== null) {
+            $languageUuid = $languageMapping['entityId'];
+            $this->mappingIds[] = $languageMapping['id'];
+        } else {
+            $languageUuid = null;
+            if (!empty($data['defaultLocale'])) {
+                $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
             }
 
-            $this->mappingIds[] = $languageMapping['id'];
-            $languageUuid = $languageMapping['entityId'];
+            if ($languageUuid === null) {
+                $languageMapping = $this->mappingService->getMapping(
+                    $this->connectionId,
+                    Magento2LanguageReader::getMappingName(),
+                    'default_language',
+                    $this->context
+                );
+
+                if ($languageMapping === null || !isset($languageMapping['entityId'])) {
+                    return null;
+                }
+
+                $this->mappingIds[] = $languageMapping['id'];
+                $languageUuid = $languageMapping['entityId'];
+            }
         }
 
         $this->mappingService->getOrCreateMapping(

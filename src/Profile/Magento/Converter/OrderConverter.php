@@ -35,7 +35,6 @@ use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertEntityUnknownLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
@@ -512,6 +511,15 @@ abstract class OrderConverter extends MagentoConverter
             $shippingMethodId,
             $this->context
         );
+
+        if ($shippingMethodMapping === null) {
+            $shippingMethodMapping = $this->mappingService->getMapping(
+                $this->connectionId,
+                DefaultEntities::SHIPPING_METHOD,
+                'default_shipping_method',
+                $this->context
+            );
+        }
 
         if ($shippingMethodMapping !== null) {
             $this->mappingIds[] = $shippingMethodMapping['id'];
