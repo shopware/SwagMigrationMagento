@@ -280,7 +280,6 @@ abstract class CustomerConverter extends MagentoConverter
                 $countryUuid = $this->countryLookup->getByIso3($address['country_iso3'], $this->context);
             }
 
-
             $newAddress['countryId'] = $countryUuid;
 
             if (isset($address['region_id'])

@@ -95,7 +95,7 @@ abstract class AbstractReader implements ReaderInterface
 
             $columnName = trim($columnName, '"`');
 
-            $query->addSelect(sprintf(
+            $query->addSelect(\sprintf(
                 '%s.%s AS `%s.%s`',
                 $tableAlias,
                 $columnName,

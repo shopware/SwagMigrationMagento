@@ -250,7 +250,6 @@ abstract class SalesChannelConverter extends MagentoConverter
             $countryUuid = $this->getCountryUuid($data['defaultCountry'], $context);
         }
 
-
         if ($countryUuid !== null) {
             $converted['countryId'] = $countryUuid;
             $converted['countries'] = $this->getSalesChannelCountries($countryUuid, $data, $context);
