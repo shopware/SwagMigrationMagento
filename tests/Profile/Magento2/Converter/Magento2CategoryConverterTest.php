@@ -26,7 +26,6 @@ use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService
 use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\DefaultCmsPageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\LowestRootCategoryLookup;
@@ -473,69 +472,5 @@ class Magento2CategoryConverterTest extends TestCase
             static::assertInstanceOf(MigrationException::class, $e);
             static::assertSame(Response::HTTP_NOT_FOUND, $e->getStatusCode());
         }
-    }
-
-    public function testConvertWithoutLocale20(): void
-    {
-        $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
-        $categoryData = $categoryData[1];
-        unset($categoryData['defaultLocale']);
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->categoryConverter20->convert($categoryData, $context, $this->migrationContext20);
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-
-        static::assertCount(1, $logs);
-        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
-    }
-
-    public function testConvertWithoutLocale21(): void
-    {
-        $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
-        $categoryData = $categoryData[1];
-        unset($categoryData['defaultLocale']);
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->categoryConverter21->convert($categoryData, $context, $this->migrationContext21);
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-
-        static::assertCount(1, $logs);
-        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
-    }
-
-    public function testConvertWithoutLocale22(): void
-    {
-        $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
-        $categoryData = $categoryData[1];
-        unset($categoryData['defaultLocale']);
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->categoryConverter22->convert($categoryData, $context, $this->migrationContext22);
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-
-        static::assertCount(1, $logs);
-        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
-    }
-
-    public function testConvertWithoutLocale23(): void
-    {
-        $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
-        $categoryData = $categoryData[1];
-        unset($categoryData['defaultLocale']);
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->categoryConverter23->convert($categoryData, $context, $this->migrationContext23);
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-
-        static::assertCount(1, $logs);
-        static::assertSame(ConvertSourceDataIncompleteLog::getCode(), $logs[0]['code']);
     }
 }

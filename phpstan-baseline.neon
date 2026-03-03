@@ -1706,11 +1706,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2CrossSellingConverterTest.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:requiredProperties\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
-
-		-
 			message: "#^Property Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2OrderConverterTest\\:\\:\\$shippedDeliveryState type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
