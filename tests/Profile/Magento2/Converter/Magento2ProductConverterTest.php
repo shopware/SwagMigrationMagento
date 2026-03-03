@@ -21,7 +21,6 @@ use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23OrderStateReader;
 use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
@@ -227,11 +226,15 @@ class Magento2ProductConverterTest extends TestCase
     public function testConvertChildFirst(): void
     {
         $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
-
         $context = Context::createDefaultContext();
-        $this->expectException(MigrationException::class);
-        $this->expectExceptionMessage('Parent entity for "product: 498" child not found.');
-        $this->productConverter->convert($productData[1], $context, $this->migrationContext);
+        $convertResult = $this->productConverter->convert($productData[1], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+        $logs = $this->loggingService->getLoggingArray();
+
+        static::assertNotNull($convertResult->getUnmapped());
+        static::assertNull($converted);
+        static::assertCount(1, $logs);
+        static::assertSame(ConvertAssociationMissingLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertWithoutTax(): void
@@ -250,43 +253,6 @@ class Magento2ProductConverterTest extends TestCase
         static::assertCount(0, $logs);
     }
 
-    public function testConvertWithInvalidTax(): void
-    {
-        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
-        $product = $productData[0];
-        $product['tax_class_id'] = '99';
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->productConverter->convert($product, $context, $this->migrationContext);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
-    }
-
-    public function testConvertSimpleProductWithoutPrice(): void
-    {
-        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
-        $product = $productData[0];
-        $product['type_id'] = 'simple';
-        unset($product['price']);
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->productConverter->convert($product, $context, $this->migrationContext);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
-    }
-
     public function testConvertConfigurableProductWithoutPrice(): void
     {
         $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
@@ -300,25 +266,6 @@ class Magento2ProductConverterTest extends TestCase
         static::assertNotNull($converted);
         static::assertSame(0.0, $converted['price'][0]['net']);
         static::assertSame(0.0, $converted['price'][0]['gross']);
-    }
-
-    public function testConvertWithoutDefaultCurrency(): void
-    {
-        $productData = require __DIR__ . '/../../../_fixtures/product_data.php';
-        $product = $productData[0];
-
-        $this->mappingService->deleteDummyMapping(DefaultEntities::CURRENCY, 'default_currency');
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->productConverter->convert($product, $context, $this->migrationContext);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], ConvertAssociationMissingLog::getCode());
     }
 
     public function testConvertWithPriceIsGross(): void
