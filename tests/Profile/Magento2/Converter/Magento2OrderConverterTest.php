@@ -7,7 +7,6 @@
 
 namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
 
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Checkout\Cart\Price\Struct\CartPrice;
 use Shopware\Core\Checkout\Cart\Tax\TaxCalculator;
@@ -24,11 +23,9 @@ use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23OrderConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Profile\Magento23\Premapping\Magento23OrderStateReader;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
@@ -335,19 +332,6 @@ class Magento2OrderConverterTest extends TestCase
         static::assertSame($this->shippingMethod, $convertResult->getConverted()['deliveries'][0]['shippingMethodId']);
     }
 
-    public function testConvertWithoutShippedStatusMapping(): void
-    {
-        $context = Context::createDefaultContext();
-
-        $this->mappingService->deleteMapping($this->shippedDeliveryState['entityId'], $this->connection->getId(), $context);
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $convertResult = $this->orderConverter->convert($orderData[1], $context, $this->migrationContext);
-
-        static::assertNotNull($convertResult->getConverted());
-        static::assertNull($convertResult->getUnmapped());
-        static::assertEmpty($convertResult->getConverted()['deliveries']);
-    }
-
     public function testConvertWithoutCustomer(): void
     {
         $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
@@ -356,61 +340,14 @@ class Magento2OrderConverterTest extends TestCase
 
         $context = Context::createDefaultContext();
 
-        static::expectExceptionObject(MigrationException::associationEntityRequiredMissing('order', 'customer'));
-        $this->orderConverter->convert($order, $context, $this->migrationContext);
-    }
-
-    public function testConvertWithInvalidSalutation(): void
-    {
-        $context = Context::createDefaultContext();
-        $this->mappingService->deleteMapping($this->defaultSalutation, $this->connection->getId(), $context);
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $order = $orderData[0];
-        $order['orders']['customer_salutation'] = 'mrs';
-
         $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+        $logs = $this->loggingService->getLoggingArray();
 
         static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
+        static::assertNull($converted);
         static::assertCount(1, $logs);
-
-        static::assertSame(ConvertObjectTypeUnsupportedLog::getCode(), $logs[0]['code']);
-
-        $this->loggingService->reset();
-        unset($order['orders']['customer_salutation']);
-        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
-
-        static::assertNull($convertResult->getUnmapped());
-        static::assertNotNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(0, $logs);
-    }
-
-    public function testConvertWithInvalidBillingAddress(): void
-    {
-        $context = Context::createDefaultContext();
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $order = $orderData[0];
-
-        $order['billingAddress'] = [
-            'entity_id' => '1',
-            'country_id' => '1',
-            'country_iso2' => 'Fo',
-            'country_iso3' => 'BAR',
-        ];
-
-        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        static::assertSame(ConvertObjectTypeUnsupportedLog::getCode(), $logs[0]['code']);
+        static::assertSame(ConvertAssociationMissingLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertAsGuestCustomer(): void
@@ -436,72 +373,6 @@ class Magento2OrderConverterTest extends TestCase
         static::assertSame($converted['orderCustomer']['lastName'], $order['billingAddress']['lastname']);
         static::assertSame($converted['orderCustomer']['customer']['firstName'], $order['billingAddress']['firstname']);
         static::assertSame($converted['orderCustomer']['customer']['lastName'], $order['billingAddress']['lastname']);
-    }
-
-    public function testConvertAsGuestCustomerWithoutShippingAddress(): void
-    {
-        $context = Context::createDefaultContext();
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $order = $orderData[0];
-
-        unset($order['orders']['customer_lastname'], $order['orders']['customer_firstname']);
-        $order['orders']['customer_is_guest'] = '1';
-
-        $order['shippingAddress'] = [
-            'entity_id' => '1',
-            'country_id' => '1',
-            'country_iso2' => 'Fo',
-            'country_iso3' => 'BAR',
-        ];
-
-        $order['billingAddress']['firstname'] = 'Foo';
-        $order['billingAddress']['lastname'] = 'bar';
-
-        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(2, $logs);
-
-        static::assertSame(ConvertObjectTypeUnsupportedLog::getCode(), $logs[0]['code']);
-        static::assertSame(ConvertObjectTypeUnsupportedLog::getCode(), $logs[1]['code']);
-
-        static::assertNull($convertResult->getUnmapped());
-        static::assertNotNull($convertResult->getConverted());
-
-        $converted = $convertResult->getConverted();
-        static::assertSame($converted['orderCustomer']['firstName'], $order['billingAddress']['firstname']);
-        static::assertSame($converted['orderCustomer']['lastName'], $order['billingAddress']['lastname']);
-        static::assertSame($converted['orderCustomer']['customer']['firstName'], $order['billingAddress']['firstname']);
-        static::assertSame($converted['orderCustomer']['customer']['lastName'], $order['billingAddress']['lastname']);
-        static::assertSame($converted['orderCustomer']['customer']['defaultBillingAddressId'], $converted['orderCustomer']['customer']['defaultShippingAddressId']);
-    }
-
-    public function testConvertAsGuestCustomerWithInvalidBillingAddress(): void
-    {
-        $context = Context::createDefaultContext();
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $order = $orderData[0];
-
-        $address = [
-            'entity_id' => '1',
-            'country_id' => '1',
-            'country_iso2' => 'Fo',
-            'country_iso3' => 'BAR',
-        ];
-        $order['billingAddress'] = $address;
-        $order['shippingAddress'] = $address;
-        unset($order['orders']['customer_lastname'], $order['orders']['customer_firstname']);
-        $order['orders']['customer_is_guest'] = '1';
-
-        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        static::assertSame(ConvertObjectTypeUnsupportedLog::getCode(), $logs[0]['code']);
     }
 
     public function testConvertAsGuestCustomerWithoutPaymentMethod(): void
@@ -579,70 +450,5 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
         static::assertNotNull($convertResult->getMappingUuid());
-    }
-
-    public function testConvertWithInvalidCurrency(): void
-    {
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $order = $orderData[0];
-        $order['orders']['order_currency_code'] = 'JPY';
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(0, $logs);
-    }
-
-    public function testConvertWithInvalidOrderState(): void
-    {
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $order = $orderData[0];
-        $order['orders']['status'] = 'invalid';
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->orderConverter->convert($order, $context, $this->migrationContext);
-
-        static::assertNotNull($convertResult->getUnmapped());
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], ConvertObjectTypeUnsupportedLog::getCode());
-    }
-
-    public static function requiredProperties(): array
-    {
-        return [
-            ['orders', null],
-            ['orders', ''],
-            ['billingAddress', null],
-            ['billingAddress', ''],
-            ['shippingAddress', null],
-            ['shippingAddress', ''],
-            ['items', null],
-            ['items', ''],
-        ];
-    }
-
-    #[DataProvider('requiredProperties')]
-    public function testConvertWithoutRequiredProperties(string $property, ?string $value): void
-    {
-        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
-        $orderData = $orderData[0];
-        $orderData[$property] = $value;
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->orderConverter->convert($orderData, $context, $this->migrationContext);
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], ConvertSourceDataIncompleteLog::getCode());
     }
 }

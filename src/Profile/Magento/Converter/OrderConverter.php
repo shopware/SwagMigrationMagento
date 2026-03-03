@@ -992,7 +992,7 @@ abstract class OrderConverter extends MagentoConverter
         $this->mappingIds[] = $deliveryMapping['id'];
 
         $shippingOrderAddress = null;
-        if (isset($data['shippingAddress'])) {
+        if (!empty($data['shippingAddress'])) {
             $shippingOrderAddress = $this->getAddress($data['shippingAddress']);
         }
 
