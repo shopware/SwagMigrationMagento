@@ -65,7 +65,7 @@ abstract class CustomerConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (!isset($data['entity_id'])) {
+        if (empty($data['entity_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerDefinition::ENTITY_NAME)
@@ -241,7 +241,7 @@ abstract class CustomerConverter extends MagentoConverter
         foreach ($originalData['addresses'] as $address) {
             $newAddress = [];
 
-            if (!isset($address['entity_id'])) {
+            if (empty($address['entity_id'])) {
                 $this->loggingService->log(
                     MigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
