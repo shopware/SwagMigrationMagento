@@ -175,7 +175,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
             $defaultLanguage = $this->languageLookup->getLanguageEntity($context);
 
-            $languageUuid = $defaultLanguage->getId() ?? null;
+            $languageUuid = $defaultLanguage?->getId() ?? null;
         }
 
         if ($languageUuid !== null) {
