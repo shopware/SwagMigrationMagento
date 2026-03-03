@@ -1,3 +1,8 @@
+# 11.0.0
+- Compatibility with SwagMigrationAssistant version 16 and added error resolution support.
+- Removed support for Magento 1.9
+- Added new profile for Magento 2.4
+
 # 10.0.0
 - MIG-1094 - Compatibility with Shopware 6.7.
 - MIG-1094 - Increased the minimum required Shopware version to ~6.7.0.
