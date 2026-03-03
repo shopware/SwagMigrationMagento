@@ -32,6 +32,7 @@ use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
+use SwagMigrationAssistant\Migration\Mapping\Lookup\LanguageLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\StateMachineStateLookup;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -87,6 +88,7 @@ class Magento19OrderConverterTest extends TestCase
             $this->getContainer()->get(CurrencyLookup::class),
             $this->getContainer()->get(CountryStateLookup::class),
             $this->getContainer()->get(StateMachineStateLookup::class),
+            $this->getContainer()->get(LanguageLookup::class),
         );
 
         $this->runId = Uuid::randomHex();

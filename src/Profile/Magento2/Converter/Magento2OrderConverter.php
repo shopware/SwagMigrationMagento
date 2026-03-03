@@ -111,6 +111,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
             $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
+            $billingAddress = [];
             if (isset($data['billingAddress'])) {
                 $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
 

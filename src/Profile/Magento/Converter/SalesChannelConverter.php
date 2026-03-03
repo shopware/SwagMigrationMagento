@@ -163,8 +163,6 @@ abstract class SalesChannelConverter extends MagentoConverter
         }
 
         if ($languageUuid === null) {
-            $defaultLanguage = $this->languageLookup->getLanguageEntity($context);
-
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
@@ -175,7 +173,9 @@ abstract class SalesChannelConverter extends MagentoConverter
                     ->build(ConvertSourceDataIncompleteLog::class)
             );
 
-            $languageUuid = $defaultLanguage->getId();
+            $defaultLanguage = $this->languageLookup->getLanguageEntity($context);
+
+            $languageUuid = $defaultLanguage->getId() ?? null;
         }
 
         if ($languageUuid !== null) {
@@ -188,10 +188,11 @@ abstract class SalesChannelConverter extends MagentoConverter
                 null,
                 $languageUuid
             );
+
+            $converted['languageId'] = $languageUuid;
+            $converted['languages'] = $this->getSalesChannelLanguages($languageUuid, $data, $context);
         }
 
-        $converted['languageId'] = $languageUuid;
-        $converted['languages'] = $this->getSalesChannelLanguages($languageUuid, $data, $context);
         unset($data['locales']);
 
         /*

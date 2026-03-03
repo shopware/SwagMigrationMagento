@@ -186,6 +186,10 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             }
         }
 
+        if ($languageUuid === null) {
+            return null;
+        }
+
         $this->mappingService->getOrCreateMapping(
             $this->connectionId,
             DefaultEntities::LOCALE,

@@ -104,7 +104,7 @@ abstract class LanguageConverter extends MagentoConverter
 
         $converted = [];
         $converted['id'] = $languageUuid;
-        $converted['name'] = $languageData['name'];
+        $converted['name'] = $languageData['name'] ?? $this->oldIdentifier;
         $converted['localeId'] = $localeUuid;
         $converted['translationCodeId'] = $localeUuid;
         unset($data['locale']);

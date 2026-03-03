@@ -131,11 +131,6 @@ parameters:
 			path: src/Profile/Magento/Converter/CustomerConverter.php
 
 		-
-			message: "#^Setter method cannot return anything, only set value$#"
-			count: 1
-			path: src/Profile/Magento/Converter/CustomerConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\MagentoConverter\\:\\:checkForEmptyRequiredDataFields\\(\\) has parameter \\$rawData with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/MagentoConverter.php
@@ -431,16 +426,6 @@ parameters:
 			path: src/Profile/Magento/Converter/ProductConverter.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\ProductConverter\\:\\:setParent\\(\\) has parameter \\$converted with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ProductConverter.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\ProductConverter\\:\\:setParent\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ProductConverter.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\ProductConverter\\:\\:setStoreVisibilities\\(\\) has parameter \\$visibilities with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento/Converter/ProductConverter.php
@@ -457,11 +442,6 @@ parameters:
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento\\\\Converter\\\\ProductConverter\\:\\:setVisibility\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento/Converter/ProductConverter.php
-
-		-
-			message: "#^Setter method cannot return anything, only set value$#"
 			count: 1
 			path: src/Profile/Magento/Converter/ProductConverter.php
 
@@ -1382,11 +1362,6 @@ parameters:
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2CustomerConverter\\:\\:setPassword\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Converter/Magento2CustomerConverter.php
-
-		-
-			message: "#^Setter method cannot return anything, only set value$#"
 			count: 1
 			path: src/Profile/Magento2/Converter/Magento2CustomerConverter.php
 

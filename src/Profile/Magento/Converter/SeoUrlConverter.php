@@ -152,7 +152,7 @@ abstract class SeoUrlConverter extends MagentoConverter
             return new ConvertStruct(null, $this->originalData);
         }
 
-        if (isset($converted['languageId'], $converted['salesChannelId'], $converted['foreignKey'], $converted['routeName'])) {
+        if (isset($converted['languageId'], $converted['salesChannelId'], $converted['foreignKey'])) {
             $isCanonical = (isset($converted['isCanonical'])) ? 'canonical' : 'not_canonical';
             $hash = Hasher::hash($converted['languageId'] . '_' . $converted['salesChannelId'] . '_' . $converted['foreignKey'] . '_' . $converted['routeName'] . '_' . $isCanonical, 'sha256');
 

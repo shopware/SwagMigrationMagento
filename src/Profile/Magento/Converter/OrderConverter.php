@@ -701,7 +701,7 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($customerMapping !== null) {
+            if ($customerMapping === null) {
                 return false;
             }
 
