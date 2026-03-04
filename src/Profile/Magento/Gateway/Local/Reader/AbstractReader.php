@@ -91,13 +91,17 @@ abstract class AbstractReader implements ReaderInterface
         $table = $this->connection->createSchemaManager()->introspectTableByUnquotedName($table);
 
         foreach ($table->getColumns() as $column) {
-            $selection = \str_replace(
-                ['#tableAlias#', '#column#'],
-                [$tableAlias, $column->getObjectName()->toString()],
-                '`#tableAlias#`.`#column#` AS `#tableAlias#.#column#`'
-            );
+            $columnName = $column->getObjectName()->toString();
 
-            $query->addSelect($selection);
+            $columnName = trim($columnName, '"`');
+
+            $query->addSelect(\sprintf(
+                '`%s`.`%s` AS `%s.%s`',
+                $tableAlias,
+                $columnName,
+                $tableAlias,
+                $columnName
+            ));
         }
     }
 

@@ -10,7 +10,6 @@ namespace Swag\MigrationMagento\Profile\Magento2\Converter;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use SwagMigrationAssistant\Exception\MigrationException;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 
 #[Package('fundamentals@after-sales')]
@@ -33,15 +32,14 @@ abstract class Magento2OrderConverter extends OrderConverter
             );
 
             if ($customerMapping === null) {
-                throw MigrationException::associationEntityRequiredMissing(
-                    DefaultEntities::ORDER,
-                    DefaultEntities::CUSTOMER
-                );
+                return false;
             }
+
             $converted['orderCustomer'] = [
                 'customerId' => $customerMapping['entityId'],
             ];
             $this->mappingIds[] = $customerMapping['id'];
+
             unset($customerMapping);
 
             $this->convertValue($converted['orderCustomer'], 'email', $data['orders'], 'customer_email');
@@ -58,11 +56,9 @@ abstract class Magento2OrderConverter extends OrderConverter
         if (isset($data['orders']['customer_salutation'])) {
             $salutationUuid = $this->getSalutation($data['orders']['customer_salutation'], $this->migrationContext);
 
-            if ($salutationUuid === null) {
-                return false;
+            if ($salutationUuid !== null) {
+                $this->salutationUuid = $salutationUuid;
             }
-
-            $this->salutationUuid = $salutationUuid;
         } else {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -115,22 +111,35 @@ abstract class Magento2OrderConverter extends OrderConverter
             $converted['orderCustomer']['customer']['salesChannelId'] = $converted['salesChannelId'];
             $converted['orderCustomer']['customer']['customerNumber'] = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
 
-            $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
+            $billingAddress = [];
+            if (isset($data['billingAddress'])) {
+                $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
 
-            if (empty($billingAddress)) {
-                return false;
+                if (!empty($billingAddress)) {
+                    $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
+                }
+
+                if (isset($billingAddress['id'])) {
+                    $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
+                }
             }
 
-            $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
-            $converted['orderCustomer']['customer']['defaultBillingAddressId'] = $billingAddress['id'];
-
-            $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
-
-            if (empty($shippingAddress)) {
-                $shippingAddress = $billingAddress;
+            $shippingAddress = [];
+            if (isset($data['shippingAddress'])) {
+                $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             }
 
-            $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
+            if (!empty($shippingAddress)) {
+                $converted['orderCustomer']['customer']['addresses'][] = $shippingAddress;
+            }
+
+            if (isset($shippingAddress['id'])) {
+                $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
+            }
+
+            if (empty($shippingAddress) && isset($billingAddress['id'])) {
+                $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $billingAddress['id'];
+            }
 
             $this->convertValue($converted['orderCustomer']['customer'], 'email', $data['orders'], 'customer_email', self::TYPE_STRING, false);
             $this->convertValue($converted['orderCustomer']['customer'], 'firstName', $billingAddress, 'firstName', self::TYPE_STRING, false);
@@ -140,6 +149,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             $this->convertValue($converted['orderCustomer'], 'firstName', $billingAddress, 'firstName', self::TYPE_STRING, false);
             $this->convertValue($converted['orderCustomer'], 'lastName', $billingAddress, 'lastName', self::TYPE_STRING, false);
         }
+
         unset($data['customerSalutation']);
 
         return true;

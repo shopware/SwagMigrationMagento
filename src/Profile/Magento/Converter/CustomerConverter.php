@@ -20,7 +20,6 @@ use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertFieldReassignedLog;
-use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertSourceDataIncompleteLog;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
@@ -41,25 +40,6 @@ abstract class CustomerConverter extends MagentoConverter
     protected Context $context;
 
     protected NumberRangeValueGeneratorInterface $numberRangeValueGenerator;
-
-    /**
-     * @var list<string>
-     */
-    protected static array $requiredDataFieldKeys = [
-        'email',
-        'firstname',
-        'lastname',
-    ];
-
-    /**
-     * @var list<string>
-     */
-    protected static array $requiredAddressDataFieldKeys = [
-        'entity_id',
-        'country_id',
-        'country_iso2',
-        'country_iso3',
-    ];
 
     protected string $oldIdentifier;
 
@@ -85,13 +65,11 @@ abstract class CustomerConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-
-        if (!empty($fields)) {
+        if (empty($data['entity_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                    ->withFieldName(\implode(', ', $fields))
+                    ->withFieldName('entity_id')
                     ->withSourceData($data)
                     ->build(ConvertSourceDataIncompleteLog::class)
             );
@@ -158,9 +136,9 @@ abstract class CustomerConverter extends MagentoConverter
         $this->convertValue($converted, 'firstName', $data, 'firstname');
         $this->convertValue($converted, 'lastName', $data, 'lastname');
         $this->convertValue($converted, 'birthday', $data, 'dob', self::TYPE_DATETIME);
-        if (isset($data['password_hash']) && !$this->setPassword($data, $converted)) {
-            return new ConvertStruct(null, $data);
-        }
+
+        $this->setPassword($data, $converted);
+
         $customerNumber = $this->mappingService->getValue($this->connectionId, DefaultEntities::CUSTOMER, $this->oldIdentifier, $this->context);
         if ($customerNumber === null) {
             $customerNumber = $this->numberRangeValueGenerator->getValue('customer', $this->context, null);
@@ -177,7 +155,7 @@ abstract class CustomerConverter extends MagentoConverter
         $salutationUuid = null;
 
         if (isset($data['gender'])) {
-            $salutationUuid = $this->getSalutation($data['gender'], $migrationContext);
+            $salutationUuid = $this->getSalutation($data['gender']);
         } else {
             $mapping = $this->mappingService->getMapping(
                 $this->connectionId,
@@ -204,28 +182,24 @@ abstract class CustomerConverter extends MagentoConverter
             $context
         );
 
-        if ($mapping === null) {
-            return new ConvertStruct(null, $this->originalData);
+        if (\is_array($mapping) && \array_key_exists('entityId', $mapping)) {
+            $converted['groupId'] = $mapping['entityId'];
+            unset($data['group_id']);
         }
-
-        $converted['groupId'] = $mapping['entityId'];
-        unset($data['group_id']);
 
         /*
          * Set payment method
          */
-        $defaultPaymentMethodUuid = $this->getDefaultPaymentMethod($migrationContext);
+        $defaultPaymentMethodUuid = $this->getDefaultPaymentMethod();
 
-        if ($defaultPaymentMethodUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
+        if ($defaultPaymentMethodUuid !== null) {
+            $converted['defaultPaymentMethodId'] = $defaultPaymentMethodUuid;
         }
-
-        $converted['defaultPaymentMethodId'] = $defaultPaymentMethodUuid;
 
         /*
          * Set addresses
          */
-        if (isset($data['addresses'], $this->mainMapping['entityId']) && !empty($data['addresses'])) {
+        if (isset($this->mainMapping['entityId']) && !empty($data['addresses'])) {
             $this->getAddresses($data, $converted, $this->mainMapping['entityId'], $migrationContext);
             unset($data['addresses']);
             unset($data['default_billing'], $data['default_shipping']);
@@ -267,13 +241,11 @@ abstract class CustomerConverter extends MagentoConverter
         foreach ($originalData['addresses'] as $address) {
             $newAddress = [];
 
-            $fields = $this->checkForEmptyRequiredDataFields($address, self::$requiredAddressDataFieldKeys);
-
-            if (!empty($fields)) {
+            if (empty($address['entity_id'])) {
                 $this->loggingService->log(
                     MigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
-                        ->withFieldName(\implode(', ', $fields))
+                        ->withFieldName('entity_id')
                         ->withSourceData($address)
                         ->build(ConvertSourceDataIncompleteLog::class)
                 );
@@ -303,26 +275,16 @@ abstract class CustomerConverter extends MagentoConverter
             $newAddress['salutationId'] = $converted['salutationId'];
             $newAddress['customerId'] = $customerUuid;
 
-            $countryUuid = $this->countryLookup->getByIso3($address['country_iso3'], $this->context);
-
-            if ($countryUuid === null) {
-                $this->loggingService->log(
-                    MigrationLogBuilder::fromMigrationContext($migrationContext)
-                        ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                        ->withFieldName('countryId')
-                        ->withFieldSourcePath('country_iso3')
-                        ->withSourceData($originalData)
-                        ->withConvertedData($converted)
-                        ->build(ConvertObjectTypeUnsupportedLog::class)
-                );
-
-                continue;
+            $countryUuid = null;
+            if (isset($address['country_iso3'])) {
+                $countryUuid = $this->countryLookup->getByIso3($address['country_iso3'], $this->context);
             }
 
             $newAddress['countryId'] = $countryUuid;
 
             if (isset($address['region_id'])
                 && isset($address['region_code'])
+                && isset($address['country_iso2'])
             ) {
                 $countryStateUuid = $this->countryStateLookup->get(
                     $address['country_iso2'],
@@ -345,16 +307,6 @@ abstract class CustomerConverter extends MagentoConverter
                         'shortCode' => $address['region_code'],
                         'countryId' => $countryUuid,
                     ];
-                } else {
-                    $this->loggingService->log(
-                        MigrationLogBuilder::fromMigrationContext($migrationContext)
-                            ->withEntityName(CustomerDefinition::ENTITY_NAME)
-                            ->withFieldName('countryState')
-                            ->withFieldSourcePath('region_code')
-                            ->withSourceData($originalData)
-                            ->withConvertedData($converted)
-                            ->build(ConvertObjectTypeUnsupportedLog::class)
-                    );
                 }
             }
 
@@ -398,7 +350,7 @@ abstract class CustomerConverter extends MagentoConverter
                     'defaultBillingAddressId' => 'default_billing_address_id',
                     'defaultShippingAddressId' => 'default_shipping_address_id',
                 ],
-                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                     ->withFieldName($key)
                     ->withFieldSourcePath($value)
@@ -420,7 +372,7 @@ abstract class CustomerConverter extends MagentoConverter
                     'defaultBillingAddressId' => 'default_billing_address_id',
                     'defaultShippingAddressId' => 'default_shipping_address_id',
                 ],
-                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                     ->withFieldName($key)
                     ->withFieldSourcePath($value)
@@ -442,7 +394,7 @@ abstract class CustomerConverter extends MagentoConverter
                     'defaultBillingAddressId' => 'default_billing_address_id',
                     'defaultShippingAddressId' => 'default_shipping_address_id',
                 ],
-                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($this->migrationContext)
+                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                     ->withFieldName($key)
                     ->withFieldSourcePath($value)
@@ -452,7 +404,7 @@ abstract class CustomerConverter extends MagentoConverter
         }
     }
 
-    protected function getSalutation(string $gender, MigrationContextInterface $migrationContext): ?string
+    protected function getSalutation(string $gender): ?string
     {
         $mapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -479,7 +431,7 @@ abstract class CustomerConverter extends MagentoConverter
         return $mapping['entityId'];
     }
 
-    protected function getDefaultPaymentMethod(MigrationContextInterface $migrationContext): ?string
+    protected function getDefaultPaymentMethod(): ?string
     {
         $paymentMethodMapping = $this->mappingService->getMapping(
             $this->connectionId,
@@ -497,15 +449,13 @@ abstract class CustomerConverter extends MagentoConverter
         return $paymentMethodMapping['entityId'];
     }
 
-    protected function setPassword(array &$data, array &$converted): bool
+    protected function setPassword(array &$data, array &$converted): void
     {
         $converted['legacyPassword'] = $data['password_hash'];
         // we assume md5 as default for Magento 1.9.x
         // This has to be overridden if differs
         $converted['legacyEncoder'] = 'Magento19';
         unset($data['password_hash']);
-
-        return true;
     }
 
     private function setSalesChannelId(array $data, array &$converted): void

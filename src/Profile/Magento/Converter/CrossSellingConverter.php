@@ -75,6 +75,7 @@ abstract class CrossSellingConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
+
         $this->mappingIds[] = $sourceProductMapping['id'];
 
         $relatedProductMapping = $this->mappingService->getMapping(
@@ -88,8 +89,8 @@ abstract class CrossSellingConverter extends MagentoConverter
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(ProductCrossSellingDefinition::ENTITY_NAME)
-                    ->withFieldName('linked_product_id')
-                    ->withFieldSourcePath('crossSellingAssignedProducts.productId')
+                    ->withFieldName('assignedProducts.productId')
+                    ->withFieldSourcePath('linked_product_id')
                     ->withSourceData($data)
                     ->withConvertedData($converted)
                     ->build(ConvertAssociationMissingLog::class)
@@ -97,6 +98,7 @@ abstract class CrossSellingConverter extends MagentoConverter
 
             return new ConvertStruct(null, $data);
         }
+
         $this->mappingIds[] = $relatedProductMapping['id'];
 
         $converted['name'] = 'Related products';

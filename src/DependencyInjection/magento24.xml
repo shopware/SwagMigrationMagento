@@ -1,0 +1,361 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Swag\MigrationMagento\Profile\Magento24\Magento24Profile">
+            <tag name="shopware.migration.profile"/>
+        </service>
+
+        <!-- Magento 2.4 Profile Gateways -->
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Magento24LocalGateway">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\Reader\ReaderRegistry"/>
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\EnvironmentReader"/>
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LocalTableReader"/>
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <argument type="service" id="currency.repository"/>
+            <tag name="shopware.migration.gateway"/>
+        </service>
+
+        <!-- Readers which contain the sql queries -->
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24LanguageReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LanguageReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24CustomerGroupReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\LanguageReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24CategoryReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CategoryReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24CountryReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CountryReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24CurrencyReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CurrencyReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24SalesChannelReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SalesChannelReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24CustomerReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CustomerReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24MediaReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\MediaReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24NotAssociatedMediaReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NotAssociatedMediaReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ManufacturerReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ManufacturerReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24NewsletterRecipientReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\NewsletterRecipientReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24OrderReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\OrderReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductCustomFieldReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductCustomFieldReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductReviewReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductReviewReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24PropertyGroupReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\PropertyGroupReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24SeoUrlReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\SeoUrlReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24CrossSellingReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\CrossSellingReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductChildPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductMultiSelectPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductMultiSelectPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductChildMultiSelectPropertyRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductMultiSelectPropertyRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader\Magento24ProductOptionRelationReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\ProductOptionRelationReader">
+            <argument type="service" id="Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory"/>
+            <tag name="shopware.migration.reader"/>
+        </service>
+
+        <!-- Magento 2.4 converters -->
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24LanguageConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\LanguageConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CategoryConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CategoryConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ManufacturerConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ManufacturerConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CountryConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CountryConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CurrencyConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CurrencyConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CustomerGroupConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CustomerGroupConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24SalesChannelConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CustomerConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CustomerConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductCustomFieldConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductCustomFieldConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24OrderConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\OrderConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24MediaConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\MediaConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24NewsletterRecipientConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\NewsletterRecipientConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24NotAssociatedMediaConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\NotAssociatedMediaConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24PropertyGroupConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\PropertyGroupConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductReviewConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductReviewConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24SeoUrlConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\SeoUrlConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CrossSellingConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\CrossSellingConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductMultiSelectPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductOptionRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductOptionRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductChildPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Converter\Magento24ProductChildMultiSelectPropertyRelationConverter"
+                 parent="Swag\MigrationMagento\Profile\Magento\Converter\ProductMultiSelectPropertyRelationConverter">
+            <tag name="shopware.migration.converter"/>
+        </service>
+
+        <!-- Magento 2.4 premapping readers -->
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24CustomerGroupReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24PaymentMethodReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <argument type="service" id="payment_method.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24ShippingMethodReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\ShippingMethodReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <argument type="service" id="shipping_method.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24CountryReader">
+            <argument type="service" id="country.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24CurrencyReader">
+            <argument type="service" id="currency.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24LanguageReader">
+            <argument type="service" id="language.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24SalutationReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <argument type="service" id="salutation.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24AdminStoreReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24OrderStateReader">
+            <argument type="service" id="state_machine.repository"/>
+            <argument type="service" id="state_machine_state.repository"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24NewsletterRecipientStatusReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader">
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24TaxReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\TaxReader">
+            <argument type="service" id="SwagMigrationAssistant\Migration\Gateway\GatewayRegistry"/>
+            <argument type="service" id="tax.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <service id="Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24OrderDeliveryStateReader"
+                 parent="Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader">
+            <argument type="service" id="state_machine.repository"/>
+            <argument type="service" id="state_machine_state.repository"/>
+            <tag name="shopware.migration.pre_mapping_reader"/>
+        </service>
+
+        <!-- Media processor -->
+        <service id="Swag\MigrationMagento\Profile\Magento24\Media\Magento24LocalMediaProcessor">
+            <argument type="service" id="swag_migration_media_file.repository"/>
+            <argument type="service" id="media.repository"/>
+            <argument type="service" id="Shopware\Core\Content\Media\File\FileSaver"/>
+            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+            <tag name="shopware.migration.media_file_processor"/>
+        </service>
+    </services>
+</container>

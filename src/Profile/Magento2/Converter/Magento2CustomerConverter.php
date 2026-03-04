@@ -21,7 +21,7 @@ abstract class Magento2CustomerConverter extends CustomerConverter
 {
     private const PASSWORD_HASH_SPLIT_LIMIT = 3;
 
-    protected function setPassword(array &$data, array &$converted): bool
+    protected function setPassword(array &$data, array &$converted): void
     {
         [, , $version] = \explode(':', $data['password_hash'], self::PASSWORD_HASH_SPLIT_LIMIT);
         $converted['legacyPassword'] = $data['password_hash'];
@@ -47,13 +47,9 @@ abstract class Magento2CustomerConverter extends CustomerConverter
                         ->withExceptionTrace($exception->getTrace())
                         ->build(RunExceptionLog::class)
                 );
-
-                return false;
             }
         }
 
         unset($data['password_hash']);
-
-        return true;
     }
 }

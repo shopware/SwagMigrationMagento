@@ -7,8 +7,8 @@ A migration profile for [Shopware 6](https://github.com/shopware/platform) [Migr
 
 ## Features
 
-This plugin adds Magento 1.9.x and 2.x profiles to the Migration Assistant for Shopware 6. You can use this profile together with the
-[SwagMigrationAssistant](https://github.com/shopware/SwagMigrationAssistant) to migrate the data of your Magento 1.9.x or 2.x shop to Shopware 6.
+This plugin adds Magento 2.x profiles to the Migration Assistant for Shopware 6. You can use this profile together with the
+[SwagMigrationAssistant](https://github.com/shopware/SwagMigrationAssistant) to migrate the data of your Magento 2.x shop to Shopware 6.
 
 Currently, you can migrate the following data:
 

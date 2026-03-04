@@ -1,0 +1,26 @@
+<?php declare(strict_types=1);
+/*
+ * (c) shopware AG <info@shopware.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+namespace Swag\MigrationMagento\Profile\Magento24\Premapping;
+
+use Shopware\Core\Framework\Log\Package;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
+use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
+use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
+use SwagMigrationAssistant\Migration\MigrationContextInterface;
+
+#[Package('fundamentals@after-sales')]
+class Magento24AdminStoreReader extends AdminStoreReader
+{
+    public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
+    {
+        return $migrationContext->getProfile() instanceof Magento24Profile
+            && (\in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true)
+            || \in_array(ProductReviewDataSelection::IDENTIFIER, $entityGroupNames, true));
+    }
+}

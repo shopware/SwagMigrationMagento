@@ -28,25 +28,13 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('fundamentals@after-sales')]
 abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 {
-    /**
-     * @var list<string>
-     */
-    protected static array $requiredDataFieldKeys = [
-        'website_id',
-        'name',
-        'group_id',
-        'root_category_id',
-    ];
-
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        $fields = $this->checkForEmptyRequiredDataFields($data, self::$requiredDataFieldKeys);
-
-        if (!empty($fields)) {
+        if (empty($data['group_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
-                    ->withFieldName(\implode(', ', $fields))
+                    ->withFieldName('group_id')
                     ->withSourceData($data)
                     ->build(ConvertSourceDataIncompleteLog::class)
             );
@@ -165,25 +153,41 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
     protected function setLanguageUuid(array &$data, array &$converted, Context $context): ?string
     {
-        $languageUuid = null;
-        if (!empty($data['defaultLocale'])) {
-            $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
+        $languageMapping = $this->mappingService->getMapping(
+            $this->connectionId,
+            Magento2LanguageReader::getMappingName(),
+            $data['defaultLocale'],
+            $this->context
+        );
+
+        if ($languageMapping !== null) {
+            $languageUuid = $languageMapping['entityId'];
+            $this->mappingIds[] = $languageMapping['id'];
+        } else {
+            $languageUuid = null;
+            if (!empty($data['defaultLocale'])) {
+                $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
+            }
+
+            if ($languageUuid === null) {
+                $languageMapping = $this->mappingService->getMapping(
+                    $this->connectionId,
+                    Magento2LanguageReader::getMappingName(),
+                    'default_language',
+                    $this->context
+                );
+
+                if ($languageMapping === null || !isset($languageMapping['entityId'])) {
+                    return null;
+                }
+
+                $this->mappingIds[] = $languageMapping['id'];
+                $languageUuid = $languageMapping['entityId'];
+            }
         }
 
         if ($languageUuid === null) {
-            $languageMapping = $this->mappingService->getMapping(
-                $this->connectionId,
-                Magento2LanguageReader::getMappingName(),
-                'default_language',
-                $this->context
-            );
-
-            if ($languageMapping === null || !isset($languageMapping['entityId'])) {
-                return null;
-            }
-
-            $this->mappingIds[] = $languageMapping['id'];
-            $languageUuid = $languageMapping['entityId'];
+            return null;
         }
 
         $this->mappingService->getOrCreateMapping(
@@ -246,6 +250,10 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 
     protected function setCategoryUuid(array &$data, array &$converted): ?string
     {
+        if (!isset($data['root_category_id'])) {
+            return null;
+        }
+
         $categoryMapping = $this->mappingService->getMapping(
             $this->connectionId,
             DefaultEntities::CATEGORY,

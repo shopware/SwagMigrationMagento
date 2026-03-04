@@ -180,7 +180,7 @@ SQL;
 
         $query->from($this->tablePrefix . 'sales_shipment_item', 'item');
         $query->addSelect('item.parent_id as identifier');
-        $this->addTableSelection($query, $this->tablePrefix . 'sales_flat_shipment_item', 'item');
+        $this->addTableSelection($query, $this->tablePrefix . 'sales_shipment_item', 'item');
 
         $query->where('item.parent_id in (:ids)');
         $query->setParameter('ids', $shipmentIds, ArrayParameterType::STRING);

@@ -77,14 +77,7 @@ abstract class LanguageConverter extends MagentoConverter
         }
 
         $languageData = LanguageRegistry::get($this->oldIdentifier);
-        if ($languageData === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
-
         $localeUuid = $this->localeLookup->get($this->oldIdentifier, $this->context);
-        if ($localeUuid === null) {
-            return new ConvertStruct(null, $this->originalData);
-        }
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
@@ -111,7 +104,7 @@ abstract class LanguageConverter extends MagentoConverter
 
         $converted = [];
         $converted['id'] = $languageUuid;
-        $converted['name'] = $languageData['name'];
+        $converted['name'] = $languageData['name'] ?? $this->oldIdentifier;
         $converted['localeId'] = $localeUuid;
         $converted['translationCodeId'] = $localeUuid;
         unset($data['locale']);

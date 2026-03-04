@@ -255,42 +255,6 @@ class Magento2CustomerConverterTest extends TestCase
         static::assertSame($customerData[0]['password_hash'], $converted['legacyPassword']);
     }
 
-    /**
-     * @return list<list{string|null}>
-     */
-    public static function requiredProperties(): array
-    {
-        return [
-            ['email', null],
-            ['email', ''],
-            ['firstname', null],
-            ['firstname', ''],
-            ['lastname', null],
-            ['lastname', ''],
-        ];
-    }
-
-    #[DataProvider('requiredProperties')]
-    public function testConvertWithoutRequiredProperties(string $property, ?string $value): void
-    {
-        $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
-        $customerData = $customerData[0];
-        $customerData[$property] = $value;
-
-        $context = Context::createDefaultContext();
-        $convertResult = $this->customerConverter->convert(
-            $customerData,
-            $context,
-            $this->migrationContext
-        );
-        static::assertNull($convertResult->getConverted());
-
-        $logs = $this->loggingService->getLoggingArray();
-        static::assertCount(1, $logs);
-
-        static::assertSame($logs[0]['code'], ConvertSourceDataIncompleteLog::getCode());
-    }
-
     public function testConvertCustomerWithoutNumber(): void
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
@@ -364,12 +328,6 @@ class Magento2CustomerConverterTest extends TestCase
         return [
             ['entity_id', null],
             ['entity_id', ''],
-            ['country_id', null],
-            ['country_id', ''],
-            ['country_iso2', null],
-            ['country_iso2', ''],
-            ['country_iso3', null],
-            ['country_iso3', ''],
         ];
     }
 

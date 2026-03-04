@@ -20,10 +20,14 @@ abstract class CustomerGroupReader extends AbstractReader
     {
         $this->setConnection($migrationContext);
 
-        $ids = $this->fetchIdentifiers($this->tablePrefix . 'customer_group', 'customer_group_id', $migrationContext->getOffset(), $migrationContext->getLimit());
-        $fetchedCustomerGroups = $this->mapData($this->fetchCustomerGroups($ids), [], ['customergroup']);
+        $ids = $this->fetchIdentifiers(
+            $this->tablePrefix . 'customer_group',
+            'customer_group_id',
+            $migrationContext->getOffset(),
+            $migrationContext->getLimit()
+        );
 
-        return $fetchedCustomerGroups;
+        return $this->mapData($this->fetchCustomerGroups($ids), [], ['customergroup']);
     }
 
     public function readTotal(MigrationContextInterface $migrationContext): ?TotalStruct
@@ -31,8 +35,8 @@ abstract class CustomerGroupReader extends AbstractReader
         $this->setConnection($migrationContext);
 
         $sql = <<<SQL
-SELECT COUNT(*)
-FROM {$this->tablePrefix}customer_group;
+            SELECT COUNT(*)
+            FROM {$this->tablePrefix}customer_group;
 SQL;
         $total = (int) $this->connection->executeQuery($sql)->fetchOne();
 
