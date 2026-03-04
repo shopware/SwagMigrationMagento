@@ -1,7 +1,7 @@
 # 11.0.0
-- Compatibility with SwagMigrationAssistant version 16 and added error resolution support.
-- Removed support for Magento 1.9
-- Added new profile for Magento 2.4
+- [#34](https://github.com/shopware/SwagMigrationMagento/pull/34) Unterstützung für migration assistant ~16.0 und zusätzliche Unterstützung für die Fehlerbehebung hinzugefügt
+- Unterstützung für Magento 1.9 entfernt
+- Neues Profil für Magento 2.4 hinzugefügt
 
 # 10.0.0
 - MIG-1094 - Kompatibilität mit Shopware 6.7.
