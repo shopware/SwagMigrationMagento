@@ -1,6 +1,5 @@
 # 11.0.0
 - [#34](https://github.com/shopware/SwagMigrationMagento/pull/34) Compatibility with SwagMigrationAssistant version 16 and added error resolution support.
-- Removed support for Magento 1.9
 - Added new profile for Magento 2.4
 
 # 10.0.0

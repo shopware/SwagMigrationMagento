@@ -8,8 +8,8 @@
 namespace Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\Log\Package;
-use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Reader\Magento2CountryReader;
+use Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Magento24LocalGateway;
 use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -20,7 +20,7 @@ class Magento24CountryReader extends Magento2CountryReader
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof Magento24Profile
-            && $migrationContext->getGateway()->getName() === Magento19LocalGateway::GATEWAY_NAME
+            && $migrationContext->getGateway()->getName() === Magento24LocalGateway::GATEWAY_NAME
             && $this->getDataSetEntity($migrationContext) === DefaultEntities::COUNTRY;
     }
 }

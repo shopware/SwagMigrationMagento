@@ -95,7 +95,7 @@ abstract class OrderConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (!isset($data['orders']) || !isset($data['orders']['entity_id'])) {
+        if (!isset($data['orders']['entity_id'])) {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(OrderDefinition::ENTITY_NAME)

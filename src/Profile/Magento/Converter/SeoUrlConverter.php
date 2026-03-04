@@ -15,6 +15,7 @@ use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as Magen
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
+use SwagMigrationAssistant\Migration\Logging\Log\ConvertAssociationMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\ConvertObjectTypeUnsupportedLog;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -63,10 +64,21 @@ abstract class SeoUrlConverter extends MagentoConverter
             $context
         );
 
-        if ($mapping !== null) {
-            $converted['salesChannelId'] = $mapping['entityId'];
-            $this->mappingIds[] = $mapping['id'];
+        if ($mapping === null) {
+            $this->loggingService->log(
+                MigrationLogBuilder::fromMigrationContext($migrationContext)
+                    ->withEntityName(SeoUrlDefinition::ENTITY_NAME)
+                    ->withFieldName('salesChannelId')
+                    ->withSourceData($data)
+                    ->withConvertedData($converted)
+                    ->build(ConvertAssociationMissingLog::class)
+            );
+
+            return new ConvertStruct(null, $this->originalData);
         }
+
+        $converted['salesChannelId'] = $mapping['entityId'];
+        $this->mappingIds[] = $mapping['id'];
 
         $languageMapping = $this->mappingService->getMapping(
             $this->connectionId,

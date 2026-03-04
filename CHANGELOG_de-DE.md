@@ -1,6 +1,5 @@
 # 11.0.0
 - [#34](https://github.com/shopware/SwagMigrationMagento/pull/34) Unterstützung für migration assistant ~16.0 und zusätzliche Unterstützung für die Fehlerbehebung hinzugefügt
-- Unterstützung für Magento 1.9 entfernt
 - Neues Profil für Magento 2.4 hinzugefügt
 
 # 10.0.0
