@@ -8,6 +8,7 @@
 namespace Swag\MigrationMagento\Profile\Magento24\Premapping;
 
 use Shopware\Core\Framework\Log\Package;
+use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\Premapping\CustomerGroupReader;
 use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -17,6 +18,7 @@ class Magento24CustomerGroupReader extends CustomerGroupReader
 {
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
-        return $migrationContext->getProfile() instanceof Magento24Profile;
+        return $migrationContext->getProfile() instanceof Magento24Profile
+            && (\in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true));
     }
 }
