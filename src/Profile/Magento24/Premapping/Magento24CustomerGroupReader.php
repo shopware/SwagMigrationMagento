@@ -19,6 +19,6 @@ class Magento24CustomerGroupReader extends CustomerGroupReader
     public function supports(MigrationContextInterface $migrationContext, array $entityGroupNames): bool
     {
         return $migrationContext->getProfile() instanceof Magento24Profile
-            && (\in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true));
+            && \in_array(CustomerAndOrderDataSelection::IDENTIFIER, $entityGroupNames, true);
     }
 }
