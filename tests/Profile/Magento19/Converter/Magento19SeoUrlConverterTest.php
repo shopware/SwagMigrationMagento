@@ -5,15 +5,15 @@
  * file that was distributed with this source code.
  */
 
-namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
+namespace Swag\MigrationMagento\Test\Profile\Magento19\Converter;
 
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23SeoUrlConverter;
-use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Profile\Magento19\Converter\Magento19SeoUrlConverter;
+use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
@@ -27,13 +27,13 @@ use SwagMigrationAssistant\Test\Mock\Migration\Logging\DummyLoggingService;
  * @internal
  */
 #[Package('fundamentals@after-sales')]
-class Magento2SeoUrlConverterTest extends TestCase
+class Magento19SeoUrlConverterTest extends TestCase
 {
     private DummyMagentoMappingService $mappingService;
 
     private DummyLoggingService $loggingService;
 
-    private Magento23SeoUrlConverter $seoUrlConverter;
+    private Magento19SeoUrlConverter $seoUrlConverter;
 
     private string $runId;
 
@@ -55,15 +55,15 @@ class Magento2SeoUrlConverterTest extends TestCase
     {
         $this->mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->seoUrlConverter = new Magento23SeoUrlConverter($this->mappingService, $this->loggingService);
+        $this->seoUrlConverter = new Magento19SeoUrlConverter($this->mappingService, $this->loggingService);
 
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
         $this->connection->setId(Uuid::randomHex());
-        $this->connection->setProfileName(Magento23Profile::PROFILE_NAME);
+        $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new SeoUrlDataSet(), $this->runId, 0, 250);
+        $this->migrationContext = new MigrationContext($this->connection, new Magento19Profile(), null, new SeoUrlDataSet(), $this->runId, 0, 250);
 
         $this->context = Context::createDefaultContext();
 
