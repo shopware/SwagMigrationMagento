@@ -288,8 +288,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                     $this->loggingService->log(
                         MigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withEntityName(MediaDefinition::ENTITY_NAME)
-                            ->withExceptionMessage($e->getMessage())
-                            ->withExceptionTrace($e->getTrace())
+                            ->withException($e)
                             ->withConvertedData(
                                 [
                                     'file_path' => $filePath,
@@ -545,8 +544,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                     $this->loggingService->log(
                         MigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withEntityName(MediaDefinition::ENTITY_NAME)
-                            ->withExceptionMessage($e->getMessage())
-                            ->withExceptionTrace($e->getTrace())
+                            ->withException($e)
                             ->withConvertedData(
                                 [
                                     'file_path' => $filePath,
