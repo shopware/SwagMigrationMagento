@@ -20,6 +20,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
 use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
+use Swag\MigrationMagento\Profile\Magento24\Media\Magento24LocalMediaProcessor;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
@@ -118,7 +119,7 @@ class LocalMediaProcessorTest extends TestCase
                 static::assertTrue(Uuid::isValid($mediaId));
             });
 
-        return new LocalMediaProcessor(
+        return new Magento24LocalMediaProcessor(
             $migrationMediaFileRepo,
             $mediaFileRepo,
             $fileSaverMock,
