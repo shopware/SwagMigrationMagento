@@ -12,7 +12,6 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
-use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
 use Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CurrencyConverter;
 use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
 use Swag\MigrationMagento\Test\LookupHelperTrait;
@@ -64,7 +63,7 @@ class Magento2CurrencyConverterTest extends TestCase
         $this->connection->setProfileName(Magento24Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
-        $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new CurrencyDataSet(), $this->runId, 0, 250);
+        $this->migrationContext = new MigrationContext($this->connection, new Magento24Profile(), null, new CurrencyDataSet(), $this->runId, 0, 250);
 
         $context = Context::createDefaultContext();
 
