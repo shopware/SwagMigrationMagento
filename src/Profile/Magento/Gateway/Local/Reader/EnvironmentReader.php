@@ -9,7 +9,6 @@ namespace Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader;
 
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
-use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Magento2LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\Reader\EnvironmentReaderInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -20,11 +19,7 @@ class EnvironmentReader extends AbstractReader implements EnvironmentReaderInter
     public function supports(MigrationContextInterface $migrationContext): bool
     {
         return $migrationContext->getProfile() instanceof MagentoProfileInterface
-            && \in_array(
-                $migrationContext->getGateway()->getName(),
-                [Magento19LocalGateway::GATEWAY_NAME, Magento2LocalGateway::GATEWAY_NAME],
-                true
-            );
+            && $migrationContext->getGateway()->getName() === Magento2LocalGateway::GATEWAY_NAME;
     }
 
     /**

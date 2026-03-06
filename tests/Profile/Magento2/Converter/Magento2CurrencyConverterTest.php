@@ -12,9 +12,9 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\CurrencyDataSet;
-use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
-use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23CurrencyConverter;
 use Swag\MigrationMagento\Profile\Magento23\Magento23Profile;
+use Swag\MigrationMagento\Profile\Magento24\Converter\Magento24CurrencyConverter;
+use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
 use Swag\MigrationMagento\Test\LookupHelperTrait;
 use Swag\MigrationMagento\Test\Mock\Migration\Mapping\DummyMagentoMappingService;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
@@ -33,7 +33,7 @@ class Magento2CurrencyConverterTest extends TestCase
 {
     use LookupHelperTrait;
 
-    private Magento23CurrencyConverter $currencyConverter;
+    private Magento24CurrencyConverter $currencyConverter;
 
     private DummyLoggingService $loggingService;
 
@@ -51,7 +51,7 @@ class Magento2CurrencyConverterTest extends TestCase
     {
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
-        $this->currencyConverter = new Magento23CurrencyConverter(
+        $this->currencyConverter = new Magento24CurrencyConverter(
             $mappingService,
             $this->loggingService,
             $this->getContainer()->get(CurrencyLookup::class),
@@ -61,7 +61,7 @@ class Magento2CurrencyConverterTest extends TestCase
         $this->runId = Uuid::randomHex();
         $this->connection = new SwagMigrationConnectionEntity();
         $this->connection->setId(Uuid::randomHex());
-        $this->connection->setProfileName(Magento19Profile::PROFILE_NAME);
+        $this->connection->setProfileName(Magento24Profile::PROFILE_NAME);
         $this->connection->setName('shopware');
 
         $this->migrationContext = new MigrationContext($this->connection, new Magento23Profile(), null, new CurrencyDataSet(), $this->runId, 0, 250);

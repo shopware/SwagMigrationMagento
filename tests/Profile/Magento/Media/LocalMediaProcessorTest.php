@@ -19,7 +19,7 @@ use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
-use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
+use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
@@ -54,7 +54,7 @@ class LocalMediaProcessorTest extends TestCase
 
         $migrationContext = new MigrationContext(
             new SwagMigrationConnectionEntity(),
-            new Magento19Profile(),
+            new Magento24Profile(),
             null,
             null,
             Uuid::randomHex(),
