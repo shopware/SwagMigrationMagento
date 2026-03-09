@@ -1411,11 +1411,6 @@ parameters:
 			path: src/Profile/Magento2/Converter/Magento2SalesChannelConverter.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Magento2LocalGateway\\:\\:readCarriers\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Profile/Magento2/Gateway/Local/Magento2LocalGateway.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Profile\\\\Magento2\\\\Gateway\\\\Local\\\\Magento2LocalGateway\\:\\:readCustomerGroups\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Profile/Magento2/Gateway/Local/Magento2LocalGateway.php
