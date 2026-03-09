@@ -20,9 +20,9 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
-use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
-use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
-use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19PaymentMethodReader;
+use Swag\MigrationMagento\Profile\Magento24\Gateway\Local\Magento24LocalGateway;
+use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
+use Swag\MigrationMagento\Profile\Magento24\Premapping\Magento24PaymentMethodReader;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistry;
 use SwagMigrationAssistant\Migration\MigrationContext;
@@ -41,7 +41,7 @@ class PaymentMethodReaderTest extends TestCase
 
     private MigrationContextInterface $migrationContext;
 
-    private Magento19PaymentMethodReader $reader;
+    private Magento24PaymentMethodReader $reader;
 
     private Context $context;
 
@@ -55,7 +55,7 @@ class PaymentMethodReaderTest extends TestCase
 
         $connection = new SwagMigrationConnectionEntity();
         $connection->setId(Uuid::randomHex());
-        $connection->setProfileName(Magento19Profile::PROFILE_NAME);
+        $connection->setProfileName(Magento24Profile::PROFILE_NAME);
         $connection->setGatewayName(ShopwareLocalGateway::GATEWAY_NAME);
         $connection->setCredentialFields([]);
 
@@ -85,7 +85,7 @@ class PaymentMethodReaderTest extends TestCase
         $mock = $this->createMock(EntityRepository::class);
         $mock->method('search')->willReturn(new EntitySearchResult(PaymentMethodDefinition::ENTITY_NAME, 2, new EntityCollection([$this->debitMock, $this->cashMock]), null, new Criteria(), $this->context));
 
-        $gatewayMock = $this->createMock(Magento19LocalGateway::class);
+        $gatewayMock = $this->createMock(Magento24LocalGateway::class);
         $gatewayMock->method('readPayments')->willReturn([
             ['payment_id' => 'direct', 'value' => 'Direct Debit'],
             ['payment_id' => 'cash', 'value' => 'Cash'],
@@ -96,9 +96,9 @@ class PaymentMethodReaderTest extends TestCase
         $gatewayRegistryMock = $this->createMock(GatewayRegistry::class);
         $gatewayRegistryMock->method('getGateway')->willReturn($gatewayMock);
 
-        $this->migrationContext = new MigrationContext($connection, new Magento19Profile(), null, null, '', 0, 0);
+        $this->migrationContext = new MigrationContext($connection, new Magento24Profile(), null, null, '', 0, 0);
 
-        $this->reader = new Magento19PaymentMethodReader($gatewayRegistryMock, $mock);
+        $this->reader = new Magento24PaymentMethodReader($gatewayRegistryMock, $mock);
     }
 
     public function testGetPremapping(): void

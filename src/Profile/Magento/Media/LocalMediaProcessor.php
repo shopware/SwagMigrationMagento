@@ -22,8 +22,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
-use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\MediaDataSet;
-use Swag\MigrationMagento\Profile\Magento19\Magento19Profile;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
 use SwagMigrationAssistant\Migration\Logging\Log\MediaFileMissingLog;
 use SwagMigrationAssistant\Migration\Logging\Log\MediaMimeTypeUnknownLog;
@@ -38,7 +36,7 @@ use SwagMigrationAssistant\Migration\MessageQueue\Handler\Processor\MediaProcess
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
-class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
+abstract class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessorInterface
 {
     /**
      * @var EntityRepository<MediaCollection>
@@ -68,12 +66,6 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
         $this->fileSaver = $fileSaver;
         $this->loggingService = $loggingService;
         parent::__construct($dbalConnection, $migrationMediaFileRepo);
-    }
-
-    public function supports(MigrationContextInterface $migrationContext): bool
-    {
-        return $migrationContext->getProfile() instanceof Magento19Profile
-            && $this->getDataSetEntity($migrationContext) === MediaDataSet::getEntity();
     }
 
     public function process(
@@ -288,8 +280,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                     $this->loggingService->log(
                         MigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withEntityName(MediaDefinition::ENTITY_NAME)
-                            ->withExceptionMessage($e->getMessage())
-                            ->withExceptionTrace($e->getTrace())
+                            ->withException($e)
                             ->withConvertedData(
                                 [
                                     'file_path' => $filePath,
@@ -545,8 +536,7 @@ class LocalMediaProcessor extends BaseMediaService implements MediaFileProcessor
                     $this->loggingService->log(
                         MigrationLogBuilder::fromMigrationContext($this->migrationContext)
                             ->withEntityName(MediaDefinition::ENTITY_NAME)
-                            ->withExceptionMessage($e->getMessage())
-                            ->withExceptionTrace($e->getTrace())
+                            ->withException($e)
                             ->withConvertedData(
                                 [
                                     'file_path' => $filePath,

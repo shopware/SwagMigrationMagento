@@ -17,8 +17,8 @@ use Shopware\Core\System\Tax\TaxEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\SeoUrlDataSelection;
+use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
-use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -86,7 +86,7 @@ abstract class TaxReader extends AbstractPremappingReader
      */
     private function getMapping(MigrationContextInterface $migrationContext): array
     {
-        /** @var Magento19LocalGateway $gateway */
+        /** @var MagentoGatewayInterface $gateway */
         $gateway = $this->gatewayRegistry->getGateway($migrationContext);
         $preMappingData = $gateway->readTable($migrationContext, 'tax_class');
 

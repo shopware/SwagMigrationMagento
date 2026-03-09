@@ -13,8 +13,8 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Log\Package;
+use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
-use Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -79,7 +79,7 @@ abstract class PaymentMethodReader extends AbstractPremappingReader
      */
     private function getMapping(MigrationContextInterface $migrationContext): array
     {
-        /** @var Magento19LocalGateway $gateway */
+        /** @var MagentoGatewayInterface $gateway */
         $gateway = $this->gatewayRegistry->getGateway($migrationContext);
 
         $preMappingData = $gateway->readPayments($migrationContext);

@@ -228,6 +228,9 @@ SQL;
         return $connection->executeQuery($sql)->fetchAllAssociative();
     }
 
+    /**
+     * @return list<array<string,mixed>>
+     */
     public function readCarriers(MigrationContextInterface $migrationContext): array
     {
         $connection = $this->connectionFactory->createDatabaseConnection($migrationContext);

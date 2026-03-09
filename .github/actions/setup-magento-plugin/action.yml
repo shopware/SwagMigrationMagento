@@ -22,7 +22,6 @@ inputs:
 runs:
   using: composite
   steps:
-    # TODO: remove feature branch after SwagMigrationAssistant 16.0.0 is released
     - name: Setup SwagMigrationMagento
       uses: shopware/github-actions/setup-extension@main
       with:
@@ -49,7 +48,6 @@ runs:
           [
             {
               "name": "SwagMigrationAssistant",
-              "repo": "https://github.com/shopware/SwagMigrationAssistant.git",
-              "branch": "feature/migration-logging-refactor"
+              "repo": "https://github.com/shopware/SwagMigrationAssistant.git"
             }
           ]

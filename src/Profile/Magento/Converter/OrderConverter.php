@@ -28,9 +28,9 @@ use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Premapping\AdminStoreReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\OrderDeliveryStateReader as MagentoOrderDeliveryStateReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\OrderStateReader;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
-use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19OrderStateReader;
-use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19SalutationReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\SalutationReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
@@ -219,7 +219,7 @@ abstract class OrderConverter extends MagentoConverter
     {
         $salutationMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            Magento19SalutationReader::getMappingName(),
+            SalutationReader::getMappingName(),
             $salutation,
             $this->context
         );
@@ -861,7 +861,7 @@ abstract class OrderConverter extends MagentoConverter
     {
         $stateMapping = $this->mappingService->getMapping(
             $this->connectionId,
-            Magento19OrderStateReader::getMappingName(),
+            OrderStateReader::getMappingName(),
             (string) $data['orders']['status'],
             $this->context
         );

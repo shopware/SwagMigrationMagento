@@ -43,8 +43,7 @@ abstract class Magento2CustomerConverter extends CustomerConverter
                         ->withFieldName('legacyEncoder')
                         ->withFieldSourcePath('password_hash')
                         ->withSourceData($data)
-                        ->withExceptionMessage($exception->getMessage())
-                        ->withExceptionTrace($exception->getTrace())
+                        ->withException($exception)
                         ->build(RunExceptionLog::class)
                 );
             }

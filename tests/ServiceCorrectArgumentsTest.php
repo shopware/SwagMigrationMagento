@@ -33,20 +33,12 @@ class ServiceCorrectArgumentsTest extends TestCase
      */
     public static function serviceProvider(): array
     {
-        $ignoredFiles = [
-            'magento19.xml',
-        ];
-
         $pluginPath = __DIR__ . '/../';
         $finder = new Finder();
         $finder->in($pluginPath)->files()->name('*.xml')->contains('<services>');
 
         $testCases = [];
         foreach ($finder->getIterator() as $xmlFile) {
-            if (\in_array($xmlFile->getFilename(), $ignoredFiles, true)) {
-                continue;
-            }
-
             $xmlPath = $xmlFile->getRealPath();
             if (!$xmlPath) {
                 continue;

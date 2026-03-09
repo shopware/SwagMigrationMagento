@@ -11,7 +11,7 @@ use Shopware\Core\Content\Newsletter\Aggregate\NewsletterRecipient\NewsletterRec
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
-use Swag\MigrationMagento\Profile\Magento19\Premapping\Magento19NewsletterRecipientStatusReader;
+use Swag\MigrationMagento\Profile\Magento\Premapping\NewsletterRecipientStatusReader;
 use SwagMigrationAssistant\Migration\Converter\ConvertStruct;
 use SwagMigrationAssistant\Migration\DataSelection\DefaultEntities;
 use SwagMigrationAssistant\Migration\Logging\Log\Builder\MigrationLogBuilder;
@@ -133,7 +133,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
     {
         $status = $this->mappingService->getValue(
             $this->connectionId,
-            Magento19NewsletterRecipientStatusReader::getMappingName(),
+            NewsletterRecipientStatusReader::getMappingName(),
             $data['subscriber_status'],
             $this->context
         );
@@ -141,7 +141,7 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
         if ($status === null) {
             $status = $this->mappingService->getValue(
                 $this->connectionId,
-                Magento19NewsletterRecipientStatusReader::getMappingName(),
+                NewsletterRecipientStatusReader::getMappingName(),
                 'default_newsletter_recipient_status',
                 $this->context
             );

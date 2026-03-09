@@ -435,14 +435,9 @@
             <tag name="shopware.migration.writer"/>
         </service>
 
-        <!-- Magento media processor -->
-        <service id="Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor">
-            <argument type="service" id="swag_migration_media_file.repository"/>
-            <argument type="service" id="media.repository"/>
-            <argument type="service" id="Shopware\Core\Content\Media\File\FileSaver"/>
-            <argument type="service" id="SwagMigrationAssistant\Migration\Logging\LoggingService"/>
-            <argument type="service" id="Doctrine\DBAL\Connection"/>
-            <tag name="shopware.migration.media_file_processor"/>
+        <!-- Magento 1.9 - LegacyEncoder -->
+        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder">
+            <tag name="shopware.legacy_encoder"/>
         </service>
 
         <!-- Magento 2 - LegacyEncoder -->
