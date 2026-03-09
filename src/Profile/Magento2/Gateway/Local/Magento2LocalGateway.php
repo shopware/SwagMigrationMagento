@@ -229,7 +229,7 @@ SQL;
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string,mixed>>
      */
     public function readCarriers(MigrationContextInterface $migrationContext): array
     {
