@@ -1,5 +1,9 @@
 # 11.0.0
 
+- [BREAKING] Made class `Swag\MigrationMagento\Profile\Magento\MediaLocalMediaProcessor` abstract
+
+# 11.0.0
+
 - [#34](https://github.com/shopware/SwagMigrationMagento/pull/35) - Compatibility with Migration Assistant v16.
   - [BREAKING] Changed return type of `Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactoryInterface::createDatabaseConnection` from `?Connection` to `Connection`. The method now throws `MigrationMagentoException::databaseConnectionError()` instead of returning `null`.
   - [BREAKING] Changed signature of `Swag\MigrationMagento\Profile\Magento19\Gateway\Local\Magento19LocalGateway::supports` from `supports(MigrationContextInterface $migrationContext)` to `supports(ProfileInterface $profile)`.
