@@ -79,7 +79,7 @@ class LocalMediaProcessorTest extends TestCase
     /**
      * @param array<int, mixed> $mediaFiles
      */
-    private function createLocaleMediaProcessor(array $mediaFiles): LocalMediaProcessor
+    private function createLocaleMediaProcessor(array $mediaFiles): Magento24LocalMediaProcessor
     {
         /** @var StaticEntityRepository<SwagMigrationMediaFileCollection> $migrationMediaFileRepo */
         $migrationMediaFileRepo = new StaticEntityRepository(

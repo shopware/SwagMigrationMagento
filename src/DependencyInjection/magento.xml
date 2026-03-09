@@ -435,6 +435,11 @@
             <tag name="shopware.migration.writer"/>
         </service>
 
+        <!-- Magento 1.9 - LegacyEncoder -->
+        <service id="Swag\MigrationMagento\Profile\Magento19\PasswordEncoder\MagentoEncoder">
+            <tag name="shopware.legacy_encoder"/>
+        </service>
+
         <!-- Magento 2 - LegacyEncoder -->
         <service id="Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Md5Encoder">
             <tag name="shopware.legacy_encoder"/>

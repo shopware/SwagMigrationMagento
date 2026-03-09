@@ -452,9 +452,9 @@ abstract class CustomerConverter extends MagentoConverter
     protected function setPassword(array &$data, array &$converted): void
     {
         $converted['legacyPassword'] = $data['password_hash'];
-        // we assume md5 as default
+        // we assume md5 as default for Magento 1.9.x
         // This has to be overridden if differs
-        $converted['legacyEncoder'] = 'Magento';
+        $converted['legacyEncoder'] = 'Magento19';
         unset($data['password_hash']);
     }
 
