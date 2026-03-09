@@ -21,4 +21,6 @@ interface MagentoGatewayInterface extends GatewayInterface
     public function readGenders(MigrationContextInterface $migrationContext): array;
 
     public function readCustomerGroups(MigrationContextInterface $migrationContext): array;
+
+    public function readCarriers(MigrationContextInterface $migrationContext): array;
 }
