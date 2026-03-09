@@ -119,7 +119,7 @@ class LocalMediaProcessorTest extends TestCase
                 static::assertTrue(Uuid::isValid($mediaId));
             });
 
-        return new class ($migrationMediaFileRepo, $mediaFileRepo, $fileSaverMock, $loggerMock, $dbalConnectionMock) extends LocalMediaProcessor {
+        return new class($migrationMediaFileRepo, $mediaFileRepo, $fileSaverMock, $loggerMock, $dbalConnectionMock) extends LocalMediaProcessor {
             public function supports(MigrationContextInterface $migrationContext): bool
             {
                 return true;
