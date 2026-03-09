@@ -20,13 +20,13 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\Test\Stub\DataAbstractionLayer\StaticEntityRepository;
 use Swag\MigrationMagento\Profile\Magento\Media\LocalMediaProcessor;
 use Swag\MigrationMagento\Profile\Magento24\Magento24Profile;
-use Swag\MigrationMagento\Profile\Magento24\Media\Magento24LocalMediaProcessor;
 use SwagMigrationAssistant\Migration\Connection\SwagMigrationConnectionEntity;
 use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileCollection;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileDefinition;
 use SwagMigrationAssistant\Migration\MigrationContext;
+use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 /**
  * @internal
@@ -79,7 +79,7 @@ class LocalMediaProcessorTest extends TestCase
     /**
      * @param array<int, mixed> $mediaFiles
      */
-    private function createLocaleMediaProcessor(array $mediaFiles): Magento24LocalMediaProcessor
+    private function createLocaleMediaProcessor(array $mediaFiles): LocalMediaProcessor
     {
         /** @var StaticEntityRepository<SwagMigrationMediaFileCollection> $migrationMediaFileRepo */
         $migrationMediaFileRepo = new StaticEntityRepository(
@@ -119,13 +119,12 @@ class LocalMediaProcessorTest extends TestCase
                 static::assertTrue(Uuid::isValid($mediaId));
             });
 
-        return new Magento24LocalMediaProcessor(
-            $migrationMediaFileRepo,
-            $mediaFileRepo,
-            $fileSaverMock,
-            $loggerMock,
-            $dbalConnectionMock
-        );
+        return new class ($migrationMediaFileRepo, $mediaFileRepo, $fileSaverMock, $loggerMock, $dbalConnectionMock) extends LocalMediaProcessor {
+            public function supports(MigrationContextInterface $migrationContext): bool
+            {
+                return true;
+            }
+        };
     }
 
     /**
