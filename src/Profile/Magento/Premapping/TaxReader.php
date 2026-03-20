@@ -103,7 +103,7 @@ abstract class TaxReader extends AbstractPremappingReader
 
             $entityData[] = new PremappingEntityStruct((string) $data['class_id'], (string) $data['class_name'], $uuid);
         }
-        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
@@ -127,7 +127,7 @@ abstract class TaxReader extends AbstractPremappingReader
             $choices[] = new PremappingChoiceStruct($taxId, $tax->getName());
             $this->choiceUuids[$taxId] = $taxId;
         }
-        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+        \usort($choices, static function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 

@@ -111,7 +111,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
         }
 
         $entityData[] = new PremappingEntityStruct('default_shipping_method', 'Standard shipping method', $uuid);
-        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
@@ -137,7 +137,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
             $choices[] = new PremappingChoiceStruct($id, $shippingMethodName);
             $this->choiceUuids[$id] = $id;
         }
-        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+        \usort($choices, static function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 

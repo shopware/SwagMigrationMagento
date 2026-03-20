@@ -64,7 +64,7 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
 
         $entityData = [];
         $entityData[] = new PremappingEntityStruct('default_currency', 'Standard currency', $uuid);
-        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
@@ -89,7 +89,7 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
             $this->preselectionDictionary[$currencyName] = $currency->getId();
             $choices[] = new PremappingChoiceStruct($currency->getId(), $currencyName);
         }
-        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+        \usort($choices, static function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 

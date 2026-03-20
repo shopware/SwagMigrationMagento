@@ -11,25 +11,26 @@ use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Plugin;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 
 #[Package('fundamentals@after-sales')]
 class SwagMigrationMagento extends Plugin
 {
-    /**
-     * {@inheritdoc}
-     */
+    final public const DEPENDENCY_LOCATION = __DIR__ . '/DependencyInjection/';
+
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 
-        $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/DependencyInjection/'));
-        $loader->load('magento.xml');
-        $loader->load('magento20.xml');
-        $loader->load('magento21.xml');
-        $loader->load('magento22.xml');
-        $loader->load('magento23.xml');
-        $loader->load('magento24.xml');
+        $locator = new FileLocator(self::DEPENDENCY_LOCATION);
+
+        $phpLoader = new PhpFileLoader($container, $locator);
+        $phpLoader->load('magento.php');
+        $phpLoader->load('magento20.php');
+        $phpLoader->load('magento21.php');
+        $phpLoader->load('magento22.php');
+        $phpLoader->load('magento23.php');
+        $phpLoader->load('magento24.php');
     }
 
     public function rebuildContainer(): bool

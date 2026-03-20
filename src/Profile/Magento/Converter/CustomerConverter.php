@@ -350,7 +350,7 @@ abstract class CustomerConverter extends MagentoConverter
                     'defaultBillingAddressId' => 'default_billing_address_id',
                     'defaultShippingAddressId' => 'default_shipping_address_id',
                 ],
-                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
+                static fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                     ->withFieldName($key)
                     ->withFieldSourcePath($value)
@@ -372,7 +372,7 @@ abstract class CustomerConverter extends MagentoConverter
                     'defaultBillingAddressId' => 'default_billing_address_id',
                     'defaultShippingAddressId' => 'default_shipping_address_id',
                 ],
-                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
+                static fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                     ->withFieldName($key)
                     ->withFieldSourcePath($value)
@@ -394,7 +394,7 @@ abstract class CustomerConverter extends MagentoConverter
                     'defaultBillingAddressId' => 'default_billing_address_id',
                     'defaultShippingAddressId' => 'default_shipping_address_id',
                 ],
-                fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
+                static fn (string $key, string $value) => MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
                     ->withFieldName($key)
                     ->withFieldSourcePath($value)

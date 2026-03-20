@@ -121,7 +121,7 @@ abstract class SalutationReader extends AbstractPremappingReader
         }
 
         $entityData[] = new PremappingEntityStruct('default_salutation', 'Standard salutation', $uuid);
-        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
@@ -144,7 +144,7 @@ abstract class SalutationReader extends AbstractPremappingReader
             $choices[] = new PremappingChoiceStruct($id, (string) $salutation->getSalutationKey());
             $this->choiceUuids[$id] = $id;
         }
-        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+        \usort($choices, static function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 

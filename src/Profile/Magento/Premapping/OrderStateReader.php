@@ -114,7 +114,7 @@ abstract class OrderStateReader extends AbstractPremappingReader
 
             $entityData[] = new PremappingEntityStruct($data['status'], $data['label'], $uuid);
         }
-        \usort($entityData, function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
+        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
@@ -150,7 +150,7 @@ abstract class OrderStateReader extends AbstractPremappingReader
             $choices[] = new PremappingChoiceStruct($id, $state->getName());
             $this->choiceUuids[$id] = $id;
         }
-        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+        \usort($choices, static function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 
