@@ -23,5 +23,5 @@ return (new TestBootstrapper())
     ->addActivePlugins('SwagMigrationAssistant', 'SwagMigrationMagento')
     ->addCallingPlugin()
     ->bootstrap()
-    ->setClassLoader(require dirname(__DIR__) . '/vendor/autoload.php')
+    ->setClassLoader(require ($_SERVER['PROJECT_ROOT'] ?? dirname(__DIR__, 4)) . '/vendor/autoload.php')
     ->getClassLoader();

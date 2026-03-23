@@ -125,7 +125,6 @@ use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Argon2Id13Enc
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Md5Encoder;
 use Swag\MigrationMagento\Profile\Magento2\PasswordEncoder\Magento2Sha256Encoder;
 use SwagMigrationAssistant\Migration\Converter\Converter;
-use SwagMigrationAssistant\Migration\Logging\LoggingService;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CountryStateLookup;
 use SwagMigrationAssistant\Migration\Mapping\Lookup\CurrencyLookup;
@@ -383,10 +382,7 @@ return static function (ContainerConfigurator $container): void {
     $services->set(MagentoConverter::class)
         ->abstract()
         ->parent(Converter::class)
-        ->args([
-            service(MagentoMappingService::class),
-            '1' => service(LoggingService::class),
-        ]);
+        ->arg(0, service(MagentoMappingService::class));
 
     $services->set(CustomerConverter::class)
         ->abstract()
