@@ -102,7 +102,8 @@ abstract class AdminStoreReader extends AbstractPremappingReader
             $choices[] = new PremappingChoiceStruct($storeId, $store['name']);
             $this->choiceUuids[$storeId] = $storeId;
         }
-        \usort($choices, function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
+
+        \usort($choices, static function (PremappingChoiceStruct $item1, PremappingChoiceStruct $item2) {
             return \strcmp($item1->getDescription(), $item2->getDescription());
         });
 

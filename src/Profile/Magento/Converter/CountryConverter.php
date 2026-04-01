@@ -101,12 +101,19 @@ abstract class CountryConverter extends MagentoConverter
 
         foreach ($countryValue['translations'] as $key => $value) {
             $languageUuid = $countryUuid;
+
             if ($key !== $data['isoCode']) {
                 $uuid = $this->languageLookup->get($key, $context);
+
                 if ($uuid === null) {
                     continue;
                 }
+
                 $languageUuid = $uuid;
+            }
+
+            if ($languageUuid === null) {
+                continue;
             }
 
             $localeTranslation = [];

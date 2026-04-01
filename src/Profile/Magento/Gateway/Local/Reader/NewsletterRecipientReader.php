@@ -26,7 +26,7 @@ abstract class NewsletterRecipientReader extends AbstractReader
         $customerIds = \array_values(
             \array_filter(
                 \array_column($fetchedRecipients, 'customer_id'),
-                function ($value) {
+                static function ($value) {
                     return $value !== '0';
                 }
             )

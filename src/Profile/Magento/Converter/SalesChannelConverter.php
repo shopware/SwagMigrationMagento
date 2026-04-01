@@ -399,7 +399,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                     $context
                 );
 
-                if ($mapping !== null) {
+                if ($mapping !== null && $mapping['entityId'] !== null) {
                     $uuid = $mapping['entityId'];
                     $payments[$uuid] = [
                         'id' => $uuid,
@@ -416,7 +416,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $context
             );
 
-            if (isset($mapping['entityId'])) {
+            if (($mapping['entityId'] ?? null) !== null) {
                 $uuid = $mapping['entityId'];
                 $payments[$uuid] = [
                     'id' => $uuid,
@@ -440,7 +440,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                     $context
                 );
 
-                if ($mapping !== null) {
+                if ($mapping !== null && $mapping['entityId'] !== null) {
                     $uuid = $mapping['entityId'];
                     $carriers[$uuid] = [
                         'id' => $uuid,
@@ -457,7 +457,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $context
             );
 
-            if (isset($mapping['entityId'])) {
+            if (($mapping['entityId'] ?? null) !== null) {
                 $uuid = $mapping['entityId'];
                 $carriers[$uuid] = [
                     'id' => $uuid,
