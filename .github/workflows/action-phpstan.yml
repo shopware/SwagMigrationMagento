@@ -27,7 +27,7 @@ jobs:
           platform-branch: ${{ inputs.platform_branch }}
 
       - name: PHPStan cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: custom/plugins/${{ inputs.extension_name }}/var/cache/phpstan
           key: ${{ runner.os }}-${{ github.repository }}-phpstan-${{ github.sha }}
