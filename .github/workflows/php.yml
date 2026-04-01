@@ -9,7 +9,12 @@ on:
       - composer.json
       - src/**/*.php
       - tests/**/*.php
+      - .github/workflows/**
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   codestyle_php:
@@ -23,17 +28,7 @@ jobs:
 
   phpstan:
     name: PHPStan Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout SwagMigrationMagento
-        uses: actions/checkout@v4
-        with:
-          path: custom/plugins/${{ github.event.repository.name }}
-      - name: Setup SwagMigrationMagento
-        uses: ./custom/plugins/SwagMigrationMagento/.github/actions/setup-magento-plugin
-        with:
-          platform-branch: trunk
-      - name: Run PHPStan
-        run: |
-          symfony composer -d custom/plugins/${{ github.event.repository.name }} dump-autoload --dev
-          symfony composer -d custom/plugins/${{ github.event.repository.name }} run phpstan
+    uses: ./.github/workflows/action-phpstan.yml
+    with:
+      extension_name: ${{ github.event.repository.name }}
+      platform_branch: trunk

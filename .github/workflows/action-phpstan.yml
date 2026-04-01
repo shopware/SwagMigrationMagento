@@ -1,0 +1,40 @@
+name: Reusable PHPStan
+
+on:
+  workflow_call:
+    inputs:
+      extension_name:
+        required: true
+        type: string
+      platform_branch:
+        required: false
+        type: string
+        default: trunk
+
+jobs:
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SwagMigrationMagento
+        uses: actions/checkout@v4
+        with:
+          path: custom/plugins/${{ inputs.extension_name }}
+
+      - name: Setup SwagMigrationMagento
+        uses: ./custom/plugins/SwagMigrationMagento/.github/actions/setup-magento-plugin
+        with:
+          platform-branch: ${{ inputs.platform_branch }}
+
+      - name: PHPStan cache
+        uses: actions/cache@v4
+        with:
+          path: custom/plugins/${{ inputs.extension_name }}/var/cache/phpstan
+          key: ${{ runner.os }}-${{ github.repository }}-phpstan-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-${{ github.repository }}-phpstan-
+
+      - name: Run PHPStan
+        run: |
+          symfony composer -d custom/plugins/${{ inputs.extension_name }} dump-autoload --dev
+          symfony composer -d custom/plugins/${{ inputs.extension_name }} run phpstan
