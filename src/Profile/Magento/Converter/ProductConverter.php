@@ -822,6 +822,11 @@ abstract class ProductConverter extends MagentoConverter
 
         if ($mapping !== null) {
             $salesChannelUuid = $mapping['entityId'];
+
+            if ($salesChannelUuid === null) {
+                return;
+            }
+
             if ($status !== 1) {
                 unset($visibilities[$salesChannelUuid]);
 

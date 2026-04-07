@@ -425,7 +425,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
 
             $oldWorkloadSearchResult = \array_filter(
                 $workload,
-                function (MediaProcessWorkloadStruct $work) use ($uuid) {
+                static function (MediaProcessWorkloadStruct $work) use ($uuid) {
                     return $work->getMediaId() === $uuid;
                 }
             );

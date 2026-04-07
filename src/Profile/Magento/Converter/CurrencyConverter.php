@@ -116,12 +116,19 @@ abstract class CurrencyConverter extends MagentoConverter
 
         foreach ($currencyValue['translations'] as $key => $value) {
             $languageUuid = $currencyUuid;
+
             if ($key !== $this->oldIdentifier) {
                 $uuid = $this->languageLookup->get($key, $context);
+
                 if ($uuid === null) {
                     continue;
                 }
+
                 $languageUuid = $uuid;
+            }
+
+            if ($languageUuid === null) {
+                continue;
             }
 
             $localeTranslation = [];

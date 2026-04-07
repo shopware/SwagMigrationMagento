@@ -159,6 +159,10 @@ abstract class MagentoConverter extends Converter
             $this->mappingIds[] = $languageMapping['id'];
             $languageId = $languageMapping['entityId'];
 
+            if ($languageId === null) {
+                continue;
+            }
+
             foreach ($translationValues as $attributeCode => $attributeData) {
                 if (!isset($attributeData['attribute_id'], $attributeData['value'])) {
                     continue;
@@ -188,10 +192,8 @@ abstract class MagentoConverter extends Converter
                     $value = 'option_' . $value;
                 }
 
-                if ($languageId !== null) {
-                    $localeTranslation[$languageId]['languageId'] = $languageId;
-                    $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $value;
-                }
+                $localeTranslation[$languageId]['languageId'] = $languageId;
+                $localeTranslation[$languageId]['customFields']['migration_attribute_' . $attributeSetId . '_' . $attributeCode . '_' . $attributeData['attribute_id']] = $value;
             }
         }
 

@@ -1671,16 +1671,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2OrderConverterTest.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildMultiSelectPropertyRelationConverterTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildMultiSelectPropertyRelationConverterTest\\:\\:getWithoutMappingDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildMultiSelectPropertyRelationConverterTest\\:\\:testConvert\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
@@ -1689,16 +1679,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildMultiSelectPropertyRelationConverterTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildMultiSelectPropertyRelationConverterTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildPropertyRelationTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildPropertyRelationTest\\:\\:getWithoutMappingDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductChildPropertyRelationTest\\:\\:testConvert\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
@@ -1711,16 +1691,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductChildPropertyRelationTest.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConverterTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConverterTest\\:\\:getWithoutMappingDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductMultiSelectPropertyRelationConverterTest\\:\\:testConvert\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
@@ -1731,16 +1701,6 @@ parameters:
 			path: tests/Profile/Magento2/Converter/Magento2ProductMultiSelectPropertyRelationConverterTest.php
 
 		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductOptionRelationConvertTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductOptionRelationConvertTest\\:\\:getWithoutMappingDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
-
-		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductOptionRelationConvertTest\\:\\:testConvert\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
@@ -1749,16 +1709,6 @@ parameters:
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductOptionRelationConvertTest\\:\\:testConvertWithoutMapping\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/Profile/Magento2/Converter/Magento2ProductOptionRelationConvertTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductPropertyRelationConvertTest\\:\\:getNormalDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
-
-		-
-			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductPropertyRelationConvertTest\\:\\:getWithoutMappingDataProvider\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/Profile/Magento2/Converter/Magento2ProductPropertyRelationConvertTest.php
 
 		-
 			message: "#^Method Swag\\\\MigrationMagento\\\\Test\\\\Profile\\\\Magento2\\\\Converter\\\\Magento2ProductPropertyRelationConvertTest\\:\\:testConvert\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#"

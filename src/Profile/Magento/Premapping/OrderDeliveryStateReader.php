@@ -148,7 +148,7 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
             if ($item->getSourceId() === OrderDeliveryStateReader::DEFAULT_SHIPPED_STATUS) {
                 $preselectionValue = $this->preselectionDictionary[OrderDeliveryStates::STATE_SHIPPED] ?? null;
 
-                if (!isset($this->choiceUuids[$preselectionValue])) {
+                if ($preselectionValue === null || !isset($this->choiceUuids[$preselectionValue])) {
                     $preselectionValue = null;
                 }
             }
