@@ -1,3 +1,7 @@
+# llm
+.claude
+.codex
+
 .idea/
 coverage/
 .phpunit.result.cache

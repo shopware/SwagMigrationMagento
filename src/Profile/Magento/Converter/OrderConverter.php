@@ -206,10 +206,12 @@ abstract class OrderConverter extends MagentoConverter
         $converted['deepLinkCode'] = Hasher::hash($converted['id'], 'md5');
         unset($data['orders'], $data['identifier']);
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
+
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
@@ -567,7 +569,7 @@ abstract class OrderConverter extends MagentoConverter
 
             if ($countryStateUuid !== null) {
                 $address['countryStateId'] = $countryStateUuid;
-            } elseif (!empty($originalData['region'])) {
+            } elseif (isset($originalData['region']) && $originalData['region'] !== '') {
                 $mapping = $this->mappingService->createMapping(
                     $this->connectionId,
                     DefaultEntities::COUNTRY_STATE,
@@ -799,7 +801,7 @@ abstract class OrderConverter extends MagentoConverter
             if (isset($data['billingAddress'])) {
                 $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
 
-                if (!empty($billingAddress)) {
+                if ($billingAddress !== []) {
                     $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
                 }
 
@@ -813,7 +815,7 @@ abstract class OrderConverter extends MagentoConverter
                 $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             }
 
-            if (!empty($shippingAddress)) {
+            if ($shippingAddress !== []) {
                 $converted['orderCustomer']['customer']['addresses'][] = $shippingAddress;
             }
 
@@ -821,7 +823,7 @@ abstract class OrderConverter extends MagentoConverter
                 $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
             }
 
-            if (empty($shippingAddress) && isset($billingAddress['id'])) {
+            if ($shippingAddress === [] && isset($billingAddress['id'])) {
                 $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $billingAddress['id'];
             }
         }
@@ -937,7 +939,7 @@ abstract class OrderConverter extends MagentoConverter
     {
         $billingAddress = $this->getAddress($data['billingAddress']);
 
-        if (!empty($billingAddress)) {
+        if ($billingAddress !== []) {
             $converted['addresses'][] = $billingAddress;
         }
 
@@ -992,7 +994,8 @@ abstract class OrderConverter extends MagentoConverter
         $this->mappingIds[] = $deliveryMapping['id'];
 
         $shippingOrderAddress = null;
-        if (!empty($data['shippingAddress'])) {
+
+        if (isset($data['shippingAddress']) && $data['shippingAddress'] !== []) {
             $shippingOrderAddress = $this->getAddress($data['shippingAddress']);
         }
 

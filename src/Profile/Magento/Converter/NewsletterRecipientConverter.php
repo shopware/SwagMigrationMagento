@@ -111,9 +111,10 @@ abstract class NewsletterRecipientConverter extends MagentoConverter
             $data['change_status_at']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);

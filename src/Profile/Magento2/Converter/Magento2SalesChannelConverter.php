@@ -30,7 +30,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
 {
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (empty($data['group_id'])) {
+        if (!isset($data['group_id']) || $data['group_id'] === '') {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
@@ -115,9 +115,10 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $data['default_store_id']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
@@ -165,7 +166,8 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
             $this->mappingIds[] = $languageMapping['id'];
         } else {
             $languageUuid = null;
-            if (!empty($data['defaultLocale'])) {
+
+            if (isset($data['defaultLocale']) && $data['defaultLocale'] !== '') {
                 $languageUuid = $this->languageLookup->get($data['defaultLocale'], $this->context);
             }
 
@@ -221,7 +223,8 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     protected function setCurrencyUuid(array &$data, array &$converted): ?string
     {
         $currencyUuid = null;
-        if (!empty($data['defaultCurrency'])) {
+
+        if (isset($data['defaultCurrency']) && $data['defaultCurrency'] !== '') {
             $currencyUuid = $this->currencyLookup->get($data['defaultCurrency'], $this->context);
         }
 
@@ -276,8 +279,10 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     protected function setCountryUuid(array &$data, array &$converted): ?string
     {
         $countryUuid = null;
-        if (!empty($data['defaultCountry'])) {
+
+        if (isset($data['defaultCountry']) && $data['defaultCountry'] !== '') {
             $countryMapping = $this->mappingService->getMapping($this->connectionId, DefaultEntities::COUNTRY, $data['defaultCountry'], $this->context);
+
             if ($countryMapping !== null) {
                 $countryUuid = $countryMapping['entityId'];
             } else {
@@ -320,7 +325,8 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     protected function setPaymentMethodUuid(array &$data, array &$converted): ?string
     {
         $converted['paymentMethods'] = $this->getPaymentMethods($data, $this->context);
-        if (empty($converted['paymentMethods'])) {
+
+        if ($converted['paymentMethods'] === []) {
             $paymentMethodMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 PaymentMethodReader::getMappingName(),
@@ -345,7 +351,8 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
     protected function setShippingMethodUuid(array &$data, array &$converted): ?string
     {
         $converted['shippingMethods'] = $this->getShippingMethods($data, $this->context);
-        if (empty($converted['shippingMethods'])) {
+
+        if ($converted['shippingMethods'] === []) {
             $shippingMethodMapping = $this->mappingService->getMapping(
                 $this->connectionId,
                 ShippingMethodReader::getMappingName(),

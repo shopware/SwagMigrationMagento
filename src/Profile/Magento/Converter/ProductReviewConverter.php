@@ -120,9 +120,11 @@ abstract class ProductReviewConverter extends MagentoConverter
 
         $this->convertValue($converted, 'title', $data, 'title');
         $this->convertValue($converted, 'externalUser', $data, 'nickname');
-        if (empty($converted['title'])) {
+
+        if (!isset($converted['title']) || $converted['title'] === '') {
             $converted['title'] = \mb_substr($data['detail'], 0, 30) . '...';
         }
+
         $this->convertValue($converted, 'content', $data, 'detail');
 
         if (isset($data['status'])) {
@@ -142,9 +144,10 @@ abstract class ProductReviewConverter extends MagentoConverter
             $data['detail_id']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);

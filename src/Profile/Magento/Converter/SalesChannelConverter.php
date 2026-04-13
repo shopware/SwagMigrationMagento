@@ -58,7 +58,7 @@ abstract class SalesChannelConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (empty($data['group_id'])) {
+        if (!isset($data['group_id']) || $data['group_id'] === '') {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(SalesChannelDefinition::ENTITY_NAME)
@@ -262,21 +262,7 @@ abstract class SalesChannelConverter extends MagentoConverter
          */
         $converted['paymentMethods'] = $this->getPaymentMethods($data, $context);
 
-        if (empty($converted['paymentMethods'])) {
-            $defaultPaymentMethod = $this->mappingService->getMapping(
-                $this->connectionId,
-                PaymentMethodReader::getMappingName(),
-                'default_payment_method',
-                $this->context
-            );
-
-            if (!empty($defaultPaymentMethod)) {
-                $this->mappingIds[] = $defaultPaymentMethod['id'];
-                $converted['paymentMethods'][0]['id'] = $defaultPaymentMethod['entityId'];
-            }
-        }
-
-        if (!empty($converted['paymentMethods'])) {
+        if (isset($converted['paymentMethods'][0]['id'])) {
             $converted['paymentMethodId'] = $converted['paymentMethods'][0]['id'];
             unset($data['payments']);
         }
@@ -286,7 +272,7 @@ abstract class SalesChannelConverter extends MagentoConverter
          */
         $converted['shippingMethods'] = $this->getShippingMethods($data, $context);
 
-        if (!empty($converted['shippingMethods'])) {
+        if (isset($converted['shippingMethods'][0]['id'])) {
             $converted['shippingMethodId'] = $converted['shippingMethods'][0]['id'];
             unset($data['carriers']);
         }
@@ -308,9 +294,10 @@ abstract class SalesChannelConverter extends MagentoConverter
             $data['default_store_id']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);

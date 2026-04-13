@@ -89,7 +89,7 @@ abstract class NotAssociatedMediaConverter extends MagentoConverter
 
         $this->updateMainMapping($migrationContext, $context);
 
-        if (empty($data)) {
+        if ($data === []) {
             $data = null;
         }
 

@@ -61,9 +61,10 @@ abstract class ProductPropertyRelationConverter extends MagentoConverter
             $data['option_id']
         );
 
-        $returnData = $data;
-        if (empty($returnData)) {
-            $returnData = null;
+        $returnData = null;
+
+        if ($data !== []) {
+            $returnData = $data;
         }
 
         return new ConvertStruct($converted, $returnData);

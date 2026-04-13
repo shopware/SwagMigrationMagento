@@ -62,9 +62,10 @@ abstract class ProductMultiSelectPropertyRelationConverter extends MagentoConver
             $data['option_value']
         );
 
-        $returnData = $data;
-        if (empty($returnData)) {
-            $returnData = null;
+        $returnData = null;
+
+        if ($data !== []) {
+            $returnData = $data;
         }
 
         return new ConvertStruct($converted, $returnData);
