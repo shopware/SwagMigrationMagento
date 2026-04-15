@@ -56,3 +56,9 @@ runs:
               "branch": "${{ inputs.migration-assistant-ref }}"
             }
           ]
+
+    - name: Fetch SwagMigrationAssistant tests for PHPStan
+      shell: bash
+      run: |
+        git -C custom/plugins/SwagMigrationAssistant fetch origin trunk
+        git -C custom/plugins/SwagMigrationAssistant checkout origin/trunk -- tests/
