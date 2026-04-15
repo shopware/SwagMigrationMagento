@@ -65,7 +65,7 @@ abstract class CustomerConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (empty($data['entity_id'])) {
+        if (!isset($data['entity_id']) || $data['entity_id'] === '') {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(CustomerDefinition::ENTITY_NAME)
@@ -125,7 +125,7 @@ abstract class CustomerConverter extends MagentoConverter
             unset($data['store_id']);
         }
 
-        if (empty($converted['salesChannelId'])) {
+        if (!isset($converted['salesChannelId']) || $converted['salesChannelId'] === '') {
             $this->setSalesChannelIdViaAdminStore($converted);
         }
 
@@ -199,7 +199,7 @@ abstract class CustomerConverter extends MagentoConverter
         /*
          * Set addresses
          */
-        if (isset($this->mainMapping['entityId']) && !empty($data['addresses'])) {
+        if (isset($this->mainMapping['entityId'], $data['addresses']) && $data['addresses'] !== []) {
             $this->getAddresses($data, $converted, $this->mainMapping['entityId'], $migrationContext);
             unset($data['addresses']);
             unset($data['default_billing'], $data['default_shipping']);
@@ -227,9 +227,10 @@ abstract class CustomerConverter extends MagentoConverter
             $data['taxvat']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
@@ -241,7 +242,7 @@ abstract class CustomerConverter extends MagentoConverter
         foreach ($originalData['addresses'] as $address) {
             $newAddress = [];
 
-            if (empty($address['entity_id'])) {
+            if (!isset($address['entity_id']) || $address['entity_id'] === '') {
                 $this->loggingService->log(
                     MigrationLogBuilder::fromMigrationContext($migrationContext)
                         ->withEntityName(CustomerAddressDefinition::ENTITY_NAME)
@@ -294,7 +295,7 @@ abstract class CustomerConverter extends MagentoConverter
 
                 if ($countryStateUuid !== null) {
                     $newAddress['countryStateId'] = $countryStateUuid;
-                } elseif (!empty($address['region_name'])) {
+                } elseif (isset($address['region_name']) && $address['region_name'] !== '') {
                     $mapping = $this->mappingService->createMapping(
                         $this->connectionId,
                         DefaultEntities::COUNTRY_STATE,
@@ -321,7 +322,7 @@ abstract class CustomerConverter extends MagentoConverter
             $addresses[] = $newAddress;
         }
 
-        if (empty($addresses)) {
+        if ($addresses === []) {
             return;
         }
 

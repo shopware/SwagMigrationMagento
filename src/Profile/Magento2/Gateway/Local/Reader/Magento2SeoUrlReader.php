@@ -91,13 +91,13 @@ SQL;
 
         $seoUrl['product_id'] = $seoUrl['entity_id'];
 
-        if (empty($seoUrl['metadata'])) {
+        if (!isset($seoUrl['metadata']) || $seoUrl['metadata'] === '') {
             return;
         }
 
         try {
             $json = \json_decode($seoUrl['metadata'], true);
-        } catch (\Error $error) {
+        } catch (\Error) {
             return;
         }
 

@@ -212,9 +212,10 @@ abstract class SeoUrlConverter extends MagentoConverter
             $data['category_id']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);

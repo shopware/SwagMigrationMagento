@@ -42,7 +42,3 @@ parameters:
           paths:
               - tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
         - message: '#Call to deprecated method __construct\(\) of class Shopware\\Core\\Framework\\DataAbstractionLayer\\EntityDefinition#'
-
-        # TODO: https://github.com/shopware/shopware/issues/16034
-        - identifier: empty.notAllowed
-

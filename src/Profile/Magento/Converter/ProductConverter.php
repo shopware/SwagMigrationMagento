@@ -86,7 +86,7 @@ abstract class ProductConverter extends MagentoConverter
 
     public function convert(array $data, Context $context, MigrationContextInterface $migrationContext): ConvertStruct
     {
-        if (empty($data['entity_id'])) {
+        if (!isset($data['entity_id']) || $data['entity_id'] === '') {
             $this->loggingService->log(
                 MigrationLogBuilder::fromMigrationContext($migrationContext)
                     ->withEntityName(ProductDefinition::ENTITY_NAME)
@@ -216,7 +216,7 @@ abstract class ProductConverter extends MagentoConverter
         if (isset($data['media'])) {
             $convertedMedia = $this->getMedia($data['media'], $converted);
 
-            if (!empty($convertedMedia['media'])) {
+            if (isset($convertedMedia['media']) && $convertedMedia['media'] !== []) {
                 $converted['media'] = $convertedMedia['media'];
             }
 
@@ -351,9 +351,10 @@ abstract class ProductConverter extends MagentoConverter
             $data['use_config_lifetime']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
@@ -593,7 +594,7 @@ abstract class ProductConverter extends MagentoConverter
 
             $priceArray = $this->getPrice($price, $converted);
 
-            if (empty($priceArray)) {
+            if ($priceArray === []) {
                 continue;
             }
 
@@ -712,11 +713,12 @@ abstract class ProductConverter extends MagentoConverter
             $newMedia['id'] = $mapping['entityId'];
             $this->mappingIds[] = $mapping['id'];
 
-            if (!isset($mediaData['description']) || empty($mediaData['description'])) {
+            if (!isset($mediaData['description']) || $mediaData['description'] === '') {
                 $mediaData['description'] = $newMedia['id'];
 
                 $fileMatches = [];
                 \preg_match('/^\/(.+\/)*(.+)\..+$/', $mediaData['image'], $fileMatches);
+
                 if (isset($fileMatches[2])) {
                     $mediaData['description'] = $fileMatches[2];
                 }
@@ -749,7 +751,7 @@ abstract class ProductConverter extends MagentoConverter
             }
         }
 
-        if ($cover === null && !empty($mediaObjects)) {
+        if ($cover === null && $mediaObjects !== []) {
             $cover = $mediaObjects[0];
         }
 
@@ -760,6 +762,7 @@ abstract class ProductConverter extends MagentoConverter
     {
         $productId = $converted['id'];
         $visibilities = [];
+
         foreach ($data['visibility'] as $storeConfig) {
             $storeId = (int) $storeConfig['store_id'];
             $status = (int) $storeConfig['value'];

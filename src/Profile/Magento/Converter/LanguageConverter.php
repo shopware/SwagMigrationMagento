@@ -109,9 +109,10 @@ abstract class LanguageConverter extends MagentoConverter
         $converted['translationCodeId'] = $localeUuid;
         unset($data['locale']);
 
-        if (empty($data)) {
+        if ($data === []) {
             $data = null;
         }
+
         $this->updateMainMapping($migrationContext, $context);
 
         return new ConvertStruct($converted, $data, $this->mainMapping['id'] ?? null);

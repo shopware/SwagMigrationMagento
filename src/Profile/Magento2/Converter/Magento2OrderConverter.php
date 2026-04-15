@@ -115,7 +115,7 @@ abstract class Magento2OrderConverter extends OrderConverter
             if (isset($data['billingAddress'])) {
                 $billingAddress = $this->getAddress($data['billingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
 
-                if (!empty($billingAddress)) {
+                if ($billingAddress !== []) {
                     $converted['orderCustomer']['customer']['addresses'][] = $billingAddress;
                 }
 
@@ -129,7 +129,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $shippingAddress = $this->getAddress($data['shippingAddress'], DefaultEntities::CUSTOMER_ADDRESS);
             }
 
-            if (!empty($shippingAddress)) {
+            if ($shippingAddress !== []) {
                 $converted['orderCustomer']['customer']['addresses'][] = $shippingAddress;
             }
 
@@ -137,7 +137,7 @@ abstract class Magento2OrderConverter extends OrderConverter
                 $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $shippingAddress['id'];
             }
 
-            if (empty($shippingAddress) && isset($billingAddress['id'])) {
+            if ($shippingAddress === [] && isset($billingAddress['id'])) {
                 $converted['orderCustomer']['customer']['defaultShippingAddressId'] = $billingAddress['id'];
             }
 

@@ -246,9 +246,10 @@ abstract class CategoryConverter extends MagentoConverter
             $data['children_count']
         );
 
-        $resultData = $data;
-        if (empty($resultData)) {
-            $resultData = null;
+        $resultData = null;
+
+        if ($data !== []) {
+            $resultData = $data;
         }
 
         return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
