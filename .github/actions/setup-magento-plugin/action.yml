@@ -18,6 +18,10 @@ inputs:
     default: "trunk"
     required: false
     description: "Which Shopware version should be used"
+  migration-assistant-ref:
+    default: "16.2.0"
+    required: false
+    description: "Which SwagMigrationAssistant ref should be used"
 
 runs:
   using: composite
@@ -48,6 +52,7 @@ runs:
           [
             {
               "name": "SwagMigrationAssistant",
-              "repo": "https://github.com/shopware/SwagMigrationAssistant.git"
+              "repo": "https://github.com/shopware/SwagMigrationAssistant.git",
+              "branch": "${{ inputs.migration-assistant-ref }}"
             }
           ]
