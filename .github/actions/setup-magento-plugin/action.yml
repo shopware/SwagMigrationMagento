@@ -18,10 +18,26 @@ inputs:
     default: "trunk"
     required: false
     description: "Which Shopware version should be used"
+  assistant-branch:
+    default: ""
+    required: false
+    description: "Which SwagMigrationAssistant branch to use. Defaults to the latest release (release/<version>)."
 
 runs:
   using: composite
   steps:
+    - name: Resolve SwagMigrationAssistant branch
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.assistant-branch }}" ]; then
+          echo "ASSISTANT_BRANCH=${{ inputs.assistant-branch }}" >> $GITHUB_ENV
+        else
+          VERSION=$(gh api repos/shopware/SwagMigrationAssistant/releases/latest --jq '.tag_name')
+          echo "ASSISTANT_BRANCH=release/${VERSION}" >> $GITHUB_ENV
+        fi
+      env:
+        GH_TOKEN: ${{ github.token }}
+
     - name: Setup SwagMigrationMagento
       uses: shopware/github-actions/setup-extension@main
       with:
@@ -48,6 +64,7 @@ runs:
           [
             {
               "name": "SwagMigrationAssistant",
-              "repo": "https://github.com/shopware/SwagMigrationAssistant.git"
+              "repo": "https://github.com/shopware/SwagMigrationAssistant.git",
+              "branch": "${ASSISTANT_BRANCH}"
             }
           ]
