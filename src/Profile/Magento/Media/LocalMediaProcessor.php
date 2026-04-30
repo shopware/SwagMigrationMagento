@@ -32,7 +32,7 @@ use SwagMigrationAssistant\Migration\Media\MediaFileProcessorInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
 use SwagMigrationAssistant\Migration\Media\Processor\BaseMediaService;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileCollection;
-use SwagMigrationAssistant\Migration\MessageQueue\Handler\Processor\MediaProcessingProcessor;
+use SwagMigrationAssistant\Migration\MigrationConfiguration;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
 #[Package('fundamentals@after-sales')]
@@ -61,6 +61,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         FileSaver $fileSaver,
         LoggingServiceInterface $loggingService,
         Connection $dbalConnection,
+        private readonly MigrationConfiguration $migrationConfig,
     ) {
         $this->mediaRepo = $mediaRepo;
         $this->fileSaver = $fileSaver;
@@ -438,7 +439,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                 $mappedWorkload[$uuid]->setAdditionalData($additionalData);
                 $mappedWorkload[$uuid]->setErrorCount($mappedWorkload[$uuid]->getErrorCount() + 1);
 
-                if ($mappedWorkload[$uuid]->getErrorCount() > MediaProcessingProcessor::MEDIA_ERROR_THRESHOLD) {
+                if ($mappedWorkload[$uuid]->getErrorCount() > $this->migrationConfig->migrationDefaultExceptionThreshold) {
                     $failureUuids[] = $uuid;
                     $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
 
