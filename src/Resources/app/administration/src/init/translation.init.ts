@@ -1,5 +1,5 @@
 /**
- * @deprecated tag:v12.0.0 - With Shopware v6.8.0 - `translation.init.ts` will be removed to use automatic language loading with language layer support
+ * @deprecated tag:v13.0.0 - With Shopware v6.8.0 - `translation.init.ts` will be removed to use automatic language loading with language layer support
  */
 import deMagentoSnippets from '../app/snippet/de.json';
 import enMagentoSnippets from '../app/snippet/en.json';

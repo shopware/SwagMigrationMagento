@@ -1,7 +1,7 @@
 # 12.0.0
 
-- NTR - Kompatibilität mit Migration Assistant Version 17.
-- NTR - Mindestanforderung des Migration Assistant auf ~17.0 erhöht.
+- Kompatibilität mit Migration Assistant Version 17.
+- Mindestanforderung des Migration Assistant auf ~17.0 erhöht.
 
 # 11.0.0
 
