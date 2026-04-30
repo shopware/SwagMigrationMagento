@@ -25,6 +25,7 @@ use SwagMigrationAssistant\Migration\Logging\LoggingServiceInterface;
 use SwagMigrationAssistant\Migration\Media\MediaProcessWorkloadStruct;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileCollection;
 use SwagMigrationAssistant\Migration\Media\SwagMigrationMediaFileDefinition;
+use SwagMigrationAssistant\Migration\MigrationConfiguration;
 use SwagMigrationAssistant\Migration\MigrationContext;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 
@@ -119,7 +120,7 @@ class LocalMediaProcessorTest extends TestCase
                 static::assertTrue(Uuid::isValid($mediaId));
             });
 
-        return new class($migrationMediaFileRepo, $mediaFileRepo, $fileSaverMock, $loggerMock, $dbalConnectionMock) extends LocalMediaProcessor {
+        return new class($migrationMediaFileRepo, $mediaFileRepo, $fileSaverMock, $loggerMock, $dbalConnectionMock, new MigrationConfiguration()) extends LocalMediaProcessor {
             public function supports(MigrationContextInterface $migrationContext): bool
             {
                 return true;
