@@ -34,4 +34,4 @@ jobs:
     uses: ./.github/workflows/action-phpunit.yml
     with:
       extension_name: ${{ github.event.repository.name }}
-      platform_branch: fix/phpunit-bootstrap-plugin-install
+      platform_branch: 8fdfe5edf090d6ec249f5750377a38e77c8d93bf
