@@ -14,6 +14,10 @@ inputs:
     default: "builtin"
     required: false
     description: "Which MySQL version should be used"
+  extension-ref:
+    default: ""
+    required: false
+    description: "Which SwagMigrationMagento ref should be used"
   platform-branch:
     default: "trunk"
     required: false
@@ -42,6 +46,7 @@ runs:
       uses: shopware/github-actions/setup-extension@main
       with:
         extensionName: SwagMigrationMagento
+        extensionRef: ${{ inputs.extension-ref }}
         install: true
         install-admin: true
         shopwareVersion: ${{ inputs.platform-branch }}

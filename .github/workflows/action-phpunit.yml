@@ -24,6 +24,7 @@ jobs:
       - name: Checkout SwagMigrationMagento
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.number && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.sha }}
           path: custom/plugins/${{ inputs.extension_name }}
 
       - name: Setup SwagMigrationMagento
@@ -31,6 +32,7 @@ jobs:
         with:
           php-version: ${{ matrix.php_version }}
           mysql-version: ${{ matrix.mysql_image }}
+          extension-ref: ${{ github.event.pull_request.number && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.sha }}
           platform-branch: ${{ inputs.platform_branch }}
 
       - name: Run PHPUnit
