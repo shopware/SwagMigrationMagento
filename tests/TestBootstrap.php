@@ -17,10 +17,20 @@ if (is_readable(__DIR__ . '/../vendor/shopware/platform/src/Core/TestBootstrappe
     exit('Could not find TestBootstrapper.php');
 }
 
-return (new TestBootstrapper())
-    ->setProjectDir($_SERVER['PROJECT_ROOT'] ?? dirname(__DIR__, 4))
+$projectDir = $_SERVER['PROJECT_ROOT'] ?? dirname(__DIR__, 4);
+
+// Install dependency first: calling plugins install hook needs Assistant schema
+(new TestBootstrapper())
+    ->setProjectDir($projectDir)
     ->setLoadEnvFile(true)
-    ->addActivePlugins('SwagMigrationAssistant', 'SwagMigrationMagento')
+    ->addActivePlugins('SwagMigrationAssistant')
+    ->bootstrap();
+
+return (new TestBootstrapper())
+    ->setProjectDir($projectDir)
+    ->setLoadEnvFile(true)
+    ->setForceInstall(false)
+    ->setForceInstallPlugins(true)
     ->addCallingPlugin()
     ->bootstrap()
     ->setClassLoader(require dirname(__DIR__) . '/vendor/autoload.php')
