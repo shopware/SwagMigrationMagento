@@ -10,6 +10,10 @@ on:
         required: false
         type: string
         default: trunk
+      assistant_branch:
+        required: false
+        type: string
+        default: ""
 
 jobs:
   phpunit:
@@ -22,7 +26,7 @@ jobs:
         php_version: ["8.2", "8.3"]
     steps:
       - name: Checkout SwagMigrationMagento
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           path: custom/plugins/${{ inputs.extension_name }}
 
@@ -32,6 +36,7 @@ jobs:
           php-version: ${{ matrix.php_version }}
           mysql-version: ${{ matrix.mysql_image }}
           platform-branch: ${{ inputs.platform_branch }}
+          assistant-branch: ${{ inputs.assistant_branch }}
 
       - name: Run PHPUnit
         working-directory: custom/plugins/${{ inputs.extension_name }}

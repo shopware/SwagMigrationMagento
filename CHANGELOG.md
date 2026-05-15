@@ -1,3 +1,8 @@
+# 13.0.0
+
+- Compatibility with Migration Assistant version 18.
+- Increased the minimum required Migration Assistant version to ~18.0.
+
 # 12.0.0
 
 - Compatibility with Migration Assistant version 17.

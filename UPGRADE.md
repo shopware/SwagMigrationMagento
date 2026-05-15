@@ -1,3 +1,7 @@
+# 13.0.0
+
+- [BREAKING] Raised required `swag/migration-assistant` version from `~17.0` to `~18.0`.
+
 # 12.0.0
 
 - [BREAKING] Raised required `swag/migration-assistant` version from `~16.2` to `~17.0`.

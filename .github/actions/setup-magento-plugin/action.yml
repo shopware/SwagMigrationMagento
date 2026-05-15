@@ -21,7 +21,7 @@ inputs:
   assistant-branch:
     default: ""
     required: false
-    description: "Which SwagMigrationAssistant branch to use. Defaults to the latest release (release/<version>)."
+    description: "Which SwagMigrationAssistant branch to use. Defaults to the highest release tag matching the composer.json constraint (release/<version>)."
 
 runs:
   using: composite
@@ -29,12 +29,34 @@ runs:
     - name: Resolve SwagMigrationAssistant branch
       shell: bash
       run: |
+        set -euo pipefail
+
         if [ -n "${{ inputs.assistant-branch }}" ]; then
           echo "ASSISTANT_BRANCH=${{ inputs.assistant-branch }}" >> $GITHUB_ENV
-        else
-          VERSION=$(gh api repos/shopware/SwagMigrationAssistant/releases/latest --jq '.tag_name')
-          echo "ASSISTANT_BRANCH=release/${VERSION}" >> $GITHUB_ENV
+          exit 0
         fi
+
+        COMPOSER_JSON="${GITHUB_ACTION_PATH}/../../../composer.json"
+        CONSTRAINT=$(jq -r '.require["swag/migration-assistant"]' "$COMPOSER_JSON")
+        MAJOR=$(echo "$CONSTRAINT" | grep -oE '[0-9]+' | head -1)
+
+        if [ -z "$MAJOR" ]; then
+          echo "Failed to parse major version from constraint: $CONSTRAINT" >&2
+          exit 1
+        fi
+
+        VERSION=$(gh api --paginate repos/shopware/SwagMigrationAssistant/releases --jq '.[].tag_name' \
+          | grep -E "^v?${MAJOR}\." \
+          | sort -V \
+          | tail -1)
+
+        if [ -z "$VERSION" ]; then
+          echo "No SwagMigrationAssistant release tag found matching major ${MAJOR} (constraint: ${CONSTRAINT})" >&2
+          exit 1
+        fi
+
+        echo "Resolved SwagMigrationAssistant ${VERSION} for constraint ${CONSTRAINT}"
+        echo "ASSISTANT_BRANCH=release/${VERSION}" >> $GITHUB_ENV
       env:
         GH_TOKEN: ${{ github.token }}
 
