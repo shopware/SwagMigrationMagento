@@ -1,0 +1,25 @@
+{
+  "base": "/bundles/swagmigrationmagento/administration/",
+  "entryPoints": {
+    "swag-migration-magento": {
+      "css": [
+        "/bundles/swagmigrationmagento/administration/assets/swag-migration-magento-D9HnZcRX.css"
+      ],
+      "dynamic": [],
+      "js": [
+        "/bundles/swagmigrationmagento/administration/assets/swag-migration-magento-BDji5Avz.js"
+      ],
+      "legacy": false,
+      "preload": []
+    }
+  },
+  "legacy": false,
+  "metadatas": {},
+  "version": [
+    "7.1.0",
+    7,
+    1,
+    0
+  ],
+  "viteServer": null
+}

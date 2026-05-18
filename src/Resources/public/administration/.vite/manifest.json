@@ -1,0 +1,11 @@
+{
+  "main.js": {
+    "file": "assets/swag-migration-magento-BDji5Avz.js",
+    "name": "swag-migration-magento",
+    "src": "main.js",
+    "isEntry": true,
+    "css": [
+      "assets/swag-migration-magento-D9HnZcRX.css"
+    ]
+  }
+}
