@@ -1,8 +1,9 @@
 name: Compat Check
 
 on:
-  schedule:
-    - cron: '0 1 * * *'
+  workflow_run:
+    workflows: [Nightly]
+    types: [completed]
   workflow_dispatch:
 
 concurrency:
@@ -13,6 +14,11 @@ jobs:
   resolve:
     name: Resolve latest SwagMigrationAssistant release
     runs-on: ubuntu-latest
+    if: >-
+      ${{
+        github.event_name == 'workflow_dispatch' ||
+        github.event.workflow_run.conclusion == 'success'
+      }}
     outputs:
       version: ${{ steps.latest.outputs.version }}
     steps:
@@ -60,7 +66,7 @@ jobs:
       - phpunit
     if: >-
       always() &&
-      github.event_name == 'schedule' &&
+      github.event_name == 'workflow_run' &&
       needs.resolve.result == 'success' &&
       (
         needs.phpstan.result == 'failure' ||
