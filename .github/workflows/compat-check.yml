@@ -75,7 +75,7 @@ jobs:
     steps:
       - name: Dedup cache lookup
         id: dedup
-        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: .compat-notified
           key: compat-alert-${{ needs.resolve.outputs.version }}
@@ -113,7 +113,7 @@ jobs:
 
       - name: Persist dedup marker
         if: steps.dedup.outputs.cache-hit != 'true'
-        uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+        uses: actions/cache/save@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
         with:
           path: .compat-notified
           key: compat-alert-${{ needs.resolve.outputs.version }}
