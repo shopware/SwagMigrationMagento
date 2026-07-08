@@ -94,7 +94,7 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         $criteria->addFilter(new EqualsFilter('entity', $entityName));
         $criteria->addFilter(new EqualsFilter('oldIdentifier', $identifier));
 
-        $result = $this->migrationMappingRepo->search($criteria, $context)->getElements();
+        $result = $this->migrationMappingRepo->search($criteria, $context)->getEntities()->getElements();
         $uuidList = [];
 
         foreach ($result as $entity) {

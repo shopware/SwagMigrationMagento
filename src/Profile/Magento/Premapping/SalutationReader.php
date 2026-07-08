@@ -179,7 +179,7 @@ abstract class SalutationReader extends AbstractPremappingReader
                 $criteria = new Criteria();
                 $criteria->addFilter(new EqualsFilter('salutationKey', 'mr'));
                 /** @var SalutationEntity|null $salutation */
-                $salutation = $this->salutationRepo->search($criteria, $context)->first();
+                $salutation = $this->salutationRepo->search($criteria, $context)->getEntities()->first();
 
                 if ($salutation !== null) {
                     $preselectionValue = $salutation->getId();
@@ -189,7 +189,7 @@ abstract class SalutationReader extends AbstractPremappingReader
             case '2':
                 $criteria = new Criteria();
                 $criteria->addFilter(new EqualsFilter('salutationKey', 'mrs'));
-                $salutation = $this->salutationRepo->search($criteria, $context)->first();
+                $salutation = $this->salutationRepo->search($criteria, $context)->getEntities()->first();
                 if ($salutation !== null) {
                     $preselectionValue = $salutation->getId();
                 }
@@ -199,7 +199,7 @@ abstract class SalutationReader extends AbstractPremappingReader
                 $criteria = new Criteria();
                 $criteria->addFilter(new EqualsFilter('salutationKey', 'not_specified'));
                 /** @var SalutationEntity|null $salutation */
-                $salutation = $this->salutationRepo->search($criteria, $context)->first();
+                $salutation = $this->salutationRepo->search($criteria, $context)->getEntities()->first();
                 if ($salutation !== null) {
                     $preselectionValue = $salutation->getId();
                 }

@@ -109,7 +109,7 @@ abstract class Magento2LocalGateway implements MagentoGatewayInterface
         }
 
         /** @var CurrencyEntity $targetSystemCurrency */
-        $targetSystemCurrency = $this->currencyRepository->search(new Criteria([Defaults::CURRENCY]), $context)->get(Defaults::CURRENCY);
+        $targetSystemCurrency = $this->currencyRepository->search(new Criteria([Defaults::CURRENCY]), $context)->getEntities()->get(Defaults::CURRENCY);
         if (!isset($environmentData['defaultCurrency'])) {
             $environmentData['defaultCurrency'] = $targetSystemCurrency->getIsoCode();
         }

@@ -13,7 +13,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
-use Shopware\Core\System\Tax\TaxEntity;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DataSet\ProductDataSet;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento23\Converter\Magento23ProductConverter;
@@ -70,8 +69,8 @@ class Magento2ProductConverterTest extends TestCase
 
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsFilter('taxRate', 19));
-        $tax = $this->getContainer()->get('tax.repository')->search($criteria, Context::createDefaultContext())->getEntities()->first();
-        static::assertInstanceOf(TaxEntity::class, $tax);
+        $taxId = $this->getContainer()->get('tax.repository')->searchIds($criteria, Context::createDefaultContext())->firstId();
+        static::assertIsString($taxId);
 
         $context = Context::createDefaultContext();
         $this->mappingService->getOrCreateMapping(
@@ -81,7 +80,7 @@ class Magento2ProductConverterTest extends TestCase
             $context,
             null,
             null,
-            $tax->getId()
+            $taxId
         );
 
         $this->mappingService->getOrCreateMapping(

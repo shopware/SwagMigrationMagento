@@ -77,7 +77,7 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
      */
     protected function getChoices(Context $context): array
     {
-        $currencies = $this->currencyRepo->search(new Criteria(), $context)->getElements();
+        $currencies = $this->currencyRepo->search(new Criteria(), $context)->getEntities()->getElements();
 
         $choices = [];
         foreach ($currencies as $currency) {
