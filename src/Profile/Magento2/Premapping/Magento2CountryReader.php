@@ -77,7 +77,7 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
      */
     protected function getChoices(Context $context): array
     {
-        $countries = $this->countryRepo->search(new Criteria(), $context)->getElements();
+        $countries = $this->countryRepo->search(new Criteria(), $context)->getEntities()->getElements();
 
         $choices = [];
         foreach ($countries as $country) {

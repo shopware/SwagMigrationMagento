@@ -110,7 +110,7 @@ abstract class OrderDeliveryStateReader extends AbstractPremappingReader
         $criteria->addFilter(new EqualsFilter('technicalName', OrderDeliveryStates::STATE_MACHINE));
 
         /** @var StateMachineEntity $stateMachine */
-        $stateMachine = $this->stateMachineRepo->search($criteria, $context)->first();
+        $stateMachine = $this->stateMachineRepo->search($criteria, $context)->getEntities()->first();
 
         $criteria = new Criteria();
         $criteria->addFilter(new EqualsFilter('stateMachineId', $stateMachine->getId()));

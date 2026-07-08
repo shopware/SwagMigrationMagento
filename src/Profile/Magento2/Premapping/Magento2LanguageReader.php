@@ -77,7 +77,7 @@ abstract class Magento2LanguageReader extends AbstractPremappingReader
      */
     protected function getChoices(Context $context): array
     {
-        $langauges = $this->languageRepo->search(new Criteria(), $context)->getElements();
+        $langauges = $this->languageRepo->search(new Criteria(), $context)->getEntities()->getElements();
 
         $choices = [];
         foreach ($langauges as $language) {

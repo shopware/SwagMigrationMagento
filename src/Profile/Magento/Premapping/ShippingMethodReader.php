@@ -124,7 +124,7 @@ abstract class ShippingMethodReader extends AbstractPremappingReader
      */
     private function getChoices(Context $context): array
     {
-        $shippingMethods = $this->paymentMethodRepo->search(new Criteria(), $context)->getElements();
+        $shippingMethods = $this->paymentMethodRepo->search(new Criteria(), $context)->getEntities()->getElements();
 
         $choices = [];
         foreach ($shippingMethods as $shippingMethod) {
