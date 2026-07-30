@@ -43,6 +43,3 @@ parameters:
               - tests/Profile/Magento/Premapping/PaymentMethodReaderTest.php
         - message: '#Call to deprecated method __construct\(\) of class Shopware\\Core\\Framework\\DataAbstractionLayer\\EntityDefinition#'
         - message: '#deprecated interface Shopware\\Core\\System\\NumberRange\\ValueGenerator\\NumberRangeValueGeneratorInterface#'
-        - message: '#Call to deprecated method __construct\(\) of class Shopware\\Core\\Framework\\DataAbstractionLayer\\Search\\EntitySearchResult#'
-          paths:
-              - tests/**

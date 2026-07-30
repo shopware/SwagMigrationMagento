@@ -144,6 +144,6 @@ abstract class CrossSellingConverter extends MagentoConverter
             $resultData = $data;
         }
 
-        return new ConvertStruct($converted, $resultData, $this->mainMapping['id'] ?? null);
+        return new ConvertStruct($converted, $resultData, $this->mainMapping['id']);
     }
 }

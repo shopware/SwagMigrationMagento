@@ -64,6 +64,7 @@ class ServiceCorrectArgumentsTest extends TestCase
     {
         $xmlContent = \file_get_contents($xmlPath);
         static::assertNotFalse($xmlContent);
+        static::assertNotSame('', $xmlContent);
         $document = new \DOMDocument();
         $document->loadXML($xmlContent);
 
