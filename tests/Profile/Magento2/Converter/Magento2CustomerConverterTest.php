@@ -321,22 +321,22 @@ class Magento2CustomerConverterTest extends TestCase
     }
 
     /**
-     * @return list<list{string|null}>
+     * @return list<array{string|null}>
      */
     public static function requiredAddressProperties(): array
     {
         return [
-            ['entity_id', null],
-            ['entity_id', ''],
+            [null],
+            [''],
         ];
     }
 
     #[DataProvider('requiredAddressProperties')]
-    public function testConvertWithoutRequiredAddressPropertiesForBillingDefault(string $property, ?string $value): void
+    public function testConvertWithoutRequiredAddressPropertiesForBillingDefault(?string $value): void
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
         $customerData = $customerData[1];
-        $customerData['addresses'][0][$property] = $value;
+        $customerData['addresses'][0]['entity_id'] = $value;
 
         $context = Context::createDefaultContext();
         $convertResult = $this->customerConverter->convert(
@@ -368,11 +368,11 @@ class Magento2CustomerConverterTest extends TestCase
     }
 
     #[DataProvider('requiredAddressProperties')]
-    public function testConvertWithoutRequiredAddressPropertiesForShippingDefault(string $property, ?string $value): void
+    public function testConvertWithoutRequiredAddressPropertiesForShippingDefault(?string $value): void
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
         $customerData = $customerData[1];
-        $customerData['addresses'][1][$property] = $value;
+        $customerData['addresses'][1]['entity_id'] = $value;
 
         $context = Context::createDefaultContext();
         $convertResult = $this->customerConverter->convert(
@@ -404,12 +404,12 @@ class Magento2CustomerConverterTest extends TestCase
     }
 
     #[DataProvider('requiredAddressProperties')]
-    public function testConvertWithoutRequiredAddressPropertiesForDefaultBillingAndShipping(string $property, ?string $value): void
+    public function testConvertWithoutRequiredAddressPropertiesForDefaultBillingAndShipping(?string $value): void
     {
         $customerData = require __DIR__ . '/../../../_fixtures/customer_data.php';
         $customerData = $customerData[1];
-        $customerData['addresses'][0][$property] = $value;
-        $customerData['addresses'][1][$property] = $value;
+        $customerData['addresses'][0]['entity_id'] = $value;
+        $customerData['addresses'][1]['entity_id'] = $value;
 
         $context = Context::createDefaultContext();
         $convertResult = $this->customerConverter->convert(

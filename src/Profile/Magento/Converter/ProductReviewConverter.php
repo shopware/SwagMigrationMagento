@@ -67,7 +67,7 @@ abstract class ProductReviewConverter extends MagentoConverter
                     ->build(ConvertAssociationMissingLog::class)
             );
 
-            return new ConvertStruct(null, $data, $this->mainMapping['id'] ?? null);
+            return new ConvertStruct(null, $data, $this->mainMapping['id']);
         }
 
         $converted['productId'] = $mapping['entityId'];
