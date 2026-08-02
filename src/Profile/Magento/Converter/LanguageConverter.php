@@ -9,6 +9,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Converter;
 
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
+use Swag\MigrationMagento\Migration\Locale\LocaleFallback;
 use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Migration\Mapping\Registry\LanguageRegistry;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
@@ -77,7 +78,14 @@ abstract class LanguageConverter extends MagentoConverter
         }
 
         $languageData = LanguageRegistry::get($this->oldIdentifier);
-        $localeUuid = $this->localeLookup->get($this->oldIdentifier, $this->context);
+
+        $localeUuid = null;
+        foreach (LocaleFallback::candidates($this->oldIdentifier) as $candidate) {
+            $localeUuid = $this->localeLookup->get($candidate, $this->context);
+            if ($localeUuid !== null) {
+                break;
+            }
+        }
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
