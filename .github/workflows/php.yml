@@ -44,6 +44,9 @@ jobs:
       - name: Checkout SwagMigrationMagento
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
+      - name: Remove PHPStan config
+        run: rm phpstan.neon.dist
+
       - name: Run verifier
         uses: shopware/github-actions/extension-verifier@main
         with:
