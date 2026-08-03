@@ -32,3 +32,20 @@ jobs:
     with:
       extension_name: ${{ github.event.repository.name }}
       platform_branch: trunk
+
+  extension_verifier:
+    name: Extension Verifier (${{ matrix.check-against }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        check-against: [lowest, highest]
+    steps:
+      - name: Checkout SwagMigrationMagento
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Run verifier
+        uses: shopware/github-actions/extension-verifier@main
+        with:
+          action: check
+          check-against: ${{ matrix.check-against }}
