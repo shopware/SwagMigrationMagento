@@ -14,9 +14,7 @@ use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Connection\ConnectionFactory;
 
 /**
- * Executes the schema introspection of addTableSelection() against a live database,
- * so a CI run on the lowest supported platform fails when the used DBAL API does not
- * exist in the DBAL version that platform ships.
+ * Executes the schema introspection against a real database to catch DBAL API drift at runtime.
  *
  * @internal
  */
