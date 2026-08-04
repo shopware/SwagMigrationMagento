@@ -753,7 +753,7 @@ abstract class OrderConverter extends MagentoConverter
                 $this->context
             );
 
-            if ($mapping !== null && isset($mapping['entityId'], $mapping['id'])) {
+            if ($mapping !== null && isset($mapping['entityId'])) {
                 $this->mappingIds[] = $mapping['id'];
                 $this->salutationUuid = $mapping['entityId'];
             }

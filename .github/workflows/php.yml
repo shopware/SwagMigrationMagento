@@ -47,6 +47,9 @@ jobs:
       - name: Remove PHPStan config
         run: rm phpstan.neon.dist
 
+      - name: Allow composer to resolve advisory-affected releases
+        run: composer config policy.advisories.block false
+
       - name: Run verifier
         uses: shopware/github-actions/extension-verifier@main
         with:

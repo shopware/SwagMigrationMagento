@@ -12,6 +12,7 @@ use Shopware\Core\Framework\Api\Util\AccessKeyHelper;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\System\SalesChannel\SalesChannelDefinition;
+use Swag\MigrationMagento\Migration\Mapping\MagentoMappingServiceInterface;
 use Swag\MigrationMagento\Profile\Magento\Converter\SalesChannelConverter;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\DefaultEntities as MagentoDefaultEntities;
 use Swag\MigrationMagento\Profile\Magento\Premapping\PaymentMethodReader;
@@ -140,6 +141,7 @@ abstract class Magento2SalesChannelConverter extends SalesChannelConverter
                 $this->mappingIds[] = $mapping['id'];
             }
 
+            \assert($this->mappingService instanceof MagentoMappingServiceInterface);
             $this->mappingService->createListItemMapping(
                 $this->connectionId,
                 MagentoDefaultEntities::STORE_DEFAULT,

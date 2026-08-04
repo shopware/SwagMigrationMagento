@@ -20,7 +20,6 @@ use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\Tax\TaxCollection;
 use SwagMigrationAssistant\Migration\Mapping\MappingService;
 use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingCollection;
-use SwagMigrationAssistant\Migration\Mapping\SwagMigrationMappingEntity;
 
 #[Package('fundamentals@after-sales')]
 class MagentoMappingService extends MappingService implements MagentoMappingServiceInterface
@@ -98,10 +97,6 @@ class MagentoMappingService extends MappingService implements MagentoMappingServ
         $uuidList = [];
 
         foreach ($result as $entity) {
-            if (!$entity instanceof SwagMigrationMappingEntity) {
-                continue;
-            }
-
             $entityId = $entity->getEntityId();
 
             if ($entityId === null) {

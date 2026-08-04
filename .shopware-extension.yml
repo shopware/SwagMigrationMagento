@@ -1,0 +1,8 @@
+compatibility_date: '2026-08-03'
+
+validation:
+    ignore:
+        # replacement AbstractNumberRangeValueGenerator needs Shopware 6.7.12.0+
+        - message: 'NumberRangeValueGeneratorInterface'
+        # https://github.com/shopware/shopware/issues/13072
+        - message: 'XmlFileLoader'

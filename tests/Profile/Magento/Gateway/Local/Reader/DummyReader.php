@@ -7,6 +7,8 @@
 
 namespace Swag\MigrationMagento\Test\Profile\Magento\Gateway\Local\Reader;
 
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\Gateway\Local\Reader\AbstractReader;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
@@ -35,5 +37,15 @@ class DummyReader extends AbstractReader
     public function testUtf8ize(array $array): array
     {
         return $this->utf8ize($array);
+    }
+
+    public function setDatabaseConnection(Connection $connection): void
+    {
+        $this->connection = $connection;
+    }
+
+    public function testAddTableSelection(QueryBuilder $query, string $table, string $tableAlias): void
+    {
+        $this->addTableSelection($query, $table, $tableAlias);
     }
 }

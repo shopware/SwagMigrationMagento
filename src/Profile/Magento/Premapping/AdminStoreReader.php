@@ -11,8 +11,8 @@ use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\CustomerAndOrderDataSelection;
 use Swag\MigrationMagento\Profile\Magento\DataSelection\ProductReviewDataSelection;
-use Swag\MigrationMagento\Profile\Magento\Gateway\MagentoGatewayInterface;
 use Swag\MigrationMagento\Profile\Magento\MagentoProfileInterface;
+use Swag\MigrationMagento\Profile\Magento2\Gateway\Local\Magento2LocalGateway;
 use SwagMigrationAssistant\Migration\Gateway\GatewayRegistryInterface;
 use SwagMigrationAssistant\Migration\MigrationContextInterface;
 use SwagMigrationAssistant\Migration\Premapping\AbstractPremappingReader;
@@ -91,7 +91,7 @@ abstract class AdminStoreReader extends AbstractPremappingReader
      */
     private function getChoices(MigrationContextInterface $migrationContext): array
     {
-        /** @var MagentoGatewayInterface $gateway */
+        /** @var Magento2LocalGateway $gateway */
         $gateway = $this->gatewayRegistry->getGateway($migrationContext);
 
         $stores = $gateway->readStores($migrationContext);
