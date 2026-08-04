@@ -38,6 +38,9 @@ parameters:
         - message: '#Call to deprecated method introspectTable\(\) of class Doctrine\\DBAL\\Schema\\AbstractSchemaManager#'
           paths:
               - src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+        - message: '#Call to deprecated method getName\(\) of class Doctrine\\DBAL\\Schema\\AbstractAsset#'
+          paths:
+              - src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
         # TODO remove this for 6.8 compatibility
         - message: '#Access to constant on deprecated class Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\DebitPayment#'

@@ -1,7 +1,7 @@
 {
     "name": "swag/migration-magento",
     "description": "Magento profiles for Shopware Migration Assistant",
-    "version": "13.0.0",
+    "version": "13.0.1",
     "type": "shopware-platform-plugin",
     "license": "MIT",
     "authors": [

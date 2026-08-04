@@ -92,7 +92,8 @@ abstract class AbstractReader implements ReaderInterface
         $table = $this->connection->createSchemaManager()->introspectTable($table);
 
         foreach ($table->getColumns() as $column) {
-            $columnName = $column->getObjectName()->toString();
+            // replacement getObjectName() needs DBAL 4.3+ (Shopware 6.7.0/6.7.1 can lock DBAL 4.2)
+            $columnName = $column->getName();
 
             $columnName = trim($columnName, '"`');
 

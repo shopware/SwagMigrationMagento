@@ -1,3 +1,7 @@
+# 13.0.1
+
+- Fixed a fatal error that broke reading data via the local gateway on Shopware versions below 6.7.8.0.
+
 # 13.0.0
 
 - Compatibility with Migration Assistant version 18.

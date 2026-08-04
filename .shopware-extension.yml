@@ -6,3 +6,5 @@ validation:
         - message: 'NumberRangeValueGeneratorInterface'
         # https://github.com/shopware/shopware/issues/13072
         - message: 'XmlFileLoader'
+        # replacement getObjectName() needs DBAL 4.3+ (Shopware 6.7.0/6.7.1 can lock DBAL 4.2)
+        - message: 'getName() of deprecated class Doctrine\DBAL\Schema\AbstractAsset'
