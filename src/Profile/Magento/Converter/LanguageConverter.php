@@ -60,7 +60,18 @@ abstract class LanguageConverter extends MagentoConverter
         $connection = $migrationContext->getConnection();
         $this->connectionId = $connection->getId();
 
-        $languageUuid = $this->languageLookup->get($this->oldIdentifier, $context);
+        $localeUuid = null;
+        $resolvedLocaleCode = $this->oldIdentifier;
+        foreach (LocaleFallback::candidates($this->oldIdentifier) as $candidate) {
+            $candidateUuid = $this->localeLookup->get($candidate, $this->context);
+            if ($candidateUuid !== null) {
+                $localeUuid = $candidateUuid;
+                $resolvedLocaleCode = $candidate;
+                break;
+            }
+        }
+
+        $languageUuid = $this->languageLookup->get($resolvedLocaleCode, $context);
         if ($languageUuid !== null) {
             foreach ($data['stores'] as $storeId) {
                 $this->mappingService->getOrCreateMapping(
@@ -78,14 +89,6 @@ abstract class LanguageConverter extends MagentoConverter
         }
 
         $languageData = LanguageRegistry::get($this->oldIdentifier);
-
-        $localeUuid = null;
-        foreach (LocaleFallback::candidates($this->oldIdentifier) as $candidate) {
-            $localeUuid = $this->localeLookup->get($candidate, $this->context);
-            if ($localeUuid !== null) {
-                break;
-            }
-        }
 
         $this->mainMapping = $this->mappingService->getOrCreateMapping(
             $this->connectionId,
