@@ -28,11 +28,9 @@ use SwagMigrationAssistant\Migration\MigrationContextInterface;
 #[Package('fundamentals@after-sales')]
 abstract class CategoryConverter extends MagentoConverter
 {
-    private const DIRECTORY_SEPERATOR = '/';
+    private const DIRECTORY_SEPARATOR = '/';
 
-    private const CATEGORY_MEDIA_PATH = '/media/catalog/category/';
-
-    private const CATEGORY_MEDIA_PATH_WITHOUT_SLASH = 'media/catalog/category/';
+    private const CATEGORY_MEDIA_PATH = 'media/catalog/category/';
 
     protected string $connectionId;
 
@@ -415,12 +413,12 @@ abstract class CategoryConverter extends MagentoConverter
 
     private function createMediaUri(string $path): string
     {
-        $normalizedPath = \ltrim($path, self::DIRECTORY_SEPERATOR);
+        $normalizedPath = \ltrim($path, self::DIRECTORY_SEPARATOR);
 
-        if (\str_starts_with($normalizedPath, self::CATEGORY_MEDIA_PATH_WITHOUT_SLASH)) {
-            return self::DIRECTORY_SEPERATOR . $normalizedPath;
+        if (\str_starts_with($normalizedPath, self::CATEGORY_MEDIA_PATH)) {
+            return self::DIRECTORY_SEPARATOR . $normalizedPath;
         }
 
-        return self::CATEGORY_MEDIA_PATH . $normalizedPath;
+        return self::DIRECTORY_SEPARATOR . self::CATEGORY_MEDIA_PATH . $normalizedPath;
     }
 }
