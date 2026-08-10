@@ -156,7 +156,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         return $promises;
     }
 
-    #[ReturnTypeNarrowing(version: '14.0.0', newType: Promise\PromiseInterface::class)]
+    #[ReturnTypeNarrowing(version: 'v14.0.0', newType: Promise\PromiseInterface::class)]
     protected function doNormalDownloadRequest(MediaProcessWorkloadStruct $workload, Client $client): ?Promise\PromiseInterface
     {
         $additionalData = $workload->getAdditionalData();
