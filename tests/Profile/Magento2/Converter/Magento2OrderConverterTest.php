@@ -277,6 +277,7 @@ class Magento2OrderConverterTest extends TestCase
         static::assertNotNull($converted);
         static::assertNull($convertResult->getUnmapped());
         static::assertArrayHasKey('id', $converted);
+        static::assertSame(1.0, $converted['currencyFactor']);
         static::assertNotNull($convertResult->getMappingUuid());
         static::assertSame($this->storeUuid, $converted['salesChannelId']);
         $price = $converted['price'];
@@ -287,6 +288,19 @@ class Magento2OrderConverterTest extends TestCase
         static::assertSame($this->shippingMethod, $converted['deliveries'][0]['shippingMethodId']);
         static::assertNotNull($converted['itemRounding']);
         static::assertNotNull($converted['totalRounding']);
+    }
+
+    public function testConvertWithZeroCurrencyFactor(): void
+    {
+        $context = Context::createDefaultContext();
+        $orderData = require __DIR__ . '/../../../_fixtures/order_data.php';
+        $orderData[0]['orders']['store_to_order_rate'] = '0.0000';
+
+        $convertResult = $this->orderConverter->convert($orderData[0], $context, $this->migrationContext);
+        $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
+        static::assertSame(1.0, $converted['currencyFactor']);
     }
 
     public function testConvertWithInvalidShippingMethod(): void
