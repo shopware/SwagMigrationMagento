@@ -1,3 +1,7 @@
+# [NEXT]
+- Fixes errors when downloading media.
+- Fixes errors when migrating category images.
+
 # 13.0.0
 
 - Compatibility with Migration Assistant version 18.
