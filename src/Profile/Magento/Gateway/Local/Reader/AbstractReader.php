@@ -88,11 +88,11 @@ abstract class AbstractReader implements ReaderInterface
             return;
         }
 
-        // replacement introspectTableByUnquotedName() needs DBAL 4.4+ (Shopware 6.7.8.0+)
+        // introspectTable() is deprecated, but introspectTableByUnquotedName() needs DBAL 4.4+ (Shopware 6.7.8.0+)
         $table = $this->connection->createSchemaManager()->introspectTable($table);
 
         foreach ($table->getColumns() as $column) {
-            // replacement getObjectName() needs DBAL 4.3+ (Shopware 6.7.0/6.7.1 can lock DBAL 4.2)
+            // getName() is deprecated, but getObjectName() needs DBAL 4.3+ (Shopware 6.7.0/6.7.1 can lock DBAL 4.2)
             $columnName = $column->getName();
 
             $columnName = trim($columnName, '"`');
