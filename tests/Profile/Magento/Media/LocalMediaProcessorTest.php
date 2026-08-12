@@ -75,8 +75,15 @@ class LocalMediaProcessorTest extends TestCase
             100
         );
 
-        $mediaProcessor = $this->createLocaleMediaProcessor($mediaFiles, 2);
-        $result = $mediaProcessor->process($migrationContext, Context::createDefaultContext(), \array_values($mappedWorkload));
+        Context::createDefaultContext();
+
+        $mediaProcessor = $this->createLocaleMediaProcessor($mediaFiles);
+        $reflectionMethod = (new \ReflectionClass(LocalMediaProcessor::class))->getMethod('copyMediaFiles');
+
+        $result = $reflectionMethod->invokeArgs(
+            $mediaProcessor,
+            [$mediaFiles, $mappedWorkload, $migrationContext, Context::createDefaultContext()]
+        );
 
         foreach ($result as $workload) {
             static::assertInstanceOf(MediaProcessWorkloadStruct::class, $workload);
