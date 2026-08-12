@@ -78,7 +78,7 @@ class LocalMediaProcessorTest extends TestCase
 
         Context::createDefaultContext();
 
-        $mediaProcessor = $this->createLocaleMediaProcessor($mediaFiles);
+        $mediaProcessor = $this->createLocaleMediaProcessor($mediaFiles, 2);
         $reflectionMethod = (new \ReflectionClass(LocalMediaProcessor::class))->getMethod('copyMediaFiles');
 
         $result = $reflectionMethod->invokeArgs(
