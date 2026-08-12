@@ -58,7 +58,7 @@ class LocalMediaProcessorTest extends TestCase
                 $media['media_id'],
                 $runId,
                 MediaProcessWorkloadStruct::IN_PROGRESS_STATE,
-                ['path' => $media['path'], 'fileSize' => $media['file_size'], 'fileName' => $media['file_name']]
+                ['path' => $media['uri'], 'fileSize' => $media['file_size'], 'fileName' => $media['file_name']]
             );
         }
         unset($media);
