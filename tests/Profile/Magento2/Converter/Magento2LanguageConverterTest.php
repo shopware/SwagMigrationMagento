@@ -112,6 +112,30 @@ class Magento2LanguageConverterTest extends TestCase
         static::assertNotNull($convertResult->getMappingUuid());
     }
 
+    /**
+     * A script-subtag locale (zh-Hans-CN) has no Shopware locale row, and LanguageLookup::get()
+     * throws localeNotFound on a missing locale. The converter must resolve the base code first,
+     * so zh-Hans-CN falls back to zh-CN instead of aborting the language.
+     */
+    public function testConvertScriptSubtagLocaleFallsBackToBaseCode(): void
+    {
+        $context = Context::createDefaultContext();
+        $expectedLocaleUuid = $this->getContainer()->get(LocaleLookup::class)->get('zh-CN', $context);
+        static::assertNotNull($expectedLocaleUuid);
+
+        $convertResult = $this->languageConverter->convert(
+            ['stores' => ['5'], 'locale' => 'zh-Hans-CN'],
+            $context,
+            $this->migrationContext
+        );
+
+        $converted = $convertResult->getConverted();
+
+        static::assertNotNull($converted);
+        static::assertSame($expectedLocaleUuid, $converted['localeId']);
+        static::assertSame($expectedLocaleUuid, $converted['translationCodeId']);
+    }
+
     public function testConvertOfExistingLanguage(): void
     {
         $languageData = require __DIR__ . '/../../../_fixtures/language_data.php';
