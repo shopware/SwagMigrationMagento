@@ -1,3 +1,7 @@
+# [NEXT]
+- Behebt Fehler beim Herunterladen von Medien.
+- Behebt Fehler bei der Migration von Kategoriebildern.
+
 # 13.0.0
 
 - Kompatibilität mit Migration Assistant Version 18.
