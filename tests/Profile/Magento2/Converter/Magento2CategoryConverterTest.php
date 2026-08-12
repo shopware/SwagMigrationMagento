@@ -7,6 +7,7 @@
 
 namespace Swag\MigrationMagento\Test\Profile\Magento2\Converter;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Log\Package;
@@ -76,9 +77,11 @@ class Magento2CategoryConverterTest extends TestCase
 
     private string $defaultLanguageUuid;
 
+    private DummyMediaFileService $mediaFileService;
+
     protected function setUp(): void
     {
-        $mediaFileService = new DummyMediaFileService();
+        $this->mediaFileService = new DummyMediaFileService();
         $mappingService = new DummyMagentoMappingService();
         $this->loggingService = new DummyLoggingService();
 
@@ -163,10 +166,10 @@ class Magento2CategoryConverterTest extends TestCase
         $defaultCmsPageLookup = $this->getContainer()->get(DefaultCmsPageLookup::class);
         $languageLookup = $this->getContainer()->get(LanguageLookup::class);
 
-        $this->categoryConverter20 = new Magento20CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
-        $this->categoryConverter21 = new Magento21CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
-        $this->categoryConverter22 = new Magento22CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
-        $this->categoryConverter23 = new Magento23CategoryConverter($mappingService, $this->loggingService, $mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter20 = new Magento20CategoryConverter($mappingService, $this->loggingService, $this->mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter21 = new Magento21CategoryConverter($mappingService, $this->loggingService, $this->mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter22 = new Magento22CategoryConverter($mappingService, $this->loggingService, $this->mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
+        $this->categoryConverter23 = new Magento23CategoryConverter($mappingService, $this->loggingService, $this->mediaFileService, $mediaFolderLookup, $lowestRootCategoryLookup, $defaultCmsPageLookup, $languageLookup);
     }
 
     public function testSupports(): void
@@ -222,6 +225,46 @@ class Magento2CategoryConverterTest extends TestCase
             \mb_substr($categoryData[1]['translations']['1']['meta_keywords']['value'], 0, 255),
             $converted['translations'][$this->languageUuid]['keywords']
         );
+    }
+
+    #[DataProvider('categoryImagePathProvider')]
+    public function testConvertCategoryImagePath(string $sourcePath, string $expectedUri): void
+    {
+        $categoryData = require __DIR__ . '/../../../_fixtures/category_data.php';
+        $categoryData[1]['image'] = $sourcePath;
+
+        $this->mediaFileService->resetMediaFileArray();
+        $this->categoryConverter20->convert(
+            $categoryData[1],
+            Context::createDefaultContext(),
+            $this->migrationContext20
+        );
+
+        $mediaFiles = $this->mediaFileService->getMediaFileArray();
+
+        static::assertCount(1, $mediaFiles);
+        static::assertSame($expectedUri, $mediaFiles[0]['uri']);
+    }
+
+    /**
+     * @return iterable<string, array{sourcePath: string, expectedUri: string}>
+     */
+    public static function categoryImagePathProvider(): iterable
+    {
+        yield 'bare category image filename' => [
+            'sourcePath' => 'example.jpg',
+            'expectedUri' => '/media/catalog/category/example.jpg',
+        ];
+
+        yield 'category image with existing media prefix' => [
+            'sourcePath' => '/media/catalog/category/example.jpg',
+            'expectedUri' => '/media/catalog/category/example.jpg',
+        ];
+
+        yield 'category image with existing media prefix without leading slash' => [
+            'sourcePath' => 'media/catalog/category/example.jpg',
+            'expectedUri' => '/media/catalog/category/example.jpg',
+        ];
     }
 
     public function testConvert21(): void

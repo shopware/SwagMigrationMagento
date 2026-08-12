@@ -10,6 +10,7 @@ namespace Swag\MigrationMagento\Profile\Magento\Media;
 use Doctrine\DBAL\Connection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise;
+use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
 use Shopware\Core\Content\Media\File\FileSaver;
@@ -19,6 +20,7 @@ use Shopware\Core\Content\Media\MediaDefinition;
 use Shopware\Core\Content\Media\MediaException;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
+use Shopware\Core\Framework\Deprecation\BCChange\ReturnTypeNarrowing;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
@@ -101,7 +103,14 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                         ->build(MediaFileMissingLog::class)
                 );
 
-                return $workload;
+                $failureUuids = \array_keys($mappedWorkload);
+                foreach ($mappedWorkload as $mappedWork) {
+                    $mappedWork->setState(MediaProcessWorkloadStruct::ERROR_STATE);
+                }
+
+                $this->setProcessedFlag($migrationContext->getRunUuid(), $context, [], $failureUuids);
+
+                return \array_values($mappedWorkload);
             }
 
             return $this->downloadMediaFiles(
@@ -147,6 +156,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         return $promises;
     }
 
+    #[ReturnTypeNarrowing(version: 'v14.0.0', newType: Promise\PromiseInterface::class)]
     protected function doNormalDownloadRequest(MediaProcessWorkloadStruct $workload, Client $client): ?Promise\PromiseInterface
     {
         $additionalData = $workload->getAdditionalData();
@@ -162,8 +172,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
             $workload->setCurrentOffset((int) $additionalData['file_size']);
             $workload->setState(MediaProcessWorkloadStruct::FINISH_STATE);
         } catch (\Exception $exception) {
-            $promise = null;
-            $workload->setErrorCount($workload->getErrorCount() + 1);
+            $promise = Create::rejectionFor($exception);
         }
 
         return $promise;
@@ -411,7 +420,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         Context $context,
     ): array {
         // Do download requests and store the promises
-        $client = new Client();
+        $client = new Client(['timeout' => $this->migrationConfig->migrationRequestTimeout]);
         $promises = $this->doMediaDownloadRequests($media, $mappedWorkload, $client, $shopUrl);
 
         // Wait for the requests to complete, even if some of them fail

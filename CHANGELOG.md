@@ -1,5 +1,6 @@
-# 13.0.1
-
+# [NEXT]
+- Fixes errors when downloading media.
+- Fixes errors when migrating category images.
 - Fixed a fatal error that broke reading data via the local gateway on Shopware versions below 6.7.8.0.
 
 # 13.0.0
