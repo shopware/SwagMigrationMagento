@@ -169,6 +169,9 @@ abstract class OrderConverter extends MagentoConverter
 
         $this->convertValue($converted, 'orderNumber', $data['orders'], 'increment_id');
         $this->convertValue($converted, 'currencyFactor', $data['orders'], 'store_to_order_rate', self::TYPE_FLOAT);
+        if (($converted['currencyFactor'] ?? 0.0) <= 0.0) {
+            $converted['currencyFactor'] = 1.0;
+        }
         $this->convertValue($converted, 'orderDateTime', $data['orders'], 'created_at', self::TYPE_DATETIME);
 
         $this->convertCurrency($converted, $data);
