@@ -132,6 +132,7 @@ abstract class SalesChannelConverter extends MagentoConverter
                 $this->mappingIds[] = $mapping['id'];
             }
 
+            \assert($this->mappingService instanceof MagentoMappingServiceInterface);
             $this->mappingService->createListItemMapping(
                 $this->connectionId,
                 MagentoDefaultEntities::STORE_DEFAULT,

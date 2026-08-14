@@ -373,11 +373,7 @@ SQL;
         $storeCountryConfig = [];
         foreach ($configurations as $key => $storeConfig) {
             foreach ($storeConfig as $config) {
-                if ($config['path'] === 'general/country/allow') {
-                    if (isset($storeCountryConfig[$key]['allowedCountries'])) {
-                        $storeCountryConfig[$key]['allowedCountries'] = \explode(',', (string) $config['value']);
-                    }
-                } else {
+                if ($config['path'] !== 'general/country/allow') {
                     $storeCountryConfig[$key]['defaultCountry'] = $config['value'];
                 }
             }

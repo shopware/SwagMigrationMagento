@@ -196,18 +196,10 @@ SQL;
                 unset($orderPayments[$key]);
             }
 
-            if (isset($result[$key])) {
-                continue;
-            }
-
             $result[] = $payment;
         }
 
         foreach ($orderPayments as $key => $payment) {
-            if (isset($result[$key])) {
-                continue;
-            }
-
             $result[] = $payment;
         }
 

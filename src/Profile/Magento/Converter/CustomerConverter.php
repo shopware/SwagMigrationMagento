@@ -182,7 +182,7 @@ abstract class CustomerConverter extends MagentoConverter
             $context
         );
 
-        if (\is_array($mapping) && \array_key_exists('entityId', $mapping)) {
+        if (\is_array($mapping)) {
             $converted['groupId'] = $mapping['entityId'];
             unset($data['group_id']);
         }

@@ -75,12 +75,10 @@ abstract class ManufacturerConverter extends MagentoConverter
                 $context
             );
 
-            if (isset($converted['translations'])) {
-                foreach ($converted['translations'] as &$translation) {
-                    $translation['manufacturerId'] = $converted['id'];
-                }
-                unset($translation);
+            foreach ($converted['translations'] as &$translation) {
+                $translation['manufacturerId'] = $converted['id'];
             }
+            unset($translation);
         }
         unset($data['translations']);
 

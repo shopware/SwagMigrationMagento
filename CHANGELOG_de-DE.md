@@ -1,6 +1,7 @@
 # [NEXT]
 - Behebt Fehler beim Herunterladen von Medien.
 - Behebt Fehler bei der Migration von Kategoriebildern.
+- Ein fataler Fehler wurde behoben, der das Lesen von Daten über das lokale Gateway auf Shopware-Versionen unter 6.7.8.0 verhindert hat.
 
 # 13.0.0
 

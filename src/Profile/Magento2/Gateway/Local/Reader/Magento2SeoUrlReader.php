@@ -95,11 +95,7 @@ SQL;
             return;
         }
 
-        try {
-            $json = \json_decode($seoUrl['metadata'], true);
-        } catch (\Error) {
-            return;
-        }
+        $json = \json_decode($seoUrl['metadata'], true);
 
         if (isset($json['category_id'])) {
             $seoUrl['category_id'] = $json['category_id'];

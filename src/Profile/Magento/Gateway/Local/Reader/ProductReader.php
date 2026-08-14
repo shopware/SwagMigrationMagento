@@ -268,7 +268,7 @@ SQL;
         $media = $this->fetchProductMedia($ids);
         $prices = $this->fetchProductPrices($ids);
         $configuratorSettings = $this->fetchConfiguratorSettings();
-        unset($this->combinedProductIds);
+        $this->combinedProductIds = null;
         $visibility = $this->fetchVisibility($ids);
         $locales = $this->fetchLocales();
 

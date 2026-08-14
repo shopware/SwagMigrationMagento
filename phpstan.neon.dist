@@ -34,8 +34,20 @@ parameters:
         # TODO: XML config format will be migrated step by step, so we ignore errors for now, see https://github.com/shopware/shopware/issues/13072
         - message: '#deprecated class Symfony\\Component\\DependencyInjection\\Loader\\XmlFileLoader#'
 
-        # TODO: MagentoMappingServiceInterface extends MappingServiceInterface with additional methods, but parent Converter class types $mappingService as MappingServiceInterface
-        - message: '#Call to an undefined method SwagMigrationAssistant\\Migration\\Mapping\\MappingServiceInterface::(createListItemMapping|getUuidList)\(\)#'
+        # TODO remove once the minimum supported Shopware version ships DBAL 4.4 (>= 6.7.8.0)
+        - message: '#Call to deprecated method introspectTable\(\) of class Doctrine\\DBAL\\Schema\\AbstractSchemaManager#'
+          paths:
+              - src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+        - message: '#Call to deprecated method getName\(\) of class Doctrine\\DBAL\\Schema\\AbstractAsset#'
+          paths:
+              - src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
+
+        # TODO remove once the minimum supported Shopware version ships the `BCChange` attributes
+        - identifier: shopware.bcPlanningDeprecation
+        - identifier: shopware.deprecatedMethod
+          paths:
+              - src/Profile/Magento/Media/LocalMediaProcessor.php
+        - message: '#Call to deprecated method doNormalDownloadRequest\(\) of class Swag\\MigrationMagento\\Profile\\Magento\\Media\\LocalMediaProcessor#'
 
         # TODO remove this for 6.8 compatibility
         - message: '#Access to constant on deprecated class Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\DebitPayment#'

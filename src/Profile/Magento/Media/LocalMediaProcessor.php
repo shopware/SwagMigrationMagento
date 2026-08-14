@@ -20,7 +20,6 @@ use Shopware\Core\Content\Media\MediaDefinition;
 use Shopware\Core\Content\Media\MediaException;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
-use Shopware\Core\Framework\Deprecation\BCChange\ReturnTypeNarrowing;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
@@ -156,7 +155,9 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         return $promises;
     }
 
-    #[ReturnTypeNarrowing(version: 'v14.0.0', newType: Promise\PromiseInterface::class)]
+    /**
+     * @deprecated tag:v14.0.0 - reason:return-type-change - Will return Promise\PromiseInterface
+     */
     protected function doNormalDownloadRequest(MediaProcessWorkloadStruct $workload, Client $client): ?Promise\PromiseInterface
     {
         $additionalData = $workload->getAdditionalData();
@@ -241,9 +242,9 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
             $sourcePath = $this->getInstallationRoot($migrationContext) . $mappedWorkload[$mediaId]->getAdditionalData()['path'];
 
             $fileExtension = \pathinfo($sourcePath, \PATHINFO_EXTENSION);
-            $filePath = \tempnam(\sys_get_temp_dir(), 'SwagMigrationMagento-');
+            $tempFilePath = \tempnam(\sys_get_temp_dir(), 'SwagMigrationMagento-');
 
-            if ($filePath === false) {
+            if ($tempFilePath === false) {
                 $failureUuids[] = (string) $mediaId;
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
 
@@ -265,16 +266,16 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                 continue;
             }
 
-            if (\copy($sourcePath, $filePath)) {
+            if (\copy($sourcePath, $tempFilePath)) {
                 try {
-                    $fileSize = \filesize($filePath);
+                    $fileSize = \filesize($tempFilePath);
                     if ($fileSize === false) {
-                        throw MigrationMagentoException::mediaFileSizeError($filePath);
+                        throw MigrationMagentoException::mediaFileSizeError($tempFilePath);
                     }
 
                     $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::FINISH_STATE);
                     $this->persistFileToMedia(
-                        $filePath,
+                        $tempFilePath,
                         $mediaId,
                         $mediaFile['file_name'],
                         $fileSize,
@@ -293,7 +294,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                             ->withException($e)
                             ->withConvertedData(
                                 [
-                                    'file_path' => $filePath,
+                                    'file_path' => $tempFilePath,
                                     'source_path' => $sourcePath,
                                     'media' => $media,
                                 ]
@@ -303,7 +304,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                     );
                 }
 
-                \unlink($filePath);
+                \unlink($tempFilePath);
             } else {
                 $mappedWorkload[$mediaId]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
 
@@ -313,7 +314,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                         ->withSourceData($mediaFile)
                         ->withConvertedData(
                             [
-                                'file_path' => $filePath,
+                                'file_path' => $tempFilePath,
                                 'source_path' => $sourcePath,
                                 'media' => $media,
                             ]
@@ -338,7 +339,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
      * @param list<string> $failedMedia
      */
     private function persistFileToMedia(
-        string $filePath,
+        string $tempFilePath,
         string $mediaId,
         string $fileName,
         int $fileSize,
@@ -347,7 +348,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         array &$failedMedia,
         Context $context,
     ): void {
-        $mimeType = \mime_content_type($filePath);
+        $mimeType = \mime_content_type($tempFilePath);
 
         if ($mimeType === false) {
             $failedMedia[] = $mediaId;
@@ -359,7 +360,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                     ->withFieldName('mimeType')
                     ->withConvertedData(
                         [
-                            'file_path' => $filePath,
+                            'file_path' => $tempFilePath,
                             'media_id' => $mediaId,
                             'file_name' => $fileName,
                             'file_size' => $fileSize,
@@ -373,7 +374,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
             return;
         }
 
-        $mediaFile = new MediaFile($filePath, $mimeType, $fileExtension, $fileSize);
+        $mediaFile = new MediaFile($tempFilePath, $mimeType, $fileExtension, $fileSize);
         $fileName = (string) \preg_replace('/[^a-z0-9_-]+/', '-', \mb_strtolower($fileName));
 
         try {
@@ -473,8 +474,8 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
             /** @var Response $response */
             $response = $result['value'];
             $fileExtension = \pathinfo($additionalData['uri'], \PATHINFO_EXTENSION);
-            $filePath = \tempnam(\sys_get_temp_dir(), 'SwagMigrationMagento-');
-            if ($filePath === false) {
+            $tempFilePath = \tempnam(\sys_get_temp_dir(), 'SwagMigrationMagento-');
+            if ($tempFilePath === false) {
                 $failureUuids[] = $uuid;
                 $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
 
@@ -502,7 +503,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                 ],
             ]);
 
-            $fileHandle = \fopen($filePath, 'ab', false, $streamContext);
+            $fileHandle = \fopen($tempFilePath, 'ab', false, $streamContext);
             if ($fileHandle === false) {
                 $failureUuids[] = $uuid;
                 $mappedWorkload[$uuid]->setState(MediaProcessWorkloadStruct::ERROR_STATE);
@@ -512,7 +513,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                         ->withEntityName(MediaDefinition::ENTITY_NAME)
                         ->withSourceData([
                             'media_id' => $uuid,
-                            'source_path' => $filePath,
+                            'source_path' => $tempFilePath,
                             'media' => $media,
                         ])
                         ->withEntityId($uuid)
@@ -522,13 +523,13 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                 continue;
             }
             \fwrite($fileHandle, $response->getBody()->getContents());
-            $fileSize = (int) \filesize($filePath);
+            $fileSize = (int) \filesize($tempFilePath);
             \fclose($fileHandle);
 
             if ($mappedWorkload[$uuid]->getState() === MediaProcessWorkloadStruct::FINISH_STATE) {
                 try {
                     $this->persistFileToMedia(
-                        $filePath,
+                        $tempFilePath,
                         $uuid,
                         $additionalData['file_name'],
                         $fileSize,
@@ -537,7 +538,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                         $failureUuids,
                         $context
                     );
-                    \unlink($filePath);
+                    \unlink($tempFilePath);
                     $finishedUuids[] = $uuid;
                 } catch (\Exception $e) {
                     $failureUuids[] = $uuid;
@@ -549,7 +550,7 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
                             ->withException($e)
                             ->withConvertedData(
                                 [
-                                    'file_path' => $filePath,
+                                    'file_path' => $tempFilePath,
                                     'uri' => $additionalData['uri'],
                                     'media_id' => $uuid,
                                     'media' => $media,

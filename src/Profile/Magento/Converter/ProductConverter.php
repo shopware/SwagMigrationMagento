@@ -785,6 +785,7 @@ abstract class ProductConverter extends MagentoConverter
             return;
         }
 
+        \assert($this->mappingService instanceof MagentoMappingServiceInterface);
         $uuids = $this->mappingService->getUuidList(
             $this->connectionId,
             MagentoDefaultEntities::STORE_DEFAULT,
