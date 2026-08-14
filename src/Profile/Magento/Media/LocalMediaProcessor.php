@@ -20,7 +20,6 @@ use Shopware\Core\Content\Media\MediaDefinition;
 use Shopware\Core\Content\Media\MediaException;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
-use Shopware\Core\Framework\Deprecation\BCChange\ReturnTypeNarrowing;
 use Shopware\Core\Framework\Log\Package;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Swag\MigrationMagento\Exception\MigrationMagentoException;
@@ -156,7 +155,9 @@ abstract class LocalMediaProcessor extends BaseMediaService implements MediaFile
         return $promises;
     }
 
-    #[ReturnTypeNarrowing(version: 'v14.0.0', newType: Promise\PromiseInterface::class)]
+    /**
+     * @deprecated tag:v14.0.0 - reason:return-type-change - Will return Promise\PromiseInterface
+     */
     protected function doNormalDownloadRequest(MediaProcessWorkloadStruct $workload, Client $client): ?Promise\PromiseInterface
     {
         $additionalData = $workload->getAdditionalData();

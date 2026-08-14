@@ -42,6 +42,13 @@ parameters:
           paths:
               - src/Profile/Magento/Gateway/Local/Reader/AbstractReader.php
 
+        # TODO remove once the minimum supported Shopware version ships the `BCChange` attributes
+        - identifier: shopware.bcPlanningDeprecation
+        - identifier: shopware.deprecatedMethod
+          paths:
+              - src/Profile/Magento/Media/LocalMediaProcessor.php
+        - message: '#Call to deprecated method doNormalDownloadRequest\(\) of class Swag\\MigrationMagento\\Profile\\Magento\\Media\\LocalMediaProcessor#'
+
         # TODO remove this for 6.8 compatibility
         - message: '#Access to constant on deprecated class Shopware\\Core\\Checkout\\Payment\\Cart\\PaymentHandler\\DebitPayment#'
           paths:
