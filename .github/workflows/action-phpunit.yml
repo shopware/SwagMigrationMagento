@@ -52,7 +52,7 @@ jobs:
         working-directory: custom/plugins/${{ inputs.extension_name }}
         run: |
           composer dump-autoload --dev
-          php -d pcov.enabled=${{ env.COVERAGE == 'true' && '1' || '0' }} -d pcov.directory=${PWD}/src -d pcov.exclude='~(vendor|tests|node_modules)~' ${GITHUB_WORKSPACE}/vendor/bin/phpunit --configuration phpunit.xml.dist ${{ env.COVERAGE == 'true' && '--coverage-cobertura coverage.xml' || '' }}
+          php -d pcov.enabled=${{ env.COVERAGE == 'true' && '1' || '0' }} -d pcov.directory=${PWD}/src -d pcov.exclude='~(vendor|tests|node_modules)~' ${GITHUB_WORKSPACE}/vendor/bin/phpunit --configuration phpunit.xml.dist ${{ env.COVERAGE == 'true' && '--coverage-clover clover.xml' || '' }}
 
       - name: Upload coverage to Codecov
         if: env.COVERAGE == 'true'
@@ -60,5 +60,6 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          working-directory: custom/plugins/${{ inputs.extension_name }}
-          files: coverage.xml
+          root_dir: ${{ github.workspace }}/custom/plugins/${{ inputs.extension_name }}
+          working-directory: ${{ github.workspace }}/custom/plugins/${{ inputs.extension_name }}
+          files: ./clover.xml

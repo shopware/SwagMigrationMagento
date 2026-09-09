@@ -14,4 +14,4 @@ src/Resources/public/administration/
 src/Resources/public/static/
 composer.lock
 php-cs-fixer.migration-magento.cache
-coverage.xml
+clover.xml
