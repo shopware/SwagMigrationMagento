@@ -35,3 +35,6 @@ jobs:
     with:
       extension_name: ${{ github.event.repository.name }}
       platform_branch: trunk
+      coverage: true
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
