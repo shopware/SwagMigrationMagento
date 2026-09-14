@@ -62,14 +62,7 @@ abstract class Magento2CountryReader extends AbstractPremappingReader
             $uuid = $this->connectionPremappingDictionary['default_country']->getDestinationUuid();
         }
 
-        $entityData = [];
-        $entityData[] = new PremappingEntityStruct('default_country', 'Standard country', $uuid);
-
-        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
-            return \strcmp($item1->getDescription(), $item2->getDescription());
-        });
-
-        return $entityData;
+        return [new PremappingEntityStruct('default_country', 'Standard country', $uuid)];
     }
 
     /**

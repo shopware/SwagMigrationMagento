@@ -62,14 +62,7 @@ abstract class Magento2CurrencyReader extends AbstractPremappingReader
             $uuid = $this->connectionPremappingDictionary['default_currency']->getDestinationUuid();
         }
 
-        $entityData = [];
-        $entityData[] = new PremappingEntityStruct('default_currency', 'Standard currency', $uuid);
-
-        \usort($entityData, static function (PremappingEntityStruct $item1, PremappingEntityStruct $item2) {
-            return \strcmp($item1->getDescription(), $item2->getDescription());
-        });
-
-        return $entityData;
+        return [new PremappingEntityStruct('default_currency', 'Standard currency', $uuid)];
     }
 
     /**
