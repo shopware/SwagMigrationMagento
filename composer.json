@@ -36,7 +36,7 @@
     },
     "scripts": {
         "lint": [
-            "@ecs-fix",
+            "@cs-fix",
             "@phpstan",
             "@phpunit"
         ],
