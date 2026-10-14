@@ -314,7 +314,7 @@ class Magento2CustomerConverterTest extends TestCase
         );
 
         static::assertNotNull($convertResult->getConverted());
-        static::assertNotEmpty($convertResult->getConverted()['addresses']);
+        static::assertNotSame([], $convertResult->getConverted()['addresses']);
 
         $logs = $this->loggingService->getLoggingArray();
         static::assertCount(0, $logs);

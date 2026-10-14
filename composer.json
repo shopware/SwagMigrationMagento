@@ -40,8 +40,16 @@
             "@phpstan",
             "@phpunit"
         ],
-        "ecs": "../../../vendor/bin/php-cs-fixer fix --dry-run",
-        "ecs-fix": "../../../vendor/bin/php-cs-fixer fix",
+        "ecs": [
+            "echo \"\\e[31mDeprecated! Use 'cs' instead\n\\e[0m\"",
+            "../../../vendor/bin/php-cs-fixer fix --dry-run --diff"
+        ],
+        "cs": "../../../vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "ecs-fix": [
+            "echo \"\\e[31mDeprecated! Use 'cs-fix' instead\n\\e[0m\"",
+            "../../../vendor/bin/php-cs-fixer fix -v"
+        ],
+        "cs-fix": "../../../vendor/bin/php-cs-fixer fix -v",
         "init:admin": "npm ci --no-audit --prefer-offline --prefix src/Resources/app/administration",
         "lint:admin": "npm run lint-fix --prefix src/Resources/app/administration",
         "lint:admin:ci": "npm run lint-ci --prefix src/Resources/app/administration",
@@ -50,7 +58,7 @@
         ],
         "phpstan": [
             "php bin/phpstan-config-generator.php",
-            "../../../vendor/bin/phpstan analyze"
+            "../../../vendor/bin/phpstan analyze -vv"
         ],
         "phpstan-min-version": [
             "php bin/phpstan-config-generator.php --configuration=phpstan-v6-5-0-0.neon.dist",

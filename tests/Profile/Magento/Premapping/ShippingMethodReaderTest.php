@@ -114,9 +114,9 @@ class ShippingMethodReaderTest extends TestCase
         static::assertSame('shipment-invalid', $mapping[3]->getDescription());
         static::assertSame('withoutDescription', $mapping[4]->getDescription());
         static::assertSame($this->dhlMock->getId(), $result->getMapping()[0]->getDestinationUuid());
-        static::assertEmpty($result->getMapping()[1]->getDestinationUuid());
+        static::assertSame('', $result->getMapping()[1]->getDestinationUuid());
         static::assertSame($this->upsMock->getId(), $result->getMapping()[2]->getDestinationUuid());
-        static::assertEmpty($result->getMapping()[3]->getDestinationUuid());
-        static::assertEmpty($result->getMapping()[4]->getDestinationUuid());
+        static::assertSame('', $result->getMapping()[3]->getDestinationUuid());
+        static::assertSame('', $result->getMapping()[4]->getDestinationUuid());
     }
 }
