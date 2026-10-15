@@ -252,7 +252,7 @@ class LocalMediaProcessorTest extends TestCase
     {
         $fileSize = \filesize($filePath);
         static::assertIsInt($fileSize);
-        static::assertNotEmpty($fileSize);
+        static::assertNotSame(0, $fileSize);
 
         $fileNameArray = \explode('/', $filePath);
 

@@ -40,7 +40,7 @@ class AbstractReaderTableIntrospectionTest extends TestCase
         static::assertStringContainsString('`lang`.`name` AS `lang.name`', $sql);
 
         $rows = $query->executeQuery()->fetchAllAssociative();
-        static::assertNotEmpty($rows);
+        static::assertNotCount(0, $rows);
         static::assertArrayHasKey('lang.id', $rows[0]);
         static::assertArrayHasKey('lang.name', $rows[0]);
     }

@@ -199,7 +199,7 @@ SQL;
             $result[] = $payment;
         }
 
-        foreach ($orderPayments as $key => $payment) {
+        foreach ($orderPayments as $payment) {
             $result[] = $payment;
         }
 

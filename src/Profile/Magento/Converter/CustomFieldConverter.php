@@ -176,7 +176,6 @@ abstract class CustomFieldConverter extends Converter
                 $defaultLocale => null,
             ],
             'type' => 'text',
-            'customFieldType' => 'text',
         ];
 
         if (isset($data['translations'])) {
@@ -186,7 +185,6 @@ abstract class CustomFieldConverter extends Converter
         }
 
         if ($data['frontend_input'] === 'text') {
-            $attributeData['type'] = 'text';
             $attributeData['customFieldType'] = 'text';
 
             return $attributeData;
