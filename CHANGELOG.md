@@ -1,7 +1,12 @@
-# [NEXT]
+# 14.0.0
+
+- Compatibility with Migration Assistant version 19.
+- Increased the minimum required Migration Assistant version to ~19.0.
 - Fixes errors when downloading media.
 - Fixes errors when migrating category images.
 - Fixed a fatal error that broke reading data via the local gateway on Shopware versions below 6.7.8.0.
+- Fixed migrated orders getting a currency factor of 0 when Magento stores no conversion rate, for example for orders in the shop's base currency.
+- Fixed language migration for locales with a script subtag, such as `zh-Hans-CN`, by falling back to the base locale if the exact locale does not exist.
 
 # 13.0.0
 

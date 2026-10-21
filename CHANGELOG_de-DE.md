@@ -1,7 +1,12 @@
-# [NEXT]
+# 14.0.0
+
+- Kompatibilität mit Migration Assistant Version 19.
+- Mindestanforderung des Migration Assistant auf ~19.0 erhöht.
 - Behebt Fehler beim Herunterladen von Medien.
 - Behebt Fehler bei der Migration von Kategoriebildern.
 - Ein fataler Fehler wurde behoben, der das Lesen von Daten über das lokale Gateway auf Shopware-Versionen unter 6.7.8.0 verhindert hat.
+- Migrierte Bestellungen erhalten keinen Währungsfaktor von 0 mehr, wenn Magento keinen Umrechnungskurs speichert, zum Beispiel bei Bestellungen in der Standardwährung des Shops.
+- Die Sprachmigration für Locales mit Schrift-Subtag, wie `zh-Hans-CN`, wurde korrigiert: Existiert die genaue Locale nicht, wird auf die Basis-Locale zurückgegriffen.
 
 # 13.0.0
 
